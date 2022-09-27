@@ -7,6 +7,7 @@ namespace App\Controller;
 use App\Entity\Board;
 use App\Entity\Image;
 use App\Form\Type\ImageType;
+use App\Repository\TagRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -47,10 +48,11 @@ class ImageController extends AbstractController
 
     #[Route(path: '/boards/{slug}/{id}', name: 'app_image_show', methods: ['GET'])]
     #[ParamConverter('board', options: ['mapping' => ['slug' => 'slug']])]
-    public function show(Board $board, Image $image): Response {
+    public function show(Board $board, Image $image, TagRepository $tagRepository): Response {
         return $this->render('App/Image/show.html.twig', [
             'board' => $board,
             'image' => $image,
+            'tags' => $tagRepository->findForImage($image)
         ]);
     }
 }
