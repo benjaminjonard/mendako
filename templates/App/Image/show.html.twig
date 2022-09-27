@@ -1,7 +1,13 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <img src="{{ asset(image.path) }}">
+    {% if image.mimeType == 'video/mp4' %}
+        <video controls>
+            <source src="{{ asset(image.path) }}" type="video/mp4">
+        </video>
+    {% else %}
+        <img src="{{ asset(image.path) }}">
+    {% endif %}
 
     <div>{{ 'label.added_at'|trans }}: {{ image.createdAt|date('Y-m-d h:i:s') }}</div>
     <div>{{ 'label.size'|trans }}: {{ image.size|bytes }}</div>

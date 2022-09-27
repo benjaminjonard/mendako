@@ -43,6 +43,9 @@ class Image
     #[ORM\Column(type: Types::INTEGER)]
     private ?int $size = null;
 
+    #[ORM\Column(type: Types::INTEGER, nullable: true)]
+    private ?int $duration = null;
+
     #[ORM\ManyToOne(targetEntity: Board::class, inversedBy: 'images')]
     #[Assert\NotBlank]
     private ?Board $board = null;
@@ -144,6 +147,18 @@ class Image
     public function setSize(?int $size): Image
     {
         $this->size = $size;
+
+        return $this;
+    }
+
+    public function getDuration(): ?int
+    {
+        return $this->duration;
+    }
+
+    public function setDuration(?int $duration): Image
+    {
+        $this->duration = $duration;
 
         return $this;
     }

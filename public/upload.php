@@ -1,5 +1,9 @@
 <?php
 
+require_once dirname(__DIR__).'/vendor/autoload.php';
+
+use FFMpeg\Coordinate\TimeCode;
+use FFMpeg\FFMpeg;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 //@TODO Allow only some width
@@ -40,7 +44,17 @@ function generate(string $path, string $thumbnailPath, int $thumbnailWidth)
         return false;
     }
 
-    list($width, $height, $mime) = getimagesize($path);
+    $mime = mime_content_type($path);
+    if (mime_content_type($path) === 'video/mp4') {
+        $ffmpeg = FFMpeg::create();
+        $video = $ffmpeg->open($path);
+        $stream = $video->getStreams()->videos()->first();
+        $width = $stream->getDimensions()->getWidth();
+        $height = $stream->getDimensions()->getHeight();
+    } else {
+        list($width, $height) = getimagesize($path);
+    }
+
     if ($width <= $thumbnailWidth) {
         $thumbnailWidth = $width;
     }
@@ -52,44 +66,47 @@ function generate(string $path, string $thumbnailPath, int $thumbnailWidth)
     $dir = implode('/', $dir);
 
     if (!is_dir($dir) && !mkdir($dir, 0777, true) && !is_dir($dir)) {
-        throw new \Exception('There was a problem while uploading the image. Please try again!');
+        throw new \Exception('There was a problem while creating the thumbnail. Please try again!');
     }
 
-    $image = match ($mime) {
-        IMAGETYPE_JPEG, IMAGETYPE_JPEG2000 => imagecreatefromjpeg($path),
-        IMAGETYPE_PNG => imagecreatefrompng($path),
-        IMAGETYPE_WEBP => imagecreatefromwebp($path),
-        default => throw new \Exception('Your image cannot be processed, please use another one.'),
-    };
+    if ($mime === 'video/mp4') {
+        $video->frame(TimeCode::fromSeconds(1))->save($thumbnailPath);;
+    } else {
+        $image = match ($mime) {
+            IMAGETYPE_JPEG, IMAGETYPE_JPEG2000 => imagecreatefromjpeg($path),
+            IMAGETYPE_PNG => imagecreatefrompng($path),
+            IMAGETYPE_WEBP => imagecreatefromwebp($path),
+            default => throw new \Exception('Your image cannot be processed, please use another one.'),
+        };
 
-    $thumbnail = imagecreatetruecolor($thumbnailWidth, $thumbnailHeight);
+        $thumbnail = imagecreatetruecolor($thumbnailWidth, $thumbnailHeight);
 
-    // Transparency
-    if (IMAGETYPE_PNG === $mime || IMAGETYPE_WEBP === $mime) {
-        imagecolortransparent($thumbnail, imagecolorallocate($thumbnail, 0, 0, 0));
-        imagealphablending($thumbnail, false);
-        imagesavealpha($thumbnail, true);
+        // Transparency
+        if (IMAGETYPE_PNG === $mime || IMAGETYPE_WEBP === $mime) {
+            imagecolortransparent($thumbnail, imagecolorallocate($thumbnail, 0, 0, 0));
+            imagealphablending($thumbnail, false);
+            imagesavealpha($thumbnail, true);
+        }
+
+        imagecopyresampled($thumbnail, $image, 0, 0, 0, 0, $thumbnailWidth, $thumbnailHeight, $width, $height);
+        $deg = guessRotation($path);
+        $thumbnail = imagerotate($thumbnail, $deg, 0);
+
+        switch ($mime) {
+            case IMAGETYPE_JPEG:
+            case IMAGETYPE_JPEG2000:
+                imagejpeg($thumbnail, $thumbnailPath, 85);
+                break;
+            case IMAGETYPE_PNG:
+                imagepng($thumbnail, $thumbnailPath, 9);
+                break;
+            case IMAGETYPE_WEBP:
+                imagewebp($thumbnail, $thumbnailPath, 85);
+                break;
+            default:
+                break;
+        }
     }
-
-    imagecopyresampled($thumbnail, $image, 0, 0, 0, 0, $thumbnailWidth, $thumbnailHeight, $width, $height);
-    $deg = guessRotation($path);
-    $thumbnail = imagerotate($thumbnail, $deg, 0);
-
-    switch ($mime) {
-        case IMAGETYPE_JPEG:
-        case IMAGETYPE_JPEG2000:
-            imagejpeg($thumbnail, $thumbnailPath, 85);
-            break;
-        case IMAGETYPE_PNG:
-            imagepng($thumbnail, $thumbnailPath, 9);
-            break;
-        case IMAGETYPE_WEBP:
-            imagewebp($thumbnail, $thumbnailPath, 85);
-            break;
-        default:
-            break;
-    }
-
 
     return true;
 }

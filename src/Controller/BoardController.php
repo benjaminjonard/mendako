@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\Board;
-use App\Form\Type\Entity\BoardType;
-use App\Model\Paginator;
+use App\Form\Type\BoardType;
 use App\Repository\BoardRepository;
 use App\Repository\ImageRepository;
 use App\Service\PaginatorFactory;
