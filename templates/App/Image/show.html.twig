@@ -1,0 +1,10 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <img src="{{ asset(image.path) }}">
+
+    <div>{{ 'label.added_at'|trans }}: {{ image.createdAt|date('Y-m-d h:i:s') }}</div>
+    <div>{{ 'label.size'|trans }}: {{ image.size|bytes }}</div>
+    <div>{{ 'label.dimensions'|trans }}: {{ image.width }}*{{ image.height }}</div>
+    <div>{{ 'label.mimetype'|trans }}: {{ image.mimetype }}</div>
+{% endblock %}

@@ -1,0 +1,48 @@
+#This docker-compose file is provided for dev purposes
+version: '3.4'
+
+services:
+    mendako:
+        container_name: mendako
+        image: koillection/koillection:dev
+        restart: always
+        ports:
+            - 81:80
+        environment:
+            - APP_ENV=dev
+            - APP_DEBUG=1
+            - DB_DRIVER=pdo_pgsql
+            - DB_NAME=mendako
+            - DB_HOST=postgresql
+            - DB_PORT=5432
+            - DB_USER=postgres
+            - DB_PASSWORD=m6iFpZTkR1U6klSvLtRF
+            - DB_VERSION=14
+            - PHP_TZ=Europe/Paris
+            - HTTPS_ENABLED=0
+        depends_on:
+            - postgresql
+        volumes:
+            - "./docker/volumes/koillection/public/uploads:/var/www/koillection/public/uploads"
+            - ./:/var/www/koillection
+
+    postgresql:
+        container_name: postgresql
+        image: postgres:14
+        environment:
+            - POSTGRES_DB=mendako
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=m6iFpZTkR1U6klSvLtRF
+            - POSTGRES_HOST_AUTH_METHOD=trust
+        volumes:
+            - "./docker/volumes/postgresql:/var/lib/postgresql/data"
+
+    pgadmin:
+        container_name: pgadmin4_container
+        image: dpage/pgadmin4
+        restart: always
+        environment:
+            PGADMIN_DEFAULT_EMAIL: admin@admin.com
+            PGADMIN_DEFAULT_PASSWORD: admin
+        ports:
+            - 8080:80

@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <a href="{{ path('app_board_add') }}" class="button">{{ 'btn.add_board' }}</a>
+
+    {% for board in boards %}
+        <div>
+            <a href="{{ path('app_board_show', {slug: board.slug}) }}">{{ board.name }}</a>
+        </div>
+    {% endfor %}
+{% endblock %}

@@ -1,0 +1,6 @@
+{{ form_start(form) }}
+    {{ form_row(form.file, {'label' : 'label.file'} ) }}
+
+    <button type="submit">{{ 'btn.submit'|trans }}</button>
+    <a href="{{ path('app_board_show', {slug: board.slug}) }}"> {{ 'btn.cancel'|trans }}</a>
+{{ form_end(form) }}

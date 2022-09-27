@@ -1,0 +1,23 @@
+parameters:
+    release: '0.0.1'
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        bind:
+            $publicPath: '%kernel.project_dir%/public'
+
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Entity/'
+            - '../src/Kernel.php'
+
+    App\EventListener\UploadListener:
+        tags:
+            - { name: doctrine.event_listener, event: prePersist }
+            - { name: doctrine.event_listener, event: onFlush }
+            - { name: doctrine.event_listener, event: postRemove }
+            - { name: doctrine.event_listener, event: postLoad }
