@@ -31,9 +31,6 @@ class Board
     #[ORM\OneToMany(targetEntity: Image::class, mappedBy: 'board', cascade: ['all'])]
     private Collection $images;
 
-    #[ORM\OneToMany(targetEntity: Tag::class, mappedBy: 'board', cascade: ['all'])]
-    private Collection $tags;
-
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     #[Gedmo\Timestampable(on: 'create')]
     private \DateTimeImmutable $createdAt;
@@ -74,11 +71,6 @@ class Board
         $this->slug = $slug;
 
         return $this;
-    }
-
-    public function getTags(): Collection
-    {
-        return $this->tags;
     }
 
     public function getCreatedAt(): \DateTimeImmutable

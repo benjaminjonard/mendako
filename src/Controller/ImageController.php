@@ -6,9 +6,8 @@ namespace App\Controller;
 
 use App\Entity\Board;
 use App\Entity\Image;
-use App\Form\Type\Entity\ImageType;
+use App\Form\Type\ImageType;
 use Doctrine\Persistence\ManagerRegistry;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;

@@ -16,7 +16,7 @@ services:
             - DB_HOST=postgresql
             - DB_PORT=5432
             - DB_USER=postgres
-            - DB_PASSWORD=m6iFpZTkR1U6klSvLtRF
+            - DB_PASSWORD=password
             - DB_VERSION=14
             - PHP_TZ=Europe/Paris
             - HTTPS_ENABLED=0
@@ -32,7 +32,7 @@ services:
         environment:
             - POSTGRES_DB=mendako
             - POSTGRES_USER=postgres
-            - POSTGRES_PASSWORD=m6iFpZTkR1U6klSvLtRF
+            - POSTGRES_PASSWORD=password
             - POSTGRES_HOST_AUTH_METHOD=trust
         volumes:
             - "./docker/volumes/postgresql:/var/lib/postgresql/data"

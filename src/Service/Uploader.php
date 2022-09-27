@@ -6,6 +6,7 @@ namespace App\Service;
 
 use App\Attribute\Upload;
 use App\Entity\Image;
+use FFMpeg\FFMpeg;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\PropertyAccess\PropertyAccess;
@@ -40,14 +41,27 @@ class Uploader
             $fileName = $generatedName . '.' . $extension;
             $file->move($absolutePath, $fileName);
 
-            $dimensions = getimagesize($absolutePath . $fileName);
-
             $entity
                 ->setMimetype(mime_content_type($absolutePath . $fileName))
                 ->setSize(filesize($absolutePath . $fileName))
-                ->setWidth($dimensions[0])
-                ->setHeight($dimensions[1])
             ;
+
+            if ($entity->getMimetype() === 'video/mp4') {
+                $ffmpeg = FFMpeg::create();
+                $video = $ffmpeg->open($absolutePath . $fileName);
+                $stream = $video->getStreams()->videos()->first();
+                $entity
+                    ->setDuration((int) round((float) ($stream->get('duration'))))
+                    ->setHeight($stream->getDimensions()->getHeight())
+                    ->setWidth($stream->getDimensions()->getWidth())
+                ;
+            } else {
+                $dimensions = getimagesize($absolutePath . $fileName);
+                $entity
+                    ->setWidth($dimensions[0])
+                    ->setHeight($dimensions[1])
+                ;
+            }
 
             $this->removeOldFile($entity, $attribute);
             $this->accessor->setValue($entity, $attribute->getPath(), $relativePath . $fileName);

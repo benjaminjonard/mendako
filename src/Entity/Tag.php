@@ -35,10 +35,6 @@ class Tag
     #[ORM\ManyToMany(targetEntity: Image::class, mappedBy: 'tags')]
     private Collection $images;
 
-    #[ORM\ManyToOne(targetEntity: Board::class, inversedBy: 'tags')]
-    #[Assert\NotBlank]
-    private ?Board $board = null;
-
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     #[Gedmo\Timestampable(on: 'create')]
     private \DateTimeImmutable $createdAt;
@@ -89,18 +85,6 @@ class Tag
     public function setCategory(?TagCategory $category): Tag
     {
         $this->category = $category;
-        return $this;
-    }
-
-    public function getBoard(): ?Board
-    {
-        return $this->board;
-    }
-
-    public function setBoard(?Board $board): Tag
-    {
-        $this->board = $board;
-
         return $this;
     }
 
