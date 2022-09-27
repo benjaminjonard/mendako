@@ -50,6 +50,9 @@ class Image
     #[Assert\NotBlank]
     private ?Board $board = null;
 
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    private ?User $uploadedBy = null;
+
     #[ORM\ManyToMany(targetEntity: Tag::class, inversedBy: 'images', cascade: ['persist'])]
     #[ORM\JoinTable(name: 'men_image_tag')]
     #[ORM\JoinColumn(name: 'image_id', referencedColumnName: 'id')]
@@ -201,6 +204,18 @@ class Image
         if ($this->tags->contains($tag)) {
             $this->tags->removeElement($tag);
         }
+
+        return $this;
+    }
+
+    public function getUploadedBy(): ?User
+    {
+        return $this->uploadedBy;
+    }
+
+    public function setUploadedBy(?User $uploadedBy): Image
+    {
+        $this->uploadedBy = $uploadedBy;
 
         return $this;
     }

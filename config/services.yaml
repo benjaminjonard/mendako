@@ -15,9 +15,14 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
+    App\EventListener\UserListener:
+        tags:
+            - { name: doctrine.event_listener, event: prePersist, lazy: true }
+            - { name: doctrine.event_listener, event: preUpdate, lazy: true }
+
     App\EventListener\UploadListener:
         tags:
-            - { name: doctrine.event_listener, event: prePersist }
-            - { name: doctrine.event_listener, event: onFlush }
-            - { name: doctrine.event_listener, event: postRemove }
-            - { name: doctrine.event_listener, event: postLoad }
+            - { name: doctrine.event_listener, event: prePersist, lazy: true }
+            - { name: doctrine.event_listener, event: onFlush, lazy: true }
+            - { name: doctrine.event_listener, event: postRemove, lazy: true }
+            - { name: doctrine.event_listener, event: postLoad, lazy: true }
