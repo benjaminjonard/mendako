@@ -31,6 +31,7 @@ class ImageController extends AbstractController
         $form = $this->createForm(ImageType::class, $image);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+            $image->setUploadedBy($this->getUser());
             $managerRegistry->getManager()->persist($image);
             $managerRegistry->getManager()->flush();
 
