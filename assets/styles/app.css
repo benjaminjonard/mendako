@@ -1,0 +1,5 @@
+@import "../node_modules/bulma/css/bulma.min.css";
+
+body {
+    background-color: lightgray;
+}

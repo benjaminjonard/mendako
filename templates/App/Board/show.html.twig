@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    {{ board.name }}
+    <a href="{{ path('app_image_add', {slug: board.slug}) }}" class="button">{{ 'btn.add_image' }}</a>
+
+    <div>
+        {% for image in images %}
+            <a href="{{ path('app_image_show', {slug: board.slug, id: image.id}) }}">
+                {% if image.mimetype == 'image/gif' %}
+                    <img width="200" src="{{ asset(image.path) }}">
+                {% else %}
+                    <img width="200" src="{{ asset(image.path|thumbnail(200)) }}">
+                {% endif %}
+
+            </a>
+        {% endfor %}
+    </div>
+
+    {{ include('App/_partials/_pagination.html.twig', {paginator: paginator}) }}
+{% endblock %}

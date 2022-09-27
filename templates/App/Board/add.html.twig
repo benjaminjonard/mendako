@@ -1,0 +1,9 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>{{ 'title.add_board'|trans }}</h1>
+
+    <div>
+        {{ include('App/Board/_form.html.twig') }}
+    </div>
+{% endblock %}
