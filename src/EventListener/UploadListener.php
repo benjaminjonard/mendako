@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\EventListener;
 
 use App\Attribute\UploadAnnotationReader;
+use App\Service\AutomatedTagger;
 use App\Service\Uploader;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\OnFlushEventArgs;
@@ -13,7 +14,8 @@ final class UploadListener
 {
     public function __construct(
         private readonly UploadAnnotationReader $reader,
-        private readonly Uploader $uploader
+        private readonly Uploader $uploader,
+        private readonly AutomatedTagger $automatedTagger
     ) {
     }
 
@@ -22,6 +24,7 @@ final class UploadListener
         $entity = $args->getEntity();
         foreach ($this->reader->getUploadFields($entity) as $property => $attribute) {
             $this->uploader->upload($entity, $property, $attribute);
+            $this->automatedTagger->tag($entity);
         }
     }
 
@@ -33,6 +36,7 @@ final class UploadListener
         foreach ($uow->getScheduledEntityUpdates() as $entity) {
             foreach ($this->reader->getUploadFields($entity) as $property => $attribute) {
                 $this->uploader->upload($entity, $property, $attribute);
+                $this->automatedTagger->tag($entity);
                 $uow->recomputeSingleEntityChangeSet($em->getClassMetadata(\get_class($entity)), $entity);
             }
         }
