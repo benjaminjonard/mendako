@@ -981,6 +981,18 @@
     error-stack-parser "^2.0.0"
     string-width "^4.2.3"
 
+"@orchidjs/sifter@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@orchidjs/sifter/-/sifter-1.0.1.tgz#9a401546d80e3592f78f0640290d51b82f89ca64"
+  integrity sha512-gciY+iuk2hBAyzsPBMCvGJa+JVrssWOit6Pveke4KqkY/6JTinvztAESmPDM0UJBPNmc1m1tC15VVKrZ3v8nrw==
+  dependencies:
+    "@orchidjs/unicode-variants" "^1.0.2"
+
+"@orchidjs/unicode-variants@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@orchidjs/unicode-variants/-/unicode-variants-1.0.2.tgz#3d4355fe9796ed00ca9709e6bd85caf4f6da8c53"
+  integrity sha512-Q0DDoAwywdCE3dOBl8PlMWci8OwEwZG22WxLB48xfLPpM1hC+gQRnUAKMEUBZqPN/Rk/FrdAcem4VQe8qfuPHQ==
+
 "@symfony/stimulus-bridge@^3.2.0":
   version "3.2.1"
   resolved "https://registry.yarnpkg.com/@symfony/stimulus-bridge/-/stimulus-bridge-3.2.1.tgz#b9c261ad72830fd17898cf27c97862d1cc15b46a"
@@ -991,6 +1003,9 @@
     acorn "^8.0.5"
     loader-utils "^2.0.0"
     schema-utils "^3.0.0"
+
+"@symfony/ux-autocomplete@file:../vendor/symfony/ux-autocomplete/assets":
+  version "1.0.0"
 
 "@symfony/webpack-encore@^4.0.0":
   version "4.0.0"
@@ -3987,6 +4002,14 @@ toidentifier@1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/toidentifier/-/toidentifier-1.0.1.tgz#3be34321a88a820ed1bd80dfaa33e479fbb8dd35"
   integrity sha512-o5sSPKEkg/DIQNmH43V0/uerLrpzVedkUh8tGNvaeXpfpuwjKenlSox/2O/BTlZUtEe+JG7s5YhEz608PlAHRA==
+
+tom-select@^2.2.1:
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/tom-select/-/tom-select-2.2.1.tgz#7abab1fdd074fefa96653e60eb89b6292e4cf9f2"
+  integrity sha512-wdYe/baQrztDJEjUtB0p3eZFFyr3jljoWPh31KEdqUEsdHGQ3UyqUYyGzT//F7WlvZc7Qmg+hLGT5qKFWAqgIA==
+  dependencies:
+    "@orchidjs/sifter" "^1.0.1"
+    "@orchidjs/unicode-variants" "^1.0.2"
 
 type-is@~1.6.18:
   version "1.6.18"
