@@ -33,6 +33,7 @@
         "symfony/translation": "6.1.*",
         "symfony/twig-bundle": "6.1.*",
         "symfony/uid": "6.1.*",
+        "symfony/ux-autocomplete": "^2.4",
         "symfony/validator": "6.1.*",
         "symfony/webpack-encore-bundle": "^1.15",
         "symfony/yaml": "6.1.*",
