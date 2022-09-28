@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Entity\Board;
 use App\Entity\Image;
 use App\Entity\Tag;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -40,7 +41,7 @@ class TagRepository extends ServiceEntityRepository
         return $results;
     }
 
-    public function findForImage(Image $image): array
+    public function findForImages(Board $board, array $images): array
     {
         $countQuery = $this->_em
             ->createQueryBuilder()
@@ -55,10 +56,10 @@ class TagRepository extends ServiceEntityRepository
             ->createQueryBuilder()
             ->select("t.id, t.name, t.category, ($countQuery) AS counter")
             ->from(Tag::class, 't')
-            ->join('t.images', 'i', 'WITH', 'i = :image')
+            ->join('t.images', 'i', 'WITH', 'i IN (:images)')
             ->orderBy('t.name', 'ASC')
-            ->setParameter('image', $image->getId())
-            ->setParameter('board', $image->getBoard()->getId())
+            ->setParameter('images', $images)
+            ->setParameter('board', $board->getId())
         ;
 
         $results = $qb->getQuery()->getArrayResult();

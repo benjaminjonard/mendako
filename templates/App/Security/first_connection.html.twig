@@ -1,16 +1,15 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <div class="box">
-        <div>
-            <h1>
-                {{ 'title.welcome'|trans }}
-            </h1>
+    <div class="container">
+        <div class="columns">
+            <div class="column"></div>
+            <div class="column">
+                <div class="box">
+                    <h1 class="title">{{ 'title.welcome'|trans }}</h1>
 
-            <div>
-                <div>
                     {{ form_start(form) }}
-                    <h2>{{ 'title.first_connection.user'|trans }}</h2>
+                        <h2 class="subtitle">{{ 'title.first_connection.user'|trans }}</h2>
                         {{ form_errors(form) }}
                         {{ form_row(form.username, {'label' : 'label.username'} ) }}
                         {{ form_row(form.email, {'label' : 'label.email'} ) }}
@@ -18,11 +17,12 @@
                         {{ form_row(form.plainPassword.second, {'label': 'label.repeat_password'}) }}
                         {{ form_row(form.timezone, {'label': 'label.timezone', 'attr': {'data-controller': 'select--default'}}) }}
                         <div>
-                            <button type="submit">{{ 'btn.submit'|trans }}</button>
+                            <button class="button is-primary" type="submit">{{ 'btn.submit'|trans }}</button>
                         </div>
                     {{ form_end(form) }}
                 </div>
             </div>
+            <div class="column"></div>
         </div>
     </div>
 {% endblock %}

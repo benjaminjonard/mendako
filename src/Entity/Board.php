@@ -31,7 +31,7 @@ class Board
     #[ORM\ManyToOne(targetEntity: Image::class)]
     private ?Image $thumbnail = null;
 
-    #[ORM\OneToMany(targetEntity: Image::class, mappedBy: 'board', cascade: ['all'])]
+    #[ORM\OneToMany(targetEntity: Image::class, mappedBy: 'board', cascade: ['all'], fetch: 'EXTRA_LAZY')]
     private Collection $images;
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]

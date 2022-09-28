@@ -1,5 +1,92 @@
+@import "tom-select/dist/css/tom-select.default.css";
 @import "../node_modules/bulma/css/bulma.min.css";
 
-body {
-    background-color: lightgray;
+.ts-control {
+    border: none;
+}
+
+.ts-wrapper {
+    height: auto;
+}
+
+.ts-wrapper.multi .ts-control [data-value] {
+    text-shadow: none;
+    border: none;
+    box-shadow: none;
+    background-image: none;
+}
+
+.ts-wrapper .tag:not(body) {
+    background-color: #00d1b2!important;
+}
+
+.ts-wrapper.plugin-remove_button:not(.rtl) .item .remove {
+    border: none;
+}
+
+.section {
+    padding: 3rem 1.5rem;
+}
+
+.grid {
+    grid-template-columns: repeat(auto-fill,minmax(210px,1fr));
+    grid-column-gap: 10px;
+    grid-row-gap: 15px;
+    display: grid;
+    text-align: center;
+}
+
+.grid a {
+    margin-top: auto;
+}
+
+.preview {
+    max-width: 300px;
+    max-height: 300px;
+}
+
+.image-display {
+    max-width: 800px;
+    max-height: 650px;
+}
+
+/* Start image grid */
+.grid figure img {
+    max-width: 210px;
+    max-height: 150px;
+}
+/* End image grid */
+
+/* Start board grid */
+.grid .card img {
+    width: 210px;
+    height: 150px;
+}
+
+.grid .card {
+    width: 210px;
+    height: auto;
+}
+/* End board grid */
+
+figure .tag {
+    position: absolute;
+    left: 5px;
+    top: 5px;
+}
+
+.category-meta {
+    color: #ead084;
+}
+
+.category-copyright {
+    color: #c797ff;
+}
+
+.category-artist {
+    color: #ff8a8b;
+}
+
+.category-character {
+    color: #35c64a;
 }

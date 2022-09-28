@@ -8,6 +8,7 @@ use App\Entity\Board;
 use App\Form\Type\BoardType;
 use App\Repository\BoardRepository;
 use App\Repository\ImageRepository;
+use App\Repository\TagRepository;
 use App\Service\PaginatorFactory;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -59,16 +60,19 @@ class BoardController extends AbstractController
         Request $request,
         Board $board,
         ImageRepository $imageRepository,
+        TagRepository $tagRepository,
         PaginatorFactory $paginatorFactory,
     ): Response {
         $page = $request->query->get('page', 1);
+        $tags = $request->query->all()['tags'] ?? [];
 
-        $images = $imageRepository->findBy(['board' => $board], [], 20, ($page - 1) * 20);
-        $imagesCount = $imageRepository->count(['board' => $board]);
+        $images = $imageRepository->filterByTags($board, $tags, $page);
+        $imagesCount = $imageRepository->countFilterByTags($board, $tags);
 
         return $this->render('App/Board/show.html.twig', [
             'board' => $board,
             'images' => $images,
+            'tags' => $tagRepository->findForImages($board, $images),
             'paginator' => $paginatorFactory->generate($imagesCount),
         ]);
     }

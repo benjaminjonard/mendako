@@ -1,9 +1,30 @@
-{% extends 'base.html.twig' %}
+{% extends 'layout.html.twig' %}
 
-{% block body %}
-    {% for tag in tags %}
-        <div>
-            <a href="{{ path('app_tag_edit', {id: tag.id}) }}">{{ tag.name }} - {{ tag.category.value }} - ({{ tag.counter }})</a>
-        </div>
-    {% endfor %}
+{% block breadcrumb %}
+    <li class="is-active"><a href="{{ path('app_tag_index') }}" aria-current="page">{{ 'menu.tags'|trans }}</a></li>
+{% endblock %}
+
+{% block content %}
+    <div class="column"></div>
+
+    <div class="column">
+        <table class="table is-hoverable is-fullwidth">
+            <thead>
+                <tr>
+                    <th>{{ 'label.name'|trans }}</th>
+                    <th>{{ 'label.category'|trans }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for tag in tags %}
+                    <tr>
+                        <td><a class="category-{{ tag.category.value }}" href="{{ path('app_tag_edit', {id: tag.id}) }}">{{ tag.name }}</a> ({{ tag.counter }})</td>
+                        <td>{{ tag.category.value }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="column"></div>
 {% endblock %}

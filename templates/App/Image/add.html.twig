@@ -1,9 +1,20 @@
-{% extends 'base.html.twig' %}
+{% extends 'layout.html.twig' %}
 
-{% block body %}
-    <h1>{{ 'title.add_image'|trans({board: board.name}) }}</h1>
+{% block breadcrumb %}
+    <li><a href="{{ path('app_board_index') }}">{{ 'menu.boards'|trans }}</a></li>
+    <li><a href="{{ path('app_board_show', {slug: board.slug}) }}">{{ board.name }}</a></li>
+    <li class="is-active"><a href="#" aria-current="page">{{ 'menu.add_image'|trans }}</a></li>
+{% endblock %}
 
-    <div>
-        {{ include('App/Image/_form.html.twig') }}
+{% block content %}
+    <div class="column"></div>
+
+    <div class="column">
+        <div class="box">
+            <h1 class="title">{{ 'title.add_image'|trans({board: board.name}) }}</h1>
+            {{ include('App/Image/_form.html.twig') }}
+        </div>
     </div>
+
+    <div class="column"></div>
 {% endblock %}

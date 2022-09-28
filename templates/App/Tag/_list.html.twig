@@ -1,0 +1,13 @@
+<div class="block">
+    {% for tag in tags|filter(t => t.category == 'general') %}
+        {% if loop.first %}<h3 class="has-text-weight-medium">{{ 'app.enum.tag.category.general'|trans }}</h3>{% endif %}
+        <div><a href="{{ path('app_board_show', {slug: board.slug, tags: [tag.name]}) }}">{{ tag.name }}</a> ({{ tag.counter }})</div>
+    {% endfor %}
+</div>
+
+<div class="block">
+    {% for tag in tags|filter(t => t.category == 'meta') %}
+        {% if loop.first %}<h3 class="has-text-weight-medium">{{ 'app.enum.tag.category.meta'|trans }}</h3>{% endif %}
+        <div><a href="#">{{ tag.name }}</a> ({{ tag.counter }})</div>
+    {% endfor %}
+</div>

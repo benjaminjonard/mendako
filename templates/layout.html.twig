@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <nav class="navbar" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <div class="navbar-item">
+                <img src="{{ asset('build/images/logo.svg') }}" width="28" height="28">
+            </div>
+        </div>
+
+        <div class="navbar-menu">
+            <div class="navbar-start">
+                <a class="navbar-item" href="{{ path('app_board_index') }}">{{ 'menu.boards'|trans }}</a>
+                <a class="navbar-item" href="{{ path('app_tag_index') }}">{{ 'menu.tags'|trans }}</a>
+                <span class="navbar-item">|</span>
+
+                <div class="navbar-item breadcrumb right" aria-label="breadcrumbs">
+                    <ul>
+                        {% block breadcrumb %}{% endblock %}
+                    </ul>
+                </div>
+            </div>
+
+
+            <div class="navbar-end">
+                {% block navbarEnd %}{% endblock %}
+            </div>
+        </div>
+    </nav>
+
+
+
+    <section class="section">
+        <div class="columns">
+            {% block content %}{% endblock %}
+        </div>
+    </section>
+{% endblock %}

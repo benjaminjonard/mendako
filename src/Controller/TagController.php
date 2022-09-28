@@ -62,7 +62,7 @@ class TagController extends AbstractController
 
             $this->addFlash('notice', $translator->trans('message.tag_edited', ['tag' => '&nbsp;<strong>'.$tag->getName().'</strong>&nbsp;']));
 
-            return $this->redirectToRoute('app_tag_edit', ['id' => $tag->getId()]);
+            return $this->redirectToRoute('app_tag_index');
         }
 
         return $this->render('App/Tag/edit.html.twig', [

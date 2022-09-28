@@ -5,6 +5,6 @@
 
     {{ form_row(form.setAsBoardThumbnail, {'label' : 'label.set_as_board_thumbnail'} ) }}
 
-    <button type="submit">{{ 'btn.submit'|trans }}</button>
-    <a href="{{ path('app_board_show', {slug: board.slug}) }}"> {{ 'btn.cancel'|trans }}</a>
+    <button class="button is-primary" type="submit">{{ 'btn.submit'|trans }}</button>
+    <a class="button is-danger" href="{{ path('app_board_show', {slug: board.slug}) }}">{{ 'btn.cancel'|trans }}</a>
 {{ form_end(form) }}

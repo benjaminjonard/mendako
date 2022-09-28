@@ -33,6 +33,9 @@ class ImageType extends AbstractType
             ])
             ->add('tags', TextType::class, [
                 'autocomplete' => true,
+                'attr' => [
+                    'data-controller' => 'autocomplete',
+                ],
                 'tom_select_options' => [
                     'create' => true,
                     'createOnBlur' => true,
