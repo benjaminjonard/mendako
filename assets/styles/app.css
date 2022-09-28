@@ -29,6 +29,7 @@
 
 /* Start image grid */
 .grid figure img {
+    margin: auto;
     max-width: 210px;
     max-height: 220px;
     width: unset;
@@ -49,9 +50,9 @@
 /* End board grid */
 
 figure .tag {
-    position: absolute;
-    left: 5px;
-    top: 5px;
+    position: relative;
+    left: -75px;
+    top: 30px;
 }
 
 .category-meta {

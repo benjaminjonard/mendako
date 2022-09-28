@@ -8,10 +8,6 @@
                 {% set classes = classes ~ ' input' %}
             {% endif %}
 
-            {% if form.vars.type|default(null) == 'file' %}
-                {% set classes = classes ~ ' is-hidden' %}
-            {% endif %}
-
             {% if errors|length > 0 %}
                 {% set classes = classes ~ ' is-danger' %}
             {% endif %}
