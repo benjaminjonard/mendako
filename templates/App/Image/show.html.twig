@@ -1,6 +1,9 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+    <a href="{{ path('app_image_edit', {slug: board.slug, id: image.id}) }}" class="button">{{ 'btn.edit' }}</a>
+
+
     {% if image.mimeType == 'video/mp4' %}
         <video controls>
             <source src="{{ asset(image.path) }}" type="video/mp4">
@@ -9,9 +12,14 @@
         <img src="{{ asset(image.path) }}">
     {% endif %}
 
+    {% for tag in tags|filter(t => t.category == 'general') %}
+        {% if loop.first %}<h3>{{ 'enum.tag-category.general' }}</h3>{% endif %}
+        <div>{{ tag.name }}</div>
+    {% endfor %}
+
     {% for tag in tags|filter(t => t.category == 'meta') %}
         {% if loop.first %}<h3>{{ 'enum.tag-category.meta' }}</h3>{% endif %}
-        {{ tag.name }}
+        <div>{{ tag.name }}</div>
     {% endfor %}
 
     <div>{{ 'label.added_at'|trans }}: {{ image.createdAt|date('Y-m-d h:i:s') }}</div>

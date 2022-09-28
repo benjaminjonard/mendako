@@ -3,6 +3,7 @@
 {% block body %}
     {{ board.name }}
     <a href="{{ path('app_image_add', {slug: board.slug}) }}" class="button">{{ 'btn.add_image' }}</a>
+    <a href="{{ path('app_board_edit', {slug: board.slug}) }}" class="button">{{ 'btn.edit' }}</a>
 
     <div>
         {% for image in images %}

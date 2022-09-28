@@ -10,6 +10,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Symfony\Component\String\UnicodeString;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -24,10 +25,6 @@ class Tag
     #[ORM\Column(type: Types::STRING, unique: true)]
     #[Assert\NotBlank]
     private ?string $name = null;
-
-    #[ORM\Column(type: Types::STRING, unique: true)]
-    #[Gedmo\Slug(fields: ['name'])]
-    private ?string $slug;
 
     #[ORM\Column(type: Types::STRING, nullable: true, enumType: TagCategory::class)]
     private ?TagCategory $category;
@@ -60,19 +57,9 @@ class Tag
 
     public function setName(?string $name): Tag
     {
+        $name = new UnicodeString($name);
+        $name = $name->snake()->toString();
         $this->name = $name;
-
-        return $this;
-    }
-
-    public function getSlug(): ?string
-    {
-        return $this->slug;
-    }
-
-    public function setSlug(?string $slug): Tag
-    {
-        $this->slug = $slug;
 
         return $this;
     }

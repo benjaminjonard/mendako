@@ -72,4 +72,28 @@ class BoardController extends AbstractController
             'paginator' => $paginatorFactory->generate($imagesCount),
         ]);
     }
+
+    #[Route(path: '/boards/{slug}/edit', name: 'app_board_edit', methods: ['GET', 'POST'])]
+    public function edit(
+        Request $request,
+        Board $board,
+        TranslatorInterface $translator,
+        ManagerRegistry $managerRegistry
+    ): Response {
+        $form = $this->createForm(BoardType::class, $board);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $managerRegistry->getManager()->persist($board);
+            $managerRegistry->getManager()->flush();
+
+            $this->addFlash('notice', $translator->trans('message.board_edited', ['board' => '&nbsp;<strong>'.$board->getName().'</strong>&nbsp;']));
+
+            return $this->redirectToRoute('app_board_show', ['slug' => $board->getSlug()]);
+        }
+
+        return $this->render('App/Board/edit.html.twig', [
+            'board' => $board,
+            'form' => $form->createView(),
+        ]);
+    }
 }

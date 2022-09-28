@@ -1,5 +1,7 @@
 twig:
     default_path: '%kernel.project_dir%/templates'
+    form_themes:
+        - 'App/_partials/_form/_file.html.twig'
 
 when@test:
     twig:

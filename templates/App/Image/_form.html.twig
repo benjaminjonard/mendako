@@ -3,6 +3,8 @@
 
     {{ form_row(form.tags, {'label' : 'label.tags'} ) }}
 
+    {{ form_row(form.setAsBoardThumbnail, {'label' : 'label.set_as_board_thumbnail'} ) }}
+
     <button type="submit">{{ 'btn.submit'|trans }}</button>
     <a href="{{ path('app_board_show', {slug: board.slug}) }}"> {{ 'btn.cancel'|trans }}</a>
 {{ form_end(form) }}

@@ -1,0 +1,25 @@
+{% block file_widget %}
+    {% apply spaceless %}
+        <div class="row row-file">
+            <div class="col s12 l10 offset-l1 xl6 offset-xl3">
+                <div data-controller="preview">
+                    <label class="file-label">
+                        {% if form.parent.vars.value.path is not null %}
+                            <img data-preview-target="image" class="preview-image"
+                                 src="{{ asset(form.parent.vars.value.path) }}"/>
+                        {% else %}
+                            <img data-preview-target="image" class="preview-image"
+                                 src="{{ asset('build/images/default.png') }}"/>
+                        {% endif %}
+                        <input {{ block('widget_attributes') }}
+                                data-action="change->preview#load"
+                                type="file"
+                                class="hidden"
+                                accept="image/png, image/jpeg, image/jpg, image/gif, image/webp, video/mp4"
+                        />
+                    </label>
+                </div>
+            </div>
+        </div>
+    {% endapply %}
+{% endblock file_widget %}
