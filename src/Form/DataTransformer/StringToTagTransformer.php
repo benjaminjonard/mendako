@@ -23,14 +23,14 @@ class StringToTagTransformer implements DataTransformerInterface
             $results[] = $tag->getName();
         }
 
-        $results = implode(',', $results);
+        $results = implode(' ', $results);
 
         return $results;
     }
 
     public function reverseTransform($string): array
     {
-        $parts = explode(',', $string);
+        $parts = explode(' ', $string);
         $tags = [];
         foreach ($parts as $part) {
             $name = trim($part);

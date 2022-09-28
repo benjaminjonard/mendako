@@ -16,8 +16,11 @@ class PostRepository extends ServiceEntityRepository
         parent::__construct($registry, Post::class);
     }
 
-    public function filterByTags(Board $board, array $tags, $page): array
+    public function filterByTags(Board $board, string $tags, $page): array
     {
+        $tags = explode(' ', $tags);
+        $tags = array_filter($tags);
+
         $qb = $this
             ->createQueryBuilder('post')
             ->where('post.board = :board')
@@ -30,15 +33,21 @@ class PostRepository extends ServiceEntityRepository
         if (!empty($tags)) {
             $qb
                 ->join('post.tags', 'tag', 'WITH', 'tag.name in (:tags)')
+                ->groupBy('post.id')
+                ->having('COUNT(DISTINCT tag.id) >= :count')
                 ->setParameter('tags', $tags)
+                ->setParameter('count', \count($tags))
             ;
         }
 
         return $qb->getQuery()->getResult();
     }
 
-    public function countFilterByTags(Board $board, array $tags): int
+    public function countFilterByTags(Board $board, string $tags): int
     {
+        $tags = explode(' ', $tags);
+        $tags = array_filter($tags);
+
         $qb = $this
             ->createQueryBuilder('post')
             ->select('COUNT(DISTINCT post.id)')
@@ -49,7 +58,10 @@ class PostRepository extends ServiceEntityRepository
         if (!empty($tags)) {
             $qb
                 ->join('post.tags', 'tag', 'WITH', 'tag.name in (:tags)')
+                ->groupBy('post.id')
+                ->having('COUNT(DISTINCT tag.id) >= :count')
                 ->setParameter('tags', $tags)
+                ->setParameter('count', \count($tags))
             ;
         }
 

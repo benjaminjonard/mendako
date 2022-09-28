@@ -1,11 +1,4 @@
 {
-    "controllers": {
-        "@symfony/ux-autocomplete": {
-            "autocomplete": {
-                "enabled": true,
-                "fetch": "eager"
-            }
-        }
-    },
+    "controllers": [],
     "entrypoints": []
 }
