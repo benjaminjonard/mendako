@@ -4,7 +4,7 @@
         <div class="control">
             {% set classes = '' %}
 
-            {% if form.vars.choices is not defined and form.vars.checked is not defined  %}
+            {% if form.vars.choices is not defined and form.vars.checked is not defined and form.vars.patter is not defined  %}
                 {% set classes = classes ~ ' input' %}
             {% endif %}
 
@@ -22,6 +22,10 @@
         {{- form_errors(form) -}}
     </div>
 {% endblock %}
+
+{%- block textarea_widget -%}
+    <textarea class="textarea has-fixed-size" {{ block('widget_attributes') }}>{{ value }}</textarea>
+{%- endblock textarea_widget -%}
 
 {%- block choice_widget -%}
     {% if expanded %}

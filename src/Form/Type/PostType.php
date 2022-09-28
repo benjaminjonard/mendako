@@ -9,6 +9,7 @@ use App\Form\DataTransformer\StringToTagTransformer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -31,18 +32,8 @@ class PostType extends AbstractType
                 'required' => !$isEdition,
                 'label' => false,
             ])
-            ->add('tags', TextType::class, [
-                'autocomplete' => true,
-                'attr' => [
-                    'data-controller' => 'autocomplete',
-                ],
-                'tom_select_options' => [
-                    'create' => true,
-                    'createOnBlur' => true,
-                    'persist' => false,
-                    'delimiter' => ',',
-                ],
-                'autocomplete_url' => $this->router->generate('app_tag_autocomplete')
+            ->add('tags', TextareaType::class, [
+                'required' => true
             ])
             ->add('setAsBoardThumbnail', CheckboxType::class, [
                 'required' => false,

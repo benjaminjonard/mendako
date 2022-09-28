@@ -177,18 +177,6 @@
             "templates/base.html.twig"
         ]
     },
-    "symfony/ux-autocomplete": {
-        "version": "2.4",
-        "recipe": {
-            "repo": "github.com/symfony/recipes",
-            "branch": "main",
-            "version": "2.2",
-            "ref": "f8fa49e4547904ab278c100564ae1102df774243"
-        },
-        "files": [
-            "config/routes/ux_autocomplete.yaml"
-        ]
-    },
     "symfony/validator": {
         "version": "6.1",
         "recipe": {

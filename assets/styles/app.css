@@ -1,28 +1,5 @@
-@import "tom-select/dist/css/tom-select.default.css";
 @import "../node_modules/bulma/css/bulma.min.css";
-
-.ts-control {
-    border: none;
-}
-
-.ts-wrapper {
-    height: auto;
-}
-
-.ts-wrapper.multi .ts-control [data-value] {
-    text-shadow: none;
-    border: none;
-    box-shadow: none;
-    background-image: none;
-}
-
-.ts-wrapper .tag:not(body) {
-    background-color: #00d1b2!important;
-}
-
-.ts-wrapper.plugin-remove_button:not(.rtl) .item .remove {
-    border: none;
-}
+@import '../fonts/icomoon/icomoon.css';
 
 .section {
     padding: 3rem 1.5rem;
@@ -91,4 +68,8 @@ figure .tag {
 
 .category-character {
     color: #35c64a;
+}
+
+.block-search .control {
+    width: 100%;
 }

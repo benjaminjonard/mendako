@@ -64,7 +64,7 @@ class BoardController extends AbstractController
         PaginatorFactory $paginatorFactory,
     ): Response {
         $page = $request->query->get('page', 1);
-        $tags = $request->query->all()['tags'] ?? [];
+        $tags = $request->query->get('tags', '');
 
         $posts = $postRepository->filterByTags($board, $tags, $page);
         $postsCount = $postRepository->countFilterByTags($board, $tags);
@@ -74,6 +74,7 @@ class BoardController extends AbstractController
             'posts' => $posts,
             'tags' => $tagRepository->findForPosts($board, $posts),
             'paginator' => $paginatorFactory->generate($postsCount),
+            'search' => $tags
         ]);
     }
 

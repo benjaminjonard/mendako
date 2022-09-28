@@ -1,3 +1,0 @@
-ux_autocomplete:
-    resource: '@AutocompleteBundle/Resources/routes.php'
-    prefix: '/autocomplete'
