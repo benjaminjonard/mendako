@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\Board;
-use App\Entity\Image;
-use App\Form\Type\ImageType;
+use App\Entity\Post;
+use App\Form\Type\PostType;
 use App\Repository\TagRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -16,77 +16,77 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class ImageController extends AbstractController
+class PostController extends AbstractController
 {
-    #[Route(path: '/boards/{slug}/add', name: 'app_image_add', methods: ['GET', 'POST'])]
+    #[Route(path: '/boards/{slug}/add', name: 'app_post_add', methods: ['GET', 'POST'])]
     public function add(
         Request $request,
         TranslatorInterface $translator,
         ManagerRegistry $managerRegistry,
         Board $board
     ): Response {
-        $image = new Image();
-        $image->setBoard($board);
+        $post = new Post();
+        $post->setBoard($board);
 
-        $form = $this->createForm(ImageType::class, $image);
+        $form = $this->createForm(PostType::class, $post);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $image->setUploadedBy($this->getUser());
+            $post->setUploadedBy($this->getUser());
             if ($form->get('setAsBoardThumbnail')->getData() === true) {
-               $board->setThumbnail($image);
+               $board->setThumbnail($post);
             }
 
-            $managerRegistry->getManager()->persist($image);
+            $managerRegistry->getManager()->persist($post);
             $managerRegistry->getManager()->flush();
 
-            $this->addFlash('notice', $translator->trans('message.image_added'));
+            $this->addFlash('notice', $translator->trans('message.post_added'));
 
-            return $this->redirectToRoute('app_image_show', ['slug' => $board->getSlug(), 'id' => $image->getId()]);
+            return $this->redirectToRoute('app_post_show', ['slug' => $board->getSlug(), 'id' => $post->getId()]);
         }
 
-        return $this->render('App/Image/add.html.twig', [
+        return $this->render('App/Post/add.html.twig', [
             'board' => $board,
-            'image' => $image,
+            'post' => $post,
             'form' => $form->createView(),
         ]);
     }
 
-    #[Route(path: '/boards/{slug}/{id}', name: 'app_image_show', methods: ['GET'])]
+    #[Route(path: '/boards/{slug}/{id}', name: 'app_post_show', methods: ['GET'])]
     #[ParamConverter('board', options: ['mapping' => ['slug' => 'slug']])]
-    public function show(Board $board, Image $image, TagRepository $tagRepository): Response {
-        return $this->render('App/Image/show.html.twig', [
+    public function show(Board $board, Post $post, TagRepository $tagRepository): Response {
+        return $this->render('App/Post/show.html.twig', [
             'board' => $board,
-            'image' => $image,
-            'tags' => $tagRepository->findForImages($board, [$image])
+            'post' => $post,
+            'tags' => $tagRepository->findForPosts($board, [$post])
         ]);
     }
 
-    #[Route(path: '/boards/{slug}/{id}/edit', name: 'app_image_edit', methods: ['GET', 'POST'])]
+    #[Route(path: '/boards/{slug}/{id}/edit', name: 'app_post_edit', methods: ['GET', 'POST'])]
     #[ParamConverter('board', options: ['mapping' => ['slug' => 'slug']])]
     public function edit(
         Request $request,
         TranslatorInterface $translator,
         ManagerRegistry $managerRegistry,
         Board $board,
-        Image $image
+        Post $post
     ): Response {
-        $form = $this->createForm(ImageType::class, $image);
+        $form = $this->createForm(PostType::class, $post);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             if ($form->get('setAsBoardThumbnail')->getData() === true) {
-                $board->setThumbnail($image);
+                $board->setThumbnail($post);
             }
-            $managerRegistry->getManager()->persist($image);
+            $managerRegistry->getManager()->persist($post);
             $managerRegistry->getManager()->flush();
 
-            $this->addFlash('notice', $translator->trans('message.image_edited'));
+            $this->addFlash('notice', $translator->trans('message.post_edited'));
 
-            return $this->redirectToRoute('app_image_show', ['slug' => $board->getSlug(), 'id' => $image->getId()]);
+            return $this->redirectToRoute('app_post_show', ['slug' => $board->getSlug(), 'id' => $post->getId()]);
         }
 
-        return $this->render('App/Image/edit.html.twig', [
+        return $this->render('App/Post/edit.html.twig', [
             'board' => $board,
-            'image' => $image,
+            'post' => $post,
             'form' => $form->createView(),
         ]);
     }

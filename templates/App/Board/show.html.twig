@@ -3,7 +3,7 @@
 {% block navbarEnd %}
     <div class="navbar-item">
         <div class="buttons">
-            <a href="{{ path('app_image_add', {slug: board.slug}) }}" class="button is-primary">{{ 'btn.add_image'|trans }}</a>
+            <a href="{{ path('app_post_add', {slug: board.slug}) }}" class="button is-primary">{{ 'btn.add_post'|trans }}</a>
             <a href="{{ path('app_board_edit', {slug: board.slug}) }}" class="button">{{ 'btn.edit'|trans }}</a>
         </div>
     </div>
@@ -21,16 +21,16 @@
 
     <div class="column">
         <div class="grid">
-            {% for image in images %}
-                <a href="{{ path('app_image_show', {slug: board.slug, id: image.id}) }}">
+            {% for post in posts %}
+                <a href="{{ path('app_post_show', {slug: board.slug, id: post.id}) }}">
                     <figure class="image">
-                        {% if image.mimetype == 'image/gif' %}
-                            <img src="{{ asset(image.path) }}">
+                        {% if post.mimetype == 'image/gif' %}
+                            <img src="{{ asset(post.path) }}">
                         {% else %}
-                            {% if image.duration %}
-                                <span class="tag is-dark has-text-weight-medium">{{ image.duration|minutes }}</span>
+                            {% if post.duration %}
+                                <span class="tag is-dark has-text-weight-medium">{{ post.duration|minutes }}</span>
                             {% endif %}
-                            <img src="{{ asset(image.path|thumbnail(500)) }}">
+                            <img src="{{ asset(post.path|thumbnail(500)) }}">
                         {% endif %}
                     </figure>
                 </a>

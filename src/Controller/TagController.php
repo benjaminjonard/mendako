@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\Tag;
-use App\Form\Type\ImageType;
+use App\Form\Type\PostType;
 use App\Form\Type\TagType;
 use App\Repository\BoardRepository;
 use App\Repository\TagRepository;

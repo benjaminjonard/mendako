@@ -1,0 +1,46 @@
+{% extends 'layout.html.twig' %}
+
+{% block navbarEnd %}
+    <div class="navbar-item">
+        <div class="buttons">
+            <a href="{{ path('app_post_edit', {slug: board.slug, id: post.id}) }}" class="button">{{ 'btn.edit'|trans }}</a>
+        </div>
+    </div>
+{% endblock %}
+
+{% block breadcrumb %}
+    <li><a href="{{ path('app_board_index') }}">{{ 'menu.boards'|trans }}</a></li>
+    <li><a href="{{ path('app_board_show', {slug: board.slug}) }}">{{ board.name }}</a></li>
+    <li class="is-active"><a href="#" aria-current="page">{{ post.id }}</a></li>
+{% endblock %}
+
+
+{% block content %}
+    <div class="column is-one-quarter">
+        {{ include('App/Tag/_list.html.twig', {tags: tags}) }}
+
+        <div class="block">
+            <h3 class="has-text-weight-medium">{{ 'title.informations'|trans }}</h3>
+            <div>{{ 'label.uploaded_at'|trans }}: {{ post.createdAt|date('Y-m-d h:i:s') }}</div>
+            <div>{{ 'label.uploaded_by'|trans }}: {{ post.uploadedBy.username }}</div>
+            <div>{{ 'label.size'|trans }}: {{ post.size|bytes }}</div>
+            <div>{{ 'label.dimensions'|trans }}: {{ post.width }}*{{ post.height }}</div>
+            {% if post.duration %}
+                <div>{{ 'label.duration'|trans }}: {{ post.duration|minutes }}</div>
+            {% endif %}
+            <div>{{ 'label.mimetype'|trans }}: {{ post.mimetype }}</div>
+        </div>
+    </div>
+
+    <div class="column">
+        <figure class="image-display">
+            {% if post.mimeType == 'video/mp4' %}
+                <video controls>
+                    <source src="{{ asset(post.path) }}" type="video/mp4">
+                </video>
+            {% else %}
+                <img src="{{ asset(post.path) }}">
+            {% endif %}
+        </figure>
+    </div>
+{% endblock %}

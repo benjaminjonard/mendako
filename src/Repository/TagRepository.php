@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Board;
-use App\Entity\Image;
+use App\Entity\Post;
 use App\Entity\Tag;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Criteria;
@@ -24,7 +24,7 @@ class TagRepository extends ServiceEntityRepository
             ->createQueryBuilder()
             ->select('COUNT(DISTINCT i2.id)')
             ->from(Tag::class, 't2')
-            ->join('t2.images', 'i2')
+            ->join('t2.posts', 'i2')
             ->where('t2 = t')
             ->getDQL()
         ;
@@ -41,13 +41,13 @@ class TagRepository extends ServiceEntityRepository
         return $results;
     }
 
-    public function findForImages(Board $board, array $images): array
+    public function findForPosts(Board $board, array $posts): array
     {
         $countQuery = $this->_em
             ->createQueryBuilder()
             ->select('COUNT(DISTINCT i2.id)')
             ->from(Tag::class, 't2')
-            ->join('t2.images', 'i2', 'WITH', 'i2.board = :board')
+            ->join('t2.posts', 'i2', 'WITH', 'i2.board = :board')
             ->where('t2 = t')
             ->getDQL()
         ;
@@ -56,9 +56,9 @@ class TagRepository extends ServiceEntityRepository
             ->createQueryBuilder()
             ->select("t.id, t.name, t.category, ($countQuery) AS counter")
             ->from(Tag::class, 't')
-            ->join('t.images', 'i', 'WITH', 'i IN (:images)')
+            ->join('t.posts', 'i', 'WITH', 'i IN (:posts)')
             ->orderBy('t.name', 'ASC')
-            ->setParameter('images', $images)
+            ->setParameter('posts', $posts)
             ->setParameter('board', $board->getId())
         ;
 

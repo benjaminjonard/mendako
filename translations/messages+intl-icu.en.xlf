@@ -115,16 +115,16 @@
         <target>Edit</target>
       </segment>
     </unit>
-    <unit id="hsfUMa3" name="btn.add_image">
+    <unit id="hsfUMa3" name="btn.add_post">
       <segment>
-        <source>btn.add_image</source>
-        <target>New image</target>
+        <source>btn.add_post</source>
+        <target>New post</target>
       </segment>
     </unit>
-    <unit id="T4Ac2ly" name="title.add_image">
+    <unit id="T4Ac2ly" name="title.add_post">
       <segment>
-        <source>title.add_image</source>
-        <target>New image</target>
+        <source>title.add_post</source>
+        <target>New post</target>
       </segment>
     </unit>
     <unit id="Xwv9noo" name="label.file">
@@ -145,10 +145,10 @@
         <target>Set as board thumbnail</target>
       </segment>
     </unit>
-    <unit id="0Dk8ay9" name="menu.add_image">
+    <unit id="0Dk8ay9" name="menu.add_post">
       <segment>
-        <source>menu.add_image</source>
-        <target>New image</target>
+        <source>menu.add_post</source>
+        <target>New post</target>
       </segment>
     </unit>
     <unit id="gl3tQ00" name="menu.add_board">
@@ -235,10 +235,10 @@
         <target>Uploaded by</target>
       </segment>
     </unit>
-    <unit id="jmyZpbm" name="title.edit_image">
+    <unit id="jmyZpbm" name="title.edit_post">
       <segment>
-        <source>title.edit_image</source>
-        <target>Edit image</target>
+        <source>title.edit_post</source>
+        <target>Edit post</target>
       </segment>
     </unit>
     <unit id="IeD4bW4" name="label.duration">

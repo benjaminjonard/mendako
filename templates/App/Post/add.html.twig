@@ -3,8 +3,7 @@
 {% block breadcrumb %}
     <li><a href="{{ path('app_board_index') }}">{{ 'menu.boards'|trans }}</a></li>
     <li><a href="{{ path('app_board_show', {slug: board.slug}) }}">{{ board.name }}</a></li>
-    <li><a href="{{ path('app_image_show', {slug: board.slug, id: image.id}) }}">{{ image.id }}</a></li>
-    <li class="is-active"><a href="#" aria-current="page">{{ 'menu.edit'|trans }}</a></li>
+    <li class="is-active"><a href="#" aria-current="page">{{ 'menu.add_post'|trans }}</a></li>
 {% endblock %}
 
 {% block content %}
@@ -12,8 +11,8 @@
 
     <div class="column">
         <div class="box">
-            <h1 class="title">{{ 'title.edit_image'|trans }}</h1>
-            {{ include('App/Image/_form.html.twig') }}
+            <h1 class="title">{{ 'title.add_post'|trans({board: board.name}) }}</h1>
+            {{ include('App/Post/_form.html.twig') }}
         </div>
     </div>
 

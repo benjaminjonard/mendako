@@ -12,7 +12,7 @@ use Symfony\Component\Uid\Uuid;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20220928072727 extends AbstractMigration
+final class Version20220928180410 extends AbstractMigration
 {
     public function getDescription(): string
     {
