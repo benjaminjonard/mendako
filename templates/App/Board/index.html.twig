@@ -5,6 +5,9 @@
 
     {% for board in boards %}
         <div>
+            {% if board.thumbnail %}
+                <img src="{{ board.thumbnail.path|thumbnail(100) }}">
+            {% endif %}
             <a href="{{ path('app_board_show', {slug: board.slug}) }}">{{ board.name }}</a>
         </div>
     {% endfor %}

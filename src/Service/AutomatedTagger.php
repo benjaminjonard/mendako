@@ -16,7 +16,7 @@ class AutomatedTagger
     public function tag(Image $image): void
     {
         if ($image->getMimetype() === 'video/mp4') {
-            $automatedTag = $this->tagRepository->findOneBy(['slug' => 'animated']);
+            $automatedTag = $this->tagRepository->findOneBy(['name' => 'animated']);
             $image->addTag($automatedTag);
         }
     }

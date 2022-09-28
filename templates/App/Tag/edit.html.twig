@@ -1,0 +1,9 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>{{ 'title.edit_tag'|trans({name: tag.name}) }}</h1>
+
+    <div>
+        {{ include('App/Tag/_form.html.twig') }}
+    </div>
+{% endblock %}

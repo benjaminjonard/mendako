@@ -73,16 +73,16 @@ function generate(string $path, string $thumbnailPath, int $thumbnailWidth)
         $video->frame(TimeCode::fromSeconds(1))->save($thumbnailPath);;
     } else {
         $image = match ($mime) {
-            IMAGETYPE_JPEG, IMAGETYPE_JPEG2000 => imagecreatefromjpeg($path),
-            IMAGETYPE_PNG => imagecreatefrompng($path),
-            IMAGETYPE_WEBP => imagecreatefromwebp($path),
+            'image/jpeg' => imagecreatefromjpeg($path),
+            'image/png' => imagecreatefrompng($path),
+            'image/webp' => imagecreatefromwebp($path),
             default => throw new \Exception('Your image cannot be processed, please use another one.'),
         };
 
         $thumbnail = imagecreatetruecolor($thumbnailWidth, $thumbnailHeight);
 
         // Transparency
-        if (IMAGETYPE_PNG === $mime || IMAGETYPE_WEBP === $mime) {
+        if ('image/png' === $mime || 'image/webp' === $mime) {
             imagecolortransparent($thumbnail, imagecolorallocate($thumbnail, 0, 0, 0));
             imagealphablending($thumbnail, false);
             imagesavealpha($thumbnail, true);
@@ -93,14 +93,13 @@ function generate(string $path, string $thumbnailPath, int $thumbnailWidth)
         $thumbnail = imagerotate($thumbnail, $deg, 0);
 
         switch ($mime) {
-            case IMAGETYPE_JPEG:
-            case IMAGETYPE_JPEG2000:
+            case 'image/jpeg':
                 imagejpeg($thumbnail, $thumbnailPath, 85);
                 break;
-            case IMAGETYPE_PNG:
+            case 'image/png':
                 imagepng($thumbnail, $thumbnailPath, 9);
                 break;
-            case IMAGETYPE_WEBP:
+            case 'image/webp':
                 imagewebp($thumbnail, $thumbnailPath, 85);
                 break;
             default:

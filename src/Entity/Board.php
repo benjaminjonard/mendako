@@ -28,6 +28,9 @@ class Board
     #[Gedmo\Slug(fields: ['name'])]
     private ?string $slug;
 
+    #[ORM\ManyToOne(targetEntity: Image::class)]
+    private ?Image $thumbnail = null;
+
     #[ORM\OneToMany(targetEntity: Image::class, mappedBy: 'board', cascade: ['all'])]
     private Collection $images;
 
@@ -69,6 +72,18 @@ class Board
     public function setSlug(?string $slug): Board
     {
         $this->slug = $slug;
+
+        return $this;
+    }
+
+    public function getThumbnail(): ?Image
+    {
+        return $this->thumbnail;
+    }
+
+    public function setThumbnail(?Image $thumbnail): Board
+    {
+        $this->thumbnail = $thumbnail;
 
         return $this;
     }

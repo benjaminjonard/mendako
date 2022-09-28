@@ -1,0 +1,9 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    {% for tag in tags %}
+        <div>
+            <a href="{{ path('app_tag_edit', {id: tag.id}) }}">{{ tag.name }} - {{ tag.category.value }} - ({{ tag.counter }})</a>
+        </div>
+    {% endfor %}
+{% endblock %}

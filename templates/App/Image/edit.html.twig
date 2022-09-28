@@ -1,0 +1,9 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>{{ 'title.edit_image'|trans }}</h1>
+
+    <div>
+        {{ include('App/Image/_form.html.twig') }}
+    </div>
+{% endblock %}

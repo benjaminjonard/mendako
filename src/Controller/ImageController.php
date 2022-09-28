@@ -32,6 +32,10 @@ class ImageController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $image->setUploadedBy($this->getUser());
+            if ($form->get('setAsBoardThumbnail')->getData() === true) {
+               $board->setThumbnail($image);
+            }
+
             $managerRegistry->getManager()->persist($image);
             $managerRegistry->getManager()->flush();
 
@@ -54,6 +58,36 @@ class ImageController extends AbstractController
             'board' => $board,
             'image' => $image,
             'tags' => $tagRepository->findForImage($image)
+        ]);
+    }
+
+    #[Route(path: '/boards/{slug}/{id}/edit', name: 'app_image_edit', methods: ['GET', 'POST'])]
+    #[ParamConverter('board', options: ['mapping' => ['slug' => 'slug']])]
+    public function edit(
+        Request $request,
+        TranslatorInterface $translator,
+        ManagerRegistry $managerRegistry,
+        Board $board,
+        Image $image
+    ): Response {
+        $form = $this->createForm(ImageType::class, $image);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            if ($form->get('setAsBoardThumbnail')->getData() === true) {
+                $board->setThumbnail($image);
+            }
+            $managerRegistry->getManager()->persist($image);
+            $managerRegistry->getManager()->flush();
+
+            $this->addFlash('notice', $translator->trans('message.image_edited'));
+
+            return $this->redirectToRoute('app_image_show', ['slug' => $board->getSlug(), 'id' => $image->getId()]);
+        }
+
+        return $this->render('App/Image/edit.html.twig', [
+            'board' => $board,
+            'image' => $image,
+            'form' => $form->createView(),
         ]);
     }
 }

@@ -9,7 +9,10 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 use Symfony\Component\Uid\Uuid;
 
-final class Version20220927192119 extends AbstractMigration
+/**
+ * Auto-generated Migration: Please modify to your needs!
+ */
+final class Version20220928072727 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -21,7 +24,7 @@ final class Version20220927192119 extends AbstractMigration
         $category = TagCategory::META->value;
 
         $id = Uuid::v4()->toRfc4122();
-        $this->addSql("INSERT INTO men_tag (id, name, slug, category, created_at) VALUES ('$id', 'animated', 'animated', '$category', NOW())");
+        $this->addSql("INSERT INTO men_tag (id, name, category, created_at) VALUES ('$id', 'animated', '$category', NOW())");
     }
 
     public function down(Schema $schema): void
