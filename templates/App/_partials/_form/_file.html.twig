@@ -2,13 +2,15 @@
     {% apply spaceless %}
         <div data-controller="preview" class="has-text-centered">
             <label>
-                {% if form.parent.vars.value.path is not null %}
-                    <img data-preview-target="image" class="preview is-clickable"
-                         src="{{ asset(form.parent.vars.value.path) }}"/>
+                {% if form.parent.vars.data.mimetype is not null %}
+                    {% set isVideo = form.parent.vars.data.mimetype == 'video/mp4' %}
+                    <video controls data-preview-target="video" class="preview {{ isVideo == false ? 'is-hidden' }}" src="{{ asset(form.parent.vars.value.path) }}"></video>
+                    <img data-preview-target="image" class="preview {{ isVideo == true ? 'is-hidden' }}" src="{{ asset(form.parent.vars.value.path) }}"/>
                 {% else %}
-                    <img data-preview-target="image" class="preview is-clickable"
-                         src="{{ asset('build/images/default.png') }}"/>
+                    <img data-preview-target="image" class="preview" src="{{ asset('build/images/default.png') }}"/>
+                    <video controls data-preview-target="video" class="preview is-hidden" src="{{ asset('build/images/default.png') }}"></video>
                 {% endif %}
+
                 <input {{ block('widget_attributes') }}
                         data-action="change->preview#load"
                         type="file"

@@ -24,7 +24,7 @@ class PostRepository extends ServiceEntityRepository
         $qb = $this
             ->createQueryBuilder('post')
             ->where('post.board = :board')
-            ->orderBy('post.createdAt')
+            ->orderBy('post.createdAt', 'DESC')
             ->setFirstResult(($page - 1) * 20)
             ->setMaxResults(20)
             ->setParameter('board', $board)
@@ -50,6 +50,7 @@ class PostRepository extends ServiceEntityRepository
 
         $qb = $this
             ->createQueryBuilder('post')
+            ->distinct()
             ->select('COUNT(DISTINCT post.id)')
             ->where('post.board = :board')
             ->setParameter('board', $board)

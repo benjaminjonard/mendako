@@ -25,6 +25,9 @@ final class Version20220928180410 extends AbstractMigration
 
         $id = Uuid::v4()->toRfc4122();
         $this->addSql("INSERT INTO men_tag (id, name, category, created_at) VALUES ('$id', 'animated', '$category', NOW())");
+
+        $id = Uuid::v4()->toRfc4122();
+        $this->addSql("INSERT INTO men_tag (id, name, category, created_at) VALUES ('$id', 'with_sound', '$category', NOW())");
     }
 
     public function down(Schema $schema): void

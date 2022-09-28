@@ -54,6 +54,7 @@ class TagRepository extends ServiceEntityRepository
 
         $qb = $this->_em
             ->createQueryBuilder()
+            ->distinct()
             ->select("t.id, t.name, t.category, ($countQuery) AS counter")
             ->from(Tag::class, 't')
             ->join('t.posts', 'i', 'WITH', 'i IN (:posts)')
