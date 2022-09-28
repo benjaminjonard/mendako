@@ -21,4 +21,20 @@ class AppRuntime implements RuntimeExtensionInterface
 
         return round(pow(1024, $base - floor($base)), $precision).' '.$suffixes[floor($base)].$this->translator->trans('global.byte_abbreviation');
     }
+
+    public function minutes(int $seconds): string
+    {
+        $minutes = floor($seconds / 60 % 60);
+        if ($minutes < 10) {
+            $minutes = "0$minutes";
+        }
+
+        $seconds = floor($seconds % 60);
+        if ($seconds < 10) {
+            $seconds = "0$seconds";
+        }
+
+        return "$minutes:$seconds";
+    }
+
 }

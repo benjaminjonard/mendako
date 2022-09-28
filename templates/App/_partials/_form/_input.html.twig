@@ -1,0 +1,51 @@
+{% block form_row %}
+    <div class="field">
+        {{- form_label(form, label, {label_attr: {class: 'label'}}) -}}
+        <div class="control">
+            {% set classes = '' %}
+
+            {% if form.vars.choices is not defined and form.vars.checked is not defined  %}
+                {% set classes = classes ~ ' input' %}
+            {% endif %}
+
+            {% if form.vars.type|default(null) == 'file' %}
+                {% set classes = classes ~ ' is-hidden' %}
+            {% endif %}
+
+            {% if errors|length > 0 %}
+                {% set classes = classes ~ ' is-danger' %}
+            {% endif %}
+
+            {{- form_widget(form, {attr: {class: classes }}) -}}
+        </div>
+        {{- form_help(form) -}}
+        {{- form_errors(form) -}}
+    </div>
+{% endblock %}
+
+{%- block choice_widget -%}
+    {% if expanded %}
+        {{- block('choice_widget_expanded') -}}
+    {% else %}
+        <div class="select">
+            {{- block('choice_widget_collapsed') -}}
+        </div>
+    {% endif %}
+{%- endblock choice_widget -%}
+
+{%- block checkbox_widget -%}
+    <label class="checkbox">
+        <input type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
+        {{ label|trans }}
+    </label>
+{%- endblock checkbox_widget -%}
+
+{%- block checkbox_label -%}{%- endblock checkbox_label -%}
+
+{%- block form_errors -%}
+    {%- if errors|length > 0 -%}
+        {%- for error in errors -%}
+            <p class="help is-danger">{{ error.message }}</p>
+        {%- endfor -%}
+    {%- endif -%}
+{%- endblock -%}

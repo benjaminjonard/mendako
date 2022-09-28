@@ -3,6 +3,6 @@
 
     {{ form_row(form.category, {'label' : 'label.category'} ) }}
 
-    <button type="submit">{{ 'btn.submit'|trans }}</button>
-    <a href="{{ path('app_tag_index') }}"> {{ 'btn.cancel'|trans }}</a>
+    <button class="button is-primary" type="submit">{{ 'btn.submit'|trans }}</button>
+    <a class="button is-danger" href="{{ path('app_tag_index') }}">{{ 'btn.cancel'|trans }}</a>
 {{ form_end(form) }}

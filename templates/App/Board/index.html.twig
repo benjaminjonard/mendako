@@ -1,14 +1,40 @@
-{% extends 'base.html.twig' %}
+{% extends 'layout.html.twig' %}
 
-{% block body %}
-    <a href="{{ path('app_board_add') }}" class="button">{{ 'btn.add_board' }}</a>
-
-    {% for board in boards %}
-        <div>
-            {% if board.thumbnail %}
-                <img src="{{ board.thumbnail.path|thumbnail(100) }}">
-            {% endif %}
-            <a href="{{ path('app_board_show', {slug: board.slug}) }}">{{ board.name }}</a>
+{% block navbarEnd %}
+    <div class="navbar-item">
+        <div class="buttons">
+            <a href="{{ path('app_board_add') }}" class="button is-primary">{{ 'btn.add_board'|trans }}</a>
         </div>
-    {% endfor %}
+    </div>
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="is-active"><a href="{{ path('app_board_index') }}" aria-current="page">{{ 'menu.boards'|trans }}</a></li>
+{% endblock %}
+
+{% block content %}
+    <div class="column">
+        <div class="grid">
+            {% for board in boards %}
+                <div class="card">
+                    <div class="card-image">
+                        <figure class="image">
+                            <a href="{{ path('app_board_show', {slug: board.slug}) }}">
+                                {% if board.thumbnail %}
+                                    <img src="{{ board.thumbnail.path|thumbnail(300) }}">
+                                {% else %}
+                                    <img src="{{ asset('build/images/default.png') }}">
+                                {% endif %}
+                            </a>
+                        </figure>
+                    </div>
+                    <div class="card-content">
+                        <div class="content">
+                            <a href="{{ path('app_board_show', {slug: board.slug}) }}">{{ board.name }}</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
 {% endblock %}

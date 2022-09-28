@@ -57,7 +57,7 @@ class ImageController extends AbstractController
         return $this->render('App/Image/show.html.twig', [
             'board' => $board,
             'image' => $image,
-            'tags' => $tagRepository->findForImage($image)
+            'tags' => $tagRepository->findForImages($board, [$image])
         ]);
     }
 
