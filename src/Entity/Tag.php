@@ -29,8 +29,8 @@ class Tag
     #[ORM\Column(type: Types::STRING, nullable: true, enumType: TagCategory::class)]
     private ?TagCategory $category;
 
-    #[ORM\ManyToMany(targetEntity: Image::class, mappedBy: 'tags')]
-    private Collection $images;
+    #[ORM\ManyToMany(targetEntity: Post::class, mappedBy: 'tags')]
+    private Collection $posts;
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     #[Gedmo\Timestampable(on: 'create')]
@@ -75,26 +75,26 @@ class Tag
         return $this;
     }
 
-    public function getImages(): Collection
+    public function getPosts(): Collection
     {
-        return $this->images;
+        return $this->posts;
     }
 
-    public function addImage(Image $image): self
+    public function addPost(Post $post): self
     {
-        if (!$this->images->contains($image)) {
-            $this->images[] = $image;
-            $image->addTag($this);
+        if (!$this->posts->contains($post)) {
+            $this->posts[] = $post;
+            $post->addTag($this);
         }
 
         return $this;
     }
 
-    public function removeImage(Image $image): self
+    public function removePost(Post $post): self
     {
-        if ($this->images->contains($image)) {
-            $this->images->removeElement($image);
-            $image->removeTag($this);
+        if ($this->posts->contains($post)) {
+            $this->posts->removeElement($post);
+            $post->removeTag($this);
         }
 
         return $this;

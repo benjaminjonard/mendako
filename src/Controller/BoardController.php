@@ -7,7 +7,7 @@ namespace App\Controller;
 use App\Entity\Board;
 use App\Form\Type\BoardType;
 use App\Repository\BoardRepository;
-use App\Repository\ImageRepository;
+use App\Repository\PostRepository;
 use App\Repository\TagRepository;
 use App\Service\PaginatorFactory;
 use Doctrine\Persistence\ManagerRegistry;
@@ -59,21 +59,21 @@ class BoardController extends AbstractController
     public function show(
         Request $request,
         Board $board,
-        ImageRepository $imageRepository,
+        PostRepository $postRepository,
         TagRepository $tagRepository,
         PaginatorFactory $paginatorFactory,
     ): Response {
         $page = $request->query->get('page', 1);
         $tags = $request->query->all()['tags'] ?? [];
 
-        $images = $imageRepository->filterByTags($board, $tags, $page);
-        $imagesCount = $imageRepository->countFilterByTags($board, $tags);
+        $posts = $postRepository->filterByTags($board, $tags, $page);
+        $postsCount = $postRepository->countFilterByTags($board, $tags);
 
         return $this->render('App/Board/show.html.twig', [
             'board' => $board,
-            'images' => $images,
-            'tags' => $tagRepository->findForImages($board, $images),
-            'paginator' => $paginatorFactory->generate($imagesCount),
+            'posts' => $posts,
+            'tags' => $tagRepository->findForPosts($board, $posts),
+            'paginator' => $paginatorFactory->generate($postsCount),
         ]);
     }
 

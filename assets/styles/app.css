@@ -53,7 +53,8 @@
 /* Start image grid */
 .grid figure img {
     max-width: 210px;
-    max-height: 150px;
+    max-height: 220px;
+    width: unset;
 }
 /* End image grid */
 
@@ -61,6 +62,7 @@
 .grid .card img {
     width: 210px;
     height: 150px;
+    object-fit: cover;
 }
 
 .grid .card {

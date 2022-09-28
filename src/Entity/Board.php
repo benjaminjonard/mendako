@@ -28,11 +28,11 @@ class Board
     #[Gedmo\Slug(fields: ['name'])]
     private ?string $slug;
 
-    #[ORM\ManyToOne(targetEntity: Image::class)]
-    private ?Image $thumbnail = null;
+    #[ORM\ManyToOne(targetEntity: Post::class)]
+    private ?Post $thumbnail = null;
 
-    #[ORM\OneToMany(targetEntity: Image::class, mappedBy: 'board', cascade: ['all'], fetch: 'EXTRA_LAZY')]
-    private Collection $images;
+    #[ORM\OneToMany(targetEntity: Post::class, mappedBy: 'board', cascade: ['all'], fetch: 'EXTRA_LAZY')]
+    private Collection $posts;
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     #[Gedmo\Timestampable(on: 'create')]
@@ -76,12 +76,12 @@ class Board
         return $this;
     }
 
-    public function getThumbnail(): ?Image
+    public function getThumbnail(): ?Post
     {
         return $this->thumbnail;
     }
 
-    public function setThumbnail(?Image $thumbnail): Board
+    public function setThumbnail(?Post $thumbnail): Board
     {
         $this->thumbnail = $thumbnail;
 

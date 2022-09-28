@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Attribute\Upload;
-use App\Repository\ImageRepository;
+use App\Repository\PostRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -16,9 +16,9 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity(repositoryClass: ImageRepository::class)]
-#[ORM\Table(name: 'men_image')]
-class Image
+#[ORM\Entity(repositoryClass: PostRepository::class)]
+#[ORM\Table(name: 'men_post')]
+class Post
 {
     #[ORM\Id]
     #[ORM\Column(type: Types::STRING, length: 36, unique: true, options: ['fixed' => true])]
@@ -46,16 +46,16 @@ class Image
     #[ORM\Column(type: Types::INTEGER, nullable: true)]
     private ?int $duration = null;
 
-    #[ORM\ManyToOne(targetEntity: Board::class, inversedBy: 'images')]
+    #[ORM\ManyToOne(targetEntity: Board::class, inversedBy: 'posts')]
     #[Assert\NotBlank]
     private ?Board $board = null;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     private ?User $uploadedBy = null;
 
-    #[ORM\ManyToMany(targetEntity: Tag::class, inversedBy: 'images', cascade: ['persist'])]
-    #[ORM\JoinTable(name: 'men_image_tag')]
-    #[ORM\JoinColumn(name: 'image_id', referencedColumnName: 'id')]
+    #[ORM\ManyToMany(targetEntity: Tag::class, inversedBy: 'posts', cascade: ['persist'])]
+    #[ORM\JoinTable(name: 'men_post_tag')]
+    #[ORM\JoinColumn(name: 'post_id', referencedColumnName: 'id')]
     #[ORM\InverseJoinColumn(name: 'tag_id', referencedColumnName: 'id')]
     #[ORM\OrderBy(['name' => 'ASC'])]
     private Collection $tags;
@@ -65,7 +65,7 @@ class Image
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
-    #[Gedmo\Timestampable(on: 'change', field: ['image'])]
+    #[Gedmo\Timestampable(on: 'change', field: ['path'])]
     private ?\DateTimeImmutable $updatedAt;
 
     public function __construct()
@@ -84,7 +84,7 @@ class Image
         return $this->file;
     }
 
-    public function setFile(?File $file): Image
+    public function setFile(?File $file): Post
     {
         $this->file = $file;
         // Force Doctrine to trigger an update
@@ -100,7 +100,7 @@ class Image
         return $this->path;
     }
 
-    public function setPath(?string $path): Image
+    public function setPath(?string $path): Post
     {
         $this->path = $path;
 
@@ -112,7 +112,7 @@ class Image
         return $this->mimetype;
     }
 
-    public function setMimetype(?string $mimetype): Image
+    public function setMimetype(?string $mimetype): Post
     {
         $this->mimetype = $mimetype;
         return $this;
@@ -123,7 +123,7 @@ class Image
         return $this->height;
     }
 
-    public function setHeight(?int $height): Image
+    public function setHeight(?int $height): Post
     {
         $this->height = $height;
 
@@ -135,7 +135,7 @@ class Image
         return $this->width;
     }
 
-    public function setWidth(?int $width): Image
+    public function setWidth(?int $width): Post
     {
         $this->width = $width;
 
@@ -147,7 +147,7 @@ class Image
         return $this->size;
     }
 
-    public function setSize(?int $size): Image
+    public function setSize(?int $size): Post
     {
         $this->size = $size;
 
@@ -159,7 +159,7 @@ class Image
         return $this->duration;
     }
 
-    public function setDuration(?int $duration): Image
+    public function setDuration(?int $duration): Post
     {
         $this->duration = $duration;
 
@@ -171,7 +171,7 @@ class Image
         return $this->board;
     }
 
-    public function setBoard(?Board $board): Image
+    public function setBoard(?Board $board): Post
     {
         $this->board = $board;
 
@@ -183,14 +183,14 @@ class Image
         return $this->tags;
     }
 
-    public function setTags(Collection $tags): Image
+    public function setTags(Collection $tags): Post
     {
         $this->tags = $tags;
 
         return $this;
     }
 
-    public function addTag(Tag $tag): Image
+    public function addTag(Tag $tag): Post
     {
         if (!$this->tags->contains($tag)) {
             $this->tags[] = $tag;
@@ -199,7 +199,7 @@ class Image
         return $this;
     }
 
-    public function removeTag(Tag $tag): Image
+    public function removeTag(Tag $tag): Post
     {
         if ($this->tags->contains($tag)) {
             $this->tags->removeElement($tag);
@@ -213,7 +213,7 @@ class Image
         return $this->uploadedBy;
     }
 
-    public function setUploadedBy(?User $uploadedBy): Image
+    public function setUploadedBy(?User $uploadedBy): Post
     {
         $this->uploadedBy = $uploadedBy;
 
@@ -225,7 +225,7 @@ class Image
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeImmutable $createdAt): Image
+    public function setCreatedAt(\DateTimeImmutable $createdAt): Post
     {
         $this->createdAt = $createdAt;
 
@@ -237,7 +237,7 @@ class Image
         return $this->updatedAt;
     }
 
-    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): Image
+    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): Post
     {
         $this->updatedAt = $updatedAt;
 

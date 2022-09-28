@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Form\Type;
 
-use App\Entity\Image;
+use App\Entity\Post;
 use App\Form\DataTransformer\StringToTagTransformer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -14,7 +14,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\RouterInterface;
 
-class ImageType extends AbstractType
+class PostType extends AbstractType
 {
     public function __construct(
         private readonly RouterInterface $router,
@@ -56,7 +56,7 @@ class ImageType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => Image::class,
+            'data_class' => Post::class,
         ]);
     }
 }

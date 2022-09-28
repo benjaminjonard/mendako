@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Entity\Image;
+use App\Entity\Post;
 use App\Repository\TagRepository;
 
 class AutomatedTagger
@@ -13,11 +13,11 @@ class AutomatedTagger
     {
     }
 
-    public function tag(Image $image): void
+    public function tag(Post $post): void
     {
-        if ($image->getMimetype() === 'video/mp4') {
+        if ($post->getMimetype() === 'video/mp4') {
             $automatedTag = $this->tagRepository->findOneBy(['name' => 'animated']);
-            $image->addTag($automatedTag);
+            $post->addTag($automatedTag);
         }
     }
 }

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Attribute\Upload;
-use App\Entity\Image;
+use App\Entity\Post;
 use FFMpeg\FFMpeg;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -24,7 +24,7 @@ class Uploader
         $this->accessor = PropertyAccess::createPropertyAccessor();
     }
 
-    public function upload(Image $entity, string $property, Upload $attribute): void
+    public function upload(Post $entity, string $property, Upload $attribute): void
     {
         $file = $this->accessor->getValue($entity, $property);
         if ($file instanceof UploadedFile) {
@@ -32,7 +32,7 @@ class Uploader
             $absolutePath = $this->publicPath . '/' . $relativePath;
 
             if (!is_dir($absolutePath) && !mkdir($absolutePath) && !is_dir($absolutePath)) {
-                throw new \Exception('There was a problem while uploading the image. Please try again!');
+                throw new \Exception('There was a problem while uploading the file. Please try again!');
             }
 
             $generatedName = $this->randomStringGenerator->generate(20);
