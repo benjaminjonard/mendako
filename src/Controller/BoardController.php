@@ -114,7 +114,7 @@ class BoardController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $managerRegistry->getManager()->remove($board);
             $managerRegistry->getManager()->flush();
-            $this->addFlash('notice', $translator->trans('message.board_deleted'));
+            $this->addFlash('notice', $translator->trans('message.board_deleted', ['board' => '&nbsp;<strong>'.$board->getName().'</strong>&nbsp;']));
         }
 
         return $this->redirectToRoute('app_board_index');
