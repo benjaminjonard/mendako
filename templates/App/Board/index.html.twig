@@ -13,9 +13,8 @@
 {% endblock %}
 
 {% block content %}
-    <div class="column"></div>
     <div class="column">
-        <div class="grid">
+        <div class="grid grid-boards">
             {% for board in boards %}
                 <div class="card">
                     <div class="card-image">
@@ -38,5 +37,4 @@
             {% endfor %}
         </div>
     </div>
-    <div class="column"></div>
 {% endblock %}
