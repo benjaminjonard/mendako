@@ -259,5 +259,11 @@
         <target>Edit tag {name}</target>
       </segment>
     </unit>
+    <unit id="jEeQjDx" name="message.offline">
+      <segment state="translated">
+        <source>message.offline</source>
+        <target>You are offline, please check your connection.</target>
+      </segment>
+    </unit>
   </file>
 </xliff>

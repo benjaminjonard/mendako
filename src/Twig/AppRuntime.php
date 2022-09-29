@@ -25,9 +25,6 @@ class AppRuntime implements RuntimeExtensionInterface
     public function minutes(int $seconds): string
     {
         $minutes = floor($seconds / 60 % 60);
-        if ($minutes < 10) {
-            $minutes = "0$minutes";
-        }
 
         $seconds = floor($seconds % 60);
         if ($seconds < 10) {

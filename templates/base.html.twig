@@ -5,6 +5,8 @@
         <title>{% block title %}Mendako{% endblock %}</title>
         <link rel="icon" href="{{ asset('build/images/logo.svg') }}">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#00d1b2">
+        <link rel="manifest" href="{{ asset('manifest.json') }}">
 
         {% block stylesheets %}
             {{ encore_entry_link_tags('app') }}
@@ -16,5 +18,11 @@
     </head>
     <body>
         {% block body %}{% endblock %}
+        <div id="offline-message"
+             data-controller="offline-message"
+             data-action="online@window->offline-message#hide offline@window->offline-message#show"
+             class="is-hidden">
+            <span>{{ 'message.offline'|trans }}</span>
+        </div>
     </body>
 </html>
