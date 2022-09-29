@@ -5,15 +5,15 @@ html {
     height: 100%;
 }
 
-.section {
-    padding: 3rem 1.5rem;
+@media(max-width: 767px) { /* <== You can change this break point as per your  needs */
+    .reverse-columns {
+        flex-direction: column-reverse;
+        display: flex;
+    }
 }
 
-.grid {
-    grid-template-columns: repeat(auto-fill,minmax(180px,1fr));
-    gap: 0.5rem;
-    display: grid;
-    text-align: center;
+.section {
+    padding: 3rem 1.5rem;
 }
 
 .grid a {
@@ -31,7 +31,14 @@ html {
 }
 
 /* Start image grid */
-.grid figure img {
+.grid-posts {
+    grid-template-columns: repeat(auto-fill,minmax(180px,1fr));
+    gap: 1rem;
+    display: grid;
+    text-align: center;
+}
+
+.grid-posts img {
     margin: auto;
     max-width: 180px;
     max-height: 180px;
@@ -40,15 +47,24 @@ html {
 /* End image grid */
 
 /* Start board grid */
-.grid .card img {
+.grid-boards {
+    grid-template-columns: repeat(auto-fill,minmax(210px,1fr));
+    gap: 1rem;
+    display: grid;
+    text-align: center;
+}
+
+.grid-boards .card img {
     width: 210px;
     height: 150px;
     object-fit: cover;
 }
 
-.grid .card {
+.grid-boards .card {
+    margin: auto;
     width: 210px;
     height: auto;
+    max-width: 210px;
 }
 /* End board grid */
 

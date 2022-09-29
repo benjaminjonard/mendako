@@ -3,9 +3,10 @@
 {% block body %}
     <nav class="navbar" role="navigation" aria-label="main navigation" data-controller="burger" >
         <div class="navbar-brand">
-            <div class="navbar-item">
+            <a class="navbar-item" href="{{ path('app_board_index') }}">
                 <img src="{{ asset('build/images/logo.svg') }}" width="28" height="28">
-            </div>
+            </a>
+
 
             <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbar"
                data-action="click->burger#display" data-burger-target="button"
@@ -37,7 +38,8 @@
     </nav>
 
     <section class="section">
-        <div class="columns">
+        {% set route = app.request.attributes.get('_route') %}
+        <div class="columns {% if route in ['app_post_show', 'app_board_show'] %}reverse-columns{% endif %}">
             {% block content %}{% endblock %}
         </div>
     </section>
