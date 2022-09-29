@@ -81,12 +81,12 @@
     },
     {
       "src": "/icons/maskable.png",
-      "sizes": "196x196",
+      "sizes": "1024x1024",
       "type": "image/png",
       "purpose": "maskable"
     }
   ],
-  "theme_color": "#00d1b2",
-  "background_color": "#00d1b2",
+  "theme_color": "#009688",
+  "background_color": "#009688",
   "display": "standalone"
 }
