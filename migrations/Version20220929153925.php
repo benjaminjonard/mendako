@@ -7,19 +7,17 @@ namespace DoctrineMigrations;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
-/**
- * Auto-generated Migration: Please modify to your needs!
- */
-final class Version20220928180353 extends AbstractMigration
+final class Version20220929153925 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return '';
+        return '[Postgresql] First init.';
     }
 
     public function up(Schema $schema): void
     {
-        // this up() migration is auto-generated, please modify it to your needs
+        $this->skipIf('postgresql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'postgresql\'.');
+
         $this->addSql('CREATE TABLE men_board (id CHAR(36) NOT NULL, thumbnail_id CHAR(36) DEFAULT NULL, name VARCHAR(255) NOT NULL, slug VARCHAR(255) NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_6B0B8D425E237E06 ON men_board (name)');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_6B0B8D42989D9B62 ON men_board (slug)');
@@ -45,7 +43,7 @@ final class Version20220928180353 extends AbstractMigration
         $this->addSql('COMMENT ON COLUMN men_user.roles IS \'(DC2Type:simple_array)\'');
         $this->addSql('COMMENT ON COLUMN men_user.created_at IS \'(DC2Type:datetime_immutable)\'');
         $this->addSql('COMMENT ON COLUMN men_user.updated_at IS \'(DC2Type:datetime_immutable)\'');
-        $this->addSql('ALTER TABLE men_board ADD CONSTRAINT FK_6B0B8D42FDFF2E92 FOREIGN KEY (thumbnail_id) REFERENCES men_post (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE men_board ADD CONSTRAINT FK_6B0B8D42FDFF2E92 FOREIGN KEY (thumbnail_id) REFERENCES men_post (id) ON DELETE SET NULL NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE men_post ADD CONSTRAINT FK_4318CE0E7EC5785 FOREIGN KEY (board_id) REFERENCES men_board (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE men_post ADD CONSTRAINT FK_4318CE0A2B28FE8 FOREIGN KEY (uploaded_by_id) REFERENCES men_user (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE men_post_tag ADD CONSTRAINT FK_B182CE0E4B89032C FOREIGN KEY (post_id) REFERENCES men_post (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
@@ -54,17 +52,6 @@ final class Version20220928180353 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('CREATE SCHEMA public');
-        $this->addSql('ALTER TABLE men_board DROP CONSTRAINT FK_6B0B8D42FDFF2E92');
-        $this->addSql('ALTER TABLE men_post DROP CONSTRAINT FK_4318CE0E7EC5785');
-        $this->addSql('ALTER TABLE men_post DROP CONSTRAINT FK_4318CE0A2B28FE8');
-        $this->addSql('ALTER TABLE men_post_tag DROP CONSTRAINT FK_B182CE0E4B89032C');
-        $this->addSql('ALTER TABLE men_post_tag DROP CONSTRAINT FK_B182CE0EBAD26311');
-        $this->addSql('DROP TABLE men_board');
-        $this->addSql('DROP TABLE men_post');
-        $this->addSql('DROP TABLE men_post_tag');
-        $this->addSql('DROP TABLE men_tag');
-        $this->addSql('DROP TABLE men_user');
+        $this->skipIf(true, 'Always move forward.');
     }
 }
