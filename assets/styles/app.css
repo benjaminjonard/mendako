@@ -11,8 +11,7 @@ html {
 
 .grid {
     grid-template-columns: repeat(auto-fill,minmax(180px,1fr));
-    grid-column-gap: 10px;
-    grid-row-gap: 15px;
+    gap: 0.5rem;
     display: grid;
     text-align: center;
 }
@@ -33,6 +32,7 @@ html {
 
 /* Start image grid */
 .grid figure img {
+    margin: auto;
     max-width: 180px;
     max-height: 180px;
     width: unset;
