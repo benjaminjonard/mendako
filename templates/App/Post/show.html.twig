@@ -3,6 +3,7 @@
 {% block navbarEnd %}
     <div class="navbar-item">
         <div class="buttons">
+            <a href="{{ path('app_post_add', {slug: board.slug}) }}" class="button is-primary">{{ 'btn.add_post'|trans }}</a>
             <a href="{{ path('app_post_edit', {slug: board.slug, id: post.id}) }}" class="button">{{ 'btn.edit'|trans }}</a>
         </div>
     </div>

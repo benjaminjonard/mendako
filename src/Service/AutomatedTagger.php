@@ -19,8 +19,14 @@ class AutomatedTagger
     public function tag(Post $post): void
     {
         if ($post->getMimetype() === 'video/mp4') {
-           $this->animated($post);
-           $this->withSound($post);
+            $this->animated($post);
+            $this->withSound($post);
+            $this->video($post);
+        }
+
+        if ($post->getMimetype() === 'image/gif') {
+            $this->animated($post);
+            $this->gif($post);
         }
     }
 
@@ -28,6 +34,18 @@ class AutomatedTagger
     {
         $automatedTag = $this->tagRepository->findOneBy(['name' => 'animated']);
         $post->addTag($automatedTag);
+    }
+
+    private function gif(Post $post): void
+    {
+        $gifTag = $this->tagRepository->findOneBy(['name' => 'gif']);
+        $post->addTag($gifTag);
+    }
+
+    private function video(Post $post): void
+    {
+        $videoTag = $this->tagRepository->findOneBy(['name' => 'video']);
+        $post->addTag($videoTag);
     }
 
     private function withSound(Post $post): void

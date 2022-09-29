@@ -24,6 +24,7 @@
             {% for post in posts %}
                 <a href="{{ path('app_post_show', {slug: board.slug, id: post.id}) }}">
                     <figure class="image">
+                        <div>
                         {% if post.mimetype == 'image/gif' %}
                             <img src="{{ asset(post.path) }}">
                         {% else %}
@@ -32,6 +33,7 @@
                             {% endif %}
                             <img src="{{ asset(post.path|thumbnail(500)) }}">
                         {% endif %}
+                        </div>
                     </figure>
                 </a>
             {% endfor %}

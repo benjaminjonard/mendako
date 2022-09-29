@@ -1,34 +1,24 @@
 {% if paginator.numPages > 1 %}
-    <div>
-        <ul>
+    <nav class="pagination is-centered mt-6" role="navigation" aria-label="pagination">
+        <ul class="pagination-list">
             {% if paginator.prevUrl %}
-                <li>
-                    <a href="{{ paginator.prevUrl }}">
-                        <-
-                    </a>
-                </li>
+                <li><a class="pagination-link" href="{{ paginator.prevUrl }}"><i class="icon-chevron-left"></i></a></li>
             {% endif %}
-
             {% for page in paginator.pages %}
                 {% if page.url %}
-                    <li class="{{ page.isCurrent ? 'active' }}">
-                        <a href="{{ page.url }}">{{ page.num }}</a>
+                    <li>
+                        <a class="pagination-link {{ page.isCurrent ? 'is-current' }}" href="{{ page.url }}">{{ page.num }}</a>
                     </li>
                 {% else %}
-                    <li class="disabled">
-                        <span>{{ page.num }}</span>
+                    <li>
+                        <span class="pagination-ellipsis">&hellip;</span>
                     </li>
                 {% endif %}
             {% endfor %}
-
             {% if paginator.nextUrl %}
-                <li>
-                    <a href="{{ paginator.nextUrl }}">
-                        ->
-                    </a>
-                </li>
+                <li><a class="pagination-link" href="{{ paginator.nextUrl }}"><i class="icon-chevron-right"></i></a></li>
             {% endif %}
         </ul>
-    </div>
+    </nav>
 {% endif %}
 
