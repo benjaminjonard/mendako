@@ -445,5 +445,11 @@
         <target>Tag {tag} updated</target>
       </segment>
     </unit>
+    <unit id="7cCZaHF" name="label.dark_mode_enabled">
+      <segment>
+        <source>label.dark_mode_enabled</source>
+        <target>Dark mode</target>
+      </segment>
+    </unit>
   </file>
 </xliff>

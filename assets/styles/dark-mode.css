@@ -1,0 +1,11 @@
+html, .navbar {
+    background-color: #2a2a2a;
+}
+
+.navbar-item, .navbar-link, .breadcrumb li.is-active a, body {
+    color: #ccc;
+}
+
+.box, .table {
+    background-color: #efefef;
+}

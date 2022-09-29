@@ -22,6 +22,7 @@ Encore
      * and one CSS file (e.g. app.css) if your JavaScript imports CSS.
      */
     .addEntry('app', './app.js')
+    .addStyleEntry('dark-mode', './styles/dark-mode.css')
 
     .addPlugin(new CopyPlugin({
         patterns: [

@@ -12,10 +12,11 @@
                 {% endif %}
 
                 <input {{ block('widget_attributes') }}
+                        class="file-input"
                         data-action="change->preview#load"
                         type="file"
                         accept="image/png, image/jpeg, image/jpg, image/gif, image/webp, video/mp4"
-                />
+                >
             </label>
         </div>
     {% endapply %}
