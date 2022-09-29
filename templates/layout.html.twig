@@ -42,3 +42,10 @@
         </div>
     </section>
 {% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {% for flash_message in app.session.flashbag.get('notice') %}
+        <span data-controller="toast" data-message="{{ flash_message|e }}"></span>
+    {% endfor %}
+{% endblock %}

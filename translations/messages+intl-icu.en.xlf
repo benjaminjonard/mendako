@@ -397,5 +397,53 @@
         <target>New password</target>
       </segment>
     </unit>
+    <unit id="WhQRujz" name="message.board_added">
+      <segment>
+        <source>message.board_added</source>
+        <target>Board {board} added</target>
+      </segment>
+    </unit>
+    <unit id="0XYMTSn" name="message.board_edited">
+      <segment>
+        <source>message.board_edited</source>
+        <target>Board {board} updated</target>
+      </segment>
+    </unit>
+    <unit id="rrWW5B2" name="message.board_deleted">
+      <segment>
+        <source>message.board_deleted</source>
+        <target>Board {board} deleted</target>
+      </segment>
+    </unit>
+    <unit id="yoTXthl" name="message.post_added">
+      <segment>
+        <source>message.post_added</source>
+        <target>Post added</target>
+      </segment>
+    </unit>
+    <unit id="aM5UzdZ" name="message.post_edited">
+      <segment>
+        <source>message.post_edited</source>
+        <target>Post updated</target>
+      </segment>
+    </unit>
+    <unit id="b411mvt" name="message.post_deleted">
+      <segment>
+        <source>message.post_deleted</source>
+        <target>Post deleted</target>
+      </segment>
+    </unit>
+    <unit id="TYeiHH6" name="message.profile_updated">
+      <segment>
+        <source>message.profile_updated</source>
+        <target>Profile updated</target>
+      </segment>
+    </unit>
+    <unit id="xncFQxj" name="message.tag_edited">
+      <segment>
+        <source>message.tag_edited</source>
+        <target>Tag {tag} updated</target>
+      </segment>
+    </unit>
   </file>
 </xliff>
