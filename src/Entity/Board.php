@@ -26,9 +26,10 @@ class Board
 
     #[ORM\Column(type: Types::STRING, unique: true)]
     #[Gedmo\Slug(fields: ['name'])]
-    private ?string $slug;
+    private ?string $slug = null;
 
-    #[ORM\ManyToOne(targetEntity: Post::class)]
+    #[ORM\ManyToOne(targetEntity: Post::class, cascade: ['all'])]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?Post $thumbnail = null;
 
     #[ORM\OneToMany(targetEntity: Post::class, mappedBy: 'board', cascade: ['all'], fetch: 'EXTRA_LAZY')]

@@ -10,7 +10,6 @@ use App\Form\Type\PostType;
 use App\Repository\TagRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -89,5 +88,26 @@ class PostController extends AbstractController
             'post' => $post,
             'form' => $form->createView(),
         ]);
+    }
+
+    #[Route(path: '/boards/{slug}/{id}/delete', name: 'app_post_delete', methods: ['POST'])]
+    #[ParamConverter('board', options: ['mapping' => ['slug' => 'slug']])]
+    public function delete(
+        Request $request,
+        TranslatorInterface $translator,
+        ManagerRegistry $managerRegistry,
+        Board $board,
+        Post $post
+    ): Response {
+        $form = $this->createDeleteForm('app_post_delete', $post);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $managerRegistry->getManager()->remove($post);
+            $managerRegistry->getManager()->flush();
+            $this->addFlash('notice', $translator->trans('message.post_deleted'));
+        }
+
+        return $this->redirectToRoute('app_board_show', ['slug' => $board->getSlug()]);
     }
 }

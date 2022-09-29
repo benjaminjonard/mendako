@@ -260,9 +260,111 @@
       </segment>
     </unit>
     <unit id="jEeQjDx" name="message.offline">
-      <segment state="translated">
+      <segment>
         <source>message.offline</source>
         <target>You are offline, please check your connection.</target>
+      </segment>
+    </unit>
+    <unit id="bKzhzsy" name="global.time.ago">
+      <segment>
+        <source>global.time.ago</source>
+        <target>{time} ago</target>
+      </segment>
+    </unit>
+    <unit id="kBJEdcf" name="global.time.just_now">
+      <segment>
+        <source>global.time.just_now</source>
+        <target>Just now</target>
+      </segment>
+    </unit>
+    <unit id="S3BSG8X" name="global.time.year">
+      <segment>
+        <source>global.time.year</source>
+        <target>{count, plural, one {# year} other {# years}}</target>
+      </segment>
+    </unit>
+    <unit id="I6EoiYa" name="global.time.month">
+      <segment>
+        <source>global.time.month</source>
+        <target>{count, plural, one {# month} other {# months}}</target>
+      </segment>
+    </unit>
+    <unit id="BXLOUij" name="global.time.week">
+      <segment>
+        <source>global.time.week</source>
+        <target>{count, plural, one {# week} other {# weeks}}</target>
+      </segment>
+    </unit>
+    <unit id="r1RqqRg" name="global.time.day">
+      <segment>
+        <source>global.time.day</source>
+        <target>{count, plural, one {# day} other {# days}}</target>
+      </segment>
+    </unit>
+    <unit id="QeraM7P" name="global.time.hour">
+      <segment>
+        <source>global.time.hour</source>
+        <target>{count, plural, one {# hour} other {# hours}}</target>
+      </segment>
+    </unit>
+    <unit id="UN2onP4" name="global.time.minute">
+      <segment>
+        <source>global.time.minute</source>
+        <target>{count, plural, one {# minute} other {# minutes}}</target>
+      </segment>
+    </unit>
+    <unit id="JQSurmk" name="global.time.second">
+      <segment>
+        <source>global.time.second</source>
+        <target>{count, plural, one {# second} other {# seconds}}</target>
+      </segment>
+    </unit>
+    <unit id="DeWr6L7" name="menu.upload">
+      <segment>
+        <source>menu.upload</source>
+        <target>Upload</target>
+      </segment>
+    </unit>
+    <unit id="kRZ49xu" name="btn.delete">
+      <segment>
+        <source>btn.delete</source>
+        <target>Delete</target>
+      </segment>
+    </unit>
+    <unit id="kRZ49xu" name="btn.agree">
+      <segment>
+        <source>btn.agree</source>
+        <target>Agree</target>
+      </segment>
+    </unit>
+    <unit id="kRZ49xu" name="message.delete_post">
+      <segment>
+        <source>message.delete_post</source>
+        <target>Delete post</target>
+      </segment>
+    </unit>
+    <unit id="kRZ49xu" name="message.warning_delete_post">
+      <segment>
+        <source>message.warning_delete_post</source>
+        <target>This action is irreversible, are you sure ?</target>
+      </segment>
+    </unit>
+    <unit id="kRZ49xu" name="title.actions">
+      <segment>
+        <source>title.actions</source>
+        <target>Actions</target>
+      </segment>
+    </unit>
+    <unit id="kRZ49xu" name="message.delete_board">
+      <segment>
+        <source>message.delete_board</source>
+        <target>Delete board</target>
+      </segment>
+    </unit>
+    <unit id="kRZ49xu" name="message.warning_delete_board">
+      <segment>
+        <source>message.warning_delete_board</source>
+        <target>This action is irreversible, are you sure ? All posts inside this board will be lost.</target>
       </segment>
     </unit>
   </file>

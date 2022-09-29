@@ -20,6 +20,7 @@
             <div class="navbar-start">
                 <a class="navbar-item" href="{{ path('app_board_index') }}">{{ 'menu.boards'|trans }}</a>
                 <a class="navbar-item" href="{{ path('app_tag_index') }}">{{ 'menu.tags'|trans }}</a>
+                {% block navbar %}{% endblock %}
                 <span class="navbar-item is-hidden-mobile">|</span>
 
                 <div class="navbar-item breadcrumb is-hidden-mobile" aria-label="breadcrumbs">
@@ -28,8 +29,6 @@
                     </ul>
                 </div>
             </div>
-
-
             <div class="navbar-end">
                 {% block navbarEnd %}{% endblock %}
             </div>

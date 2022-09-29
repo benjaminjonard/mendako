@@ -34,4 +34,34 @@ class AppRuntime implements RuntimeExtensionInterface
         return "$minutes:$seconds";
     }
 
+    public function ago(\DateTimeImmutable $ago): string
+    {
+        $now = new \DateTimeImmutable();
+        $diff = $now->diff($ago);
+
+        $diff->w = floor($diff->d / 7);
+        $diff->d -= $diff->w * 7;
+
+        $string = [
+            'y' => 'year',
+            'm' => 'month',
+            'w' => 'week',
+            'd' => 'day',
+            'h' => 'hour',
+            'i' => 'minute',
+            's' => 'second',
+        ];
+        foreach ($string as $k => &$v) {
+            if ($diff->$k) {
+                $v = $this->translator->trans("global.time.{$v}", ['count' => $diff->$k]);
+            } else {
+                unset($string[$k]);
+            }
+        }
+
+        $string = \array_slice($string, 0, 1);
+
+        return $string !== [] ?
+            $this->translator->trans('global.time.ago', ['time' => implode(', ', $string)]) : $this->translator->trans('global.time.just_now');
+    }
 }
