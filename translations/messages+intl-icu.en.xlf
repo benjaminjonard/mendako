@@ -331,40 +331,70 @@
         <target>Delete</target>
       </segment>
     </unit>
-    <unit id="kRZ49xu" name="btn.agree">
+    <unit id="LnS3Ycb" name="btn.agree">
       <segment>
         <source>btn.agree</source>
         <target>Agree</target>
       </segment>
     </unit>
-    <unit id="kRZ49xu" name="message.delete_post">
+    <unit id="UGDnz12" name="message.delete_post">
       <segment>
         <source>message.delete_post</source>
         <target>Delete post</target>
       </segment>
     </unit>
-    <unit id="kRZ49xu" name="message.warning_delete_post">
+    <unit id="s4Ym2Rj" name="message.warning_delete_post">
       <segment>
         <source>message.warning_delete_post</source>
         <target>This action is irreversible, are you sure ?</target>
       </segment>
     </unit>
-    <unit id="kRZ49xu" name="title.actions">
+    <unit id="UhArzPN" name="title.actions">
       <segment>
         <source>title.actions</source>
         <target>Actions</target>
       </segment>
     </unit>
-    <unit id="kRZ49xu" name="message.delete_board">
+    <unit id="rUEPvWW" name="message.delete_board">
       <segment>
         <source>message.delete_board</source>
         <target>Delete board</target>
       </segment>
     </unit>
-    <unit id="kRZ49xu" name="message.warning_delete_board">
+    <unit id="YupPOqE" name="message.warning_delete_board">
       <segment>
         <source>message.warning_delete_board</source>
         <target>This action is irreversible, are you sure ? All posts inside this board will be lost.</target>
+      </segment>
+    </unit>
+    <unit id="qkghpHS" name="menu.profile">
+      <segment>
+        <source>menu.profile</source>
+        <target>Profile</target>
+      </segment>
+    </unit>
+    <unit id="XJEq8ZP" name="title.edit_profile">
+      <segment>
+        <source>title.edit_profile</source>
+        <target>Edit profile</target>
+      </segment>
+    </unit>
+    <unit id="AdYO6y5" name="title.info">
+      <segment>
+        <source>title.info</source>
+        <target>Info</target>
+      </segment>
+    </unit>
+    <unit id="CsFP1yZ" name="title.password">
+      <segment>
+        <source>title.password</source>
+        <target>Password</target>
+      </segment>
+    </unit>
+    <unit id="cdAEVCP" name="label.new_password">
+      <segment>
+        <source>label.new_password</source>
+        <target>New password</target>
       </segment>
     </unit>
   </file>
