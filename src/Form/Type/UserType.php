@@ -18,6 +18,8 @@ class UserType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $isEdition = !($builder->getData()->getCreatedAt() === null);
+
         $builder
             ->add('username', TextType::class, [
                 'attr' => ['length' => 255],
@@ -29,7 +31,7 @@ class UserType extends AbstractType
             ])
             ->add('plainPassword', RepeatedType::class, [
                 'type' => PasswordType::class,
-                'required' => true,
+                'required' => !$isEdition,
                 'invalid_message' => 'error.password.not_matching',
             ])
             ->add('timezone', TimezoneType::class, [

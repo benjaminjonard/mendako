@@ -1,0 +1,33 @@
+{% extends 'layout.html.twig' %}
+
+{% block breadcrumb %}
+    <li class="is-active"><a href="#" aria-current="page">{{ 'menu.profile'|trans }}</a></li>
+{% endblock %}
+
+{% block content %}
+    <div class="column"></div>
+
+    <div class="column">
+        <div class="box">
+            <h1 class="title">{{ 'title.edit_profile'|trans }}</h1>
+
+            {{ form_start(form) }}
+                <h2 class="subtitle">{{ 'title.info'|trans }}</h2>
+                {{ form_errors(form) }}
+                {{ form_row(form.username, {'label' : 'label.username'} ) }}
+                {{ form_row(form.email, {'label' : 'label.email'} ) }}
+                {{ form_row(form.timezone, {'label': 'label.timezone', 'attr': {'data-controller': 'select--default'}}) }}
+
+                <h2 class="subtitle">{{ 'title.password'|trans }}</h2>
+                {{ form_row(form.plainPassword.first, {'label' : 'label.new_password', 'attr': {'autocomplete' : 'new-password'}} ) }}
+                {{ form_row(form.plainPassword.second, {'label': 'label.repeat_password'}) }}
+
+                <div>
+                    <button class="button is-primary" type="submit">{{ 'btn.submit'|trans }}</button>
+                </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+
+    <div class="column"></div>
+{% endblock %}
