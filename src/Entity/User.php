@@ -49,9 +49,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\Timezone]
     private ?string $timezone = null;
 
+    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => 0])]
+    private bool $darkModeEnabled = false;
+
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     #[Gedmo\Timestampable(on: 'create')]
-    private \DateTimeImmutable $createdAt;
+    private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
     #[Gedmo\Timestampable(on: 'change', field: ['username', 'email', 'password', 'enabled', 'roles', 'timezone'])]
@@ -200,6 +203,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setTimezone(string $timezone): User
     {
         $this->timezone = $timezone;
+
+        return $this;
+    }
+
+    public function isDarkModeEnabled(): bool
+    {
+        return $this->darkModeEnabled;
+    }
+
+    public function setDarkModeEnabled(bool $darkModeEnabled): User
+    {
+        $this->darkModeEnabled = $darkModeEnabled;
 
         return $this;
     }

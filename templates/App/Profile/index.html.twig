@@ -17,6 +17,7 @@
                 {{ form_row(form.username, {'label' : 'label.username'} ) }}
                 {{ form_row(form.email, {'label' : 'label.email'} ) }}
                 {{ form_row(form.timezone, {'label': 'label.timezone', 'attr': {'data-controller': 'select--default'}}) }}
+                {{ form_row(form.darkModeEnabled, {'label' : 'label.dark_mode_enabled'} ) }}
 
                 <h2 class="subtitle">{{ 'title.password'|trans }}</h2>
                 {{ form_row(form.plainPassword.first, {'label' : 'label.new_password', 'attr': {'autocomplete' : 'new-password'}} ) }}

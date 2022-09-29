@@ -37,6 +37,9 @@
 
         {% block stylesheets %}
             {{ encore_entry_link_tags('app') }}
+            {% if app.user.darkModeEnabled %}
+                {{ encore_entry_link_tags('dark-mode') }}
+            {% endif %}
         {% endblock %}
 
         {% block javascripts %}
