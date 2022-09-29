@@ -11,7 +11,6 @@ use App\Repository\PostRepository;
 use App\Repository\TagRepository;
 use App\Service\PaginatorFactory;
 use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -100,5 +99,24 @@ class BoardController extends AbstractController
             'board' => $board,
             'form' => $form->createView(),
         ]);
+    }
+
+    #[Route(path: '/boards/{slug}/delete', name: 'app_board_delete', methods: ['POST'])]
+    public function delete(
+        Request $request,
+        TranslatorInterface $translator,
+        ManagerRegistry $managerRegistry,
+        Board $board,
+    ): Response {
+        $form = $this->createDeleteForm('app_board_delete', $board);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $managerRegistry->getManager()->remove($board);
+            $managerRegistry->getManager()->flush();
+            $this->addFlash('notice', $translator->trans('message.board_deleted'));
+        }
+
+        return $this->redirectToRoute('app_board_index');
     }
 }

@@ -1,0 +1,19 @@
+<div id="delete" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">{{ header }}</p>
+            <button class="delete" aria-label="close"></button>
+        </header>
+
+        <section class="modal-card-body">
+            <h1 class="subtitle">{{ message }}</h1>
+            <form name="form" method="post" action="{{ action }}">
+                <button type="submit" class="button is-primary">
+                    {{ 'btn.agree'|trans }}
+                </button>
+                <input type="hidden" id="form__token" name="form[_token]" value="{{ csrf_token('form') }}">
+            </form>
+        </section>
+    </div>
+</div>

@@ -14,6 +14,7 @@ class AppExtension extends AbstractExtension
         return [
             new TwigFilter('bytes', [AppRuntime::class, 'bytes']),
             new TwigFilter('minutes', [AppRuntime::class, 'minutes']),
+            new TwigFilter('ago', [AppRuntime::class, 'ago']),
         ];
     }
 }

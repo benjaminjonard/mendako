@@ -1,12 +1,7 @@
 {% extends 'layout.html.twig' %}
 
-{% block navbarEnd %}
-    <div class="navbar-item">
-        <div class="buttons">
-            <a href="{{ path('app_post_add', {slug: board.slug}) }}" class="button is-primary">{{ 'btn.add_post'|trans }}</a>
-            <a href="{{ path('app_board_edit', {slug: board.slug}) }}" class="button">{{ 'btn.edit'|trans }}</a>
-        </div>
-    </div>
+{% block navbar %}
+    <a class="navbar-item" href="{{ path('app_post_add', {slug: board.slug}) }}">{{ 'menu.upload'|trans }}</a>
 {% endblock %}
 
 {% block breadcrumb %}
@@ -17,6 +12,12 @@
 {% block content %}
     <div class="column is-one-fifth">
         {{ include('App/Tag/_list.html.twig', {tags: tags}) }}
+
+        <div class="block">
+            <h3 class="has-text-weight-medium">{{ 'title.actions'|trans }}</h3>
+            <div><a href="{{ path('app_board_edit', {slug: board.slug}) }}">{{ 'btn.edit'|trans }}</a></div>
+            <div><a href="#" class="js-modal-trigger" data-target="delete">{{ 'btn.delete'|trans }}</a></div>
+        </div>
     </div>
 
     <div class="column">
@@ -41,4 +42,10 @@
 
         {{ include('App/_partials/_pagination.html.twig', {paginator: paginator}) }}
     </div>
+
+    {{ include('App/_partials/_modal/_delete.html.twig', {
+        'header': 'message.delete_board'|trans,
+        'message': 'message.warning_delete_board'|trans,
+        'action': path('app_board_delete', {slug: board.slug})
+    }) }}
 {% endblock %}
