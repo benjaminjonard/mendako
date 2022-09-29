@@ -1,0 +1,38 @@
+name: Build beta image for Docker Hub
+on:
+  workflow_dispatch:
+
+jobs:
+  push_beta_image:
+    name: Build beta image for Docker Hub
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v3
+        with:
+          repository: benjaminjonard/mendako-docker
+          ref: php8.1
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ secrets.REGISTRY_URL }}
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          build-args: GITHUB_RELEASE=1.3
+          tags: ${{ secrets.REGISTRY_URL }}/benjaminjonard/mendako:beta
+          platforms: linux/amd64,linux/arm64

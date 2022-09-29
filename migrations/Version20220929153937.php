@@ -9,18 +9,17 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 use Symfony\Component\Uid\Uuid;
 
-/**
- * Auto-generated Migration: Please modify to your needs!
- */
-final class Version20220928180410 extends AbstractMigration
+final class Version20220929153937 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return '';
+        return '[Postgresql] Add required meta tags.';
     }
 
     public function up(Schema $schema): void
     {
+        $this->skipIf('postgresql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'postgresql\'.');
+
         $category = TagCategory::META->value;
 
         $id = Uuid::v4()->toRfc4122();
@@ -38,7 +37,6 @@ final class Version20220928180410 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('CREATE SCHEMA public');
+        $this->skipIf(true, 'Always move forward.');
     }
 }
