@@ -1,3 +1,3 @@
 Light -booru like image board, supports multiple boards.
 
-In alpha state, do not use.
+Not even in alpha state, do not use.
