@@ -31,14 +31,12 @@ class TagRepository extends ServiceEntityRepository
 
         $qb = $this->_em
             ->createQueryBuilder()
-            ->select("t.id, t.name, t.category, ($countQuery) AS counter")
+            ->select("t.id, t.name, t.category, t.suggested, ($countQuery) AS counter")
             ->from(Tag::class, 't')
             ->orderBy('t.createdAt', 'DESC')
         ;
 
-        $results = $qb->getQuery()->getArrayResult();
-
-        return $results;
+        return $qb->getQuery()->getArrayResult();
     }
 
     public function findForPosts(Board $board, array $posts): array

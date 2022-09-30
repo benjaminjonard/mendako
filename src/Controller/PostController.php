@@ -22,6 +22,7 @@ class PostController extends AbstractController
         Request $request,
         TranslatorInterface $translator,
         ManagerRegistry $managerRegistry,
+        TagRepository $tagRepository,
         Board $board
     ): Response {
         $post = new Post();
@@ -47,6 +48,7 @@ class PostController extends AbstractController
             'board' => $board,
             'post' => $post,
             'form' => $form->createView(),
+            'suggestedTags' => $tagRepository->findBy(['suggested' => true])
         ]);
     }
 
@@ -65,6 +67,7 @@ class PostController extends AbstractController
     public function edit(
         Request $request,
         TranslatorInterface $translator,
+        TagRepository $tagRepository,
         ManagerRegistry $managerRegistry,
         Board $board,
         Post $post
@@ -87,6 +90,7 @@ class PostController extends AbstractController
             'board' => $board,
             'post' => $post,
             'form' => $form->createView(),
+            'suggestedTags' => $tagRepository->findBy(['suggested' => true])
         ]);
     }
 

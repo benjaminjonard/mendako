@@ -13,6 +13,7 @@
                 <tr>
                     <th>{{ 'label.name'|trans }}</th>
                     <th>{{ 'label.category'|trans }}</th>
+                    <th>{{ 'label.suggested'|trans }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -20,6 +21,7 @@
                     <tr>
                         <td><a class="category-{{ tag.category.value }}" href="{{ path('app_tag_edit', {id: tag.id}) }}">{{ tag.name }}</a> ({{ tag.counter }})</td>
                         <td>{{ tag.category.value }}</td>
+                        <td>{{ (tag.suggested ? 'global.yes' : 'global.no')|trans }}</td>
                     </tr>
                 {% endfor %}
             </tbody>

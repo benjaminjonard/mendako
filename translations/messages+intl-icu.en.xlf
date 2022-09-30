@@ -457,5 +457,23 @@
         <target>Download</target>
       </segment>
     </unit>
+    <unit id="Lb7V3vA" name="label.suggested">
+      <segment>
+        <source>label.suggested</source>
+        <target>Suggested</target>
+      </segment>
+    </unit>
+    <unit id="Lb7V3vA" name="global.yes">
+      <segment>
+        <source>global.yes</source>
+        <target>Yes</target>
+      </segment>
+    </unit>
+    <unit id="Lb7V3vA" name="global.no">
+      <segment>
+        <source>global.no</source>
+        <target>No</target>
+      </segment>
+    </unit>
   </file>
 </xliff>

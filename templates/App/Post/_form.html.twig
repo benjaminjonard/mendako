@@ -1,7 +1,21 @@
 {{ form_start(form) }}
     {{ form_row(form.file, {'label' : 'label.file'} ) }}
 
-    {{ form_row(form.tags, {'label' : 'label.tags'} ) }}
+    <div data-controller="suggestions">
+        {{ form_row(form.tags, {'label' : 'label.tags', 'attr': {'data-suggestions-target': 'input'}} ) }}
+
+        {% if suggestedTags is not empty %}
+            <div class="block">
+                {% for tag in suggestedTags %}
+                    <span class="is-clickable"
+                          data-action="click->suggestions#fillInputWithSuggestion"
+                          data-suggestion="{{ tag.name }}">
+                        {{ tag.name }}{{ loop.last == false ? ', ' }}
+                    </span>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
 
     {{ form_row(form.setAsBoardThumbnail, {'label' : 'label.set_as_board_thumbnail'} ) }}
 

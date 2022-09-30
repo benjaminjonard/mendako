@@ -32,6 +32,9 @@ class Tag
     #[ORM\ManyToMany(targetEntity: Post::class, mappedBy: 'tags')]
     private Collection $posts;
 
+    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => 0])]
+    private bool $suggested = false;
+
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     #[Gedmo\Timestampable(on: 'create')]
     private \DateTimeImmutable $createdAt;
@@ -96,6 +99,18 @@ class Tag
             $this->posts->removeElement($post);
             $post->removeTag($this);
         }
+
+        return $this;
+    }
+
+    public function isSuggested(): bool
+    {
+        return $this->suggested;
+    }
+
+    public function setSuggested(bool $suggested): Tag
+    {
+        $this->suggested = $suggested;
 
         return $this;
     }
