@@ -1,7 +1,7 @@
 {% extends 'layout.html.twig' %}
 
-{% block navbar %}
-    <a class="navbar-item" href="{{ path('app_post_add', {slug: board.slug}) }}">{{ 'menu.upload'|trans }}</a>
+{% block buttons %}
+    <a class="button is-primary" href="{{ path('app_post_add', {slug: board.slug}) }}">{{ 'menu.upload'|trans }}</a>
 {% endblock %}
 
 {% block breadcrumb %}
@@ -28,6 +28,7 @@
 
         <div class="block">
             <h3 class="has-text-weight-medium">{{ 'title.actions'|trans }}</h3>
+            <div><a href="{{ asset(post.path) }}" download="test.png">{{ 'btn.download'|trans }}</a></div>
             <div><a href="{{ path('app_post_edit', {slug: board.slug, id: post.id}) }}">{{ 'btn.edit'|trans }}</a></div>
             <div><a href="#" class="js-modal-trigger" data-target="delete">{{ 'btn.delete'|trans }}</a></div>
         </div>

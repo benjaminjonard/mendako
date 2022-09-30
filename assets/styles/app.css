@@ -5,7 +5,14 @@ html {
     height: 100%;
 }
 
-@media(max-width: 767px) { /* <== You can change this break point as per your  needs */
+.navbar-breadcrumb {
+    justify-content: flex-start;
+    margin-right: auto;
+    align-items: stretch;
+    display: flex;
+}
+
+@media(max-width: 767px) {
     .reverse-columns {
         flex-direction: column-reverse;
         display: flex;

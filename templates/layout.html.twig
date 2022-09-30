@@ -7,6 +7,14 @@
                 <img src="{{ asset('build/images/logo.svg') }}" width="28" height="28">
             </a>
 
+            <div class="navbar-breadcrumb">
+                <div class="navbar-item breadcrumb is-centered" aria-label="breadcrumbs">
+                    <ul>
+                        {% block breadcrumb %}{% endblock %}
+                    </ul>
+                </div>
+            </div>
+
 
             <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbar"
                data-action="click->burger#display" data-burger-target="button"
@@ -19,20 +27,18 @@
 
         <div id="navbar" class="navbar-menu" data-burger-target="menu">
             <div class="navbar-start">
+                <span class="navbar-item is-hidden-mobile">|</span>
                 <a class="navbar-item" href="{{ path('app_board_index') }}">{{ 'menu.boards'|trans }}</a>
                 <a class="navbar-item" href="{{ path('app_tag_index') }}">{{ 'menu.tags'|trans }}</a>
                 <a class="navbar-item" href="{{ path('app_profile_index') }}">{{ 'menu.profile'|trans }}</a>
-                {% block navbar %}{% endblock %}
-                <span class="navbar-item is-hidden-mobile">|</span>
-
-                <div class="navbar-item breadcrumb is-hidden-mobile" aria-label="breadcrumbs">
-                    <ul>
-                        {% block breadcrumb %}{% endblock %}
-                    </ul>
-                </div>
             </div>
+
             <div class="navbar-end">
-                {% block navbarEnd %}{% endblock %}
+                <div class="navbar-item">
+                    <div class="buttons">
+                        {% block buttons %}{% endblock %}
+                    </div>
+                </div>
             </div>
         </div>
     </nav>

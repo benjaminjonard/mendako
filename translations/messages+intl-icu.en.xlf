@@ -451,5 +451,11 @@
         <target>Dark mode</target>
       </segment>
     </unit>
+    <unit id="97NQmwC" name="btn.download">
+      <segment>
+        <source>btn.download</source>
+        <target>Download</target>
+      </segment>
+    </unit>
   </file>
 </xliff>

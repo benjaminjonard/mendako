@@ -1,11 +1,7 @@
 {% extends 'layout.html.twig' %}
 
-{% block navbarEnd %}
-    <div class="navbar-item">
-        <div class="buttons">
-            <a href="{{ path('app_board_add') }}" class="button is-primary">{{ 'btn.add_board'|trans }}</a>
-        </div>
-    </div>
+{% block buttons %}
+    <a class="button is-primary" href="{{ path('app_board_add') }}">{{ 'btn.add_board'|trans }}</a>
 {% endblock %}
 
 {% block breadcrumb %}
