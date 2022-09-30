@@ -26,10 +26,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private string $id;
 
     #[ORM\Column(type: Types::STRING, length: 32, unique: true)]
+    #[Assert\Unique]
     #[Assert\Regex(pattern: '/^[a-z\\d_]{2,32}$/i', message: 'error.username.incorrect')]
     private ?string $username = null;
 
     #[ORM\Column(type: Types::STRING, unique: true)]
+    #[Assert\Unique]
     #[Assert\Email]
     private ?string $email = null;
 
