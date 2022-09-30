@@ -1,0 +1,4 @@
+{%- block _post_tags_widget -%}
+    <textarea class="textarea has-fixed-size" {{ block('widget_attributes') }}>{{ value }}</textarea>
+    <ul class="autocomplete-dropdown autocomplete-dropdown-textarea is-hidden" data-autocomplete-target="list"></ul>
+{%- endblock _post_tags_widget -%}

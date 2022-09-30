@@ -2,12 +2,18 @@
     {{ form_row(form.file, {'label' : 'label.file'} ) }}
 
     <div data-controller="suggestions">
-        {{ form_row(form.tags, {'label' : 'label.tags', 'attr': {'data-suggestions-target': 'input'}} ) }}
+        <div data-controller="autocomplete">
+            {{ form_row(form.tags, {'label' : 'label.tags', 'attr': {
+                'data-suggestions-target': 'input',
+                'data-autocomplete-target': 'input',
+                'data-action': 'keyup->autocomplete#autocomplete'
+            }} ) }}
+        </div>
 
         {% if suggestedTags is not empty %}
             <div class="block">
                 {% for tag in suggestedTags %}
-                    <span class="is-clickable"
+                    <span class="is-clickable is-category-{{ tag.category.value }}"
                           data-action="click->suggestions#fillInputWithSuggestion"
                           data-suggestion="{{ tag.name }}">
                         {{ tag.name }}{{ loop.last == false ? ', ' }}

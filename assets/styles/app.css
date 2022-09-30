@@ -85,20 +85,24 @@ figure .tag {
     left: 5px;
 }
 
-.category-meta {
-    color: #ead084;
+.is-category-general {
+    color: #0075f8;
 }
 
-.category-copyright {
-    color: #c797ff;
+.is-category-meta {
+    color: #fd9200;
 }
 
-.category-artist {
+.is-category-copyright {
+    color: #a800aa;
+}
+
+.is-category-artist {
     color: #ff8a8b;
 }
 
-.category-character {
-    color: #35c64a;
+.is-category-character {
+    color: #00ab2c;
 }
 
 .block-search .control {
@@ -222,4 +226,15 @@ html.loading:before {
 .animate__fadeOutRight {
     -webkit-animation-name: fadeOutRight;
     animation-name: fadeOutRight;
+}
+
+.autocomplete-dropdown {
+    background-color: #eee;
+    padding: 5px 0 5px 10px;
+}
+
+.autocomplete-dropdown-textarea {
+    position: absolute;
+    z-index: 1;
+    width: 100%;
 }

@@ -51,7 +51,7 @@ class PostRepository extends ServiceEntityRepository
         $qb = $this
             ->createQueryBuilder('post')
             ->distinct()
-            ->select('COUNT(DISTINCT post.id)')
+            ->select('COUNT(DISTINCT post.id) as count')
             ->where('post.board = :board')
             ->setParameter('board', $board)
         ;
@@ -65,7 +65,8 @@ class PostRepository extends ServiceEntityRepository
                 ->setParameter('count', \count($tags))
             ;
         }
+        $result = $qb->getQuery()->getScalarResult();
 
-        return $qb->getQuery()->getSingleScalarResult();
+        return empty($result) ? 0 : $result[0]['count'];
     }
 }

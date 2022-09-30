@@ -1,4 +1,4 @@
-html, .navbar {
+html, .navbar, .autocomplete-dropdown-textarea {
     background-color: #2a2a2a;
 }
 
@@ -6,10 +6,30 @@ html, .navbar {
     color: #ccc;
 }
 
-.box, .table {
+.box, .table, .autocomplete-dropdown-search {
     background-color: #3f3f46;
 }
 
 .input, .select select, .textarea {
     background-color: #ccc;
+}
+
+.is-category-general {
+    color: #009be6;
+}
+
+.is-category-meta {
+    color: #ead084;
+}
+
+.is-category-copyright {
+    color: #c797ff;
+}
+
+.is-category-artist {
+    color: #ff8a8b;
+}
+
+.is-category-character {
+    color: #35c64a;
 }

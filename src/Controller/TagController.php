@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\Tag;
-use App\Form\Type\PostType;
 use App\Form\Type\TagType;
-use App\Repository\BoardRepository;
 use App\Repository\TagRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
@@ -34,16 +32,14 @@ class TagController extends AbstractController
     ): Response {
         $query = $request->query->get('query', null);
 
-        $results = [];
-        $tags = $tagRepository->findLike($query);
-        foreach ($tags as $tag) {
-            $results['results'][] = [
-                'value' => $tag->getName(),
-                'text' => $tag->getName(),
+        $tags = array_map(function (Tag $tag) {
+            return [
+                'name' => $tag->getName(),
+                'category' => $tag->getCategory()->value
             ];
-        }
+        }, $tagRepository->findLike($query));
 
-        return $this->json($results);
+        return $this->json($tags);
     }
 
     #[Route(path: '/tags/{id}/edit', name: 'app_tag_edit', methods: ['GET', 'POST'])]

@@ -5,20 +5,18 @@ declare(strict_types=1);
 namespace App\EventListener;
 
 use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 
 class SeenListener
 {
     public function __construct(
-        private readonly ManagerRegistry $managerRegistry,
-        private readonly RequestStack $requestStack
+        private readonly ManagerRegistry $managerRegistry
     ) {
     }
 
     public function onKernelResponse(ResponseEvent $event): void
     {
-        $route =$this->requestStack->getCurrentRequest()->get('_route');
+        $route = $event->getRequest()->get('_route');
 
         if ($route === 'app_post_show') {
             $id = $event->getRequest()->get('id');

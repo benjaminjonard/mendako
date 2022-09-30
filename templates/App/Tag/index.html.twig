@@ -19,7 +19,7 @@
             <tbody>
                 {% for tag in tags %}
                     <tr>
-                        <td><a class="category-{{ tag.category.value }}" href="{{ path('app_tag_edit', {id: tag.id}) }}">{{ tag.name }}</a> ({{ tag.counter }})</td>
+                        <td><a class="is-category-{{ tag.category.value }}" href="{{ path('app_tag_edit', {id: tag.id}) }}">{{ tag.name }}</a> ({{ tag.counter }})</td>
                         <td>{{ tag.category.value }}</td>
                         <td>{{ (tag.suggested ? 'global.yes' : 'global.no')|trans }}</td>
                     </tr>

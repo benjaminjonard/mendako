@@ -1,10 +1,12 @@
 <div class="block">
     <form action="{{ path('app_board_show', {slug: board.slug}) }}" method="get">
         <div class="field has-addons">
-            <div class="control" style="width: 100%">
-                <input name="tags" class="input" value="{{ search|default('') }}" multiple {{ stimulus_controller('autocomplete', {
-                    url: path('app_tag_autocomplete', { alias: 'search' })
-                }) }}>
+            <div class="control" style="width: 100%" data-controller="autocomplete">
+                <input name="tags" class="input" value="{{ search|default('') }}" multiple autocomplete="off"
+                       data-autocomplete-target="input"
+                       data-action="keyup->autocomplete#autocomplete"
+                >
+                <ul class="autocomplete-dropdown autocomplete-dropdown-search is-hidden" data-autocomplete-target="list"></ul>
             </div>
             <div class="control">
                 <button class="button is-info" type="submit">
@@ -16,16 +18,11 @@
 </div>
 
 
-<div class="block">
-    {% for tag in tags|filter(t => t.category == 'general') %}
-        {% if loop.first %}<h3 class="has-text-weight-medium">{{ 'app.enum.tag.category.general'|trans }}</h3>{% endif %}
-        <div><a href="{{ path('app_board_show', {slug: board.slug, tags: tag.name}) }}">{{ tag.name }}</a> ({{ tag.counter }})</div>
-    {% endfor %}
-</div>
-
-<div class="block">
-    {% for tag in tags|filter(t => t.category == 'meta') %}
-        {% if loop.first %}<h3 class="has-text-weight-medium">{{ 'app.enum.tag.category.meta'|trans }}</h3>{% endif %}
-        <div><a href="{{ path('app_board_show', {slug: board.slug, tags: tag.name}) }}">{{ tag.name }}</a> ({{ tag.counter }})</div>
-    {% endfor %}
-</div>
+{% for category in ['general', 'character', 'copyright', 'artist', 'meta'] %}
+    <div class="block">
+        {% for tag in tags|filter(t => t.category == category) %}
+            {% if loop.first %}<h3 class="has-text-weight-medium">{{ ('app.enum.tag.category.' ~ category)|trans }}</h3>{% endif %}
+            <div><a class="is-category-{{ category }}" href="{{ path('app_board_show', {slug: board.slug, tags: tag.name}) }}">{{ tag.name }}</a> ({{ tag.counter }})</div>
+        {% endfor %}
+    </div>
+{% endfor %}
