@@ -10,7 +10,8 @@ export default class extends Controller {
             dismissible: false,
             animate: { in: 'fadeInRight', out: 'fadeOutRight' },
             duration: 5000,
-            position: 'bottom-right'
+            position: 'top-right',
+            extraClasses: 'toast'
         })
     }
 }
