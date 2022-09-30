@@ -1,7 +1,7 @@
 import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
-    static targets = ['input', 'label'];
+    static targets = ['input'];
 
     fillInputWithSuggestion(event) {
         let suggestion = event.target.dataset.suggestion;

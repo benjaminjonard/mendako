@@ -80,7 +80,7 @@ class TagRepository extends ServiceEntityRepository
             ->addOrderBy('LOWER(tag.name)', Criteria::ASC) // Then order other matching tags alphabetically
             ->setParameter('query', '%'.trim($query).'%')
             ->setParameter('startWith', trim($query).'%')
-            ->setMaxResults(5)
+            ->setMaxResults(15)
             ->getQuery()
             ->getResult()
         ;
