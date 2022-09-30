@@ -7,6 +7,7 @@ namespace App\Form\Type;
 use App\Entity\Tag;
 use App\Enum\TagCategory;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -25,6 +26,9 @@ class TagType extends AbstractType
             ->add('category', EnumType::class, [
                 'class' => TagCategory::class,
                 'required' => true,
+            ])
+            ->add('suggested', CheckboxType::class, [
+                'required' => false,
             ])
         ;
     }
