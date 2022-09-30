@@ -1,7 +1,7 @@
 {% extends 'layout.html.twig' %}
 
-{% block navbar %}
-    <a class="navbar-item" href="{{ path('app_post_add', {slug: board.slug}) }}">{{ 'menu.upload'|trans }}</a>
+{% block buttons %}
+    <a class="button is-primary" href="{{ path('app_post_add', {slug: board.slug}) }}">{{ 'menu.upload'|trans }}</a>
 {% endblock %}
 
 {% block breadcrumb %}
