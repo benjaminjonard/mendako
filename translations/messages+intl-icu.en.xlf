@@ -475,5 +475,11 @@
         <target>No</target>
       </segment>
     </unit>
+    <unit id="jjr18nl" name="label.seen">
+      <segment>
+        <source>label.seen</source>
+        <target>Seen</target>
+      </segment>
+    </unit>
   </file>
 </xliff>

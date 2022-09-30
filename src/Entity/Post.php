@@ -46,6 +46,9 @@ class Post
     #[ORM\Column(type: Types::INTEGER, nullable: true)]
     private ?int $duration = null;
 
+    #[ORM\Column(type: Types::INTEGER)]
+    private int $seenCounter = 0;
+
     #[ORM\ManyToOne(targetEntity: Board::class, inversedBy: 'posts')]
     #[Assert\NotBlank]
     private ?Board $board = null;
@@ -204,6 +207,18 @@ class Post
         if ($this->tags->contains($tag)) {
             $this->tags->removeElement($tag);
         }
+
+        return $this;
+    }
+
+    public function getSeenCounter(): int
+    {
+        return $this->seenCounter;
+    }
+
+    public function setSeenCounter(int $seenCounter): Post
+    {
+        $this->seenCounter = $seenCounter;
 
         return $this;
     }

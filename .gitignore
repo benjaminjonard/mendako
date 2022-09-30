@@ -21,4 +21,5 @@ yarn-error.log
 /public/tmp/
 docker-compose.yml
 
+/public/uploads/
 !/public/uploads/.gitkeep
