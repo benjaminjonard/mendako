@@ -10,6 +10,7 @@ use App\Repository\BoardRepository;
 use App\Repository\PostRepository;
 use App\Repository\TagRepository;
 use App\Service\PaginatorFactory;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,7 +23,7 @@ class BoardController extends AbstractController
     #[Route(path: '/', name: 'app_homepage', methods: ['GET'])]
     public function index(BoardRepository $boardRepository): Response
     {
-        $boards = $boardRepository->findAll();
+        $boards = $boardRepository->findBy([], ['name' => Criteria::ASC]);
 
         return $this->render('App/Board/index.html.twig', [
             'boards' => $boards,
