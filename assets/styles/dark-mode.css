@@ -2,10 +2,14 @@ html, .navbar {
     background-color: #2a2a2a;
 }
 
-.navbar-item, .navbar-link, .breadcrumb li.is-active a, body {
+.navbar-item, .navbar-link, .breadcrumb li.is-active a, body, .box, .table, .title, .subtitle, .label, .table thead th {
     color: #ccc;
 }
 
 .box, .table {
-    background-color: #efefef;
+    background-color: #3f3f46;
+}
+
+.input, .select select, .textarea {
+    background-color: #ccc;
 }
