@@ -28,7 +28,7 @@ class Uploader
     {
         $file = $this->accessor->getValue($entity, $property);
         if ($file instanceof UploadedFile) {
-            $relativePath = 'uploads/' . $entity->getBoard()->getId() . '/';
+            $relativePath = 'uploads/boards/' . $entity->getBoard()->getId() . '/';
             $absolutePath = $this->publicPath . '/' . $relativePath;
 
             if (!is_dir($absolutePath) && !mkdir($absolutePath) && !is_dir($absolutePath)) {
