@@ -481,5 +481,11 @@
         <target>Seen</target>
       </segment>
     </unit>
+    <unit id="BCuruGT" name="btn.view_original">
+      <segment>
+        <source>btn.view_original</source>
+        <target>View original</target>
+      </segment>
+    </unit>
   </file>
 </xliff>
