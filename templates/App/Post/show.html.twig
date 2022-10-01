@@ -32,6 +32,7 @@
             <div><a href="{{ path('app_post_edit', {slug: board.slug, id: post.id}) }}">{{ 'btn.edit'|trans }}</a></div>
             <div><a href="#" class="js-modal-trigger" data-target="delete">{{ 'btn.delete'|trans }}</a></div>
             <div><a href="{{ asset(post.path) }}" download="test.png">{{ 'btn.download'|trans }}</a></div>
+            <div><a href="{{ asset(post.path) }}">{{ 'btn.view_original'|trans }}</a></div>
         </div>
     </div>
 
