@@ -63,7 +63,7 @@ class Tag
     public function setName(?string $name): Tag
     {
         $name = new UnicodeString($name);
-        $name = $name->snake()->toString();
+        $name = $name->lower()->replace(' ', '_')->toString();
         $this->name = $name;
 
         return $this;
