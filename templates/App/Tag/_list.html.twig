@@ -18,7 +18,7 @@
 </div>
 
 
-{% for category in ['general', 'character', 'copyright', 'artist', 'meta'] %}
+{% for category in ['artist', 'copyright', 'character', 'general', 'meta'] %}
     <div class="block">
         {% for tag in tags|filter(t => t.category == category) %}
             {% if loop.first %}<h3 class="has-text-weight-medium">{{ ('app.enum.tag.category.' ~ category)|trans }}</h3>{% endif %}
