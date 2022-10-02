@@ -487,5 +487,11 @@
         <target>View original</target>
       </segment>
     </unit>
+    <unit id="BCuruGT" name="label.board">
+      <segment>
+        <source>label.board</source>
+        <target>Board</target>
+      </segment>
+    </unit>
   </file>
 </xliff>

@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Form\Type;
 
+use App\Entity\Board;
 use App\Entity\Post;
 use App\Form\DataTransformer\StringToTagTransformer;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -36,6 +38,13 @@ class PostType extends AbstractType
                 'required' => false,
                 'mapped' => false
             ])
+            ->add('board', EntityType::class, [
+                'class' => Board::class,
+                'choice_label' => 'name',
+                'expanded' => false,
+                'multiple' => false,
+                'required' => true
+            ])
         ;
 
         $builder->get('tags')->addModelTransformer($this->stringToTagTransformer);
@@ -44,7 +53,7 @@ class PostType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => Post::class,
+            'data_class' => Post::class
         ]);
     }
 }
