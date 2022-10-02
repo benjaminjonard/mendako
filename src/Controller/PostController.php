@@ -34,7 +34,7 @@ class PostController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $post->setUploadedBy($this->getUser());
             if ($form->get('setAsBoardThumbnail')->getData() === true) {
-               $board->setThumbnail($post);
+                $post->getBoard()->setThumbnail($post);
             }
 
             $managerRegistry->getManager()->persist($post);
@@ -42,7 +42,7 @@ class PostController extends AbstractController
 
             $this->addFlash('notice', $translator->trans('message.post_added'));
 
-            return $this->redirectToRoute('app_post_show', ['slug' => $board->getSlug(), 'id' => $post->getId()]);
+            return $this->redirectToRoute('app_post_show', ['slug' => $post->getBoard()->getSlug(), 'id' => $post->getId()]);
         }
 
         return $this->render($board ? 'App/Post/add.html.twig' : 'App/Post/upload.html.twig', [
