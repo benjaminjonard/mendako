@@ -18,7 +18,7 @@ class AutomatedTagger
 
     public function tag(Post $post): void
     {
-        if ($post->getMimetype() === 'video/mp4') {
+        if ($post->getMimetype() === 'video/mp4' || $post->getMimetype() === 'video/webm') {
             $this->animated($post);
             $this->withSound($post);
             $this->video($post);

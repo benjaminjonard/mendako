@@ -47,12 +47,12 @@ class Uploader
                 ->setSize(filesize($absolutePath . $fileName))
             ;
 
-            if ($entity->getMimetype() === 'video/mp4') {
+            if ($entity->getMimetype() === 'video/mp4' || $entity->getMimetype() === 'video/webm') {
                 $ffmpeg = FFMpeg::create();
                 $video = $ffmpeg->open($absolutePath . $fileName);
                 $stream = $video->getStreams()->videos()->first();
                 $entity
-                    ->setDuration((int) round((float) $stream->get('duration')))
+                    ->setDuration((int) round((float) $video->getFormat()->get('duration')))
                     ->setHeight($stream->getDimensions()->getHeight())
                     ->setWidth($stream->getDimensions()->getWidth())
                 ;

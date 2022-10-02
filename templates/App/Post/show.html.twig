@@ -38,7 +38,7 @@
 
     <div class="column">
         <figure class="image-display">
-            {% if post.mimeType == 'video/mp4' %}
+            {% if post.mimeType == 'video/mp4' or post.mimeType == 'video/webm' %}
                 <video controls>
                     <source src="{{ asset(post.path) }}" type="video/mp4">
                 </video>

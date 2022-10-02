@@ -45,7 +45,7 @@ function generate(string $path, string $thumbnailPath, int $thumbnailWidth)
     }
 
     $mime = mime_content_type($path);
-    if (mime_content_type($path) === 'video/mp4') {
+    if (mime_content_type($path) === 'video/mp4' || mime_content_type($path) === 'video/webm') {
         $ffmpeg = FFMpeg::create();
         $video = $ffmpeg->open($path);
         $stream = $video->getStreams()->videos()->first();
@@ -69,7 +69,7 @@ function generate(string $path, string $thumbnailPath, int $thumbnailWidth)
         throw new \Exception('There was a problem while creating the thumbnail. Please try again!');
     }
 
-    if ($mime === 'video/mp4') {
+    if ($mime === 'video/mp4' || $mime === 'video/webm') {
         $video->frame(TimeCode::fromSeconds(1))->save($thumbnailPath);;
     } else {
         $image = match ($mime) {
