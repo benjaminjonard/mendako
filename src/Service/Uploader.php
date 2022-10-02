@@ -18,7 +18,7 @@ class Uploader
 
     public function __construct(
         private readonly RandomStringGenerator $randomStringGenerator,
-        private readonly GiDataExtractor $gifDataExtractor,
+        private readonly GifDataExtractor $gifDataExtractor,
         private readonly string $publicPath
     )
     {
