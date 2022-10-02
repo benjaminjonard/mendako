@@ -17,13 +17,14 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PostController extends AbstractController
 {
+    #[Route(path: '/upload', name: 'app_post_upload', methods: ['GET', 'POST'])]
     #[Route(path: '/boards/{slug}/add', name: 'app_post_add', methods: ['GET', 'POST'])]
     public function add(
         Request $request,
         TranslatorInterface $translator,
         ManagerRegistry $managerRegistry,
         TagRepository $tagRepository,
-        Board $board
+        ?Board $board
     ): Response {
         $post = new Post();
         $post->setBoard($board);
@@ -44,7 +45,7 @@ class PostController extends AbstractController
             return $this->redirectToRoute('app_post_show', ['slug' => $board->getSlug(), 'id' => $post->getId()]);
         }
 
-        return $this->render('App/Post/add.html.twig', [
+        return $this->render($board ? 'App/Post/add.html.twig' : 'App/Post/upload.html.twig', [
             'board' => $board,
             'post' => $post,
             'form' => $form->createView(),

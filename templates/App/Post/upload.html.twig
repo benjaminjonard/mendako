@@ -1,0 +1,18 @@
+{% extends 'layout.html.twig' %}
+
+{% block breadcrumb %}
+    <li class="is-active"><a href="#" aria-current="page">{{ 'menu.upload'|trans }}</a></li>
+{% endblock %}
+
+{% block content %}
+    <div class="column"></div>
+
+    <div class="column">
+        <div class="box">
+            <h1 class="title">{{ 'title.add_post'|trans }}</h1>
+            {{ include('App/Post/_form.html.twig') }}
+        </div>
+    </div>
+
+    <div class="column"></div>
+{% endblock %}

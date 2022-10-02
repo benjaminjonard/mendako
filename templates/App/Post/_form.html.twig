@@ -1,6 +1,8 @@
 {{ form_start(form) }}
     {{ form_row(form.file, {'label' : 'label.file'} ) }}
 
+    {{ form_row(form.board, {'label' : 'label.board'} ) }}
+
     <div data-controller="suggestions">
         <div data-controller="autocomplete">
             {{ form_row(form.tags, {'label' : 'label.tags', 'attr': {
@@ -26,5 +28,9 @@
     {{ form_row(form.setAsBoardThumbnail, {'label' : 'label.set_as_board_thumbnail'} ) }}
 
     <button class="button is-primary" type="submit">{{ 'btn.submit'|trans }}</button>
-    <a class="button is-danger" href="{{ path('app_board_show', {slug: board.slug}) }}">{{ 'btn.cancel'|trans }}</a>
+    {% if board is defined and board is not null %}
+        <a class="button is-danger" href="{{ path('app_board_show', {slug: board.slug}) }}">{{ 'btn.cancel'|trans }}</a>
+    {% else %}
+        <a class="button is-danger" href="{{ path('app_board_index') }}">{{ 'btn.cancel'|trans }}</a>
+    {% endif %}
 {{ form_end(form) }}
