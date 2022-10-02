@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-class GiDataExtractor
+class GifDataExtractor
 {
     private $gif;
 
@@ -38,16 +38,80 @@ class GiDataExtractor
 
     private array $orgvars;
 
-    public function extract(string $filename): array
+    public function extract(string $filename, bool $originalFrames = false): array
     {
+        if (!self::isAnimatedGif($filename)) {
+            throw new \Exception('The GIF image you are trying to explode is not animated !');
+        }
+
         $this->reset();
         $this->parseFramesInfo($filename);
+        $prevImg = null;
+
+        for ($i = 0; $i < count($this->frameSources); $i++) {
+
+            $this->frames[$i] = array();
+            $this->frameDurations[$i] = $this->frames[$i]['duration'] = $this->frameSources[$i]['delay_time'];
+
+            $img = imagecreatefromstring($this->fileHeader["gifheader"] . $this->frameSources[$i]["graphicsextension"] . $this->frameSources[$i]["imagedata"] . chr(0x3b));
+
+            if (!$originalFrames) {
+
+                if ($i > 0) {
+
+                    $prevImg = $this->frames[$i - 1]['image'];
+
+                } else {
+
+                    $prevImg = $img;
+                }
+
+                $sprite = imagecreate($this->gifMaxWidth, $this->gifMaxHeight);
+                imagesavealpha($sprite, true);
+
+                $transparent = imagecolortransparent($prevImg);
+
+                if ($transparent > -1 && imagecolorstotal($prevImg) > $transparent) {
+
+                    $actualTrans = imagecolorsforindex($prevImg, $transparent);
+                    imagecolortransparent($sprite, imagecolorallocate($sprite, $actualTrans['red'], $actualTrans['green'], $actualTrans['blue']));
+                }
+
+                if ((int)$this->frameSources[$i]['disposal_method'] == 1 && $i > 0) {
+
+                    imagecopy($sprite, $prevImg, 0, 0, 0, 0, $this->gifMaxWidth, $this->gifMaxHeight);
+                }
+
+                imagecopyresampled($sprite, $img, $this->frameSources[$i]["offset_left"], $this->frameSources[$i]["offset_top"], 0, 0, $this->gifMaxWidth, $this->gifMaxHeight, $this->gifMaxWidth, $this->gifMaxHeight);
+                $img = $sprite;
+            }
+
+            $this->frameImages[$i] = $this->frames[$i]['image'] = $img;
+        }
 
         return [
-            'duration' => ($this->totalDuration) / 100,
+            'duration' => $this->totalDuration / 100,
             'width' => $this->gifMaxWidth,
-            'height' => $this->gifMaxHeight,
+            'height' => $this->gifMaxHeight
         ];
+    }
+
+    public static function isAnimatedGif(string $filename): bool
+    {
+        if (!($fh = @fopen($filename, 'rb'))) {
+            return false;
+        }
+
+        $count = 0;
+
+        while (!feof($fh) && $count < 2) {
+
+            $chunk = fread($fh, 1024 * 100); //read 100kb at a time
+            $count += preg_match_all('#\x00\x21\xF9\x04.{4}\x00(\x2C|\x21)#s', $chunk, $matches);
+        }
+
+        fclose($fh);
+        return $count > 1;
     }
 
     private function parseFramesInfo(string $filename): void
@@ -59,10 +123,13 @@ class GiDataExtractor
         $this->getApplicationData();
         $this->getFrameString(0);
         $this->parseGraphicsExtension(1);
+        $this->getCommentData();
         $this->getApplicationData();
         $this->getFrameString(1);
 
         while (!$this->checkByte(0x3b) && !$this->checkEOF()) {
+
+            $this->getCommentData(1);
             $this->parseGraphicsExtension(2);
             $this->getFrameString(2);
             $this->getApplicationData();
@@ -107,6 +174,22 @@ class GiDataExtractor
         }
     }
 
+    private function getCommentData(): void
+    {
+        $startdata = $this->readByte(2);
+
+        if ($startdata == chr(0x21) . chr(0xfe)) {
+
+            $start = $this->pointer - 2;
+            $this->readDataStream($this->readByteInt());
+            $this->fileHeader["commentdata"] = $this->dataPart($start, $this->pointer - $start);
+
+        } else {
+
+            $this->pointerRewind(2);
+        }
+    }
+
     private function parseGraphicsExtension(int $type): void
     {
         $startdata = $this->readByte(2);
@@ -128,7 +211,8 @@ class GiDataExtractor
 
             } elseif ($type == 0) {
 
-
+                $this->orgvars["hasgx_type_0"] = 1;
+                $this->globaldata["graphicsextension_0"] = $this->dataPart($start, $this->pointer - $start);
             }
 
         } else {
@@ -137,7 +221,7 @@ class GiDataExtractor
         }
     }
 
-    private function getFrameString(int $type)
+    private function getFrameString(int $type): void
     {
         if ($this->checkByte(0x2c)) {
 
@@ -242,26 +326,23 @@ class GiDataExtractor
     private function getImageDataByte(string $type, int $start, int $length): string
     {
         if ($type == "ext") {
-            if ($this->frameSources[$this->frameNumber]["graphicsextension"]) {
-                return substr($this->frameSources[$this->frameNumber]["graphicsextension"], $start, $length);
-            }
+
+            return substr($this->frameSources[$this->frameNumber]["graphicsextension"], $start, $length);
         }
 
+        // "dat"
         return substr($this->frameSources[$this->frameNumber]["imagedata"], $start, $length);
     }
 
 
-    private function getImageDataBit(string $type, int $byteIndex, int $bitStart, int $bitLength): float|int|null
+    private function getImageDataBit(string $type, int $byteIndex, int $bitStart, int $bitLength): int|float
     {
         if ($type == "ext") {
-            if ($this->frameSources[$this->frameNumber]["graphicsextension"]) {
-                return $this->readBits(ord(substr($this->frameSources[$this->frameNumber]["graphicsextension"], $byteIndex, 1)), $bitStart, $bitLength);
-            } else {
-                return null;
-            }
 
+            return $this->readBits(ord(substr($this->frameSources[$this->frameNumber]["graphicsextension"], $byteIndex, 1)), $bitStart, $bitLength);
         }
 
+        // "dat"
         return $this->readBits(ord(substr($this->frameSources[$this->frameNumber]["imagedata"], $byteIndex, 1)), $bitStart, $bitLength);
     }
 
@@ -278,9 +359,7 @@ class GiDataExtractor
         $length = $this->readByteInt();
 
         if ($length != 0) {
-
             while ($length != 0) {
-
                 $this->pointerForward($length);
                 $length = $this->readByteInt();
             }
@@ -303,8 +382,7 @@ class GiDataExtractor
         $this->handle = 0;
     }
 
-
-    private function readByte(int $byteCount): string
+    private function readByte(int $byteCount): bool|string
     {
         $data = fread($this->handle, $byteCount);
         $this->pointer += $byteCount;
@@ -328,20 +406,19 @@ class GiDataExtractor
         return bindec($data);
     }
 
-
     private function pointerRewind(int $length): void
     {
         $this->pointer -= $length;
         fseek($this->handle, $this->pointer);
     }
 
-    private function pointerForward(int $length)
+    private function pointerForward(int $length): void
     {
         $this->pointer += $length;
         fseek($this->handle, $this->pointer);
     }
 
-    private function dataPart(int $start, int $length): string
+    private function dataPart(int $start, int $length): bool|string
     {
         fseek($this->handle, $start);
         $data = fread($this->handle, $length);
