@@ -242,19 +242,24 @@ class GiDataExtractor
     private function getImageDataByte(string $type, int $start, int $length): string
     {
         if ($type == "ext") {
-
-            return substr($this->frameSources[$this->frameNumber]["graphicsextension"], $start, $length);
+            if ($this->frameSources[$this->frameNumber]["graphicsextension"]) {
+                return substr($this->frameSources[$this->frameNumber]["graphicsextension"], $start, $length);
+            }
         }
 
         return substr($this->frameSources[$this->frameNumber]["imagedata"], $start, $length);
     }
 
 
-    private function getImageDataBit(string $type, int $byteIndex, int $bitStart, int $bitLength): float|int
+    private function getImageDataBit(string $type, int $byteIndex, int $bitStart, int $bitLength): float|int|null
     {
         if ($type == "ext") {
+            if ($this->frameSources[$this->frameNumber]["graphicsextension"]) {
+                return $this->readBits(ord(substr($this->frameSources[$this->frameNumber]["graphicsextension"], $byteIndex, 1)), $bitStart, $bitLength);
+            } else {
+                return null;
+            }
 
-            return $this->readBits(ord(substr($this->frameSources[$this->frameNumber]["graphicsextension"], $byteIndex, 1)), $bitStart, $bitLength);
         }
 
         return $this->readBits(ord(substr($this->frameSources[$this->frameNumber]["imagedata"], $byteIndex, 1)), $bitStart, $bitLength);
