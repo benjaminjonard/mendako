@@ -76,6 +76,7 @@ function generate(string $path, string $thumbnailPath, int $thumbnailWidth)
             'image/jpeg' => imagecreatefromjpeg($path),
             'image/png' => imagecreatefrompng($path),
             'image/webp' => imagecreatefromwebp($path),
+            'image/gif' => imagecreatefromgif($path),
             default => throw new \Exception('Your image cannot be processed, please use another one.'),
         };
 
@@ -101,6 +102,9 @@ function generate(string $path, string $thumbnailPath, int $thumbnailWidth)
                 break;
             case 'image/webp':
                 imagewebp($thumbnail, $thumbnailPath, 85);
+                break;
+            case 'image/gif':
+                imagegif($thumbnail, $thumbnailPath);
                 break;
             default:
                 break;

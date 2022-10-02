@@ -44,7 +44,7 @@ class Post
     private ?int $size = null;
 
     #[ORM\Column(type: Types::INTEGER, nullable: true)]
-    private ?int $duration = null;
+    private ?int $duration = null; //in seconds
 
     #[ORM\Column(type: Types::INTEGER)]
     private int $seenCounter = 0;

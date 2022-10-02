@@ -18,6 +18,7 @@ class Uploader
 
     public function __construct(
         private readonly RandomStringGenerator $randomStringGenerator,
+        private readonly GiDataExtractor $gifDataExtractor,
         private readonly string $publicPath
     )
     {
@@ -51,9 +52,16 @@ class Uploader
                 $video = $ffmpeg->open($absolutePath . $fileName);
                 $stream = $video->getStreams()->videos()->first();
                 $entity
-                    ->setDuration((int) round((float) ($stream->get('duration'))))
+                    ->setDuration((int) round((float) $stream->get('duration')))
                     ->setHeight($stream->getDimensions()->getHeight())
                     ->setWidth($stream->getDimensions()->getWidth())
+                ;
+            } elseif ($entity->getMimetype() === 'image/gif') {
+                $gifData = $this->gifDataExtractor->extract($absolutePath . $fileName);
+                $entity
+                    ->setWidth($gifData['width'])
+                    ->setHeight($gifData['height'])
+                    ->setDuration((int) round((float) $gifData['duration']));
                 ;
             } else {
                 $dimensions = getimagesize($absolutePath . $fileName);
