@@ -29,7 +29,7 @@
                             {% if post.duration %}
                                 <span class="tag is-dark has-text-weight-medium">{{ post.duration|minutes }}</span>
                             {% endif %}
-                            <img src="{{ asset(post.path|thumbnail(500)) }}">
+                            <img src="{{ asset(post.path|thumbnail(360)) }}">
                         </div>
                     </figure>
                 </a>
