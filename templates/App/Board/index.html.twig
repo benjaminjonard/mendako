@@ -18,7 +18,7 @@
                         <figure class="image">
                             <a href="{{ path('app_board_show', {slug: board.slug}) }}">
                                 {% if board.thumbnail %}
-                                    <img src="{{ board.thumbnail.path|thumbnail(300) }}">
+                                    <img src="{{ board.thumbnail.path|thumbnail(420) }}">
                                 {% else %}
                                     <img src="{{ asset('build/images/default.png') }}">
                                 {% endif %}
