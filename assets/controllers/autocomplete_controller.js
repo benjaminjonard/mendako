@@ -12,15 +12,25 @@ export default class extends Controller {
         this.listTarget.classList.add('is-hidden');
     }
 
+    delay = (function(){
+        let timer = 0;
+        return function(callback, ms){
+            clearTimeout (timer);
+            timer = setTimeout(callback, ms);
+        };
+    })();
+
     autocomplete(event) {
         let self = this;
         const lastWord = this.inputTarget.value.split(' ').pop();
-        if (lastWord) {
-            fetch('/tags/autocomplete?query=' + lastWord, {
-                method: 'GET'
-            })
+
+        this.delay(function() {
+            if (lastWord) {
+                fetch('/tags/autocomplete?query=' + lastWord, {
+                    method: 'GET'
+                })
                 .then(response => response.json())
-                .then(function(result) {
+                .then(function (result) {
                     self.listTarget.innerHTML = '';
 
                     if (result.length > 0) {
@@ -32,7 +42,8 @@ export default class extends Controller {
                         self.listTarget.classList.add('is-hidden');
                     }
                 })
-        }
+            }
+        }, 200);
     }
 
     addToInput(event) {
