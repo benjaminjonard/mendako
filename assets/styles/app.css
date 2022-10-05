@@ -5,6 +5,7 @@ html {
     height: 100%;
 }
 
+
 .navbar-breadcrumb {
     justify-content: flex-start;
     margin-right: auto;
@@ -36,7 +37,7 @@ html {
     max-height: 300px;
 }
 
-.image-display {
+.image-display, .image-display img {
     max-width: 800px;
     max-height: 650px;
 }
