@@ -493,5 +493,17 @@
         <target>Board</target>
       </segment>
     </unit>
+    <unit id="subwYGS" name="btn.show_full_size">
+      <segment>
+        <source>btn.show_full_size</source>
+        <target>Show full size</target>
+      </segment>
+    </unit>
+    <unit id="kuxPqRP" name="btn.show_small_size">
+      <segment>
+        <source>btn.show_small_size</source>
+        <target>Show small size</target>
+      </segment>
+    </unit>
   </file>
 </xliff>

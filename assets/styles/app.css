@@ -39,7 +39,6 @@ html {
 .image-display {
     max-width: 800px;
     max-height: 650px;
-    margin: auto;
 }
 
 /* Start image grid */
@@ -239,4 +238,11 @@ html.loading:before {
     position: absolute;
     z-index: 1;
     width: 100%;
+}
+
+.is-fullsize {
+    width: 100%;
+    height: 100%;
+    max-height: 100%;
+    max-width: 100%;
 }

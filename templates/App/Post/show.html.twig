@@ -37,15 +37,22 @@
     </div>
 
     <div class="column">
-        <figure class="image-display">
-            {% if post.mimeType == 'video/mp4' or post.mimeType == 'video/webm' %}
-                <video controls>
-                    <source src="{{ asset(post.path) }}" type="video/mp4">
-                </video>
-            {% else %}
-                <img src="{{ asset(post.path) }}">
+        <div data-controller="fullsize">
+            {% if post.width > 800 or post.height > 650 %}
+                <a href="#" class="" data-fullsize-target="buttonFullsize" data-action="click->fullsize#fullsize">{{ 'btn.show_full_size'|trans }}</a>
+                <a href="#" class="is-hidden" data-fullsize-target="buttonSmallsize" data-action="click->fullsize#smallsize">{{ 'btn.show_small_size'|trans }}</a>
             {% endif %}
-        </figure>
+
+            <figure class="image-display" data-fullsize-target="image">
+                {% if post.mimeType == 'video/mp4' or post.mimeType == 'video/webm' %}
+                    <video controls>
+                        <source src="{{ asset(post.path) }}" type="video/mp4">
+                    </video>
+                {% else %}
+                    <img src="{{ asset(post.path) }}">
+                {% endif %}
+            </figure>
+        </div>
     </div>
 
     {{ include('App/_partials/_modal/_delete.html.twig', {
