@@ -37,19 +37,17 @@ html {
     max-height: 300px;
 }
 
-.image-display, .image-display img {
+.image-display, .image-display:not(.is-fullsize) img {
     max-width: 800px;
     max-height: 650px;
 }
 
 /* Start image grid */
 .grid-posts {
-    grid-template-columns: repeat(auto-fill,minmax(180px,1fr));
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
     gap: 1rem;
     display: grid;
 }
-
-
 
 .grid-posts img, .grid-posts figure {
     margin: auto;
