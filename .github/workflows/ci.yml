@@ -1,0 +1,38 @@
+name: Mendako CI
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+  release:
+
+jobs:
+  security_checker:
+    name: Security checker
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        id: cache-db
+        with:
+          path: ~/.symfony/cache
+          key: db
+      - uses: symfonycorp/security-checker-action@v4
+
+  doctrine_schema_validator:
+    name: Doctrine schema validator
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.1
+          extensions: ctype, fileinfo, gd, iconv, intl, json
+      - uses: actions/cache@v3
+        id: cache-composer
+        with:
+          path: vendor
+          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-
+      - run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+      - run: bin/console doctrine:schema:validate --skip-sync
