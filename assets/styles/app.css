@@ -17,13 +17,6 @@ html {
     top: 56px;
 }
 
-@media(max-width: 767px) {
-    .reverse-columns {
-        flex-direction: column-reverse;
-        display: flex;
-    }
-}
-
 .section {
     padding: 3rem 1.5rem;
 }
@@ -54,6 +47,17 @@ html {
     max-width: 180px;
     max-height: 180px;
     width: unset;
+}
+
+@media(max-width: 450px) {
+    .grid-posts {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    }
+
+    .grid-posts img, .grid-posts figure {
+        max-width: 150px;
+        max-height: 150px;
+    }
 }
 /* End image grid */
 
@@ -244,4 +248,11 @@ html.loading:before {
     height: 100%;
     max-height: 100%;
     max-width: 100%;
+}
+
+@media(max-width: 767px) {
+    .reverse-columns {
+        flex-direction: column-reverse;
+        display: flex;
+    }
 }
