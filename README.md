@@ -10,7 +10,9 @@
 
 Quick project done over the course of a week.
 
-Private, light booru like image board, supports multiple boards. 
+Private, light booru like image board, supports multiple boards.
+
+Inspired of https://github.com/danbooru/danbooru
 
 ## Installation
 Copy the docker-compose.yml.dist in a docker-compose.yml file and adjust the environment variables to your need. 
