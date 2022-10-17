@@ -22,7 +22,7 @@
   resolved "https://registry.yarnpkg.com/@babel/compat-data/-/compat-data-7.19.4.tgz#95c86de137bf0317f3a570e1b6e996b427299747"
   integrity sha512-CHIGpJcUQ5lU9KrPHTjBMhVwQG6CQjxfg36fGXl3qk/Gik1WwWachaXFuo0uCWJT/mStOKtcbFJCaVLihC1CMw==
 
-"@babel/core@^7.17.0":
+"@babel/core@7.19.3":
   version "7.19.3"
   resolved "https://registry.yarnpkg.com/@babel/core/-/core-7.19.3.tgz#2519f62a51458f43b682d61583c3810e7dcee64c"
   integrity sha512-WneDJxdsjEvyKtXKsaBGbDeiyOjR5vYq4HcShxnIbG0qixpoHjI3MqeZM9NDvsojNCEBItQE4juOo/bU6e72gQ==
@@ -770,7 +770,7 @@
     "@babel/helper-create-regexp-features-plugin" "^7.18.6"
     "@babel/helper-plugin-utils" "^7.18.6"
 
-"@babel/preset-env@^7.16.0":
+"@babel/preset-env@7.19.4":
   version "7.19.4"
   resolved "https://registry.yarnpkg.com/@babel/preset-env/-/preset-env-7.19.4.tgz#4c91ce2e1f994f717efb4237891c3ad2d808c94b"
   integrity sha512-5QVOTXUdqTCjQuh2GGtdd7YEhoRXBMVGROAtsBeLGIbIz3obCBIfRMT1I3ZKkMgNzwkyCkftDXSSkHxnfVf4qg==
@@ -913,7 +913,7 @@
   resolved "https://registry.yarnpkg.com/@hotwired/stimulus-webpack-helpers/-/stimulus-webpack-helpers-1.0.1.tgz#4cd74487adeca576c9865ac2b9fe5cb20cef16dd"
   integrity sha512-wa/zupVG0eWxRYJjC1IiPBdt3Lruv0RqGN+/DTMmUWUyMAEB27KXmVY6a8YpUVTM7QwVuaLNGW4EqDgrS2upXQ==
 
-"@hotwired/stimulus@^3.0.0", "@hotwired/stimulus@^3.1.0":
+"@hotwired/stimulus@3.1.0", "@hotwired/stimulus@^3.1.0":
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/@hotwired/stimulus/-/stimulus-3.1.0.tgz#20215251e5afe6e0a3787285181ba1bfc9097df0"
   integrity sha512-iDMHUhiEJ1xFeicyHcZQQgBzhtk5mPR0QZO3L6wtqzMsJEk2TKECuCQTGKjm+KJTHVY0dKq1dOOAWvODjpd2Mg==
@@ -1026,7 +1026,7 @@
   resolved "https://registry.yarnpkg.com/@sinclair/typebox/-/typebox-0.24.46.tgz#57501b58023776dbbae9e25619146286440be34c"
   integrity sha512-ng4ut1z2MCBhK/NwDVwIQp3pAUOCs/KNaW3cBxdFB2xTDrOuo1xuNmpr/9HHFhxqIvHrs1NTH3KJg6q+JSy1Kw==
 
-"@symfony/stimulus-bridge@^3.2.0":
+"@symfony/stimulus-bridge@3.2.1":
   version "3.2.1"
   resolved "https://registry.yarnpkg.com/@symfony/stimulus-bridge/-/stimulus-bridge-3.2.1.tgz#b9c261ad72830fd17898cf27c97862d1cc15b46a"
   integrity sha512-eawmVu+tLVkiTz7ewkcsxFvaSZKxFWXmdWxIsxr2jIfQ64PSJg7PIcd7GsPMDxX8sLwg3LGxXfJv5bASL1es+A==
@@ -1037,7 +1037,7 @@
     loader-utils "^2.0.0"
     schema-utils "^3.0.0"
 
-"@symfony/webpack-encore@^4.0.0":
+"@symfony/webpack-encore@4.0.0":
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/@symfony/webpack-encore/-/webpack-encore-4.0.0.tgz#47937806dd17866d41845c000824ab42f1a7d099"
   integrity sha512-4CrI3Q4mxl/wmAOhGlNVJGasbw9XlZiffN2HgOb9qUsuzJPnNf1qqKz4BbZO8I/R8XLWXi3wVMgIl4cKFxxtCw==
@@ -1658,12 +1658,12 @@ buffer-from@^1.0.0:
   resolved "https://registry.yarnpkg.com/buffer-from/-/buffer-from-1.1.2.tgz#2b146a6fd72e80b4f55d255f35ed59a3a9a41bd5"
   integrity sha512-E+XQCRwSbaaiChtv6k6Dwgc+bx+Bs6vuKJHHl5kox/BaKbhiXzqQOwK4cO22yElGp2OCmjwVhT3HmxgyPGnJfQ==
 
-bulma-toast@^2.4.1:
+bulma-toast@2.4.1:
   version "2.4.1"
   resolved "https://registry.yarnpkg.com/bulma-toast/-/bulma-toast-2.4.1.tgz#1e0ea72a810af2cc11a5c39cf4051567f5c29434"
   integrity sha512-Gwa40dH0gyO3/azJxzFSZD2PKcFlp55HWyPE3gV8gm1WGXyyKrNDCzFlsY8XqxstNRp+xtcdo2L0Y4df+iWNWg==
 
-bulma@^0.9.4:
+bulma@0.9.4:
   version "0.9.4"
   resolved "https://registry.yarnpkg.com/bulma/-/bulma-0.9.4.tgz#0ca8aeb1847a34264768dba26a064c8be72674a1"
   integrity sha512-86FlT5+1GrsgKbPLRRY7cGDg8fsJiP/jzTqXXVqiUZZ2aZT8uemEOHlU1CDU+TxklPEZ11HZNNWclRBBecP4CQ==
@@ -1875,7 +1875,7 @@ cookie@0.5.0:
   resolved "https://registry.yarnpkg.com/cookie/-/cookie-0.5.0.tgz#d1f5d71adec6558c58f389987c366aa47e994f8b"
   integrity sha512-YZ3GUyn/o8gfKJlnlX7g7xq4gyO6OSuhGPKaaGssGB2qgDUS0gPgtTvoyZLTt9Ab6dC4hfc9dV5arkvc/OCmrw==
 
-copy-webpack-plugin@^11.0.0:
+copy-webpack-plugin@11.0.0:
   version "11.0.0"
   resolved "https://registry.yarnpkg.com/copy-webpack-plugin/-/copy-webpack-plugin-11.0.0.tgz#96d4dbdb5f73d02dd72d0528d1958721ab72e04a"
   integrity sha512-fX2MWpamkW0hZxMEg0+mYnA40LTosOSa5TqZ9GYIBzyJa9C3QUaMPSE2xAi/buNr8u89SfD9wHSQVBzrRa/SOQ==
@@ -1894,7 +1894,7 @@ core-js-compat@^3.25.1:
   dependencies:
     browserslist "^4.21.4"
 
-core-js@^3.23.0:
+core-js@3.25.5:
   version "3.25.5"
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-3.25.5.tgz#e86f651a2ca8a0237a5f064c2fe56cef89646e27"
   integrity sha512-nbm6eZSjm+ZuBQxCUPQKQCoUEfFOXjUZ8dTTyikyKaWrTYmAVbykQfwsKE5dBK88u3QCkCrzsx/PPlKfhsvgpw==
@@ -3678,7 +3678,7 @@ regenerate@^1.4.2:
   resolved "https://registry.yarnpkg.com/regenerate/-/regenerate-1.4.2.tgz#b9346d8827e8f5a32f7ba29637d398b69014848a"
   integrity sha512-zrceR/XhGYU/d/opr2EKO7aRHUeiBI8qjtfHqADTwZd6Szfy16la6kqD0MIUs5z5hx6AaKa+PixpPrR289+I0A==
 
-regenerator-runtime@^0.13.4, regenerator-runtime@^0.13.9:
+regenerator-runtime@0.13.10, regenerator-runtime@^0.13.4:
   version "0.13.10"
   resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.13.10.tgz#ed07b19616bcbec5da6274ebc75ae95634bfc2ee"
   integrity sha512-KepLsg4dU12hryUO7bp/axHAKvwGOCV0sGloQtpagJ12ai+ojVDqkeGSiRX1zlq+kjIMZ1t7gpze+26QqtdGqw==
@@ -4042,14 +4042,14 @@ statuses@2.0.1:
   resolved "https://registry.yarnpkg.com/statuses/-/statuses-1.5.0.tgz#161c7dac177659fd9811f43771fa99381478628c"
   integrity sha512-OpZ3zP+jT1PI7I8nemJX4AKmAX070ZkYPVWV/AaKTJl+tXCTGyVdC1a4SL8RUQYEwk/f34ZX8UTykN68FwrqAA==
 
-stimulus-use@^0.50.0:
+stimulus-use@0.50.0:
   version "0.50.0"
   resolved "https://registry.yarnpkg.com/stimulus-use/-/stimulus-use-0.50.0.tgz#0bae92fbb1fd961cbb23569f9edd12ae642ce4a6"
   integrity sha512-9NScZQiOycQdzh8VZ15pxk6ep/a22fgha2halOvZFpJITC4nsTbWlO7D1hm+9LspFxa5b28tQhm3XkbH/qAlGw==
   dependencies:
     hotkeys-js ">=3"
 
-stimulus@^3.1.0:
+stimulus@3.1.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/stimulus/-/stimulus-3.1.0.tgz#225298f1936f96b0eafa883b8b304266427912c3"
   integrity sha512-ln+BtLkhemwJozr5N3I5q0kGlSv6fmcPi3JtDjBo7gnnz2tAYhK2WBhyY/EN/4+CWIwqp3qPm3Pc+i9CjIXrtg==
@@ -4297,7 +4297,7 @@ wbuf@^1.1.0, wbuf@^1.7.3:
   dependencies:
     minimalistic-assert "^1.0.0"
 
-webpack-cli@^4.10.0:
+webpack-cli@4.10.0:
   version "4.10.0"
   resolved "https://registry.yarnpkg.com/webpack-cli/-/webpack-cli-4.10.0.tgz#37c1d69c8d85214c5a65e589378f53aec64dab31"
   integrity sha512-NLhDfH/h4O6UOy+0LSso42xvYypClINuMNBVVzX4vX98TmTaTUxwRbXdhucbFMd2qLaCTcLq/PdYrvi8onw90w==
@@ -4369,7 +4369,7 @@ webpack-merge@^5.7.3:
     clone-deep "^4.0.1"
     wildcard "^2.0.0"
 
-webpack-notifier@^1.15.0:
+webpack-notifier@1.15.0:
   version "1.15.0"
   resolved "https://registry.yarnpkg.com/webpack-notifier/-/webpack-notifier-1.15.0.tgz#72644a1a4ec96b3528704d28f79da5e70048e8ee"
   integrity sha512-N2V8UMgRB5komdXQRavBsRpw0hPhJq2/SWNOGuhrXpIgRhcMexzkGQysUyGStHLV5hkUlgpRiF7IUXoBqyMmzQ==
@@ -4382,7 +4382,7 @@ webpack-sources@^3.2.3:
   resolved "https://registry.yarnpkg.com/webpack-sources/-/webpack-sources-3.2.3.tgz#2d4daab8451fd4b240cc27055ff6a0c2ccea0cde"
   integrity sha512-/DyMEOrDgLKKIG0fmvtz+4dUX/3Ghozwgm6iPp8KRhvn+eQf9+Q7GWxVNMk3+uCPWfdXYC4ExGBckIXdFEfH1w==
 
-webpack@^5.74.0:
+webpack@5.74.0:
   version "5.74.0"
   resolved "https://registry.yarnpkg.com/webpack/-/webpack-5.74.0.tgz#02a5dac19a17e0bb47093f2be67c695102a55980"
   integrity sha512-A2InDwnhhGN4LYctJj6M1JEaGL7Luj6LOmyBHjcI8529cm5p6VXiTIW2sn6ffvEAKmveLzvu4jrihwXtPojlAA==
