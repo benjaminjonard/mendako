@@ -30,3 +30,8 @@ services:
     App\EventListener\SeenListener:
         tags:
             - { name: kernel.event_listener, event: kernel.response }
+
+when@test:
+    services:
+        App\Tests\Factory\:
+            resource: '../tests/Factory'

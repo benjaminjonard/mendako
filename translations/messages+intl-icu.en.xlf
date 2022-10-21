@@ -505,5 +505,11 @@
         <target>Show small size</target>
       </segment>
     </unit>
+    <unit id="xj4swqZ" name="error.user_not_enabled">
+      <segment state="translated">
+        <source>error.user_not_enabled</source>
+        <target>User not activated</target>
+      </segment>
+    </unit>
   </file>
 </xliff>
