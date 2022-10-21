@@ -23,3 +23,11 @@ docker-compose.yml
 
 /public/uploads/
 !/public/uploads/.gitkeep
+###> phpunit/phpunit ###
+.phpunit.result.cache
+/output/
+###< phpunit/phpunit ###
+
+###> symfony/phpunit-bridge ###
+.phpunit.result.cache
+###< symfony/phpunit-bridge ###
