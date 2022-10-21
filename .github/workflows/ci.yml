@@ -92,6 +92,7 @@ jobs:
       - run: (cd assets && yarn dev)
 
       # Setup test environment
+      - run: chmod +x bin/console
       - run: bin/console doctrine:database:create --env=test
       - run: bin/console doctrine:migration:migrate --no-interaction --allow-no-migration --env=test
 
