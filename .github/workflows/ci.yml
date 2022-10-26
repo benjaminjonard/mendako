@@ -77,6 +77,7 @@ jobs:
       - run: sed -i "s|DB_USER=.*|DB_USER=postgres|i" ".env"
       - run: sed -i "s|DB_PASSWORD=.*|DB_PASSWORD=root|i" ".env"
       - run: sed -i "s|DB_VERSION=.*|DB_VERSION=${{ matrix.postgres }}|i" ".env"
+
       # Setup yarn
       - uses: actions/setup-node@v3
         with:
@@ -90,6 +91,9 @@ jobs:
             ${{ runner.os }}-yarn-
       - run: (cd assets && yarn install)
       - run: (cd assets && yarn dev)
+
+      # install ffmpeg
+      - run: apt install -y ffmpeg
 
       # Setup test environment
       - run: chmod +x bin/console
