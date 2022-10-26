@@ -71,6 +71,7 @@ class BoardTest extends WebTestCase
         ]);
 
         // Assert
+        $this->assertResponseIsSuccessful();
         $this->assertRouteSame('app_board_show', ['slug' => 'space']);
     }
 
@@ -88,6 +89,7 @@ class BoardTest extends WebTestCase
         ]);
 
         // Assert
+        $this->assertResponseIsSuccessful();
         $this->assertRouteSame('app_board_show', ['slug' => 'animals']);
     }
 
