@@ -93,7 +93,7 @@ jobs:
       - run: (cd assets && yarn dev)
 
       # install ffmpeg
-      - run: apt install -y ffmpeg
+      - run: sudo apt install -y ffmpeg
 
       # Setup test environment
       - run: chmod +x bin/console
