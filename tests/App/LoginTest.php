@@ -40,6 +40,19 @@ class LoginTest extends WebTestCase
         $this->assertRouteSame('app_board_index');
     }
 
+    public function test_user_redirected_if_already_logged_in(): void
+    {
+        // Arrange
+        $user = UserFactory::createOne()->object();
+        $this->client->loginUser($user);
+
+        // Act
+        $this->client->request('GET', '/login');
+
+        // Assert
+        $this->assertRouteSame('app_board_index');
+    }
+
     public function test_user_cant_login_with_bad_credentials(): void
     {
         // Arrange

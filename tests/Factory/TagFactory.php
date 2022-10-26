@@ -3,6 +3,7 @@
 namespace App\Tests\Factory;
 
 use App\Entity\Tag;
+use App\Enum\TagCategory;
 use App\Repository\TagRepository;
 use Zenstruck\Foundry\ModelFactory;
 use Zenstruck\Foundry\Proxy;
@@ -32,7 +33,8 @@ final class TagFactory extends ModelFactory
     protected function getDefaults(): array
     {
         return [
-            'name' => self::faker()->word(),
+            'name' => self::faker()->unique()->word(),
+            'category' => TagCategory::GENERAL,
             'suggested' => false,
             'createdAt' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
         ];

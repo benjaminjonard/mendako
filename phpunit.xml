@@ -29,6 +29,9 @@
         <include>
             <directory suffix=".php">src</directory>
         </include>
+        <exclude>
+            <directory suffix="Extension.php">src/Twig</directory>
+        </exclude>
     </coverage>
 
     <extensions>
