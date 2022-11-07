@@ -14,7 +14,7 @@
         "doctrine/orm": "2.13.3",
         "gedmo/doctrine-extensions": "3.9.0",
         "php-ffmpeg/php-ffmpeg": "1.0.1",
-        "sensio/framework-extra-bundle": "6.2.8",
+        "sensio/framework-extra-bundle": "6.2.9",
         "stof/doctrine-extensions-bundle": "1.7.0",
         "symfony/asset": "6.1.5",
         "symfony/browser-kit": "6.1.3",
