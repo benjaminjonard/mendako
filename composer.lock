@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6c908a37d3bc0da64d41a34c01204e00",
+    "content-hash": "30ffa95a8c44f5fd2e413cf9839f4f00",
     "packages": [
         {
             "name": "behat/transliterator",
@@ -9793,16 +9793,16 @@
         },
         {
             "name": "zenstruck/foundry",
-            "version": "v1.22.1",
+            "version": "v1.23.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zenstruck/foundry.git",
-                "reference": "8d41ca8f6e2e1e7f790028c258071f300773ac71"
+                "reference": "a3f3cdb397c70237ca743192aaeb4a4407f7e1d3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zenstruck/foundry/zipball/8d41ca8f6e2e1e7f790028c258071f300773ac71",
-                "reference": "8d41ca8f6e2e1e7f790028c258071f300773ac71",
+                "url": "https://api.github.com/repos/zenstruck/foundry/zipball/a3f3cdb397c70237ca743192aaeb4a4407f7e1d3",
+                "reference": "a3f3cdb397c70237ca743192aaeb4a4407f7e1d3",
                 "shasum": ""
             },
             "require": {
@@ -9828,11 +9828,10 @@
             },
             "type": "library",
             "extra": {
-                "branch-alias": {
-                    "dev-master": "1.x-dev"
-                },
                 "bamarni-bin": {
-                    "target-directory": "bin/tools"
+                    "target-directory": "bin/tools",
+                    "bin-links": true,
+                    "forward-command": false
                 }
             },
             "autoload": {
@@ -9865,7 +9864,7 @@
             ],
             "support": {
                 "issues": "https://github.com/zenstruck/foundry/issues",
-                "source": "https://github.com/zenstruck/foundry/tree/v1.22.1"
+                "source": "https://github.com/zenstruck/foundry/tree/v1.23.0"
             },
             "funding": [
                 {
@@ -9873,7 +9872,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2022-09-28T16:59:36+00:00"
+            "time": "2022-11-10T18:43:03+00:00"
         }
     ],
     "aliases": [],
