@@ -17,4 +17,10 @@
     </div>
 
     <div class="column"></div>
+
+    {{ include('App/_partials/_modal/_delete.html.twig', {
+        'header': 'message.delete_tag'|trans,
+        'message': 'message.warning_delete_tag'|trans,
+        'action': path('app_tag_delete', {id: tag.id})
+    }) }}
 {% endblock %}
