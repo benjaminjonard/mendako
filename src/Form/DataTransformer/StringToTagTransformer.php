@@ -30,6 +30,10 @@ class StringToTagTransformer implements DataTransformerInterface
 
     public function reverseTransform($string): array
     {
+        if (empty($string)) {
+            return [];
+        }
+
         $parts = explode(' ', $string);
         $tags = [];
         foreach ($parts as $part) {

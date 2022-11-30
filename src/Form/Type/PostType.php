@@ -32,7 +32,7 @@ class PostType extends AbstractType
                 'label' => false,
             ])
             ->add('tags', TextareaType::class, [
-                'required' => true
+                'required' => false
             ])
             ->add('setAsBoardThumbnail', CheckboxType::class, [
                 'required' => false,
