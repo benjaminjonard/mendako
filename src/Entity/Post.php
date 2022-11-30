@@ -193,7 +193,7 @@ class Post
         return $this;
     }
 
-    public function addTag(Tag $tag): Post
+    public function addTag(?Tag $tag): Post
     {
         if (!$this->tags->contains($tag)) {
             $this->tags[] = $tag;

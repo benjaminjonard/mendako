@@ -511,5 +511,23 @@
         <target>User not activated</target>
       </segment>
     </unit>
+    <unit id="PxEpuFm" name="message.tag_deleted">
+      <segment>
+        <source>message.tag_deleted</source>
+        <target>Tag {tag} deleted</target>
+      </segment>
+    </unit>
+    <unit id="00UO23T" name="message.delete_tag">
+      <segment>
+        <source>message.delete_tag</source>
+        <target>Delete tag</target>
+      </segment>
+    </unit>
+    <unit id="k1uPkXw" name="message.warning_delete_tag">
+      <segment>
+        <source>message.warning_delete_tag</source>
+        <target>This action is irreversible, are you sure ?</target>
+      </segment>
+    </unit>
   </file>
 </xliff>

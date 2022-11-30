@@ -65,4 +65,23 @@ class TagController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
+
+    #[Route(path: '/tags/{id}/delete', name: 'app_tag_delete', methods: ['POST'])]
+    public function delete(
+        Request $request,
+        TranslatorInterface $translator,
+        ManagerRegistry $managerRegistry,
+        Tag $tag,
+    ): Response {
+        $form = $this->createDeleteForm('app_tag_delete', $tag);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $managerRegistry->getManager()->remove($tag);
+            $managerRegistry->getManager()->flush();
+            $this->addFlash('notice', $translator->trans('message.tag_deleted', ['tag' => '&nbsp;<strong>'.$tag->getName().'</strong>&nbsp;']));
+        }
+
+        return $this->redirectToRoute('app_tag_index');
+    }
 }
