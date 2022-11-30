@@ -67,6 +67,22 @@ class TagTest extends WebTestCase
         ]);
     }
 
+    public function test_can_delete_tag(): void
+    {
+        // Arrange
+        $user = UserFactory::createOne()->object();
+        $this->client->loginUser($user);
+        $tag = TagFactory::createOne();
+
+        // Act
+        $this->client->request('GET', '/tags/'.$tag->getId().'/edit');
+        $this->client->submitForm('Agree');
+
+        // Assert
+        $this->assertRouteSame('app_tag_index');
+        TagFactory::assert()->count(0);
+    }
+
     public function test_can_get_tag_autocomplete(): void
     {
         // Arrange
