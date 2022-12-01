@@ -44,8 +44,7 @@
     </nav>
 
     <section class="section">
-        {% set route = app.request.attributes.get('_route') %}
-        <div class="columns {% if route in ['app_post_show', 'app_board_show'] %}reverse-columns{% endif %}">
+        <div class="columns {% if app.current_route in ['app_post_show', 'app_board_show'] %}reverse-columns{% endif %}">
             {% block content %}{% endblock %}
         </div>
     </section>

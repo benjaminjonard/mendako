@@ -9,7 +9,7 @@ use App\Entity\Post;
 use App\Form\Type\PostType;
 use App\Repository\TagRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -48,14 +48,17 @@ class PostController extends AbstractController
         return $this->render($board ? 'App/Post/add.html.twig' : 'App/Post/upload.html.twig', [
             'board' => $board,
             'post' => $post,
-            'form' => $form->createView(),
+            'form' => $form,
             'suggestedTags' => $tagRepository->findBy(['suggested' => true])
         ]);
     }
 
     #[Route(path: '/boards/{slug}/{id}', name: 'app_post_show', methods: ['GET'])]
-    #[ParamConverter('board', options: ['mapping' => ['slug' => 'slug']])]
-    public function show(Board $board, Post $post, TagRepository $tagRepository): Response {
+    public function show(
+        #[MapEntity(mapping: ['slug' => 'slug'])] Board $board,
+        Post $post,
+        TagRepository $tagRepository
+    ): Response {
         return $this->render('App/Post/show.html.twig', [
             'board' => $board,
             'post' => $post,
@@ -64,13 +67,12 @@ class PostController extends AbstractController
     }
 
     #[Route(path: '/boards/{slug}/{id}/edit', name: 'app_post_edit', methods: ['GET', 'POST'])]
-    #[ParamConverter('board', options: ['mapping' => ['slug' => 'slug']])]
     public function edit(
         Request $request,
         TranslatorInterface $translator,
         TagRepository $tagRepository,
         ManagerRegistry $managerRegistry,
-        Board $board,
+        #[MapEntity(mapping: ['slug' => 'slug'])] Board $board,
         Post $post
     ): Response {
         $form = $this->createForm(PostType::class, $post);
@@ -90,18 +92,17 @@ class PostController extends AbstractController
         return $this->render('App/Post/edit.html.twig', [
             'board' => $board,
             'post' => $post,
-            'form' => $form->createView(),
+            'form' => $form,
             'suggestedTags' => $tagRepository->findBy(['suggested' => true])
         ]);
     }
 
     #[Route(path: '/boards/{slug}/{id}/delete', name: 'app_post_delete', methods: ['POST'])]
-    #[ParamConverter('board', options: ['mapping' => ['slug' => 'slug']])]
     public function delete(
         Request $request,
         TranslatorInterface $translator,
         ManagerRegistry $managerRegistry,
-        Board $board,
+        #[MapEntity(mapping: ['slug' => 'slug'])] Board $board,
         Post $post
     ): Response {
         $form = $this->createDeleteForm('app_post_delete', $post);
