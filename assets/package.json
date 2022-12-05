@@ -23,7 +23,7 @@
     },
     "dependencies": {
         "bulma": "0.9.4",
-        "bulma-toast": "2.4.1",
+        "bulma-toast": "2.4.2",
         "stimulus": "3.2.0"
     }
 }
