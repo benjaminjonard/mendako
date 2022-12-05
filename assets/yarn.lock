@@ -1814,10 +1814,10 @@ buffer-from@^1.0.0:
   resolved "https://registry.yarnpkg.com/buffer-from/-/buffer-from-1.1.2.tgz#2b146a6fd72e80b4f55d255f35ed59a3a9a41bd5"
   integrity sha512-E+XQCRwSbaaiChtv6k6Dwgc+bx+Bs6vuKJHHl5kox/BaKbhiXzqQOwK4cO22yElGp2OCmjwVhT3HmxgyPGnJfQ==
 
-bulma-toast@2.4.1:
-  version "2.4.1"
-  resolved "https://registry.yarnpkg.com/bulma-toast/-/bulma-toast-2.4.1.tgz#1e0ea72a810af2cc11a5c39cf4051567f5c29434"
-  integrity sha512-Gwa40dH0gyO3/azJxzFSZD2PKcFlp55HWyPE3gV8gm1WGXyyKrNDCzFlsY8XqxstNRp+xtcdo2L0Y4df+iWNWg==
+bulma-toast@2.4.2:
+  version "2.4.2"
+  resolved "https://registry.yarnpkg.com/bulma-toast/-/bulma-toast-2.4.2.tgz#331775bfbdc07ce4a72cd8cd4a5bcb89088dffbf"
+  integrity sha512-c3ehyeXhhvxevKICP1VKsFtZlQH+H6/S+yYY4TFyLRfkbw3mh71eGazlNc/YEIvXQSbxHpD2f+WDc02xECuV9g==
 
 bulma@0.9.4:
   version "0.9.4"
