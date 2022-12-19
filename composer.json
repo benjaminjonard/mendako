@@ -13,7 +13,7 @@
         "doctrine/doctrine-migrations-bundle": "3.2.2",
         "doctrine/orm": "2.13.4",
         "gedmo/doctrine-extensions": "3.10.0",
-        "php-ffmpeg/php-ffmpeg": "1.0.1",
+        "php-ffmpeg/php-ffmpeg": "1.1.0",
         "stof/doctrine-extensions-bundle": "1.7.1",
         "symfony/asset": "6.2.0",
         "symfony/browser-kit": "6.2.0",
