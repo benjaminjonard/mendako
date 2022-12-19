@@ -45,7 +45,7 @@
         "twig/twig": "^2.12|^3.0"
     },
     "require-dev": {
-        "brianium/paratest": "6.6.5",
+        "brianium/paratest": "6.7.0",
         "dama/doctrine-test-bundle": "7.1.1",
         "phpunit/php-code-coverage": "9.2.19",
         "phpunit/phpunit": "9.5.26",
