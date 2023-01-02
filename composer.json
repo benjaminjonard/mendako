@@ -53,7 +53,7 @@
         "symfony/maker-bundle": "1.48.0",
         "symfony/stopwatch": "6.2.0",
         "symfony/web-profiler-bundle": "6.2.4",
-        "zenstruck/foundry": "1.24.1"
+        "zenstruck/foundry": "1.26.0"
     },
     "config": {
         "allow-plugins": {
