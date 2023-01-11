@@ -39,3 +39,19 @@ Copy the docker-compose.yml.dist in a docker-compose.yml file and adjust the env
     <img width="400px" src="https://user-images.githubusercontent.com/20560781/196007150-e3cd4665-e6d9-4afb-8d11-41c155493f0c.png">
     <img width="400px" src="https://user-images.githubusercontent.com/20560781/196007132-3df3fdde-1d28-4906-88aa-74326d9f369f.png">
 </p>
+
+
+## Support Mendako
+
+There are a few things you can do to support Mendako :
+
+* If you like Mendako please consider leaving a ⭐, it gives additional motivation to continue working on the project
+* Report any bug or error you see
+* English is not my first language, it would be a huge help if you could report any mistakes in Mendako.
+
+You can contribute and edit translations here: https://crowdin.com/project/mendako.
+If you wish to contribute to a new language, please open a discussion on github or crowdin and I'll gladly add it.
+You are also welcome if you want to proofread existing translations.
+
+## Licensing
+Mendako is an Open Source software, released under the MIT License. 
