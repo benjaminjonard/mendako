@@ -1,93 +1,533 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:2.0" version="2.0" srcLang="en" trgLang="fr">
   <file id="messages.en">
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    <unit id="jsUGqKL" name="global.byte_abbreviation">
+      <segment state="translated">
+        <source>global.byte_abbreviation</source>
+        <target>O</target>
+      </segment>
+    </unit>
+    <unit id="F7PFP2q" name="title.welcome">
+      <segment state="translated">
+        <source>title.welcome</source>
+        <target>Bienvenue sur Mendako</target>
+      </segment>
+    </unit>
+    <unit id="NZyoXlL" name="title.first_connection.user">
+      <segment state="translated">
+        <source>title.first_connection.user</source>
+        <target>Première connexion</target>
+      </segment>
+    </unit>
+    <unit id="pswVxwC" name="label.username">
+      <segment state="translated">
+        <source>label.username</source>
+        <target>Pseudo</target>
+      </segment>
+    </unit>
+    <unit id="PcL0yFM" name="label.email">
+      <segment state="translated">
+        <source>label.email</source>
+        <target>Email</target>
+      </segment>
+    </unit>
+    <unit id="IUdC3Ts" name="label.password">
+      <segment state="translated">
+        <source>label.password</source>
+        <target>Mot de passe</target>
+      </segment>
+    </unit>
+    <unit id="DB4pMNT" name="label.repeat_password">
+      <segment state="translated">
+        <source>label.repeat_password</source>
+        <target>Confirmation mot de passe</target>
+      </segment>
+    </unit>
+    <unit id="gH03B8x" name="label.timezone">
+      <segment state="translated">
+        <source>label.timezone</source>
+        <target>Fuseau horaire</target>
+      </segment>
+    </unit>
+    <unit id="5CwltOC" name="btn.submit">
+      <segment state="translated">
+        <source>btn.submit</source>
+        <target>Valider</target>
+      </segment>
+    </unit>
+    <unit id="ccbzRo3" name="title.sign_in">
+      <segment state="translated">
+        <source>title.sign_in</source>
+        <target>Connexion</target>
+      </segment>
+    </unit>
+    <unit id="cPBY2Ea" name="label.login">
+      <segment state="translated">
+        <source>label.login</source>
+        <target>Nom d'utilisateur ou email</target>
+      </segment>
+    </unit>
+    <unit id="WjdjjsW" name="btn.sign_in">
+      <segment state="translated">
+        <source>btn.sign_in</source>
+        <target>Connexion</target>
+      </segment>
+    </unit>
+    <unit id="kDW7Moz" name="menu.tags">
+      <segment state="translated">
+        <source>menu.tags</source>
+        <target>Tags</target>
+      </segment>
+    </unit>
+    <unit id="5CgT51i" name="menu.boards">
+      <segment state="translated">
+        <source>menu.boards</source>
+        <target>Boards</target>
+      </segment>
+    </unit>
+    <unit id="k3fde4i" name="btn.add_board">
+      <segment state="translated">
+        <source>btn.add_board</source>
+        <target>Ajouter un board</target>
+      </segment>
+    </unit>
+    <unit id="cHm0S00" name="title.add_board">
+      <segment state="translated">
+        <source>title.add_board</source>
+        <target>Ajouter un board</target>
+      </segment>
+    </unit>
+    <unit id="5sUTuAz" name="label.name">
+      <segment state="translated">
+        <source>label.name</source>
+        <target>Nom</target>
+      </segment>
+    </unit>
+    <unit id="uMdsXWM" name="btn.cancel">
+      <segment state="translated">
+        <source>btn.cancel</source>
+        <target>Annuler</target>
+      </segment>
+    </unit>
+    <unit id="uuQ1eUh" name="btn.edit">
+      <segment state="translated">
+        <source>btn.edit</source>
+        <target>Éditer</target>
+      </segment>
+    </unit>
+    <unit id="hsfUMa3" name="btn.add_post">
+      <segment state="translated">
+        <source>btn.add_post</source>
+        <target>Ajouter un post</target>
+      </segment>
+    </unit>
+    <unit id="T4Ac2ly" name="title.add_post">
+      <segment state="translated">
+        <source>title.add_post</source>
+        <target>Ajouter un post</target>
+      </segment>
+    </unit>
+    <unit id="Xwv9noo" name="label.file">
+      <segment state="translated">
+        <source>label.file</source>
+        <target>Fichier</target>
+      </segment>
+    </unit>
+    <unit id="jG1w1gs" name="label.tags">
+      <segment state="translated">
+        <source>label.tags</source>
+        <target>Tags</target>
+      </segment>
+    </unit>
+    <unit id="KCu1VIr" name="label.set_as_board_thumbnail">
+      <segment state="translated">
+        <source>label.set_as_board_thumbnail</source>
+        <target>Définir comme miniature du board</target>
+      </segment>
+    </unit>
+    <unit id="0Dk8ay9" name="menu.add_post">
+      <segment state="translated">
+        <source>menu.add_post</source>
+        <target>Ajouter un post</target>
+      </segment>
+    </unit>
+    <unit id="gl3tQ00" name="menu.add_board">
+      <segment state="translated">
+        <source>menu.add_board</source>
+        <target>Ajouter un board</target>
+      </segment>
+    </unit>
+    <unit id="SThGArP" name="title.edit_board">
+      <segment state="translated">
+        <source>title.edit_board</source>
+        <target>Éditer le board</target>
+      </segment>
+    </unit>
+    <unit id="ebr4n9D" name="menu.edit">
+      <segment state="translated">
+        <source>menu.edit</source>
+        <target>Éditer</target>
+      </segment>
+    </unit>
+    <unit id="3P3Jiec" name="app.enum.tag.category.general">
+      <segment state="translated">
+        <source>app.enum.tag.category.general</source>
+        <target>Général</target>
+      </segment>
+    </unit>
+    <unit id="avV1E1K" name="app.enum.tag.category.character">
+      <segment state="translated">
+        <source>app.enum.tag.category.character</source>
+        <target>Personnage</target>
+      </segment>
+    </unit>
+    <unit id="pb3mEAb" name="app.enum.tag.category.copyright">
+      <segment state="translated">
+        <source>app.enum.tag.category.copyright</source>
+        <target>Copyright</target>
+      </segment>
+    </unit>
+    <unit id="DBBQ5C2" name="app.enum.tag.category.artist">
+      <segment state="translated">
+        <source>app.enum.tag.category.artist</source>
+        <target>Artiste</target>
+      </segment>
+    </unit>
+    <unit id="F7WeYKN" name="app.enum.tag.category.meta">
+      <segment state="translated">
+        <source>app.enum.tag.category.meta</source>
+        <target>Meta</target>
+      </segment>
+    </unit>
+    <unit id="duAGPgR" name="title.informations">
+      <segment state="translated">
+        <source>title.informations</source>
+        <target>Informations</target>
+      </segment>
+    </unit>
+    <unit id="nzJtITL" name="label.uploaded_at">
+      <segment state="translated">
+        <source>label.uploaded_at</source>
+        <target>Ajouté</target>
+      </segment>
+    </unit>
+    <unit id="xhpnrWB" name="label.size">
+      <segment state="translated">
+        <source>label.size</source>
+        <target>Poids</target>
+      </segment>
+    </unit>
+    <unit id="bv1h4Br" name="label.dimensions">
+      <segment state="translated">
+        <source>label.dimensions</source>
+        <target>Dimensions</target>
+      </segment>
+    </unit>
+    <unit id="3meulB5" name="label.mimetype">
+      <segment state="translated">
+        <source>label.mimetype</source>
+        <target>Mimetype</target>
+      </segment>
+    </unit>
+    <unit id="9mbqscI" name="label.uploaded_by">
+      <segment state="translated">
+        <source>label.uploaded_by</source>
+        <target>Ajouté par</target>
+      </segment>
+    </unit>
+    <unit id="jmyZpbm" name="title.edit_post">
+      <segment state="translated">
+        <source>title.edit_post</source>
+        <target>Éditer le post</target>
+      </segment>
+    </unit>
+    <unit id="IeD4bW4" name="label.duration">
+      <segment state="translated">
+        <source>label.duration</source>
+        <target>Durée</target>
+      </segment>
+    </unit>
+    <unit id="CVkjT1w" name="label.category">
+      <segment state="translated">
+        <source>label.category</source>
+        <target>Catégorie</target>
+      </segment>
+    </unit>
+    <unit id="dNIZRmO" name="title.edit_tag">
+      <segment state="translated">
+        <source>title.edit_tag</source>
+        <target>Éditer le tag</target>
+      </segment>
+    </unit>
+    <unit id="jEeQjDx" name="message.offline">
+      <segment state="translated">
+        <source>message.offline</source>
+        <target>Vous êtes hors ligne, merci de vérifier votre connexion.</target>
+      </segment>
+    </unit>
+    <unit id="bKzhzsy" name="global.time.ago">
+      <segment state="translated">
+        <source>global.time.ago</source>
+        <target>Il y a {time}</target>
+      </segment>
+    </unit>
+    <unit id="kBJEdcf" name="global.time.just_now">
+      <segment state="translated">
+        <source>global.time.just_now</source>
+        <target>À l'instant</target>
+      </segment>
+    </unit>
+    <unit id="S3BSG8X" name="global.time.year">
+      <segment state="translated">
+        <source>global.time.year</source>
+        <target>{count, plural, one {# année} other {# années}}</target>
+      </segment>
+    </unit>
+    <unit id="I6EoiYa" name="global.time.month">
+      <segment state="translated">
+        <source>global.time.month</source>
+        <target>{count, plural, one {# mois} other {# mois}}</target>
+      </segment>
+    </unit>
+    <unit id="BXLOUij" name="global.time.week">
+      <segment state="translated">
+        <source>global.time.week</source>
+        <target>{count, plural, one {# semaine} other {# semaines}}</target>
+      </segment>
+    </unit>
+    <unit id="r1RqqRg" name="global.time.day">
+      <segment state="translated">
+        <source>global.time.day</source>
+        <target>{count, plural, one {# jour} other {# jours}}</target>
+      </segment>
+    </unit>
+    <unit id="QeraM7P" name="global.time.hour">
+      <segment state="translated">
+        <source>global.time.hour</source>
+        <target>{count, plural, one {# heure} other {# heures}}</target>
+      </segment>
+    </unit>
+    <unit id="UN2onP4" name="global.time.minute">
+      <segment state="translated">
+        <source>global.time.minute</source>
+        <target>{count, plural, one {# minute} other {# minutes}}</target>
+      </segment>
+    </unit>
+    <unit id="JQSurmk" name="global.time.second">
+      <segment state="translated">
+        <source>global.time.second</source>
+        <target>{count, plural, one {# seconde} other {# secondes}}</target>
+      </segment>
+    </unit>
+    <unit id="DeWr6L7" name="menu.upload">
+      <segment state="translated">
+        <source>menu.upload</source>
+        <target>Ajouter</target>
+      </segment>
+    </unit>
+    <unit id="kRZ49xu" name="btn.delete">
+      <segment state="translated">
+        <source>btn.delete</source>
+        <target>Supprimer</target>
+      </segment>
+    </unit>
+    <unit id="LnS3Ycb" name="btn.agree">
+      <segment state="translated">
+        <source>btn.agree</source>
+        <target>Accepter</target>
+      </segment>
+    </unit>
+    <unit id="UGDnz12" name="message.delete_post">
+      <segment state="translated">
+        <source>message.delete_post</source>
+        <target>Supprimer le post</target>
+      </segment>
+    </unit>
+    <unit id="s4Ym2Rj" name="message.warning_delete_post">
+      <segment state="translated">
+        <source>message.warning_delete_post</source>
+        <target>Cette action est irréversible, êtes-vous sur ?</target>
+      </segment>
+    </unit>
+    <unit id="UhArzPN" name="title.actions">
+      <segment state="translated">
+        <source>title.actions</source>
+        <target>Actions</target>
+      </segment>
+    </unit>
+    <unit id="rUEPvWW" name="message.delete_board">
+      <segment state="translated">
+        <source>message.delete_board</source>
+        <target>Supprimer le board</target>
+      </segment>
+    </unit>
+    <unit id="YupPOqE" name="message.warning_delete_board">
+      <segment state="translated">
+        <source>message.warning_delete_board</source>
+        <target>Cette action est irréversible, êtes-vous sur ? Tous les posts de ce board seront perdus.</target>
+      </segment>
+    </unit>
+    <unit id="qkghpHS" name="menu.profile">
+      <segment state="translated">
+        <source>menu.profile</source>
+        <target>Profil</target>
+      </segment>
+    </unit>
+    <unit id="XJEq8ZP" name="title.edit_profile">
+      <segment state="translated">
+        <source>title.edit_profile</source>
+        <target>Éditer le profil</target>
+      </segment>
+    </unit>
+    <unit id="AdYO6y5" name="title.info">
+      <segment state="translated">
+        <source>title.info</source>
+        <target>Infos</target>
+      </segment>
+    </unit>
+    <unit id="CsFP1yZ" name="title.password">
+      <segment state="translated">
+        <source>title.password</source>
+        <target>Mot de passe</target>
+      </segment>
+    </unit>
+    <unit id="cdAEVCP" name="label.new_password">
+      <segment state="translated">
+        <source>label.new_password</source>
+        <target>Nouveau mot de passe</target>
+      </segment>
+    </unit>
+    <unit id="WhQRujz" name="message.board_added">
+      <segment state="translated">
+        <source>message.board_added</source>
+        <target>Le board {board} a été ajouté</target>
+      </segment>
+    </unit>
+    <unit id="0XYMTSn" name="message.board_edited">
+      <segment state="translated">
+        <source>message.board_edited</source>
+        <target>Le board {board} a été édité</target>
+      </segment>
+    </unit>
+    <unit id="rrWW5B2" name="message.board_deleted">
+      <segment state="translated">
+        <source>message.board_deleted</source>
+        <target>Le board {board} a été supprimé</target>
+      </segment>
+    </unit>
+    <unit id="yoTXthl" name="message.post_added">
+      <segment state="translated">
+        <source>message.post_added</source>
+        <target>Le post a été ajouté</target>
+      </segment>
+    </unit>
+    <unit id="aM5UzdZ" name="message.post_edited">
+      <segment state="translated">
+        <source>message.post_edited</source>
+        <target>Le post a été édité</target>
+      </segment>
+    </unit>
+    <unit id="b411mvt" name="message.post_deleted">
+      <segment state="translated">
+        <source>message.post_deleted</source>
+        <target>Le post a été supprimé</target>
+      </segment>
+    </unit>
+    <unit id="TYeiHH6" name="message.profile_updated">
+      <segment state="translated">
+        <source>message.profile_updated</source>
+        <target>Le profil a été édité</target>
+      </segment>
+    </unit>
+    <unit id="xncFQxj" name="message.tag_edited">
+      <segment state="translated">
+        <source>message.tag_edited</source>
+        <target>Le tag {tag} a été édité</target>
+      </segment>
+    </unit>
+    <unit id="7cCZaHF" name="label.dark_mode_enabled">
+      <segment state="translated">
+        <source>label.dark_mode_enabled</source>
+        <target>Mode sombre</target>
+      </segment>
+    </unit>
+    <unit id="97NQmwC" name="btn.download">
+      <segment state="translated">
+        <source>btn.download</source>
+        <target>Télécharger</target>
+      </segment>
+    </unit>
+    <unit id="Lb7V3vA" name="label.suggested">
+      <segment state="translated">
+        <source>label.suggested</source>
+        <target>Suggérer</target>
+      </segment>
+    </unit>
+    <unit id="wipGyLj" name="global.yes">
+      <segment state="translated">
+        <source>global.yes</source>
+        <target>Oui</target>
+      </segment>
+    </unit>
+    <unit id="7giXLGI" name="global.no">
+      <segment state="translated">
+        <source>global.no</source>
+        <target>Non</target>
+      </segment>
+    </unit>
+    <unit id="jjr18nl" name="label.seen">
+      <segment state="translated">
+        <source>label.seen</source>
+        <target>Vues</target>
+      </segment>
+    </unit>
+    <unit id="BCuruGT" name="btn.view_original">
+      <segment state="translated">
+        <source>btn.view_original</source>
+        <target>Voir l'original</target>
+      </segment>
+    </unit>
+    <unit id="cPEsbv9" name="label.board">
+      <segment state="translated">
+        <source>label.board</source>
+        <target>Board</target>
+      </segment>
+    </unit>
+    <unit id="subwYGS" name="btn.show_full_size">
+      <segment state="translated">
+        <source>btn.show_full_size</source>
+        <target>Afficher en taille réelle</target>
+      </segment>
+    </unit>
+    <unit id="kuxPqRP" name="btn.show_small_size">
+      <segment state="translated">
+        <source>btn.show_small_size</source>
+        <target>Afficher en taille réduite</target>
+      </segment>
+    </unit>
+    <unit id="xj4swqZ" name="error.user_not_enabled">
+      <segment state="translated">
+        <source>error.user_not_enabled</source>
+        <target>Utilisateur non activé</target>
+      </segment>
+    </unit>
+    <unit id="PxEpuFm" name="message.tag_deleted">
+      <segment state="translated">
+        <source>message.tag_deleted</source>
+        <target>Le tag {tag} a été supprimé</target>
+      </segment>
+    </unit>
+    <unit id="00UO23T" name="message.delete_tag">
+      <segment state="translated">
+        <source>message.delete_tag</source>
+        <target>Supprimer le tag</target>
+      </segment>
+    </unit>
+    <unit id="k1uPkXw" name="message.warning_delete_tag">
+      <segment state="translated">
+        <source>message.warning_delete_tag</source>
+        <target>Cette action est irréversible, êtes-vous sur ?</target>
+      </segment>
+    </unit>
   </file>
 </xliff>
