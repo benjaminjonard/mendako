@@ -13,7 +13,7 @@
         <target>Username already used</target>
       </segment>
     </unit>
-    <unit id="qoRxC7z" name="error.name.not_unique">
+    <unit id="QICeEeg" name="error.name.not_unique">
       <segment state="translated">
         <source>error.name.not_unique</source>
         <target>Name already used</target>
