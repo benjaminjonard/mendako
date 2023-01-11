@@ -463,13 +463,13 @@
         <target>Suggested</target>
       </segment>
     </unit>
-    <unit id="Lb7V3vA" name="global.yes">
+    <unit id="wipGyLj" name="global.yes">
       <segment>
         <source>global.yes</source>
         <target>Yes</target>
       </segment>
     </unit>
-    <unit id="Lb7V3vA" name="global.no">
+    <unit id="7giXLGI" name="global.no">
       <segment>
         <source>global.no</source>
         <target>No</target>
