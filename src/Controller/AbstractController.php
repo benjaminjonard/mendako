@@ -20,9 +20,11 @@ abstract class AbstractController extends SymfonyAbstractController
         if ($entity !== null) {
             $params['id'] = $entity->getId();
         }
+
         if ($entity instanceof Post) {
             $params['slug'] = $entity->getBoard()->getSlug();
         }
+
         if ($entity instanceof Board) {
             $params['slug'] = $entity->getSlug();
         }

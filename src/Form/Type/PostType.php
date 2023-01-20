@@ -24,7 +24,7 @@ class PostType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $isEdition = !($builder->getData()->getCreatedAt() === null);
+        $isEdition = $builder->getData()->getCreatedAt() !== null;
 
         $builder
             ->add('file', FileType::class, [

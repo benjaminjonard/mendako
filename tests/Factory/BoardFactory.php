@@ -29,11 +29,6 @@ use Zenstruck\Foundry\RepositoryProxy;
  */
 final class BoardFactory extends ModelFactory
 {
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     protected function getDefaults(): array
     {
         return [

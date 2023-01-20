@@ -28,10 +28,10 @@ class AppRuntime implements RuntimeExtensionInterface
 
         $seconds = floor($seconds % 60);
         if ($seconds < 10) {
-            $seconds = "0$seconds";
+            $seconds = "0{$seconds}";
         }
 
-        return "$minutes:$seconds";
+        return "{$minutes}:{$seconds}";
     }
 
     public function ago(\DateTimeImmutable $ago): string

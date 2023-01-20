@@ -19,6 +19,6 @@ class ThumbnailRuntime implements RuntimeExtensionInterface
             return $round ? 'build/images/default-round.png' : 'build/images/default.png';
         }
 
-        return "upload.php?width=$width&path=$path";
+        return "upload.php?width={$width}&path={$path}";
     }
 }

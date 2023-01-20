@@ -81,6 +81,7 @@ class PostController extends AbstractController
             if ($form->get('setAsBoardThumbnail')->getData() === true) {
                 $board->setThumbnail($post);
             }
+
             $managerRegistry->getManager()->persist($post);
             $managerRegistry->getManager()->flush();
 

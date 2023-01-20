@@ -31,7 +31,7 @@ class Board
     private ?string $slug = null;
 
     #[ORM\ManyToOne(targetEntity: Post::class, cascade: ['all'])]
-    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
     private ?Post $thumbnail = null;
 
     #[ORM\OneToMany(targetEntity: Post::class, mappedBy: 'board', cascade: ['all'], fetch: 'EXTRA_LAZY')]
@@ -43,10 +43,11 @@ class Board
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
     #[Gedmo\Timestampable(on: 'change', field: ['name'])]
-    private ?\DateTimeImmutable $updatedAt;
+    private ?\DateTimeImmutable $updatedAt = null;
 
     public function __construct()
     {
+        $this->posts = new \Doctrine\Common\Collections\ArrayCollection();
         $this->id = Uuid::v4()->toRfc4122();
     }
 

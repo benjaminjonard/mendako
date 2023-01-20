@@ -19,7 +19,7 @@ class UserType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $isEdition = !($builder->getData()->getCreatedAt() === null);
+        $isEdition = $builder->getData()->getCreatedAt() !== null;
 
         $builder
             ->add('username', TextType::class, [

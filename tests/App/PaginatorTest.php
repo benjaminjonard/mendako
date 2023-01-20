@@ -26,15 +26,15 @@ class PaginatorTest extends WebTestCase
             ["num" => '...', "url" => null, "isCurrent" => false],
             ["num" => 10, "url" => "/animals/posts?page=10", "isCurrent" => false], // last page
         ], $paginator->getPages());
-        $this->assertEquals(5, $paginator->getMaxPagesToShow());
-        $this->assertEquals(5, $paginator->getCurrentPage());
-        $this->assertEquals(20, $paginator->getItemsPerPage());
-        $this->assertEquals(200, $paginator->getTotalItems());
-        $this->assertEquals(10, $paginator->getNumPages());
-        $this->assertEquals(6, $paginator->getNextPage());
-        $this->assertEquals(4, $paginator->getPrevPage());
-        $this->assertEquals('/animals/posts?page=6', $paginator->getNextUrl());
-        $this->assertEquals('/animals/posts?page=4', $paginator->getPrevUrl());
+        $this->assertSame(5, $paginator->getMaxPagesToShow());
+        $this->assertSame(5, $paginator->getCurrentPage());
+        $this->assertSame(20, $paginator->getItemsPerPage());
+        $this->assertSame(200, $paginator->getTotalItems());
+        $this->assertSame(10, $paginator->getNumPages());
+        $this->assertSame(6, $paginator->getNextPage());
+        $this->assertSame(4, $paginator->getPrevPage());
+        $this->assertSame('/animals/posts?page=6', $paginator->getNextUrl());
+        $this->assertSame('/animals/posts?page=4', $paginator->getPrevUrl());
     }
 
     public function test_paginator_first_page(): void
@@ -53,14 +53,14 @@ class PaginatorTest extends WebTestCase
             ["num" => '...', "url" => null, "isCurrent" => false],
             ["num" => 10, "url" => "/animals/posts?page=10", "isCurrent" => false],
         ], $paginator->getPages());
-        $this->assertEquals(5, $paginator->getMaxPagesToShow());
-        $this->assertEquals(1, $paginator->getCurrentPage());
-        $this->assertEquals(20, $paginator->getItemsPerPage());
-        $this->assertEquals(200, $paginator->getTotalItems());
-        $this->assertEquals(10, $paginator->getNumPages());
-        $this->assertEquals(2, $paginator->getNextPage());
+        $this->assertSame(5, $paginator->getMaxPagesToShow());
+        $this->assertSame(1, $paginator->getCurrentPage());
+        $this->assertSame(20, $paginator->getItemsPerPage());
+        $this->assertSame(200, $paginator->getTotalItems());
+        $this->assertSame(10, $paginator->getNumPages());
+        $this->assertSame(2, $paginator->getNextPage());
         $this->assertEquals(null, $paginator->getPrevPage());
-        $this->assertEquals('/animals/posts?page=2', $paginator->getNextUrl());
+        $this->assertSame('/animals/posts?page=2', $paginator->getNextUrl());
         $this->assertEquals(null, $paginator->getPrevUrl());
     }
 
@@ -80,27 +80,27 @@ class PaginatorTest extends WebTestCase
             ["num" => 9, "url" => "/animals/posts?page=9", "isCurrent" => false],
             ["num" => 10, "url" => "/animals/posts?page=10", "isCurrent" => true],
         ], $paginator->getPages());
-        $this->assertEquals(5, $paginator->getMaxPagesToShow());
-        $this->assertEquals(10, $paginator->getCurrentPage());
-        $this->assertEquals(20, $paginator->getItemsPerPage());
-        $this->assertEquals(200, $paginator->getTotalItems());
-        $this->assertEquals(10, $paginator->getNumPages());
+        $this->assertSame(5, $paginator->getMaxPagesToShow());
+        $this->assertSame(10, $paginator->getCurrentPage());
+        $this->assertSame(20, $paginator->getItemsPerPage());
+        $this->assertSame(200, $paginator->getTotalItems());
+        $this->assertSame(10, $paginator->getNumPages());
         $this->assertEquals(null, $paginator->getNextPage());
-        $this->assertEquals(9, $paginator->getPrevPage());
+        $this->assertSame(9, $paginator->getPrevPage());
         $this->assertEquals(null, $paginator->getNextUrl());
-        $this->assertEquals('/animals/posts?page=9', $paginator->getPrevUrl());
+        $this->assertSame('/animals/posts?page=9', $paginator->getPrevUrl());
     }
 
     public function test_paginator_only_one_page(): void
     {
         // Arrange
         $paginator = new Paginator(3, 20, 1, '/animals/posts');
-        $this->assertEquals([], $paginator->getPages());
-        $this->assertEquals(5, $paginator->getMaxPagesToShow());
-        $this->assertEquals(1, $paginator->getCurrentPage());
-        $this->assertEquals(20, $paginator->getItemsPerPage());
-        $this->assertEquals(3, $paginator->getTotalItems());
-        $this->assertEquals(1, $paginator->getNumPages());
+        $this->assertSame([], $paginator->getPages());
+        $this->assertSame(5, $paginator->getMaxPagesToShow());
+        $this->assertSame(1, $paginator->getCurrentPage());
+        $this->assertSame(20, $paginator->getItemsPerPage());
+        $this->assertSame(3, $paginator->getTotalItems());
+        $this->assertSame(1, $paginator->getNumPages());
         $this->assertEquals(null, $paginator->getNextPage());
         $this->assertEquals(null, $paginator->getPrevPage());
         $this->assertEquals(null, $paginator->getNextUrl());
@@ -115,14 +115,14 @@ class PaginatorTest extends WebTestCase
             ["num" => 1, "url" => "/animals/posts?page=1", "isCurrent" => true],
             ["num" => 2, "url" => "/animals/posts?page=2", "isCurrent" => false],
         ], $paginator->getPages());
-        $this->assertEquals(5, $paginator->getMaxPagesToShow());
-        $this->assertEquals(1, $paginator->getCurrentPage());
-        $this->assertEquals(20, $paginator->getItemsPerPage());
-        $this->assertEquals(25, $paginator->getTotalItems());
-        $this->assertEquals(2, $paginator->getNumPages());
-        $this->assertEquals(2, $paginator->getNextPage());
+        $this->assertSame(5, $paginator->getMaxPagesToShow());
+        $this->assertSame(1, $paginator->getCurrentPage());
+        $this->assertSame(20, $paginator->getItemsPerPage());
+        $this->assertSame(25, $paginator->getTotalItems());
+        $this->assertSame(2, $paginator->getNumPages());
+        $this->assertSame(2, $paginator->getNextPage());
         $this->assertEquals(null, $paginator->getPrevPage());
-        $this->assertEquals("/animals/posts?page=2", $paginator->getNextUrl());
+        $this->assertSame("/animals/posts?page=2", $paginator->getNextUrl());
         $this->assertEquals(null, $paginator->getPrevUrl());
     }
 
@@ -137,14 +137,14 @@ class PaginatorTest extends WebTestCase
             ["num" => 9, "url" => "/animals/posts?page=9", "isCurrent" => true],
             ["num" => 10, "url" => "/animals/posts?page=10", "isCurrent" => false],
         ], $paginator->getPages());
-        $this->assertEquals(5, $paginator->getMaxPagesToShow());
-        $this->assertEquals(9, $paginator->getCurrentPage());
-        $this->assertEquals(20, $paginator->getItemsPerPage());
-        $this->assertEquals(200, $paginator->getTotalItems());
-        $this->assertEquals(10, $paginator->getNumPages());
-        $this->assertEquals(10, $paginator->getNextPage());
-        $this->assertEquals(8, $paginator->getPrevPage());
-        $this->assertEquals("/animals/posts?page=10", $paginator->getNextUrl());
-        $this->assertEquals("/animals/posts?page=8", $paginator->getPrevUrl());
+        $this->assertSame(5, $paginator->getMaxPagesToShow());
+        $this->assertSame(9, $paginator->getCurrentPage());
+        $this->assertSame(20, $paginator->getItemsPerPage());
+        $this->assertSame(200, $paginator->getTotalItems());
+        $this->assertSame(10, $paginator->getNumPages());
+        $this->assertSame(10, $paginator->getNextPage());
+        $this->assertSame(8, $paginator->getPrevPage());
+        $this->assertSame("/animals/posts?page=10", $paginator->getNextUrl());
+        $this->assertSame("/animals/posts?page=8", $paginator->getPrevUrl());
     }
 }

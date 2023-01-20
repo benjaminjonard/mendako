@@ -52,7 +52,7 @@ class TagTest extends WebTestCase
 
         // Act
         $this->client->request('GET', '/tags/'.$tag->getId().'/edit');
-        $crawler = $this->client->submitForm('Submit', [
+        $this->client->submitForm('Submit', [
             'tag[name]' => 'animated',
             'tag[category]' => TagCategory::META->value
         ]);
@@ -93,7 +93,7 @@ class TagTest extends WebTestCase
         TagFactory::createOne(['name' => 'capybara']);
 
         // Act
-        $crawler = $this->client->request('GET', '/tags/autocomplete?query=capy');
+        $this->client->request('GET', '/tags/autocomplete?query=capy');
 
         // Assert
         $this->assertResponseIsSuccessful();

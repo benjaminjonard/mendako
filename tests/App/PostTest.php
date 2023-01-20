@@ -41,8 +41,8 @@ class PostTest extends WebTestCase
         $board = BoardFactory::createOne();
         $filesystem = new Filesystem();
         $uniqId = uniqid();
-        $filesystem->copy(__DIR__.'/../../assets/fixtures/nyancat.png', "/tmp/$uniqId.png");
-        $uploadedFile = new UploadedFile("/tmp/$uniqId.png", "$uniqId.png", test: true);
+        $filesystem->copy(__DIR__.'/../../assets/fixtures/nyancat.png', "/tmp/{$uniqId}.png");
+        $uploadedFile = new UploadedFile("/tmp/{$uniqId}.png", "{$uniqId}.png", test: true);
         $post = PostFactory::createOne(['board' => $board, 'file' => $uploadedFile, 'uploadedBy' => $user]);
 
         // Act
@@ -61,8 +61,8 @@ class PostTest extends WebTestCase
         $board = BoardFactory::createOne();
         $filesystem = new Filesystem();
         $uniqId = uniqid();
-        $filesystem->copy(__DIR__.'/../../assets/fixtures/nyancat.png', "/tmp/$uniqId.png");
-        $uploadedFile = new UploadedFile("/tmp/$uniqId.png", "$uniqId.png", test: true);
+        $filesystem->copy(__DIR__.'/../../assets/fixtures/nyancat.png', "/tmp/{$uniqId}.png");
+        $uploadedFile = new UploadedFile("/tmp/{$uniqId}.png", "{$uniqId}.png", test: true);
         $post = PostFactory::createOne(['board' => $board, 'file' => $uploadedFile, 'uploadedBy' => $user]);
 
         // Act
@@ -84,8 +84,8 @@ class PostTest extends WebTestCase
         $board = BoardFactory::createOne();
         $filesystem = new Filesystem();
         $uniqId = uniqid();
-        $filesystem->copy(__DIR__.'/../../assets/fixtures/nyancat.png', "/tmp/$uniqId.png");
-        $uploadedFile = new UploadedFile("/tmp/$uniqId.png", "$uniqId.png", test: true);
+        $filesystem->copy(__DIR__.'/../../assets/fixtures/nyancat.png', "/tmp/{$uniqId}.png");
+        $uploadedFile = new UploadedFile("/tmp/{$uniqId}.png", "{$uniqId}.png", test: true);
         $post = PostFactory::createOne(['board' => $board, 'file' => $uploadedFile, 'uploadedBy' => $user]);
 
         // Act
@@ -105,8 +105,8 @@ class PostTest extends WebTestCase
         $board = BoardFactory::createOne();
         $filesystem = new Filesystem();
         $uniqId = uniqid();
-        $filesystem->copy(__DIR__.'/../../assets/fixtures/nyancat.png', "/tmp/$uniqId.png");
-        $uploadedFile = new UploadedFile("/tmp/$uniqId.png", "$uniqId.png");
+        $filesystem->copy(__DIR__.'/../../assets/fixtures/nyancat.png', "/tmp/{$uniqId}.png");
+        $uploadedFile = new UploadedFile("/tmp/{$uniqId}.png", "{$uniqId}.png");
 
         // Act
         $this->client->request('GET', '/boards/'.$board->getSlug(). '/add');
@@ -129,8 +129,8 @@ class PostTest extends WebTestCase
         $board = BoardFactory::createOne();
         $filesystem = new Filesystem();
         $uniqId = uniqid();
-        $filesystem->copy(__DIR__.'/../../assets/fixtures/nyancat.jpg', "/tmp/$uniqId.jpg");
-        $uploadedFile = new UploadedFile("/tmp/$uniqId.jpg", "$uniqId.jpg");
+        $filesystem->copy(__DIR__.'/../../assets/fixtures/nyancat.jpg', "/tmp/{$uniqId}.jpg");
+        $uploadedFile = new UploadedFile("/tmp/{$uniqId}.jpg", "{$uniqId}.jpg");
 
         // Act
         $this->client->request('GET', '/boards/'.$board->getSlug(). '/add');
@@ -152,8 +152,8 @@ class PostTest extends WebTestCase
         $board = BoardFactory::createOne();
         $filesystem = new Filesystem();
         $uniqId = uniqid();
-        $filesystem->copy(__DIR__.'/../../assets/fixtures/nyancat.webp', "/tmp/$uniqId.webp");
-        $uploadedFile = new UploadedFile("/tmp/$uniqId.webp", "$uniqId.webp");
+        $filesystem->copy(__DIR__.'/../../assets/fixtures/nyancat.webp', "/tmp/{$uniqId}.webp");
+        $uploadedFile = new UploadedFile("/tmp/{$uniqId}.webp", "{$uniqId}.webp");
 
         // Act
         $this->client->request('GET', '/boards/'.$board->getSlug(). '/add');
@@ -175,8 +175,8 @@ class PostTest extends WebTestCase
         $board = BoardFactory::createOne();
         $filesystem = new Filesystem();
         $uniqId = uniqid();
-        $filesystem->copy(__DIR__.'/../../assets/fixtures/nyancat.gif', "/tmp/$uniqId.gif");
-        $uploadedFile = new UploadedFile("/tmp/$uniqId.gif", "$uniqId.gif");
+        $filesystem->copy(__DIR__.'/../../assets/fixtures/nyancat.gif', "/tmp/{$uniqId}.gif");
+        $uploadedFile = new UploadedFile("/tmp/{$uniqId}.gif", "{$uniqId}.gif");
 
         // Act
         $this->client->request('GET', '/boards/'.$board->getSlug(). '/add');
@@ -198,8 +198,8 @@ class PostTest extends WebTestCase
         $board = BoardFactory::createOne();
         $filesystem = new Filesystem();
         $uniqId = uniqid();
-        $filesystem->copy(__DIR__.'/../../assets/fixtures/nyancat.mp4', "/tmp/$uniqId.mp4");
-        $uploadedFile = new UploadedFile("/tmp/$uniqId.mp4", "$uniqId.mp4");
+        $filesystem->copy(__DIR__.'/../../assets/fixtures/nyancat.mp4', "/tmp/{$uniqId}.mp4");
+        $uploadedFile = new UploadedFile("/tmp/{$uniqId}.mp4", "{$uniqId}.mp4");
 
         // Act
         $this->client->request('GET', '/boards/'.$board->getSlug(). '/add');

@@ -14,7 +14,7 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class Uploader
 {
-    private PropertyAccessor $accessor;
+    private readonly PropertyAccessor $accessor;
 
     public function __construct(
         private readonly RandomStringGenerator $randomStringGenerator,

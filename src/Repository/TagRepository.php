@@ -31,9 +31,9 @@ class TagRepository extends ServiceEntityRepository
 
         $qb = $this->_em
             ->createQueryBuilder()
-            ->select("t.id, t.name, t.category, t.suggested, ($countQuery) AS counter")
+            ->select("t.id, t.name, t.category, t.suggested, ({$countQuery}) AS counter")
             ->from(Tag::class, 't')
-            ->orderBy('t.createdAt', 'DESC')
+            ->orderBy('t.createdAt', \Doctrine\Common\Collections\Criteria::DESC)
         ;
 
         return $qb->getQuery()->getArrayResult();
@@ -53,10 +53,10 @@ class TagRepository extends ServiceEntityRepository
         $qb = $this->_em
             ->createQueryBuilder()
             ->distinct()
-            ->select("t.id, t.name, t.category, ($countQuery) AS counter")
+            ->select("t.id, t.name, t.category, ({$countQuery}) AS counter")
             ->from(Tag::class, 't')
             ->join('t.posts', 'i', 'WITH', 'i IN (:posts)')
-            ->orderBy('t.name', 'ASC')
+            ->orderBy('t.name', \Doctrine\Common\Collections\Criteria::ASC)
             ->setParameter('posts', $posts)
             ->setParameter('board', $board->getId())
         ;
