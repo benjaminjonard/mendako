@@ -16,7 +16,8 @@
                 {{ form_errors(form) }}
                 {{ form_row(form.username, {'label' : 'label.username'} ) }}
                 {{ form_row(form.email, {'label' : 'label.email'} ) }}
-                {{ form_row(form.timezone, {'label': 'label.timezone', 'attr': {'data-controller': 'select--default'}}) }}
+                {{ form_row(form.locale, {'label': 'label.locale'}) }}
+                {{ form_row(form.timezone, {'label': 'label.timezone'}) }}
                 {{ form_row(form.darkModeEnabled, {'label' : 'label.dark_mode_enabled'} ) }}
 
                 <h2 class="subtitle">{{ 'title.password'|trans }}</h2>

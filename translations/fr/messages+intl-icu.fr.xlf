@@ -529,5 +529,23 @@
         <target>Cette action est irréversible, êtes-vous sur ?</target>
       </segment>
     </unit>
+    <unit id="mEDsKHk" name="label.locale">
+      <segment state="translated">
+        <source>label.locale</source>
+        <target>Langue</target>
+      </segment>
+    </unit>
+    <unit id="TjepIwh" name="global.locale.en">
+      <segment state="translated">
+        <source>global.locale.en</source>
+        <target>English</target>
+      </segment>
+    </unit>
+    <unit id="Acw13X3" name="global.locale.fr">
+      <segment state="translated">
+        <source>global.locale.fr</source>
+        <target>Français</target>
+      </segment>
+    </unit>
   </file>
 </xliff>
