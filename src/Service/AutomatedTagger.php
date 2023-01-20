@@ -52,7 +52,7 @@ class AutomatedTagger
     {
         $ffmpeg = FFMpeg::create();
         $video = $ffmpeg->open($this->publicPath.'/'.$post->getPath());
-        if ($video->getStreams()->audios()->first()) {
+        if ($video->getStreams()->audios()->first() !== null) {
             $withSound = $this->tagRepository->findOneBy(['name' => 'with_sound']);
             $post->addTag($withSound);
         }

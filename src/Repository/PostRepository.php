@@ -24,13 +24,13 @@ class PostRepository extends ServiceEntityRepository
         $qb = $this
             ->createQueryBuilder('post')
             ->where('post.board = :board')
-            ->orderBy('post.createdAt', 'DESC')
+            ->orderBy('post.createdAt', \Doctrine\Common\Collections\Criteria::DESC)
             ->setFirstResult(($page - 1) * 20)
             ->setMaxResults(20)
             ->setParameter('board', $board)
         ;
 
-        if (!empty($tags)) {
+        if ($tags !== []) {
             $qb
                 ->join('post.tags', 'tag', 'WITH', 'tag.name in (:tags)')
                 ->groupBy('post.id')
@@ -56,7 +56,7 @@ class PostRepository extends ServiceEntityRepository
             ->setParameter('board', $board)
         ;
 
-        if (!empty($tags)) {
+        if ($tags !== []) {
             $qb
                 ->join('post.tags', 'tag', 'WITH', 'tag.name in (:tags)')
                 ->groupBy('post.id')
@@ -65,8 +65,9 @@ class PostRepository extends ServiceEntityRepository
                 ->setParameter('count', \count($tags))
             ;
         }
+
         $result = $qb->getQuery()->getScalarResult();
 
-        return empty($result) ? 0 : $result[0]['count'];
+        return $result === [] ? 0 : $result[0]['count'];
     }
 }

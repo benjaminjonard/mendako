@@ -23,9 +23,7 @@ class StringToTagTransformer implements DataTransformerInterface
             $results[] = $tag->getName();
         }
 
-        $results = implode(' ', $results);
-
-        return $results;
+        return implode(' ', $results);
     }
 
     public function reverseTransform($string): array

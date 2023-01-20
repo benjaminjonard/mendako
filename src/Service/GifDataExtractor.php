@@ -6,8 +6,8 @@ namespace App\Service;
 
 class GifDataExtractor
 {
-    private $gif;
-
+    public $gifWidth;
+    public $gifHeight;
     private array $frames;
 
     private array $frameDurations;
@@ -47,24 +47,19 @@ class GifDataExtractor
         $this->reset();
         $this->parseFramesInfo($filename);
         $prevImg = null;
+        $frameSourcesCount = count($this->frameSources);
 
-        for ($i = 0; $i < count($this->frameSources); $i++) {
+        for ($i = 0; $i < $frameSourcesCount; ++$i) {
 
             $this->frames[$i] = array();
-            $this->frameDurations[$i] = $this->frames[$i]['duration'] = $this->frameSources[$i]['delay_time'];
+            $this->frameDurations[$i] = $this->frameSources[$i]['delay_time'];
+            $this->frames[$i]['duration'] = $this->frameSources[$i]['delay_time'];
 
             $img = imagecreatefromstring($this->fileHeader["gifheader"] . $this->frameSources[$i]["graphicsextension"] . $this->frameSources[$i]["imagedata"] . chr(0x3b));
 
             if (!$originalFrames) {
 
-                if ($i > 0) {
-
-                    $prevImg = $this->frames[$i - 1]['image'];
-
-                } else {
-
-                    $prevImg = $img;
-                }
+                $prevImg = $i > 0 ? $this->frames[$i - 1]['image'] : $img;
 
                 $sprite = imagecreate($this->gifMaxWidth, $this->gifMaxHeight);
                 imagesavealpha($sprite, true);
@@ -85,8 +80,8 @@ class GifDataExtractor
                 imagecopyresampled($sprite, $img, $this->frameSources[$i]["offset_left"], $this->frameSources[$i]["offset_top"], 0, 0, $this->gifMaxWidth, $this->gifMaxHeight, $this->gifMaxWidth, $this->gifMaxHeight);
                 $img = $sprite;
             }
-
-            $this->frameImages[$i] = $this->frames[$i]['image'] = $img;
+            $this->frameImages[$i] = $img;
+            $this->frames[$i]['image'] = $img;
         }
 
         return [
@@ -107,7 +102,7 @@ class GifDataExtractor
         while (!feof($fh) && $count < 2) {
 
             $chunk = fread($fh, 1024 * 100); //read 100kb at a time
-            $count += preg_match_all('#\x00\x21\xF9\x04.{4}\x00(\x2C|\x21)#s', $chunk, $matches);
+            $count += preg_match_all('/\x00\x21\xF9\x04.{4}\x00(\x2C|\x21)/s', $chunk, $matches);
         }
 
         fclose($fh);
@@ -129,7 +124,7 @@ class GifDataExtractor
 
         while (!$this->checkByte(0x3b) && !$this->checkEOF()) {
 
-            $this->getCommentData(1);
+            $this->getCommentData();
             $this->parseGraphicsExtension(2);
             $this->getFrameString(2);
             $this->getApplicationData();
@@ -269,7 +264,7 @@ class GifDataExtractor
             }
 
             $this->parseFrameData();
-            $this->frameNumber++;
+            ++$this->frameNumber;
         }
     }
 
@@ -279,7 +274,7 @@ class GifDataExtractor
         $this->frameSources[$this->frameNumber]["user_input_flag"] = $this->getImageDataBit("ext", 3, 6, 1);
         $this->frameSources[$this->frameNumber]["transparent_color_flag"] = $this->getImageDataBit("ext", 3, 7, 1);
         $this->frameSources[$this->frameNumber]["delay_time"] = $this->dualByteVal($this->getImageDataByte("ext", 4, 2));
-        $this->totalDuration += (int)$this->frameSources[$this->frameNumber]["delay_time"];
+        $this->totalDuration += $this->frameSources[$this->frameNumber]["delay_time"];
         $this->frameSources[$this->frameNumber]["transparent_color_index"] = ord($this->getImageDataByte("ext", 6, 1));
         $this->frameSources[$this->frameNumber]["offset_left"] = $this->dualByteVal($this->getImageDataByte("dat", 1, 2));
         $this->frameSources[$this->frameNumber]["offset_top"] = $this->dualByteVal($this->getImageDataByte("dat", 3, 2));
@@ -348,9 +343,7 @@ class GifDataExtractor
 
     private function dualByteVal(string $s): int
     {
-        $i = ord($s[1]) * 256 + ord($s[0]);
-
-        return $i;
+        return ord($s[1]) * 256 + ord($s[0]);
     }
 
     private function readDataStream(int $firstLength): void
@@ -376,12 +369,6 @@ class GifDataExtractor
         $this->gifHeight = $imageSize[1];
     }
 
-    private function closeFile(): void
-    {
-        fclose($this->handle);
-        $this->handle = 0;
-    }
-
     private function readByte(int $byteCount): bool|string
     {
         $data = fread($this->handle, $byteCount);
@@ -393,7 +380,7 @@ class GifDataExtractor
     private function readByteInt(): int
     {
         $data = fread($this->handle, 1);
-        $this->pointer++;
+        ++$this->pointer;
 
         return ord($data);
     }
@@ -454,8 +441,20 @@ class GifDataExtractor
 
     private function reset(): void
     {
-        $this->gif = null;
-        $this->totalDuration = $this->gifMaxHeight = $this->gifMaxWidth = $this->handle = $this->pointer = $this->frameNumber = 0;
-        $this->frameDimensions = $this->framePositions = $this->frameImages = $this->frameDurations = $this->globaldata = $this->orgvars = $this->frames = $this->fileHeader = $this->frameSources = array();
+        $this->totalDuration = 0;
+        $this->gifMaxHeight = 0;
+        $this->gifMaxWidth = 0;
+        $this->handle = 0;
+        $this->pointer = 0;
+        $this->frameNumber = 0;
+        $this->frameDimensions = array();
+        $this->framePositions = array();
+        $this->frameImages = array();
+        $this->frameDurations = array();
+        $this->globaldata = array();
+        $this->orgvars = array();
+        $this->frames = array();
+        $this->fileHeader = array();
+        $this->frameSources = array();
     }
 }

@@ -10,12 +10,12 @@ use App\Service\Uploader;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 
-final class UploadListener
+final readonly class UploadListener
 {
     public function __construct(
-        private readonly UploadAnnotationReader $reader,
-        private readonly Uploader $uploader,
-        private readonly AutomatedTagger $automatedTagger
+        private UploadAnnotationReader $reader,
+        private Uploader $uploader,
+        private AutomatedTagger $automatedTagger
     ) {
     }
 
@@ -37,7 +37,7 @@ final class UploadListener
             foreach ($this->reader->getUploadFields($entity) as $property => $attribute) {
                 $this->uploader->upload($entity, $property, $attribute);
                 $this->automatedTagger->tag($entity);
-                $uow->recomputeSingleEntityChangeSet($em->getClassMetadata(\get_class($entity)), $entity);
+                $uow->recomputeSingleEntityChangeSet($em->getClassMetadata($entity::class), $entity);
             }
         }
     }

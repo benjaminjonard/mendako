@@ -58,7 +58,7 @@ class Post
 
     #[ORM\ManyToMany(targetEntity: Tag::class, inversedBy: 'posts', cascade: ['persist'])]
     #[ORM\JoinTable(name: 'men_post_tag')]
-    #[ORM\JoinColumn(name: 'post_id', referencedColumnName: 'id')]
+    #[ORM\JoinColumn(name: 'post_id')]
     #[ORM\InverseJoinColumn(name: 'tag_id', referencedColumnName: 'id')]
     #[ORM\OrderBy(['name' => 'ASC'])]
     private Collection $tags;
@@ -69,7 +69,7 @@ class Post
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
     #[Gedmo\Timestampable(on: 'change', field: ['path'])]
-    private ?\DateTimeImmutable $updatedAt;
+    private ?\DateTimeImmutable $updatedAt = null;
 
     public function __construct()
     {

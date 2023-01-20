@@ -32,7 +32,7 @@ class TagController extends AbstractController
     ): Response {
         $query = $request->query->get('query', null);
 
-        $tags = array_map(function (Tag $tag) {
+        $tags = array_map(static function (Tag $tag) : array {
             return [
                 'name' => $tag->getName(),
                 'category' => $tag->getCategory()->value

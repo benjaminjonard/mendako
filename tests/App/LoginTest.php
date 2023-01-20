@@ -30,7 +30,7 @@ class LoginTest extends WebTestCase
 
         // Act
         $this->client->request('GET', '/');
-        $crawler = $this->client->submitForm('Sign in', [
+        $this->client->submitForm('Sign in', [
             '_login' => $user->getUsername(),
             '_password' => $user->getPlainPassword()
         ]);

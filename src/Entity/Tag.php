@@ -29,7 +29,7 @@ class Tag
     private ?string $name = null;
 
     #[ORM\Column(type: Types::STRING, nullable: true, enumType: TagCategory::class)]
-    private ?TagCategory $category;
+    private ?TagCategory $category = null;
 
     #[ORM\ManyToMany(targetEntity: Post::class, mappedBy: 'tags')]
     private Collection $posts;
@@ -43,10 +43,11 @@ class Tag
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
     #[Gedmo\Timestampable(on: 'change', field: ['name'])]
-    private ?\DateTimeImmutable $updatedAt;
+    private ?\DateTimeImmutable $updatedAt = null;
 
     public function __construct()
     {
+        $this->posts = new \Doctrine\Common\Collections\ArrayCollection();
         $this->id = Uuid::v4()->toRfc4122();
     }
 
@@ -63,8 +64,7 @@ class Tag
     public function setName(?string $name): Tag
     {
         $name = new UnicodeString($name);
-        $name = $name->lower()->replace(' ', '_')->toString();
-        $this->name = $name;
+        $this->name = $name->lower()->replace(' ', '_')->toString();
 
         return $this;
     }
