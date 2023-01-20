@@ -7,8 +7,10 @@ namespace App\EventListener;
 use App\Attribute\UploadAnnotationReader;
 use App\Service\AutomatedTagger;
 use App\Service\Uploader;
-use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\OnFlushEventArgs;
+use Doctrine\ORM\Event\PostLoadEventArgs;
+use Doctrine\ORM\Event\PostRemoveEventArgs;
+use Doctrine\ORM\Event\PrePersistEventArgs;
 
 final readonly class UploadListener
 {
@@ -19,9 +21,9 @@ final readonly class UploadListener
     ) {
     }
 
-    public function prePersist(LifecycleEventArgs $args): void
+    public function prePersist(PrePersistEventArgs $args): void
     {
-        $entity = $args->getEntity();
+        $entity = $args->getObject();
         foreach ($this->reader->getUploadFields($entity) as $property => $attribute) {
             $this->uploader->upload($entity, $property, $attribute);
             $this->automatedTagger->tag($entity);
@@ -30,7 +32,7 @@ final readonly class UploadListener
 
     public function onFlush(OnFlushEventArgs $args): void
     {
-        $em = $args->getEntityManager();
+        $em = $args->getObjectManager();
         $uow = $em->getUnitOfWork();
 
         foreach ($uow->getScheduledEntityUpdates() as $entity) {
@@ -42,17 +44,17 @@ final readonly class UploadListener
         }
     }
 
-    public function postLoad(LifecycleEventArgs $args): void
+    public function postLoad(PostLoadEventArgs $args): void
     {
-        $entity = $args->getEntity();
+        $entity = $args->getObject();
         foreach ($this->reader->getUploadFields($entity) as $property => $attribute) {
             $this->uploader->setFileFromFilename($entity, $property, $attribute);
         }
     }
 
-    public function postRemove(LifecycleEventArgs $args): void
+    public function postRemove(PostRemoveEventArgs $args): void
     {
-        $entity = $args->getEntity();
+        $entity = $args->getObject();
         foreach ($this->reader->getUploadFields($entity) as $attribute) {
             $this->uploader->removeOldFile($entity, $attribute);
         }

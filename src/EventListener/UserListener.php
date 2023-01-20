@@ -6,7 +6,8 @@ namespace App\EventListener;
 
 use App\Entity\User;
 use App\Service\PasswordUpdater;
-use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\ORM\Event\PrePersistEventArgs;
+use Doctrine\ORM\Event\PreUpdateEventArgs;
 
 class UserListener
 {
@@ -15,17 +16,17 @@ class UserListener
     ) {
     }
 
-    public function prePersist(LifecycleEventArgs $args): void
+    public function prePersist(PrePersistEventArgs $args): void
     {
-        $entity = $args->getEntity();
+        $entity = $args->getObject();
         if ($entity instanceof User) {
             $this->passwordUpdater->hashPassword($entity);
         }
     }
 
-    public function preUpdate(LifecycleEventArgs $args): void
+    public function preUpdate(PreUpdateEventArgs $args): void
     {
-        $entity = $args->getEntity();
+        $entity = $args->getObject();
         if ($entity instanceof User) {
             $this->passwordUpdater->hashPassword($entity);
         }
