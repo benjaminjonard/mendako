@@ -7,16 +7,10 @@ namespace App\Service;
 class GifDataExtractor
 {
     public $gifWidth;
+
     public $gifHeight;
+
     private array $frames;
-
-    private array $frameDurations;
-
-    private array $frameImages;
-
-    private array $framePositions;
-
-    private array $frameDimensions;
 
     private int $frameNumber;
 
@@ -52,7 +46,6 @@ class GifDataExtractor
         for ($i = 0; $i < $frameSourcesCount; ++$i) {
 
             $this->frames[$i] = array();
-            $this->frameDurations[$i] = $this->frameSources[$i]['delay_time'];
             $this->frames[$i]['duration'] = $this->frameSources[$i]['delay_time'];
 
             $img = imagecreatefromstring($this->fileHeader["gifheader"] . $this->frameSources[$i]["graphicsextension"] . $this->frameSources[$i]["imagedata"] . chr(0x3b));
@@ -80,7 +73,7 @@ class GifDataExtractor
                 imagecopyresampled($sprite, $img, $this->frameSources[$i]["offset_left"], $this->frameSources[$i]["offset_top"], 0, 0, $this->gifMaxWidth, $this->gifMaxHeight, $this->gifMaxWidth, $this->gifMaxHeight);
                 $img = $sprite;
             }
-            $this->frameImages[$i] = $img;
+
             $this->frames[$i]['image'] = $img;
         }
 
@@ -287,16 +280,6 @@ class GifDataExtractor
         $this->frameSources[$this->frameNumber]["color_table"] = substr($this->frameSources[$this->frameNumber]["imagedata"], 10, $this->frameSources[$this->frameNumber]["color_table_size"]);
         $this->frameSources[$this->frameNumber]["lzw_code_size"] = ord($this->getImageDataByte("dat", 10, 1));
 
-        $this->framePositions[$this->frameNumber] = array(
-            'x' => $this->frameSources[$this->frameNumber]["offset_left"],
-            'y' => $this->frameSources[$this->frameNumber]["offset_top"],
-        );
-
-        $this->frameDimensions[$this->frameNumber] = array(
-            'width' => $this->frameSources[$this->frameNumber]["width"],
-            'height' => $this->frameSources[$this->frameNumber]["height"],
-        );
-
         // Decoding
         $this->orgvars[$this->frameNumber]["transparent_color_flag"] = $this->frameSources[$this->frameNumber]["transparent_color_flag"];
         $this->orgvars[$this->frameNumber]["transparent_color_index"] = $this->frameSources[$this->frameNumber]["transparent_color_index"];
@@ -447,10 +430,6 @@ class GifDataExtractor
         $this->handle = 0;
         $this->pointer = 0;
         $this->frameNumber = 0;
-        $this->frameDimensions = array();
-        $this->framePositions = array();
-        $this->frameImages = array();
-        $this->frameDurations = array();
         $this->globaldata = array();
         $this->orgvars = array();
         $this->frames = array();
