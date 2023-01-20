@@ -48,7 +48,7 @@
         "brianium/paratest": "6.8.0",
         "dama/doctrine-test-bundle": "7.1.1",
         "phpunit/php-code-coverage": "9.2.23",
-        "phpunit/phpunit": "9.5.27",
+        "phpunit/phpunit": "9.5.28",
         "symfony/debug-bundle": "6.2.1",
         "symfony/maker-bundle": "1.48.0",
         "symfony/stopwatch": "6.2.0",
