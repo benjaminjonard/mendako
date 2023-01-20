@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Enum\Locale;
 use App\Repository\UserRepository;
 use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
@@ -48,6 +49,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \String
     #[ORM\Column(type: Types::STRING, length: 50)]
     #[Assert\Timezone]
     private ?string $timezone = null;
+
+    #[ORM\Column(type: Types::STRING, length: 2, options: ['default' => Locale::EN->value])]
+    #[Assert\Choice(choices: Locale::LOCALES)]
+    private string $locale = Locale::EN->value;
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => 0])]
     private bool $darkModeEnabled = false;
@@ -203,6 +208,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \String
     public function setTimezone(string $timezone): User
     {
         $this->timezone = $timezone;
+
+        return $this;
+    }
+
+    public function getLocale(): string
+    {
+        return $this->locale;
+    }
+
+    public function setLocale(string $locale): User
+    {
+        $this->locale = $locale;
 
         return $this;
     }
