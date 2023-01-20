@@ -11,7 +11,7 @@ $width = $_REQUEST['width'];
 $imagePath = $_REQUEST['path'];
 
 $publicPath = getcwd();
-$fullImagePath = "$publicPath/$imagePath";
+$fullImagePath = "{$publicPath}/{$imagePath}";
 
 if (!file_exists($fullImagePath)) {
     return new BinaryFileResponse('build/images/default.png');
@@ -38,7 +38,7 @@ header("Content-Disposition: attachment; filename=" . $info['filename'] . '_' . 
 readfile($fullThumbnailPath);
 die();
 
-function generate(string $path, string $thumbnailPath, int $thumbnailWidth)
+function generate(string $path, string $thumbnailPath, int $thumbnailWidth): bool
 {
     if (!is_file($path)) {
         return false;
@@ -52,12 +52,13 @@ function generate(string $path, string $thumbnailPath, int $thumbnailWidth)
         $width = $stream->getDimensions()->getWidth();
         $height = $stream->getDimensions()->getHeight();
     } else {
-        list($width, $height) = getimagesize($path);
+        [$width, $height] = getimagesize($path);
     }
 
     if ($width <= $thumbnailWidth) {
         $thumbnailWidth = $width;
     }
+
     $thumbnailHeight = (int)floor($height * ($thumbnailWidth / $width));
 
     // Create user directory in uploads
