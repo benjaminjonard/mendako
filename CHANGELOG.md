@@ -1,6 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.1.0] / 2023-01-23
+### Features
+- Add support for translations via Crowdin, add French translation (benjaminjonard)
+
+### Miscellaneous
+- Update to PHP 8.2 (benjaminjonard)
+- Update PHP and JS dependencies (benjaminjonard)
+
 ## [1.0.1] / 2022-11-30
 ### Features
 - Add tag delete (benjaminjonard)
