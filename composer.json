@@ -45,10 +45,10 @@
         "twig/twig": "^2.12|^3.0"
     },
     "require-dev": {
-        "brianium/paratest": "6.8.1",
-        "dama/doctrine-test-bundle": "7.1.1",
-        "phpunit/php-code-coverage": "9.2.24",
-        "phpunit/phpunit": "9.5.28",
+        "brianium/paratest": "7.0.5",
+        "dama/doctrine-test-bundle": "7.2.0",
+        "phpunit/php-code-coverage": "10.0.0",
+        "phpunit/phpunit": "10.0.7",
         "rector/rector": "0.15.10",
         "symfony/debug-bundle": "6.2.5",
         "symfony/maker-bundle": "1.48.0",
