@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6c36f00263cc8caf08b21480014faf9f",
+    "content-hash": "ea302ecd0fd4813b58b570fc42a585e3",
     "packages": [
         {
             "name": "behat/transliterator",
@@ -7527,16 +7527,16 @@
         },
         {
             "name": "dama/doctrine-test-bundle",
-            "version": "v7.2.0",
+            "version": "v7.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dmaicher/doctrine-test-bundle.git",
-                "reference": "91abe52540370d596199a79eff3d823d5b81d41d"
+                "reference": "175b47153609a369117d97d36049b8a8c3b69dc1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dmaicher/doctrine-test-bundle/zipball/91abe52540370d596199a79eff3d823d5b81d41d",
-                "reference": "91abe52540370d596199a79eff3d823d5b81d41d",
+                "url": "https://api.github.com/repos/dmaicher/doctrine-test-bundle/zipball/175b47153609a369117d97d36049b8a8c3b69dc1",
+                "reference": "175b47153609a369117d97d36049b8a8c3b69dc1",
                 "shasum": ""
             },
             "require": {
@@ -7588,9 +7588,9 @@
             ],
             "support": {
                 "issues": "https://github.com/dmaicher/doctrine-test-bundle/issues",
-                "source": "https://github.com/dmaicher/doctrine-test-bundle/tree/v7.2.0"
+                "source": "https://github.com/dmaicher/doctrine-test-bundle/tree/v7.2.1"
             },
-            "time": "2023-02-05T09:12:26+00:00"
+            "time": "2023-02-07T10:02:27+00:00"
         },
         {
             "name": "fakerphp/faker",
