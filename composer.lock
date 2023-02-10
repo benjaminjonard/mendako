@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8c2f5a2f8758cb1a34a9fa9ba3247797",
+    "content-hash": "ac37ad6933b56b2f9a6c9ac8852156b9",
     "packages": [
         {
             "name": "behat/transliterator",
@@ -5752,16 +5752,16 @@
         },
         {
             "name": "symfony/security-bundle",
-            "version": "v6.2.5",
+            "version": "v6.2.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/security-bundle.git",
-                "reference": "2f7f0b79b2acb6f497e8a8f24ff86a5d7e36170f"
+                "reference": "f3feb140c13015adecbeb51d49e45256aaf8a140"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/security-bundle/zipball/2f7f0b79b2acb6f497e8a8f24ff86a5d7e36170f",
-                "reference": "2f7f0b79b2acb6f497e8a8f24ff86a5d7e36170f",
+                "url": "https://api.github.com/repos/symfony/security-bundle/zipball/f3feb140c13015adecbeb51d49e45256aaf8a140",
+                "reference": "f3feb140c13015adecbeb51d49e45256aaf8a140",
                 "shasum": ""
             },
             "require": {
@@ -5776,7 +5776,7 @@
                 "symfony/password-hasher": "^5.4|^6.0",
                 "symfony/security-core": "^6.2",
                 "symfony/security-csrf": "^5.4|^6.0",
-                "symfony/security-http": "^6.2"
+                "symfony/security-http": "^6.2.6"
             },
             "conflict": {
                 "symfony/browser-kit": "<5.4",
@@ -5832,7 +5832,7 @@
             "description": "Provides a tight integration of the Security component into the Symfony full-stack framework",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/security-bundle/tree/v6.2.5"
+                "source": "https://github.com/symfony/security-bundle/tree/v6.2.6"
             },
             "funding": [
                 {
@@ -5848,7 +5848,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-01-13T09:31:36+00:00"
+            "time": "2023-01-30T15:46:28+00:00"
         },
         {
             "name": "symfony/security-core",
