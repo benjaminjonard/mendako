@@ -23,7 +23,7 @@
         "symfony/dotenv": "6.2.5",
         "symfony/event-dispatcher": "6.2.5",
         "symfony/expression-language": "6.2.5",
-        "symfony/flex": "2.2.4",
+        "symfony/flex": "2.2.5",
         "symfony/form": "6.2.5",
         "symfony/framework-bundle": "6.2.5",
         "symfony/mime": "6.2.5",
