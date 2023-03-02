@@ -7,6 +7,8 @@ services:
         restart: always
         ports:
             - 81:80
+        #env_file:
+        #    - .env
         environment:
             - APP_ENV=prod
             - APP_DEBUG=0
