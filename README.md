@@ -17,6 +17,8 @@ Inspired by https://github.com/danbooru/danbooru
 ## Installation
 Copy the docker-compose.yml.dist in a docker-compose.yml file and adjust the environment variables to your need. 
 
+(you can also user a .env file)
+
 ### Available environment variables
 
 | Name          | Description                                 | Possible values |
