@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "524a49d562a1c1af6b62968b6e1babc3",
+    "content-hash": "7bb9ffdb7e83ba66a09440c354c27af8",
     "packages": [
         {
             "name": "behat/transliterator",
@@ -5294,16 +5294,16 @@
         },
         {
             "name": "symfony/process",
-            "version": "v6.2.5",
+            "version": "v6.2.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/process.git",
-                "reference": "9ead139f63dfa38c4e4a9049cc64a8b2748c83b7"
+                "reference": "680e8a2ea6b3f87aecc07a6a65a203ae573d1902"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/process/zipball/9ead139f63dfa38c4e4a9049cc64a8b2748c83b7",
-                "reference": "9ead139f63dfa38c4e4a9049cc64a8b2748c83b7",
+                "url": "https://api.github.com/repos/symfony/process/zipball/680e8a2ea6b3f87aecc07a6a65a203ae573d1902",
+                "reference": "680e8a2ea6b3f87aecc07a6a65a203ae573d1902",
                 "shasum": ""
             },
             "require": {
@@ -5335,7 +5335,7 @@
             "description": "Executes commands in sub-processes",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/process/tree/v6.2.5"
+                "source": "https://github.com/symfony/process/tree/v6.2.7"
             },
             "funding": [
                 {
@@ -5351,7 +5351,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-01-01T08:38:09+00:00"
+            "time": "2023-02-24T10:42:00+00:00"
         },
         {
             "name": "symfony/property-access",
@@ -7439,16 +7439,16 @@
     "packages-dev": [
         {
             "name": "brianium/paratest",
-            "version": "v7.0.6",
+            "version": "v7.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/paratestphp/paratest.git",
-                "reference": "86ea5b223810d89294bc08de2c699dc34534e159"
+                "reference": "429bf1d657b794f62fe06fe186d55ee67496f684"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/paratestphp/paratest/zipball/86ea5b223810d89294bc08de2c699dc34534e159",
-                "reference": "86ea5b223810d89294bc08de2c699dc34534e159",
+                "url": "https://api.github.com/repos/paratestphp/paratest/zipball/429bf1d657b794f62fe06fe186d55ee67496f684",
+                "reference": "429bf1d657b794f62fe06fe186d55ee67496f684",
                 "shasum": ""
             },
             "require": {
@@ -7518,7 +7518,7 @@
             ],
             "support": {
                 "issues": "https://github.com/paratestphp/paratest/issues",
-                "source": "https://github.com/paratestphp/paratest/tree/v7.0.6"
+                "source": "https://github.com/paratestphp/paratest/tree/v7.1.0"
             },
             "funding": [
                 {
@@ -7530,7 +7530,7 @@
                     "type": "paypal"
                 }
             ],
-            "time": "2023-02-13T09:41:18+00:00"
+            "time": "2023-02-28T14:51:17+00:00"
         },
         {
             "name": "dama/doctrine-test-bundle",
