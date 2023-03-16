@@ -17,6 +17,7 @@
                             {{ form_row(form.plainPassword.first, {'label': 'label.password'}) }}
                             {{ form_row(form.plainPassword.second, {'label': 'label.repeat_password'}) }}
                             {{ form_row(form.timezone, {'label': 'label.timezone', 'attr': {'data-controller': 'select--default'}}) }}
+                            {{ form_row(form.locale, {'label': 'label.locale', 'attr': {'data-controller': 'select--default'}}) }}
                             <div>
                                 <button class="button is-primary" type="submit">{{ 'btn.submit'|trans }}</button>
                             </div>

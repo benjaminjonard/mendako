@@ -1,0 +1,14 @@
+.github
+.phpunit.cache
+.idea
+output
+assets/node_modules
+docker/volumes
+vendor
+var
+
+public/build
+public/uploads
+public/tmp
+public/thumbnails
+public/manifest.json

@@ -32,7 +32,7 @@ class Uploader
             $relativePath = 'uploads/boards/' . $entity->getBoard()->getId() . '/';
             $absolutePath = $this->publicPath . '/' . $relativePath;
 
-            if (!is_dir($absolutePath) && !mkdir($absolutePath) && !is_dir($absolutePath)) {
+            if (!is_dir($absolutePath) && !mkdir($absolutePath, recursive: true) && !is_dir($absolutePath)) {
                 throw new \Exception('There was a problem while uploading the file. Please try again!');
             }
 
