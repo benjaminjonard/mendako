@@ -1,14 +1,12 @@
 FROM debian:11-slim
 
-ARG GITHUB_RELEASE
-
 # Environment variables
-ENV APP_ENV='dev'
+ENV APP_ENV='prod'
 ENV PUID='1000'
 ENV PGID='1000'
 ENV USER='mendako'
 
-COPY entrypoint.sh /
+COPY ./docker/entrypoint.sh /entrypoint.sh
 
 # Add User and Group
 RUN addgroup --gid "$PGID" "$USER" && \
@@ -47,37 +45,14 @@ RUN addgroup --gid "$PGID" "$USER" && \
     php8.2-apcu \
     nodejs \
     yarn && \
-# Clone the repo
-    mkdir -p /var/www/mendako && \
-    curl -o /tmp/mendako.tar.gz -L "https://github.com/benjaminjonard/mendako/archive/$GITHUB_RELEASE.tar.gz" && \
-    tar xf /tmp/mendako.tar.gz -C /var/www/mendako --strip-components=1 && \
-    rm -rf /tmp/* && \
 #Install composer dependencies
     curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && \
-    cd /var/www/mendako && \
-    composer install --no-dev --classmap-authoritative && \
-    composer clearcache && \
-# Install javascript dependencies and build assets
-    cd /var/www/mendako/assets && \
-    yarn --version && \
-    yarn install && \
-    yarn build && \
-# Clean up \
-    yarn cache clean && \
-    rm -rf /var/www/mendako/assets/node_modules && \
-    apt-get purge -y wget lsb-release git nodejs yarn apt-transport-https ca-certificates gnupg2 unzip && \
-    apt-get autoremove -y && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/* && \
-    rm -rf /usr/local/bin/composer && \
-# Set permissions
-    chown -R "$USER":"$USER" /var/www/mendako && \
+# Set permissions \
     chmod +x /entrypoint.sh && \
     mkdir /run/php
 
 # Add nginx and PHP config files
-COPY default.conf /etc/nginx/nginx.conf
-COPY php.ini /etc/php/8.2/fpm/conf.d/php.ini
+COPY ./docker/default.conf /etc/nginx/nginx.conf
 
 EXPOSE 80
 
@@ -87,6 +62,6 @@ WORKDIR /var/www/mendako
 
 HEALTHCHECK CMD curl --fail http://localhost:80/ || exit 1
 
-ENTRYPOINT [ "/entrypoint.sh" ]
+ENTRYPOINT [ "/var/www/mendako/docker/entrypoint.sh" ]
 
 CMD [ "nginx" ]

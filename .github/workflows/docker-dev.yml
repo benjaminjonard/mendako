@@ -11,8 +11,8 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v3
         with:
-          repository: benjaminjonard/mendako-docker
-          ref: dev
+          repository: benjaminjonard/mendako
+          ref: main
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up QEMU
@@ -33,6 +33,5 @@ jobs:
         with:
           context: .
           push: true
-          build-args: GITHUB_RELEASE=main
           tags: ${{ secrets.REGISTRY_URL }}/benjaminjonard/mendako:dev
           platforms: linux/amd64

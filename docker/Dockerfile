@@ -65,7 +65,7 @@ RUN addgroup --gid "$PGID" "$USER" && \
     rm -rf /usr/local/bin/composer && \
 # Set permissions
     chown -R "$USER":"$USER" /var/www/mendako && \
-    chmod +x /entrypoint.sh && \
+    chmod +x /var/www/mendako/docker/entrypoint.sh && \
     mkdir /run/php
 
 # Add nginx and PHP config files
@@ -80,6 +80,6 @@ WORKDIR /var/www/mendako
 
 HEALTHCHECK CMD curl --fail http://localhost:80/ || exit 1
 
-ENTRYPOINT [ "./docker/entrypoint.sh" ]
+ENTRYPOINT [ "/var/www/mendako/docker/entrypoint.sh" ]
 
 CMD [ "nginx" ]
