@@ -31,7 +31,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v4
         with:
-          context: .
+          dockerfile: ./docker/Dockerfile.dev
           push: true
           tags: ${{ secrets.REGISTRY_URL }}/benjaminjonard/mendako:dev
           platforms: linux/amd64
