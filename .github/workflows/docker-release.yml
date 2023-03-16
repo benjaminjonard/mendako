@@ -13,8 +13,8 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v3
         with:
-          repository: benjaminjonard/mendako-docker
-          ref: php8.2
+          repository: benjaminjonard/mendako
+          ref: 1.1.0
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up QEMU
@@ -34,6 +34,5 @@ jobs:
         with:
           context: .
           push: true
-          build-args: GITHUB_RELEASE=1.1.0
           tags: docker.io/benjaminjonard/mendako:latest,docker.io/benjaminjonard/mendako:1.1.0
           platforms: linux/amd64,linux/arm64,linux/arm
