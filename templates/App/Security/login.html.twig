@@ -1,43 +1,37 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <section class="section">
-        <div class="container">
-            <div class="columns">
-                <div class="column"></div>
-                <div class="column">
-                    <div class="box">
-                        <div class='logo' aria-label="Logo"></div>
-                        <h1 class="title">
-                            {{ 'title.sign_in'|trans }}
-                        </h1>
+    <div class="header">
+        {{ 'global.welcome'|trans }}
+        <div class='logo' aria-label="Logo"></div>
+    </div>
+    <div class="box unauthenticated">
+        <h1 class="title">
+            {{ 'title.sign_in'|trans }}
+        </h1>
 
-                        <form action="{{ path("app_security_login") }}" method="post">
-                            {% if error %}
-                                <p class="has-text-danger">
-                                    {{ error.messageKey|trans(error.messageData, 'messages') }}
-                                </p>
-                            {% endif %}
+        <form action="{{ path("app_security_login") }}" method="post">
+            {% if error %}
+                <p class="has-text-danger">
+                    {{ error.messageKey|trans(error.messageData, 'messages') }}
+                </p>
+            {% endif %}
 
 
-                            <div class="field">
-                                <label class="label required" for="login">{{ 'label.login'|trans }}</label>
-                                <input class="input" type="text" id="login" name="_login" value="{{ lastUsername }}" required="required"/>
-                            </div>
-
-                            <div class="field">
-                                <label class="label required" for="password">{{ 'label.password'|trans }}</label>
-                                <input class="input" type="password" id="password" name="_password" required="required"/>
-                            </div>
-
-
-                            <input class="button is-primary" type="submit" name="submit" value="{{ 'btn.sign_in'|trans }}"/>
-                            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-                        </form>
-                    </div>
-                </div>
-                <div class="column"></div>
+            <div class="field">
+                <label class="label required" for="login">{{ 'label.login'|trans }}</label>
+                <input class="input" type="text" id="login" name="_login" value="{{ lastUsername }}" required="required"/>
             </div>
-        </div>
-    </section>
+
+            <div class="field">
+                <label class="label required" for="password">{{ 'label.password'|trans }}</label>
+                <input class="input" type="password" id="password" name="_password" required="required"/>
+            </div>
+
+            <div class="footer-button">
+                <input class="button is-primary" type="submit" name="submit" value="{{ 'btn.sign_in'|trans }}"/>
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+            </div>
+        </form>
+    </div>
 {% endblock %}

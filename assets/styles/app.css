@@ -89,14 +89,13 @@ figure .tag {
   left: 3px;
 }
 
-.box .logo {
+.logo {
   background-color: #009688;
   background-image: url('../images/logo.svg');
   background-position: center center;
   background-repeat: no-repeat;
-  background-size: 39px;
+  background-size: 50px;
   border-radius: 50%;
-  bottom: 297px;
   height: 75px;
   left: 0;
   margin: 0 auto;
@@ -282,4 +281,29 @@ html.loading:before {
   color: #000;
   font-size: 20px;
   margin: 0 15px;
+}
+
+.box.unauthenticated {
+  max-width: 500px;
+  margin: auto;
+}
+
+.box.unauthenticated h1 {
+  padding: 30px 0 !important;
+}
+
+.box .footer-button {
+   padding: 30px 0 !important;
+ }
+
+.header {
+  line-height: 110%;
+  background-color: #009688;
+  color: #f0f2f5;
+  font-size: 28px;
+  margin: 0;
+  padding: 30px 20px 40px;
+  position: relative;
+  text-align: center;
+  word-break: normal;
 }

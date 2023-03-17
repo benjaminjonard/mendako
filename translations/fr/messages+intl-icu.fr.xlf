@@ -7,12 +7,6 @@
         <target>O</target>
       </segment>
     </unit>
-    <unit id="F7PFP2q" name="title.welcome">
-      <segment state="translated">
-        <source>title.welcome</source>
-        <target>Bienvenue sur Mendako</target>
-      </segment>
-    </unit>
     <unit id="NZyoXlL" name="title.first_connection.user">
       <segment state="translated">
         <source>title.first_connection.user</source>

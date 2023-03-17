@@ -24,7 +24,7 @@
                 {{ form_row(form.plainPassword.first, {'label' : 'label.new_password', 'attr': {'autocomplete' : 'new-password'}} ) }}
                 {{ form_row(form.plainPassword.second, {'label': 'label.repeat_password'}) }}
 
-                <div>
+                <div class="footer-button">
                     <button class="button is-primary" type="submit">{{ 'btn.submit'|trans }}</button>
                 </div>
             {{ form_end(form) }}

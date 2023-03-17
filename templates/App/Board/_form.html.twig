@@ -1,6 +1,8 @@
 {{ form_start(form) }}
     {{ form_row(form.name, {'label' : 'label.name'} ) }}
 
-    <button class="button is-primary" type="submit">{{ 'btn.submit'|trans }}</button>
-    <a class="button is-danger" href="{{ path('app_board_index') }}"> {{ 'btn.cancel'|trans }}</a>
+    <div class="footer-button">
+        <button class="button is-primary" type="submit">{{ 'btn.submit'|trans }}</button>
+        <a class="button is-danger" href="{{ path('app_board_index') }}"> {{ 'btn.cancel'|trans }}</a>
+    </div>
 {{ form_end(form) }}

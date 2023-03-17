@@ -34,6 +34,6 @@ html, .navbar, .autocomplete-dropdown-textarea, .navbar-menu {
     color: #35c64a;
 }
 
-.navbar i {
+.navbar i, .navbar-burger {
     color: #ccc;
 }

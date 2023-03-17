@@ -7,12 +7,6 @@
         <target>B</target>
       </segment>
     </unit>
-    <unit id="F7PFP2q" name="title.welcome">
-      <segment state="translated">
-        <source>title.welcome</source>
-        <target>Welcome to Mendako</target>
-      </segment>
-    </unit>
     <unit id="NZyoXlL" name="title.first_connection.user">
       <segment state="translated">
         <source>title.first_connection.user</source>
@@ -563,6 +557,12 @@
       <segment state="translated">
         <source>global.theme.dark</source>
         <target>Dark</target>
+      </segment>
+    </unit>
+    <unit id="ym0vXcZ" name="global.welcome">
+      <segment state="translated">
+        <source>global.welcome</source>
+        <target>Welcome to Mendako</target>
       </segment>
     </unit>
   </file>

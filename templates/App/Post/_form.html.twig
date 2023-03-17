@@ -27,10 +27,12 @@
 
     {{ form_row(form.setAsBoardThumbnail, {'label' : 'label.set_as_board_thumbnail'} ) }}
 
-    <button class="button is-primary" type="submit">{{ 'btn.submit'|trans }}</button>
-    {% if board is defined and board is not null %}
-        <a class="button is-danger" href="{{ path('app_board_show', {slug: board.slug}) }}">{{ 'btn.cancel'|trans }}</a>
-    {% else %}
-        <a class="button is-danger" href="{{ path('app_board_index') }}">{{ 'btn.cancel'|trans }}</a>
-    {% endif %}
+    <div class="footer-button">
+        <button class="button is-primary" type="submit">{{ 'btn.submit'|trans }}</button>
+        {% if board is defined and board is not null %}
+            <a class="button is-danger" href="{{ path('app_board_show', {slug: board.slug}) }}">{{ 'btn.cancel'|trans }}</a>
+        {% else %}
+            <a class="button is-danger" href="{{ path('app_board_index') }}">{{ 'btn.cancel'|trans }}</a>
+        {% endif %}
+    </div>
 {{ form_end(form) }}

@@ -1,34 +1,26 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <section class="section">
-        <div class="container">
-            <div class="columns">
-                <div class="column"></div>
-                <div class="column">
-                    <div class="box">
-                        <div class='logo' aria-label="Logo"></div>
-                        <h1 class="title">
-                            {{ 'title.welcome'|trans }}
-                        </h1>
+    <div class="header">
+        {{ 'global.welcome'|trans }}
+        <div class='logo' aria-label="Logo"></div>
+    </div>
+    <div class="box unauthenticated">
+        <h1 class="title">
+            {{ 'title.first_connection.user'|trans }}
+        </h1>
 
-                        {{ form_start(form) }}
-                            <h2 class="subtitle">{{ 'title.first_connection.user'|trans }}</h2>
-                            {{ form_errors(form) }}
-                            {{ form_row(form.username, {'label' : 'label.username'} ) }}
-                            {{ form_row(form.email, {'label' : 'label.email'} ) }}
-                            {{ form_row(form.plainPassword.first, {'label': 'label.password'}) }}
-                            {{ form_row(form.plainPassword.second, {'label': 'label.repeat_password'}) }}
-                            {{ form_row(form.timezone, {'label': 'label.timezone', 'attr': {'data-controller': 'select--default'}}) }}
-                            {{ form_row(form.locale, {'label': 'label.locale', 'attr': {'data-controller': 'select--default'}}) }}
-                            <div>
-                                <button class="button is-primary" type="submit">{{ 'btn.submit'|trans }}</button>
-                            </div>
-                        {{ form_end(form) }}
-                    </div>
-                </div>
-                <div class="column"></div>
+        {{ form_start(form) }}
+            {{ form_errors(form) }}
+            {{ form_row(form.username, {'label' : 'label.username'} ) }}
+            {{ form_row(form.email, {'label' : 'label.email'} ) }}
+            {{ form_row(form.plainPassword.first, {'label': 'label.password'}) }}
+            {{ form_row(form.plainPassword.second, {'label': 'label.repeat_password'}) }}
+            {{ form_row(form.timezone, {'label': 'label.timezone', 'attr': {'data-controller': 'select--default'}}) }}
+            {{ form_row(form.locale, {'label': 'label.locale', 'attr': {'data-controller': 'select--default'}}) }}
+            <div class="footer-button">
+                <button class="button is-primary" type="submit">{{ 'btn.submit'|trans }}</button>
             </div>
-        </div>
-    </section>
+        {{ form_end(form) }}
+    </div>
 {% endblock %}
