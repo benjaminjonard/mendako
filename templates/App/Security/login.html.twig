@@ -7,7 +7,11 @@
                 <div class="column"></div>
                 <div class="column">
                     <div class="box">
-                        <h1 class="title">{{ 'title.sign_in'|trans }}</h1>
+                        <div class='logo' aria-label="Logo"></div>
+                        <h1 class="title">
+                            {{ 'title.sign_in'|trans }}
+                        </h1>
+
                         <form action="{{ path("app_security_login") }}" method="post">
                             {% if error %}
                                 <p class="has-text-danger">

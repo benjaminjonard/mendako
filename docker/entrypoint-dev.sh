@@ -23,7 +23,8 @@ echo "date.timezone=${PHP_TZ}" >> /etc/php/8.2/fpm/conf.d/php.ini
 
 
 echo "**** Migrate the database ****"
-cd /var/www/mendako && \
+cd /var/www/mendako
+composer install
 php bin/console doctrine:migration:migrate --no-interaction --allow-no-migration --env=prod
 
 echo "**** Create nginx log files ****"
