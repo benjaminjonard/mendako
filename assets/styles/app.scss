@@ -1,0 +1,290 @@
+$color_1: #0075f8;
+$color_2: #fd9200;
+$color_3: #a800aa;
+$color_4: #ff8a8b;
+$color_5: #00ab2c;
+$color_6: #d1d1d1;
+$background-color_1: #ff6600;
+$background-color_2: #eee;
+
+@import "../node_modules/bulma/css/bulma.min.css";
+@import "../fonts/icomoon/icomoon.css";
+
+@keyframes indeterminate {
+  0% {
+    left: -35%;
+    right: 100%;
+  }
+  60% {
+    left: 100%;
+    right: -90%;
+  }
+  100% {
+    left: 100%;
+    right: -90%;
+  }
+}
+
+/* End loader */
+@-webkit-keyframes fadeInRight {
+  from {
+    opacity: 0;
+    -webkit-transform: translate3d(100%, 0, 0);
+    transform: translate3d(100%, 0, 0);
+  }
+  to {
+    opacity: 1;
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    -webkit-transform: translate3d(100%, 0, 0);
+    transform: translate3d(100%, 0, 0);
+  }
+  to {
+    opacity: 1;
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@-webkit-keyframes fadeOutRight {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    -webkit-transform: translate3d(100%, 0, 0);
+    transform: translate3d(100%, 0, 0);
+  }
+}
+
+@keyframes fadeOutRight {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    -webkit-transform: translate3d(100%, 0, 0);
+    transform: translate3d(100%, 0, 0);
+  }
+}
+
+html {
+  height: 100%;
+}
+
+.navbar-breadcrumb {
+  justify-content: flex-start;
+  margin-right: auto;
+  align-items: stretch;
+  display: flex;
+}
+
+.toast {
+  top: 56px;
+}
+
+.section {
+  padding: 3rem 1.5rem;
+}
+
+.grid {
+  a {
+    margin-top: auto;
+  }
+}
+
+.preview {
+  max-width: 300px;
+  max-height: 300px;
+}
+
+.image-display {
+  max-width: 800px;
+  max-height: 650px;
+
+  &:not(.is-fullsize) {
+    img {
+      max-width: 800px;
+      max-height: 650px;
+    }
+  }
+}
+
+.grid-posts {
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1rem;
+  display: grid;
+
+  img {
+    margin: auto;
+    max-width: 180px;
+    max-height: 180px;
+    width: unset;
+  }
+
+  figure {
+    margin: auto;
+    max-width: 180px;
+    max-height: 180px;
+    width: unset;
+  }
+}
+
+.grid-boards {
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 1rem;
+  display: grid;
+  text-align: center;
+
+  .card {
+    img {
+      width: 210px;
+      height: 150px;
+      object-fit: cover;
+    }
+
+    margin: auto;
+    width: 210px;
+    height: auto;
+    max-width: 210px;
+  }
+}
+
+figure {
+  .tag {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+  }
+}
+
+.is-category-general {
+  color: $color_1;
+}
+
+.is-category-meta {
+  color: $color_2;
+}
+
+.is-category-copyright {
+  color: $color_3;
+}
+
+.is-category-artist {
+  color: $color_4;
+}
+
+.is-category-character {
+  color: $color_5;
+}
+
+.block-search {
+  .control {
+    width: 100%;
+  }
+}
+
+html.loading {
+  &:before {
+    animation: indeterminate 2.1s cubic-bezier(0.65, 0.815, 0.735, 0.395) infinite;
+    background-color: $background-color_1;
+    content: "";
+    display: block;
+    height: 4px;
+    left: 0;
+    position: fixed;
+    width: -35%;
+    will-change: left, right;
+    z-index: 101;
+  }
+}
+
+#offline-message {
+  background-color: $background-color_1;
+  bottom: 0;
+  color: $color_6;
+  font-weight: bold;
+  height: 50px;
+  left: 0;
+  padding-top: 12px;
+  position: fixed;
+  right: 0;
+  text-align: center;
+  z-index: 150;
+
+  span {
+    width: 100%;
+  }
+}
+
+:root {
+  --animate-duration: 1s;
+  --animate-delay: 1s;
+  --animate-repeat: 1;
+}
+
+.animate__animated {
+  -webkit-animation-duration: 1s;
+  animation-duration: 1s;
+  -webkit-animation-duration: var(--animate-duration);
+  animation-duration: var(--animate-duration);
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+}
+
+.animate__fadeInRight {
+  -webkit-animation-name: fadeInRight;
+  animation-name: fadeInRight;
+}
+
+.animate__fadeOutRight {
+  -webkit-animation-name: fadeOutRight;
+  animation-name: fadeOutRight;
+}
+
+.autocomplete-dropdown {
+  background-color: $background-color_2;
+  padding: 5px 0 5px 10px;
+}
+
+.autocomplete-dropdown-textarea {
+  position: absolute;
+  z-index: 1;
+  width: 100%;
+}
+
+.is-fullsize {
+  width: 100%;
+  height: 100%;
+  max-height: 100%;
+  max-width: 100%;
+}
+
+@media (max-width: 450px) {
+  .grid-posts {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+
+    img {
+      max-width: 150px;
+      max-height: 150px;
+    }
+
+    figure {
+      max-width: 150px;
+      max-height: 150px;
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .reverse-columns {
+    flex-direction: column-reverse;
+    display: flex;
+  }
+}

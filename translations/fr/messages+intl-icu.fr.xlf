@@ -445,10 +445,10 @@
         <target>Le tag {tag} a été édité</target>
       </segment>
     </unit>
-    <unit id="7cCZaHF" name="label.dark_mode_enabled">
+    <unit id="7cCZaHF" name="label.theme">
       <segment state="translated">
-        <source>label.dark_mode_enabled</source>
-        <target>Mode sombre</target>
+        <source>label.theme</source>
+        <target>Thème</target>
       </segment>
     </unit>
     <unit id="97NQmwC" name="btn.download">
@@ -545,6 +545,24 @@
       <segment state="translated">
         <source>global.locale.fr</source>
         <target>Français</target>
+      </segment>
+    </unit>
+    <unit id="9lTWEs2" name="global.theme.browser">
+      <segment state="translated">
+        <source>global.theme.browser</source>
+        <target>Thème par défaut du navigateur</target>
+      </segment>
+    </unit>
+    <unit id="uLAIl7f" name="global.theme.light">
+      <segment state="translated">
+        <source>global.theme.light</source>
+        <target>Clair</target>
+      </segment>
+    </unit>
+    <unit id="wO3QBHA" name="global.theme.dark">
+      <segment state="translated">
+        <source>global.theme.dark</source>
+        <target>Sombre</target>
       </segment>
     </unit>
   </file>

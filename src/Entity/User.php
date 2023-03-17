@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Enum\Locale;
+use App\Enum\Theme;
 use App\Repository\UserRepository;
 use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
@@ -54,8 +55,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \String
     #[Assert\Choice(choices: Locale::LOCALES)]
     private string $locale = Locale::EN->value;
 
-    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => 0])]
-    private bool $darkModeEnabled = false;
+    #[ORM\Column(type: Types::STRING, options: ['default' => Theme::BROWSER->value])]
+    #[Assert\Choice(choices: Theme::THEMES)]
+    private string $theme = Theme::BROWSER->value;
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     #[Gedmo\Timestampable(on: 'create')]
@@ -224,14 +226,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \String
         return $this;
     }
 
-    public function isDarkModeEnabled(): bool
+    public function getTheme(): string
     {
-        return $this->darkModeEnabled;
+        return $this->theme;
     }
 
-    public function setDarkModeEnabled(bool $darkModeEnabled): User
+    public function setTheme(string $theme): User
     {
-        $this->darkModeEnabled = $darkModeEnabled;
+        $this->theme = $theme;
 
         return $this;
     }
