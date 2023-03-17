@@ -23,6 +23,8 @@ Encore
      */
     .addEntry('app', './app.js')
 
+    .addStyleEntry('dark', './styles/themes/dark.css')
+
     .addPlugin(new CopyPlugin({
         patterns: [
             { from: './images', to: 'images' }

@@ -1,0 +1,258 @@
+@import "../node_modules/bulma/css/bulma.min.css";
+@import '../fonts/icomoon/icomoon.css';
+
+html {
+  height: 100%;
+}
+
+
+.navbar-breadcrumb {
+  justify-content: flex-start;
+  margin-right: auto;
+  align-items: stretch;
+  display: flex;
+}
+
+.toast {
+  top: 56px;
+}
+
+.section {
+  padding: 3rem 1.5rem;
+}
+
+.grid a {
+  margin-top: auto;
+}
+
+.preview {
+  max-width: 300px;
+  max-height: 300px;
+}
+
+.image-display, .image-display:not(.is-fullsize) img {
+  max-width: 800px;
+  max-height: 650px;
+}
+
+/* Start image grid */
+.grid-posts {
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1rem;
+  display: grid;
+}
+
+.grid-posts img, .grid-posts figure {
+  margin: auto;
+  max-width: 180px;
+  max-height: 180px;
+  width: unset;
+}
+
+@media(max-width: 450px) {
+  .grid-posts {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+
+  .grid-posts img, .grid-posts figure {
+    max-width: 150px;
+    max-height: 150px;
+  }
+}
+/* End image grid */
+
+/* Start board grid */
+.grid-boards {
+  grid-template-columns: repeat(auto-fill,minmax(210px,1fr));
+  gap: 1rem;
+  display: grid;
+  text-align: center;
+}
+
+.grid-boards .card img {
+  width: 210px;
+  height: 150px;
+  object-fit: cover;
+}
+
+.grid-boards .card {
+  margin: auto;
+  width: 210px;
+  height: auto;
+  max-width: 210px;
+}
+/* End board grid */
+
+figure .tag {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+}
+
+.is-category-general {
+  color: #0075f8;
+}
+
+.is-category-meta {
+  color: #fd9200;
+}
+
+.is-category-copyright {
+  color: #a800aa;
+}
+
+.is-category-artist {
+  color: #ff8a8b;
+}
+
+.is-category-character {
+  color: #00ab2c;
+}
+
+.block-search .control {
+  width: 100%;
+}
+
+/* Start loader */
+html.loading:before {
+  animation: indeterminate 2.1s cubic-bezier(0.65, 0.815, 0.735, 0.395) infinite;
+  background-color: #ff6600;
+  content: "";
+  display: block;
+  height: 4px;
+  left: 0;
+  position: fixed;
+  width: -35%;
+  will-change: left, right;
+  z-index: 101;
+}
+
+@keyframes indeterminate {
+  0% {
+    left: -35%;
+    right: 100%;
+  }
+  60% {
+    left: 100%;
+    right: -90%;
+  }
+  100% {
+    left: 100%;
+    right: -90%;
+  }
+}
+
+#offline-message {
+  background-color: #ff6600;
+  bottom: 0;
+  color: #d1d1d1;
+  font-weight: bold;
+  height: 50px;
+  left: 0;
+  padding-top: 12px;
+  position: fixed;
+  right: 0;
+  text-align: center;
+  z-index: 150;
+}
+
+#offline-message span {
+  width: 100%;
+}
+/* End loader */
+
+
+:root {
+  --animate-duration: 1s;
+  --animate-delay: 1s;
+  --animate-repeat: 1;
+}
+.animate__animated {
+  -webkit-animation-duration: 1s;
+  animation-duration: 1s;
+  -webkit-animation-duration: var(--animate-duration);
+  animation-duration: var(--animate-duration);
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+}
+@-webkit-keyframes fadeInRight {
+  from {
+    opacity: 0;
+    -webkit-transform: translate3d(100%, 0, 0);
+    transform: translate3d(100%, 0, 0);
+  }
+
+  to {
+    opacity: 1;
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+}
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    -webkit-transform: translate3d(100%, 0, 0);
+    transform: translate3d(100%, 0, 0);
+  }
+
+  to {
+    opacity: 1;
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+}
+.animate__fadeInRight {
+  -webkit-animation-name: fadeInRight;
+  animation-name: fadeInRight;
+}
+@-webkit-keyframes fadeOutRight {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+    -webkit-transform: translate3d(100%, 0, 0);
+    transform: translate3d(100%, 0, 0);
+  }
+}
+@keyframes fadeOutRight {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+    -webkit-transform: translate3d(100%, 0, 0);
+    transform: translate3d(100%, 0, 0);
+  }
+}
+.animate__fadeOutRight {
+  -webkit-animation-name: fadeOutRight;
+  animation-name: fadeOutRight;
+}
+
+.autocomplete-dropdown {
+  background-color: #eee;
+  padding: 5px 0 5px 10px;
+}
+
+.autocomplete-dropdown-textarea {
+  position: absolute;
+  z-index: 1;
+  width: 100%;
+}
+
+.is-fullsize {
+  width: 100%;
+  height: 100%;
+  max-height: 100%;
+  max-width: 100%;
+}
+
+@media(max-width: 767px) {
+  .reverse-columns {
+    flex-direction: column-reverse;
+    display: flex;
+  }
+}

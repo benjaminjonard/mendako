@@ -37,6 +37,10 @@
 
         {% block stylesheets %}
             {{ encore_entry_link_tags('app') }}
+
+            {% if app.user is null or app.user.theme == 'browser' %}
+                {{ encore_entry_link_tags("dark", null, '_default', {media: '(prefers-color-scheme: dark)'}) }}
+            {% endif %}
         {% endblock %}
 
         {% block javascripts %}
