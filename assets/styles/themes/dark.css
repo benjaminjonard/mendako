@@ -33,3 +33,7 @@ html, .navbar, .autocomplete-dropdown-textarea, .navbar-menu {
 .is-category-character {
     color: #35c64a;
 }
+
+.navbar i {
+    color: #ccc;
+}

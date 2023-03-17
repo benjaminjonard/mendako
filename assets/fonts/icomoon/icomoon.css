@@ -34,3 +34,6 @@
 .icon-search:before {
   content: "\f002";
 }
+.icon-power-off:before {
+  content: "\f011";
+}
