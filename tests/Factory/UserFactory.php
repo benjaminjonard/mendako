@@ -3,6 +3,7 @@
 namespace App\Tests\Factory;
 
 use App\Entity\User;
+use App\Enum\Theme;
 use App\Repository\UserRepository;
 use Zenstruck\Foundry\ModelFactory;
 use Zenstruck\Foundry\Proxy;
@@ -38,7 +39,7 @@ final class UserFactory extends ModelFactory
             'enabled' => true,
             'roles' => ['ROLE_USER'],
             'timezone' => self::faker()->timezone(),
-            'darkModeEnabled' => self::faker()->boolean(),
+            'theme' => Theme::BROWSER->value,
             'createdAt' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
         ];
     }
