@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f5a9cc23bee4d0c4767b9cf296e61862",
+    "content-hash": "1aaa5bb24bb44f51f0147c903932899b",
     "packages": [
         {
             "name": "behat/transliterator",
@@ -7439,16 +7439,16 @@
     "packages-dev": [
         {
             "name": "brianium/paratest",
-            "version": "v7.1.1",
+            "version": "v7.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/paratestphp/paratest.git",
-                "reference": "abc123183e90f33ce1312b5bfaa49d80d8c646b2"
+                "reference": "10e66ccdad397200f8129a034f0d3bf8cbe4c524"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/paratestphp/paratest/zipball/abc123183e90f33ce1312b5bfaa49d80d8c646b2",
-                "reference": "abc123183e90f33ce1312b5bfaa49d80d8c646b2",
+                "url": "https://api.github.com/repos/paratestphp/paratest/zipball/10e66ccdad397200f8129a034f0d3bf8cbe4c524",
+                "reference": "10e66ccdad397200f8129a034f0d3bf8cbe4c524",
                 "shasum": ""
             },
             "require": {
@@ -7462,7 +7462,7 @@
                 "phpunit/php-code-coverage": "^10.0.2",
                 "phpunit/php-file-iterator": "^4.0.1",
                 "phpunit/php-timer": "^6.0",
-                "phpunit/phpunit": "^10.0.16",
+                "phpunit/phpunit": "^10.0.17",
                 "sebastian/environment": "^6.0",
                 "symfony/console": "^6.2.7",
                 "symfony/process": "^6.2.7"
@@ -7472,8 +7472,8 @@
                 "ext-pcov": "*",
                 "ext-posix": "*",
                 "infection/infection": "^0.26.19",
-                "phpstan/phpstan": "^1.10.6",
-                "phpstan/phpstan-deprecation-rules": "^1.1.2",
+                "phpstan/phpstan": "^1.10.7",
+                "phpstan/phpstan-deprecation-rules": "^1.1.3",
                 "phpstan/phpstan-phpunit": "^1.3.10",
                 "phpstan/phpstan-strict-rules": "^1.5",
                 "squizlabs/php_codesniffer": "^3.7.2",
@@ -7518,7 +7518,7 @@
             ],
             "support": {
                 "issues": "https://github.com/paratestphp/paratest/issues",
-                "source": "https://github.com/paratestphp/paratest/tree/v7.1.1"
+                "source": "https://github.com/paratestphp/paratest/tree/v7.1.2"
             },
             "funding": [
                 {
@@ -7530,7 +7530,7 @@
                     "type": "paypal"
                 }
             ],
-            "time": "2023-03-13T10:11:07+00:00"
+            "time": "2023-03-20T15:15:41+00:00"
         },
         {
             "name": "dama/doctrine-test-bundle",
@@ -8392,16 +8392,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "10.0.16",
+            "version": "10.0.17",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "07d386a11ac7094032900f07cada1c8975d16607"
+                "reference": "b75eddcabca052312ae38c8a2bc69ff1a7b89b77"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/07d386a11ac7094032900f07cada1c8975d16607",
-                "reference": "07d386a11ac7094032900f07cada1c8975d16607",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/b75eddcabca052312ae38c8a2bc69ff1a7b89b77",
+                "reference": "b75eddcabca052312ae38c8a2bc69ff1a7b89b77",
                 "shasum": ""
             },
             "require": {
@@ -8472,7 +8472,8 @@
             ],
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/10.0.16"
+                "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/10.0.17"
             },
             "funding": [
                 {
@@ -8488,7 +8489,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-03-13T09:02:40+00:00"
+            "time": "2023-03-20T14:42:33+00:00"
         },
         {
             "name": "rector/rector",
@@ -9875,16 +9876,16 @@
         },
         {
             "name": "zenstruck/foundry",
-            "version": "v1.29.0",
+            "version": "v1.30.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zenstruck/foundry.git",
-                "reference": "9d31ae64bea443c784c0ccabeb7feb8fb809d167"
+                "reference": "3100791aa9cebb00ab97d55e5be467e9628ce699"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zenstruck/foundry/zipball/9d31ae64bea443c784c0ccabeb7feb8fb809d167",
-                "reference": "9d31ae64bea443c784c0ccabeb7feb8fb809d167",
+                "url": "https://api.github.com/repos/zenstruck/foundry/zipball/3100791aa9cebb00ab97d55e5be467e9628ce699",
+                "reference": "3100791aa9cebb00ab97d55e5be467e9628ce699",
                 "shasum": ""
             },
             "require": {
@@ -9896,6 +9897,9 @@
                 "symfony/string": "^5.4|^6.0",
                 "zenstruck/assert": "^1.0",
                 "zenstruck/callback": "^1.1"
+            },
+            "conflict": {
+                "doctrine/mongodb-odm": "2.5.0"
             },
             "require-dev": {
                 "bamarni/composer-bin-plugin": "^1.4",
@@ -9949,7 +9953,7 @@
             ],
             "support": {
                 "issues": "https://github.com/zenstruck/foundry/issues",
-                "source": "https://github.com/zenstruck/foundry/tree/v1.29.0"
+                "source": "https://github.com/zenstruck/foundry/tree/v1.30.0"
             },
             "funding": [
                 {
@@ -9957,7 +9961,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-02-28T15:54:23+00:00"
+            "time": "2023-03-20T13:37:31+00:00"
         }
     ],
     "aliases": [],
