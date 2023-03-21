@@ -18,7 +18,7 @@ services:
             - DB_USER=postgres
             - DB_PASSWORD=password
             - DB_VERSION=15
-            - PHP_TZ=Europe/Paris
+            - PHP_TIMEZONE=Europe/Paris
             - HTTPS_ENABLED=1
         depends_on:
             - postgresql
