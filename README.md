@@ -15,14 +15,13 @@ Private, light booru-like image board, supports multiple boards.
 Inspired by https://github.com/danbooru/danbooru
 
 ## Installation
-### Step 1 -> Download required files 
+#### Step 1 -> Download required files
+- `wget https://github.com/benjaminjonard/mendako/releases/latest/docker/deploy/docker-compose.yml`
+- `wget https://github.com/benjaminjonard/mendako/releases/latest/docker/deploy/.env`
 
-`wget -O docker-compose.yml https://github.com/benjaminjonard/mendako/releases/latest/download/docker-compose.yml.example`
-`wget -O .env https://github.com/benjaminjonard/mendako/releases/latest/download/.env.example`
+####  Step 2 -> Review both files and update values if required
 
-### Step 2 -> Review both files and update values if required
-
-### Step 3 -> Start Mendako
+####  Step 3 -> Start Mendako
 `docker-compose up -d`
 
 ### Available environment variables
