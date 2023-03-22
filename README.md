@@ -14,14 +14,83 @@ Private, light booru-like image board, supports multiple boards.
 
 Inspired by https://github.com/danbooru/danbooru
 
+## Screenshots
+<p align="center">
+    <img width="400px" src="https://user-images.githubusercontent.com/20560781/196007085-5be47dac-809c-4cff-bedd-deb4757c168e.png">
+    <img width="400px" src="https://user-images.githubusercontent.com/20560781/196007150-e3cd4665-e6d9-4afb-8d11-41c155493f0c.png">
+    <img width="400px" src="https://user-images.githubusercontent.com/20560781/196007132-3df3fdde-1d28-4906-88aa-74326d9f369f.png">
+</p>
+
 ## Installation
-#### Step 1 -> Download required files
-- `wget https://github.com/benjaminjonard/mendako/releases/latest/docker/deploy/docker-compose.yml`
-- `wget https://github.com/benjaminjonard/mendako/releases/latest/docker/deploy/.env`
+#### Step 1 -> Create a `docker-compose.yml` file
+```
+version: '3.4'
 
-####  Step 2 -> Review both files and update values if required
+services:
+    mendako:
+        container_name: mendako
+        image: benjaminjonard/mendako
+        restart: unless-stopped
+        ports:
+            - 81:80
+        env_file:
+            - .env
+        depends_on:
+            - mendako_postgresql
+        volumes:
+            - "./volumes/mendako/public/uploads:/var/www/mendako/public/uploads"
 
-####  Step 3 -> Start Mendako
+    mendako_postgresql:
+        container_name: mendako_postgresql
+        image: postgres:15
+        restart: unless-stopped
+        env_file:
+            - .env
+        environment:
+            - POSTGRES_DB=${DB_NAME}
+            - POSTGRES_USER=${DB_USER}
+            - POSTGRES_PASSWORD=${DB_PASSWORD}
+        volumes:
+            - "./volumes/postgresql:/var/lib/postgresql/data"
+```
+####  Step 2 -> Create a `.env` file
+```
+########################################################################################################
+#                                                WEB
+#
+# APP_DEBUG=1 displays detailed error message
+#
+# APP_SECRET is a random string used for security, you can use for example openssl rand -base64 21
+# APP_SECRET is automatically generated when using Docker
+#
+# PHP_TZ, see possible values here https://www.w3schools.com/php/php_ref_timezones.asp
+########################################################################################################
+
+APP_DEBUG=0
+APP_ENV=prod
+#APP_SECRET=
+
+HTTPS_ENABLED=1
+UPLOAD_MAX_FILESIZE=20M
+PHP_MEMORY_LIMIT=512M
+PHP_TZ=Paris\Europe
+
+########################################################################################################
+#                                                DATABASE
+########################################################################################################
+
+DB_NAME=mendako
+DB_HOST=mendako_postgresql
+DB_PORT=5432
+DB_USER=mendako
+DB_PASSWORD=mendako
+DB_VERSION=15
+
+```
+
+####  Step 3 -> Review both files and update values if required
+
+####  Step 4 -> Start Mendako
 `docker-compose up -d`
 
 ### Available environment variables
@@ -41,14 +110,6 @@ Inspired by https://github.com/danbooru/danbooru
 | UPLOAD_MAX_FILESIZE | Defaults to 20M                             |                                                     |
 | PHP_MEMORY_LIMIT    | Defaults to 512M                            |                                                     |
 | PHP_TIMEZONE        | You timezone, default to Europe\Paris       | https://www.w3schools.com/php/php_ref_timezones.asp |
-
-
-## Screenshots
-<p align="center">
-    <img width="400px" src="https://user-images.githubusercontent.com/20560781/196007085-5be47dac-809c-4cff-bedd-deb4757c168e.png">
-    <img width="400px" src="https://user-images.githubusercontent.com/20560781/196007150-e3cd4665-e6d9-4afb-8d11-41c155493f0c.png">
-    <img width="400px" src="https://user-images.githubusercontent.com/20560781/196007132-3df3fdde-1d28-4906-88aa-74326d9f369f.png">
-</p>
 
 
 ## Support Mendako
