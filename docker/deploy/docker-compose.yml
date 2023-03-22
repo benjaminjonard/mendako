@@ -14,7 +14,7 @@ services:
         volumes:
             - "./volumes/mendako/public/uploads:/var/www/mendako/public/uploads"
 
-    postgresql:
+    mendako_postgresql:
         container_name: mendako_postgresql
         image: postgres:15
         restart: unless-stopped
