@@ -15,9 +15,15 @@ Private, light booru-like image board, supports multiple boards.
 Inspired by https://github.com/danbooru/danbooru
 
 ## Installation
-Copy the docker-compose.yml.dist in a docker-compose.yml file and adjust the environment variables to your need. 
+### Step 1 -> Download required files 
 
-(you can also use a .env file)
+`wget -O docker-compose.yml https://github.com/benjaminjonard/mendako/releases/latest/download/docker-compose.yml.example`
+`wget -O .env https://github.com/benjaminjonard/mendako/releases/latest/download/.env.example`
+
+### Step 2 -> Review both files and update values if required
+
+### Step 3 -> Start Mendako
+`docker-compose up -d`
 
 ### Available environment variables
 
@@ -36,8 +42,6 @@ Copy the docker-compose.yml.dist in a docker-compose.yml file and adjust the env
 | UPLOAD_MAX_FILESIZE | Defaults to 20M                             |                                                     |
 | PHP_MEMORY_LIMIT    | Defaults to 512M                            |                                                     |
 | PHP_TIMEZONE        | You timezone, default to Europe\Paris       | https://www.w3schools.com/php/php_ref_timezones.asp |
-
-  
 
 
 ## Screenshots
