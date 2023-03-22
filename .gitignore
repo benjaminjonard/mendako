@@ -19,7 +19,7 @@ yarn-error.log
 /assets/node_modules/
 /.idea/
 /public/tmp/
-docker-compose.yml
+/.docker-compose.yml
 
 /public/uploads/
 !/public/uploads/.gitkeep

@@ -1,0 +1,39 @@
+#This docker-compose file is provided for dev purposes
+version: '3.4'
+
+services:
+    mendako:
+        container_name: mendako
+        build:
+            dockerfile: Dockerfile.dev
+        restart: unless-stopped
+        ports:
+            - 81:80
+        environment:
+            - APP_ENV=dev
+            - APP_DEBUG=1
+            - DB_DRIVER=pdo_pgsql
+            - DB_NAME=mendako
+            - DB_HOST=postgresql
+            - DB_PORT=5432
+            - DB_USER=postgres
+            - DB_PASSWORD=password
+            - DB_VERSION=15
+            - PHP_TIMEZONE=Europe/Paris
+            - HTTPS_ENABLED=0
+        depends_on:
+            - postgresql
+        volumes:
+            - "./docker/volumes/mendako/public/uploads:/var/www/mendako/public/uploads"
+            - "./docker/volumes/mendako/public/thumbnails:/var/www/mendako/public/thumbnails"
+            - ./:/var/www/mendako
+
+    postgresql:
+        image: postgres:15
+        environment:
+            - POSTGRES_DB=mendako
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=password
+            - POSTGRES_HOST_AUTH_METHOD=trust
+        volumes:
+            - "./docker/volumes/postgresql:/var/lib/postgresql/data"
