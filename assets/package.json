@@ -9,7 +9,7 @@
         "core-js": "3.29.1",
         "regenerator-runtime": "0.13.11",
         "stimulus-use": "0.52.0",
-        "webpack": "5.76.2",
+        "webpack": "5.76.3",
         "webpack-cli": "5.0.1",
         "webpack-notifier": "1.15.0"
     },
