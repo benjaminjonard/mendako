@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.1.2] / 2023-03-29
+### Fix
+- Fix permission issues with uploads folder (benjaminjonard)
+
+### Miscellaneous
+- Update PHP and JS dependencies (benjaminjonard)
+
 ## [1.1.1] / 2023-03-22
 ### Miscellaneous
 - Use default browser theme when necessary (benjaminjonard)
