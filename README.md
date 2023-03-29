@@ -73,7 +73,7 @@ APP_ENV=prod
 HTTPS_ENABLED=1
 UPLOAD_MAX_FILESIZE=20M
 PHP_MEMORY_LIMIT=512M
-PHP_TZ=Paris\Europe
+PHP_TZ=Europe/Paris
 
 ########################################################################################################
 #                                                DATABASE
