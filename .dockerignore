@@ -9,6 +9,9 @@ var
 
 public/build
 public/uploads
+!public/uploads/.gitkeep
 public/tmp
+!public/tmp/.gitkeep
 public/thumbnails
+!public/thumbnails/.gitkeep
 public/manifest.json

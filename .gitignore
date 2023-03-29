@@ -18,11 +18,17 @@ yarn-error.log
 /docker/volumes
 /assets/node_modules/
 /.idea/
+
 /public/tmp/
-/.docker-compose.yml
+!/public/tmp/.gitkeep
+
+/public/thumbnails/
+!/public/thumbnails/.gitkeep
 
 /public/uploads/
 !/public/uploads/.gitkeep
+
+/.docker-compose.yml
 ###> phpunit/phpunit ###
 .phpunit.result.cache
 /output/

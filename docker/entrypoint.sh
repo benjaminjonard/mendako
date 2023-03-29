@@ -65,8 +65,6 @@ echo "**** 8/9 - Create symfony log files ****"
 [ ! -f /var/www/mendako/var/log/prod.log ] && \
 	touch /var/www/mendako/var/log/prod.log
 
-chown -R www-data:www-data /var/www/mendako/var
-
 echo "**** 9/9 - Setup complete, starting the server. ****"
 php-fpm8.2
 exec $@
