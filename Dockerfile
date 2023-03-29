@@ -64,6 +64,8 @@ RUN addgroup --gid "$PGID" "$USER" && \
     rm -rf /var/lib/apt/lists/* && \
     rm -rf /usr/local/bin/composer && \
 # Set permissions
+    sed -i "s/user = www-data/user = $USER/g" /etc/php/8.2/fpm/pool.d/www.conf && \
+    sed -i "s/group = www-data/group = $USER/g" /etc/php/8.2/fpm/pool.d/www.conf && \
     chown -R "$USER":"$USER" /var/www/mendako && \
     chmod +x /var/www/mendako/docker/entrypoint.sh && \
     mkdir /run/php && \
