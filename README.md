@@ -38,7 +38,7 @@ services:
         depends_on:
             - mendako_postgresql
         volumes:
-            - "./volumes/mendako/public/uploads:/var/www/mendako/public/uploads"
+            - "./volumes/mendako/public/uploads:/uploads"
 
     mendako_postgresql:
         container_name: mendako_postgresql
