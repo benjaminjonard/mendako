@@ -29,7 +29,7 @@ services:
             #- ./:/var/www/mendako
 
     postgresql:
-        image: postgres:14
+        image: postgres:15
         environment:
             - POSTGRES_DB=mendako
             - POSTGRES_USER=postgres
