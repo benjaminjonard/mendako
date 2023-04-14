@@ -559,5 +559,11 @@
         <target>Sombre</target>
       </segment>
     </unit>
+    <unit id="ym0vXcZ" name="global.welcome">
+      <segment state="translated">
+        <source>global.welcome</source>
+        <target>Bienvenue sur Mendako</target>
+      </segment>
+    </unit>
   </file>
 </xliff>
