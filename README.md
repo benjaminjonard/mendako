@@ -124,5 +124,9 @@ You can contribute and edit translations here: https://crowdin.com/project/menda
 If you wish to contribute to a new language, please open a discussion on github or crowdin and I'll gladly add it.
 You are also welcome if you want to proofread existing translations.
 
+### Translations status
+<!-- CROWDIN-LANGUAGES-PROGRESS-ACTION-START -->
+<!-- CROWDIN-LANGUAGES-PROGRESS-ACTION-END -->
+
 ## Licensing
 Mendako is an Open Source software, released under the MIT License. 
