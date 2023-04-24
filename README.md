@@ -1,10 +1,9 @@
 <p align="center">
 <img src="https://img.shields.io/github/license/benjaminjonard/mendako" />    
     <img src="https://img.shields.io/github/v/release/benjaminjonard/mendako" />
-    <img src="https://img.shields.io/badge/php-8.2-blue" />
-    <img src="https://img.shields.io/badge/postgresql-^10.0-blue" />            
-    <img src="https://img.shields.io/badge/mariadb-^10.0-blue" /> 
-</p>
+    <img src="https://img.shields.io/badge/php->=8.2-blue" />
+    <img src="https://img.shields.io/badge/postgresql->=10.0-blue" />            
+</p> 
 
 # Mendako
 
