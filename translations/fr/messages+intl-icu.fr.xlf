@@ -154,7 +154,7 @@
     <unit id="SThGArP" name="title.edit_board">
       <segment state="translated">
         <source>Edit board {name}</source>
-        <target>Éditer le board</target>
+        <target>Éditer le board {name}</target>
       </segment>
     </unit>
     <unit id="ebr4n9D" name="menu.edit">
@@ -250,7 +250,7 @@
     <unit id="dNIZRmO" name="title.edit_tag">
       <segment state="translated">
         <source>Edit tag {name}</source>
-        <target>Éditer le tag</target>
+        <target>Éditer le tag {name}</target>
       </segment>
     </unit>
     <unit id="jEeQjDx" name="message.offline">
