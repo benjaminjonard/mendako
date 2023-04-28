@@ -5,12 +5,12 @@ services:
     mendako:
         container_name: mendako
         build:
-            dockerfile: Dockerfile
+            dockerfile: Dockerfile.dev
         restart: unless-stopped
         ports:
             - 81:80
         environment:
-            - APP_ENV=prod
+            - APP_ENV=dev
             - APP_DEBUG=1
             - DB_DRIVER=pdo_pgsql
             - DB_NAME=mendako
@@ -25,8 +25,8 @@ services:
             - postgresql
         volumes:
             - "./docker/volumes/mendako/public/uploads:/uploads"
-            #- "./docker/volumes/mendako/public/thumbnails:/var/www/mendako/public/thumbnails"
-            #- ./:/var/www/mendako
+            - "./docker/volumes/mendako/public/thumbnails:/var/www/mendako/public/thumbnails"
+            - ./:/var/www/mendako
 
     postgresql:
         image: postgres:15
