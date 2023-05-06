@@ -48,7 +48,7 @@ RUN addgroup --gid "$PGID" "$USER" && \
 #Install composer dependencies
     curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && \
     cd /var/www/mendako && \
-    composer install --no-dev --classmap-authoritative && \
+    composer install --classmap-authoritative && \
     composer clearcache && \
 # Install javascript dependencies and build assets
     cd /var/www/mendako/assets && \
