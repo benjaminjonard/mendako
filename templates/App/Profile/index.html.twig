@@ -19,6 +19,7 @@
                 {{ form_row(form.locale, {'label': 'label.locale'}) }}
                 {{ form_row(form.timezone, {'label': 'label.timezone'}) }}
                 {{ form_row(form.theme, {'label' : 'label.theme'} ) }}
+               {{ form_row(form.paginationType, {'label' : 'label.pagination_type'} ) }}
 
                 <h2 class="subtitle">{{ 'title.password'|trans }}</h2>
                 {{ form_row(form.plainPassword.first, {'label' : 'label.new_password', 'attr': {'autocomplete' : 'new-password'}} ) }}

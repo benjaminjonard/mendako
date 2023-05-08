@@ -12,6 +12,7 @@ use App\Repository\TagRepository;
 use App\Service\PaginatorFactory;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -67,6 +68,19 @@ class BoardController extends AbstractController
         $tags = $request->query->get('tags', '');
 
         $posts = $postRepository->filterByTags($board, $tags, $page);
+
+        if ($request->isXmlHttpRequest()) {
+            $html = '';
+            foreach ($posts as $post) {
+                $html .= $this->render('App/Board/_post.html.twig', [
+                    'board' => $board,
+                    'post' => $post,
+                ])->getContent();
+            }
+
+            return new JsonResponse($html);
+        }
+
         $postsCount = $postRepository->countFilterByTags($board, $tags);
 
         return $this->render('App/Board/show.html.twig', [

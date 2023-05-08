@@ -6,6 +6,7 @@ namespace App\Form\Type;
 
 use App\Entity\User;
 use App\Enum\Locale;
+use App\Enum\PaginationType;
 use App\Enum\Theme;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -50,6 +51,10 @@ class UserType extends AbstractType
             $builder
                 ->add('theme', ChoiceType::class, [
                     'choices' => array_flip(Theme::getThemeLabels()),
+                    'required' => true,
+                ])
+                ->add('paginationType', ChoiceType::class, [
+                    'choices' => array_flip(PaginationType::getPaginationTypeLabels()),
                     'required' => true,
                 ])
             ;

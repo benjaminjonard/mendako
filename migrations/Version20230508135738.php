@@ -7,19 +7,18 @@ namespace DoctrineMigrations;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
-final class Version20230317114105 extends AbstractMigration
+final class Version20230508135738 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return '[Postgresql] Add theme to User';
+        return '[Postgresql] Add pagination_type to User';
     }
 
     public function up(Schema $schema): void
     {
         $this->skipIf('postgresql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'postgresql\'.');
 
-        $this->addSql('ALTER TABLE men_user ADD theme VARCHAR(255) DEFAULT \'browser\' NOT NULL');
-        $this->addSql('ALTER TABLE men_user DROP dark_mode_enabled');
+        $this->addSql('ALTER TABLE men_user ADD pagination_type VARCHAR(255) DEFAULT \'page\' NOT NULL');
     }
 
     public function down(Schema $schema): void

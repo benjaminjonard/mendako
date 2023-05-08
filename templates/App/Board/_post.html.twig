@@ -1,0 +1,11 @@
+<a href="{{ path('app_post_show', {slug: board.slug, id: post.id}) }}">
+    <figure class="image">
+        <div>
+            {% if post.duration %}
+                <span class="tag is-dark has-text-weight-medium">{{ post.duration|minutes }}</span>
+            {% endif %}
+
+            <img src="{{ asset(post.path|thumbnail(360)) }}">
+        </div>
+    </figure>
+</a>

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Enum\Locale;
+use App\Enum\PaginationType;
 use App\Enum\Theme;
 use App\Repository\UserRepository;
 use DateTimeImmutable;
@@ -58,6 +59,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \String
     #[ORM\Column(type: Types::STRING, options: ['default' => Theme::BROWSER->value])]
     #[Assert\Choice(choices: Theme::THEMES)]
     private string $theme = Theme::BROWSER->value;
+
+    #[ORM\Column(type: Types::STRING, options: ['default' => PaginationType::PAGE->value])]
+    #[Assert\Choice(choices: PaginationType::PAGINATION_TYPES)]
+    private string $paginationType = PaginationType::PAGE->value;
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     #[Gedmo\Timestampable(on: 'create')]
@@ -234,6 +239,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \String
     public function setTheme(string $theme): User
     {
         $this->theme = $theme;
+
+        return $this;
+    }
+    
+    public function getPaginationType(): string
+    {
+        return $this->paginationType;
+    }
+
+    public function setPaginationType(string $paginationType): User
+    {
+        $this->paginationType = $paginationType;
 
         return $this;
     }

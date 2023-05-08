@@ -23,20 +23,18 @@
     <div class="column">
         <div class="grid grid-posts">
             {% for post in posts %}
-                <a href="{{ path('app_post_show', {slug: board.slug, id: post.id}) }}">
-                    <figure class="image">
-                        <div>
-                            {% if post.duration %}
-                                <span class="tag is-dark has-text-weight-medium">{{ post.duration|minutes }}</span>
-                            {% endif %}
-                            <img src="{{ asset(post.path|thumbnail(360)) }}">
-                        </div>
-                    </figure>
-                </a>
+                {{ include('App/Board/_post.html.twig', {post: post}) }}
             {% endfor %}
+            <div data-controller="infinite-scroll"
+                 data-infinite-scroll-url-value="{{ url('app_board_show', {slug: board.slug, tags: app.request.get('tags')}) }}"
+                 data-infinite-scroll-page-value="{{ app.request.get('page') ?? 1 }}"
+            >
+            </div>
         </div>
 
-        {{ include('App/_partials/_pagination.html.twig', {paginator: paginator}) }}
+        {% if app.user.paginationType == 'page' %}
+            {{ include('App/_partials/_pagination.html.twig', {paginator: paginator}) }}
+        {% endif %}
     </div>
 
     {{ include('App/_partials/_modal/_delete.html.twig', {

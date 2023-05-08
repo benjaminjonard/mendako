@@ -24,7 +24,7 @@ services:
         depends_on:
             - postgresql
         volumes:
-            - "./docker/volumes/mendako/public/uploads:/uploads"
+            - "./docker/volumes/mendako/public/uploads:/var/www/mendako/public/uploads"
             - "./docker/volumes/mendako/public/thumbnails:/var/www/mendako/public/thumbnails"
             - ./:/var/www/mendako
 
