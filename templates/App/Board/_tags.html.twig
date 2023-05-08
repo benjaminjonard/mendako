@@ -1,0 +1,8 @@
+{% for category in ['artist', 'copyright', 'character', 'general', 'meta'] %}
+    <div class="block" data-category="{{ category }}">
+        {% for tag in tags|naturalSorting|filter(t => t.category == category) %}
+            {% if loop.first %}<h3 class="has-text-weight-medium">{{ ('app.enum.tag.category.' ~ category)|trans }}</h3>{% endif %}
+            <div data-infinite-scroll-target="tag" data-id="{{ tag.id }}"><a class="is-category-{{ category }}" href="{{ path('app_board_show', {slug: board.slug, tags: tag.name}) }}">{{ tag.name }}</a> ({{ tag.counter }})</div>
+        {% endfor %}
+    </div>
+{% endfor %}

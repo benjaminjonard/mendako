@@ -17,12 +17,6 @@
     </form>
 </div>
 
-
-{% for category in ['artist', 'copyright', 'character', 'general', 'meta'] %}
-    <div class="block">
-        {% for tag in tags|filter(t => t.category == category) %}
-            {% if loop.first %}<h3 class="has-text-weight-medium">{{ ('app.enum.tag.category.' ~ category)|trans }}</h3>{% endif %}
-            <div><a class="is-category-{{ category }}" href="{{ path('app_board_show', {slug: board.slug, tags: tag.name}) }}">{{ tag.name }}</a> ({{ tag.counter }})</div>
-        {% endfor %}
-    </div>
-{% endfor %}
+<span data-infinite-scroll-target="tagsContainer">
+    {{ include('App/Board/_tags.html.twig', {tags: tags}) }}
+</span>

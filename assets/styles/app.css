@@ -307,3 +307,21 @@ html.loading:before {
   text-align: center;
   word-break: normal;
 }
+
+.infinite-scroll-wrapper {
+    display: contents;
+}
+
+.left-block {
+  position: sticky;
+  display: inline-block;
+  max-height: 85vh;
+  overflow-y: auto;
+  width: 300px;
+  top: 100px;
+  bottom: 0;
+}
+
+.left-block .block {
+  margin-bottom: 1.5rem;
+}

@@ -56,8 +56,37 @@ class TagRepository extends ServiceEntityRepository
             ->select("t.id, t.name, t.category, ({$countQuery}) AS counter")
             ->from(Tag::class, 't')
             ->join('t.posts', 'i', 'WITH', 'i IN (:posts)')
-            ->orderBy('t.name', \Doctrine\Common\Collections\Criteria::ASC)
             ->setParameter('posts', $posts)
+            ->setParameter('board', $board->getId())
+        ;
+
+        $results = $qb->getQuery()->getArrayResult();
+
+        foreach ($results as &$result) {
+            $result['category'] = $result['category']->value;
+        }
+
+        return $results;
+    }
+
+    public function findByIdForInfiniteScroll(Board $board, array $ids): array
+    {
+        $countQuery = $this->_em
+            ->createQueryBuilder()
+            ->select('COUNT(DISTINCT i2.id)')
+            ->from(Tag::class, 't2')
+            ->join('t2.posts', 'i2', 'WITH', 'i2.board = :board')
+            ->where('t2 = t')
+            ->getDQL()
+        ;
+
+        $qb = $this->_em
+            ->createQueryBuilder()
+            ->distinct()
+            ->select("t.id, t.name, t.category, ({$countQuery}) AS counter")
+            ->from(Tag::class, 't')
+            ->where('t.id IN (:ids)')
+            ->setParameter('ids', $ids)
             ->setParameter('board', $board->getId())
         ;
 

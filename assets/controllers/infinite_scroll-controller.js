@@ -7,8 +7,10 @@ export default class extends Controller {
         page: Number
     };
 
+    static targets = [ 'tagsContainer', 'postsContainer', 'bottom', 'tag' ]
+
     connect() {
-        useIntersection(this, this.options)
+        useIntersection(this, {element: this.bottomTarget})
     }
 
     appear() {
@@ -20,9 +22,16 @@ export default class extends Controller {
         const url = new URL(this.urlValue);
         url.searchParams.set('page', this.pageValue + 1)
 
+        let data = {};
+        data.tags = [];
+        self.tagTargets.forEach((tag) => {
+            data.tags.push(tag.dataset['id']);
+        })
+
         fetch(url.toString(), {
-            method: 'GET',
-            headers: headers
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify(data)
         })
             .then(response => response.json())
             .then(function (result) {
@@ -31,7 +40,9 @@ export default class extends Controller {
                     return;
                 }
 
-                self.element.insertAdjacentHTML('beforebegin', result);
+                self.postsContainerTarget.insertAdjacentHTML('beforeend', result.posts);
+                self.tagsContainerTarget.innerHTML = result.tags;
+
                 self.pageValue +=1;
             })
     }

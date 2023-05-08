@@ -10,31 +10,32 @@
 {% endblock %}
 
 {% block content %}
-    <div class="column is-one-fifth">
-        {{ include('App/Tag/_list.html.twig', {tags: tags}) }}
+    <div class="infinite-scroll-wrapper"
+         data-controller="infinite-scroll"
+         data-infinite-scroll-url-value="{{ url('app_board_show', {slug: board.slug, tags: app.request.get('tags')}) }}"
+         data-infinite-scroll-page-value="{{ app.request.get('page') ?? 1 }}"
+    >
+        <div class="column is-one-fifth left-block">
+            {{ include('App/Tag/_list.html.twig', {tags: tags}) }}
 
-        <div class="block">
-            <h3 class="has-text-weight-medium">{{ 'title.actions'|trans }}</h3>
-            <div><a href="{{ path('app_board_edit', {slug: board.slug}) }}">{{ 'btn.edit'|trans }}</a></div>
-            <div><a href="#" class="js-modal-trigger" data-target="delete">{{ 'btn.delete'|trans }}</a></div>
-        </div>
-    </div>
-
-    <div class="column">
-        <div class="grid grid-posts">
-            {% for post in posts %}
-                {{ include('App/Board/_post.html.twig', {post: post}) }}
-            {% endfor %}
-            <div data-controller="infinite-scroll"
-                 data-infinite-scroll-url-value="{{ url('app_board_show', {slug: board.slug, tags: app.request.get('tags')}) }}"
-                 data-infinite-scroll-page-value="{{ app.request.get('page') ?? 1 }}"
-            >
+            <div class="block">
+                <h3 class="has-text-weight-medium">{{ 'title.actions'|trans }}</h3>
+                <div><a href="{{ path('app_board_edit', {slug: board.slug}) }}">{{ 'btn.edit'|trans }}</a></div>
+                <div><a href="#" class="js-modal-trigger" data-target="delete">{{ 'btn.delete'|trans }}</a></div>
             </div>
         </div>
 
-        {% if app.user.paginationType == 'page' %}
-            {{ include('App/_partials/_pagination.html.twig', {paginator: paginator}) }}
-        {% endif %}
+        <div class="column right-block">
+            <span class="grid grid-posts" data-infinite-scroll-target="postsContainer">
+                {{ include('App/Board/_posts.html.twig', {posts: posts}) }}
+            </span>
+
+            {% if app.user.paginationType == 'page' %}
+                {{ include('App/_partials/_pagination.html.twig', {paginator: paginator}) }}
+            {% else %}
+                <div data-infinite-scroll-target="bottom"></div>
+            {% endif %}
+        </div>
     </div>
 
     {{ include('App/_partials/_modal/_delete.html.twig', {

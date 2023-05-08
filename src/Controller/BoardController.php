@@ -56,7 +56,7 @@ class BoardController extends AbstractController
         ]);
     }
 
-    #[Route(path: '/boards/{slug}', name: 'app_board_show', methods: ['GET'])]
+    #[Route(path: '/boards/{slug}', name: 'app_board_show', methods: ['GET', 'POST'])]
     public function show(
         Request $request,
         Board $board,
@@ -66,23 +66,33 @@ class BoardController extends AbstractController
     ): Response {
         $page = $request->query->get('page', 1);
         $tags = $request->query->get('tags', '');
-
         $posts = $postRepository->filterByTags($board, $tags, $page);
 
         if ($request->isXmlHttpRequest()) {
-            $html = '';
-            foreach ($posts as $post) {
-                $html .= $this->render('App/Board/_post.html.twig', [
-                    'board' => $board,
-                    'post' => $post,
-                ])->getContent();
+            $postsHtml = $this->renderView('App/Board/_posts.html.twig', [
+                'board' => $board,
+                'posts' => $posts,
+            ]);
+
+            $tags = $tagRepository->findForPosts($board, $posts);
+            $content = json_decode($request->getContent(), true);
+            if (isset($content['tags'])) {
+                $tags = array_merge($tags, $tagRepository->findByIdForInfiniteScroll($board, $content['tags']));
             }
 
-            return new JsonResponse($html);
+
+            $tagsHtml = $this->renderView('App/Board/_tags.html.twig', [
+                'board' => $board,
+                'tags' => $tags,
+            ]);
+
+            return new JsonResponse([
+                'posts' => $postsHtml,
+                'tags' => $tagsHtml
+            ]);
         }
 
         $postsCount = $postRepository->countFilterByTags($board, $tags);
-
         return $this->render('App/Board/show.html.twig', [
             'board' => $board,
             'posts' => $posts,
