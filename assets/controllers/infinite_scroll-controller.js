@@ -3,7 +3,6 @@ import { useIntersection } from 'stimulus-use'
 
 export default class extends Controller {
     static values = {
-        url: String,
         page: Number
     };
 
@@ -19,7 +18,7 @@ export default class extends Controller {
         let headers = new Headers();
         headers.append("X-Requested-With", "XMLHttpRequest")
 
-        const url = new URL(this.urlValue);
+        const url = new URL(window.location.href);
         url.searchParams.set('page', this.pageValue + 1)
 
         let data = {};
