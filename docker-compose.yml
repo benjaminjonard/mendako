@@ -10,8 +10,8 @@ services:
         ports:
             - 81:80
         environment:
-            - APP_ENV=prod
-            - APP_DEBUG=0
+            - APP_ENV=dev
+            - APP_DEBUG=1
             - DB_DRIVER=pdo_pgsql
             - DB_NAME=mendako
             - DB_HOST=postgresql
