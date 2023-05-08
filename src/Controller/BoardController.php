@@ -79,7 +79,7 @@ class BoardController extends AbstractController
             if (isset($content['tags'])) {
                 $tags = array_merge($tags, $tagRepository->findByIdForInfiniteScroll($board, $content['tags']));
             }
-
+            $tags = array_unique($tags, SORT_REGULAR);
 
             $tagsHtml = $this->renderView('App/Board/_tags.html.twig', [
                 'board' => $board,
