@@ -571,5 +571,23 @@
         <target>Bienvenue sur Mendako</target>
       </segment>
     </unit>
+    <unit id="HE1ISwE" name="label.pagination_type">
+      <segment state="translated">
+        <source>Pagination type</source>
+        <target>Type de pagination</target>
+      </segment>
+    </unit>
+    <unit id="f4wOvft" name="global.pagination_type.page">
+      <segment state="translated">
+        <source>Page</source>
+        <target>Par page</target>
+      </segment>
+    </unit>
+    <unit id="uDWfwP8" name="global.pagination_type.scroll">
+      <segment state="translated">
+        <source>Scroll</source>
+        <target>Scroll infini</target>
+      </segment>
+    </unit>
   </file>
 </xliff>
