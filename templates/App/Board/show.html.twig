@@ -12,7 +12,7 @@
 {% block content %}
     <div class="infinite-scroll-wrapper"
          data-controller="infinite-scroll"
-         data-infinite-scroll-url-value="{{ url('app_board_show', {slug: board.slug, tags: app.request.get('tags')}) }}"
+         data-infinite-scroll-url-value="{{ url('app_board_show', {slug: board.slug, tags: app.request.get('tags')}, schemeRelative: true) }}"
          data-infinite-scroll-page-value="{{ app.request.get('page') ?? 1 }}"
     >
         <div class="column is-one-fifth left-block">
