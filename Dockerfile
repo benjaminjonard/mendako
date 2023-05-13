@@ -56,14 +56,6 @@ RUN addgroup --gid "$PGID" "$USER" && \
     yarn --version && \
     yarn install && \
     yarn build && \
-# Clean up \
-    yarn cache clean && \
-    rm -rf /var/www/mendako/assets/node_modules && \
-    apt-get purge -y wget lsb-release git nodejs yarn apt-transport-https ca-certificates gnupg2 unzip && \
-    apt-get autoremove -y && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/* && \
-    rm -rf /usr/local/bin/composer && \
 # Set permissions
     sed -i "s/user = www-data/user = $USER/g" /etc/php/8.2/fpm/pool.d/www.conf && \
     sed -i "s/group = www-data/group = $USER/g" /etc/php/8.2/fpm/pool.d/www.conf && \
@@ -86,8 +78,14 @@ RUN addgroup --gid "$PGID" "$USER" && \
     echo "extension=libpuzzle.so" >> /etc/php/8.2/fpm/conf.d/php.ini && \
     echo "extension=libpuzzle.so" >> /etc/php/8.2/cli/php.ini && \
     rm -rf /tmp/libpuzzle-php-extension-builder-main && \
-    apt remove php8.2-dev -y
-
+# Clean up \
+    yarn cache clean && \
+    rm -rf /var/www/mendako/assets/node_modules && \
+    apt-get purge -y wget lsb-release git nodejs yarn apt-transport-https ca-certificates gnupg2 unzip php8.2-dev && \
+    apt-get autoremove -y && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    rm -rf /usr/local/bin/composer
 
 EXPOSE 80
 
