@@ -238,7 +238,7 @@ class PostTest extends WebTestCase
 
         // Act
         $this->client->request('POST', '/check-similar', [], ['file' => $uploadedFile]);
-     
+
         // Assert
         $this->assertResponseIsSuccessful();
         $this->assertCount(1, json_decode($this->client->getResponse()->getContent()));
