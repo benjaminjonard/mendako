@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "91c67c6775ae4344b3d4318545f46145",
+    "content-hash": "d80b64f402a8ed5cfa1f76aaf7e8c1be",
     "packages": [
         {
             "name": "behat/transliterator",
@@ -1744,26 +1744,24 @@
         },
         {
             "name": "masterminds/html5",
-            "version": "2.7.6",
+            "version": "2.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Masterminds/html5-php.git",
-                "reference": "897eb517a343a2281f11bc5556d6548db7d93947"
+                "reference": "3c5d5a56d56f48a1ca08a0670f0f80c1dad368f3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Masterminds/html5-php/zipball/897eb517a343a2281f11bc5556d6548db7d93947",
-                "reference": "897eb517a343a2281f11bc5556d6548db7d93947",
+                "url": "https://api.github.com/repos/Masterminds/html5-php/zipball/3c5d5a56d56f48a1ca08a0670f0f80c1dad368f3",
+                "reference": "3c5d5a56d56f48a1ca08a0670f0f80c1dad368f3",
                 "shasum": ""
             },
             "require": {
-                "ext-ctype": "*",
                 "ext-dom": "*",
-                "ext-libxml": "*",
                 "php": ">=5.3.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^4.8.35 || ^5.7.21 || ^6 || ^7"
+                "phpunit/phpunit": "^4.8.35 || ^5.7.21 || ^6 || ^7 || ^8"
             },
             "type": "library",
             "extra": {
@@ -1807,9 +1805,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Masterminds/html5-php/issues",
-                "source": "https://github.com/Masterminds/html5-php/tree/2.7.6"
+                "source": "https://github.com/Masterminds/html5-php/tree/2.8.0"
             },
-            "time": "2022-08-18T16:18:26+00:00"
+            "time": "2023-04-26T07:27:39+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -2205,16 +2203,16 @@
         },
         {
             "name": "spatie/temporary-directory",
-            "version": "2.1.1",
+            "version": "2.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/temporary-directory.git",
-                "reference": "e2818d871783d520b319c2d38dc37c10ecdcde20"
+                "reference": "0c804873f6b4042aa8836839dca683c7d0f71831"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/temporary-directory/zipball/e2818d871783d520b319c2d38dc37c10ecdcde20",
-                "reference": "e2818d871783d520b319c2d38dc37c10ecdcde20",
+                "url": "https://api.github.com/repos/spatie/temporary-directory/zipball/0c804873f6b4042aa8836839dca683c7d0f71831",
+                "reference": "0c804873f6b4042aa8836839dca683c7d0f71831",
                 "shasum": ""
             },
             "require": {
@@ -2250,7 +2248,7 @@
             ],
             "support": {
                 "issues": "https://github.com/spatie/temporary-directory/issues",
-                "source": "https://github.com/spatie/temporary-directory/tree/2.1.1"
+                "source": "https://github.com/spatie/temporary-directory/tree/2.1.2"
             },
             "funding": [
                 {
@@ -2262,7 +2260,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2022-08-23T07:15:15+00:00"
+            "time": "2023-04-28T07:47:42+00:00"
         },
         {
             "name": "stof/doctrine-extensions-bundle",
@@ -3165,16 +3163,16 @@
         },
         {
             "name": "symfony/dom-crawler",
-            "version": "v6.2.7",
+            "version": "v6.2.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/dom-crawler.git",
-                "reference": "65a906f5141ff2d3aef1b01c128fba78f5e9f921"
+                "reference": "328bc3795059651d2d4e462e8febdf7ec2d7a626"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/dom-crawler/zipball/65a906f5141ff2d3aef1b01c128fba78f5e9f921",
-                "reference": "65a906f5141ff2d3aef1b01c128fba78f5e9f921",
+                "url": "https://api.github.com/repos/symfony/dom-crawler/zipball/328bc3795059651d2d4e462e8febdf7ec2d7a626",
+                "reference": "328bc3795059651d2d4e462e8febdf7ec2d7a626",
                 "shasum": ""
             },
             "require": {
@@ -3215,7 +3213,7 @@
             "description": "Eases DOM navigation for HTML and XML documents",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/dom-crawler/tree/v6.2.7"
+                "source": "https://github.com/symfony/dom-crawler/tree/v6.2.9"
             },
             "funding": [
                 {
@@ -3231,7 +3229,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-02-14T08:44:56+00:00"
+            "time": "2023-04-11T16:03:19+00:00"
         },
         {
             "name": "symfony/dotenv",
@@ -4405,16 +4403,16 @@
         },
         {
             "name": "symfony/monolog-bridge",
-            "version": "v6.2.7",
+            "version": "v6.2.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/monolog-bridge.git",
-                "reference": "c611e34f9e7b075f3af6d89d7cd10c6a80ab6a74"
+                "reference": "34700f2e5c7e9eae78f8e59fc02399dd8f110cae"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/monolog-bridge/zipball/c611e34f9e7b075f3af6d89d7cd10c6a80ab6a74",
-                "reference": "c611e34f9e7b075f3af6d89d7cd10c6a80ab6a74",
+                "url": "https://api.github.com/repos/symfony/monolog-bridge/zipball/34700f2e5c7e9eae78f8e59fc02399dd8f110cae",
+                "reference": "34700f2e5c7e9eae78f8e59fc02399dd8f110cae",
                 "shasum": ""
             },
             "require": {
@@ -4468,7 +4466,7 @@
             "description": "Provides integration for Monolog with various Symfony components",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/monolog-bridge/tree/v6.2.7"
+                "source": "https://github.com/symfony/monolog-bridge/tree/v6.2.8"
             },
             "funding": [
                 {
@@ -4484,7 +4482,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-02-21T16:15:44+00:00"
+            "time": "2023-03-09T16:20:02+00:00"
         },
         {
             "name": "symfony/monolog-bundle",
@@ -6517,16 +6515,16 @@
         },
         {
             "name": "symfony/twig-bridge",
-            "version": "v6.2.7",
+            "version": "v6.2.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/twig-bridge.git",
-                "reference": "f1899fd3b8a29f9544440a716a1ed7d1121c4615"
+                "reference": "30e3ad6ae749b2d2700ecf9b4a1a9d5c96b18927"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/twig-bridge/zipball/f1899fd3b8a29f9544440a716a1ed7d1121c4615",
-                "reference": "f1899fd3b8a29f9544440a716a1ed7d1121c4615",
+                "url": "https://api.github.com/repos/symfony/twig-bridge/zipball/30e3ad6ae749b2d2700ecf9b4a1a9d5c96b18927",
+                "reference": "30e3ad6ae749b2d2700ecf9b4a1a9d5c96b18927",
                 "shasum": ""
             },
             "require": {
@@ -6621,7 +6619,7 @@
             "description": "Provides integration for Twig with various Symfony components",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/twig-bridge/tree/v6.2.7"
+                "source": "https://github.com/symfony/twig-bridge/tree/v6.2.8"
             },
             "funding": [
                 {
@@ -6637,7 +6635,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-02-24T10:42:00+00:00"
+            "time": "2023-03-31T09:14:44+00:00"
         },
         {
             "name": "symfony/twig-bundle",
@@ -8004,16 +8002,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "1.10.14",
+            "version": "1.10.15",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "d232901b09e67538e5c86a724be841bea5768a7c"
+                "reference": "762c4dac4da6f8756eebb80e528c3a47855da9bd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/d232901b09e67538e5c86a724be841bea5768a7c",
-                "reference": "d232901b09e67538e5c86a724be841bea5768a7c",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/762c4dac4da6f8756eebb80e528c3a47855da9bd",
+                "reference": "762c4dac4da6f8756eebb80e528c3a47855da9bd",
                 "shasum": ""
             },
             "require": {
@@ -8062,7 +8060,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-04-19T13:47:27+00:00"
+            "time": "2023-05-09T15:28:01+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -8848,16 +8846,16 @@
         },
         {
             "name": "sebastian/diff",
-            "version": "5.0.1",
+            "version": "5.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/diff.git",
-                "reference": "aae9a0a43bff37bd5d8d0311426c87bf36153f02"
+                "reference": "912dc2fbe3e3c1e7873313cc801b100b6c68c87b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/diff/zipball/aae9a0a43bff37bd5d8d0311426c87bf36153f02",
-                "reference": "aae9a0a43bff37bd5d8d0311426c87bf36153f02",
+                "url": "https://api.github.com/repos/sebastianbergmann/diff/zipball/912dc2fbe3e3c1e7873313cc801b100b6c68c87b",
+                "reference": "912dc2fbe3e3c1e7873313cc801b100b6c68c87b",
                 "shasum": ""
             },
             "require": {
@@ -8903,7 +8901,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/diff/issues",
                 "security": "https://github.com/sebastianbergmann/diff/security/policy",
-                "source": "https://github.com/sebastianbergmann/diff/tree/5.0.1"
+                "source": "https://github.com/sebastianbergmann/diff/tree/5.0.3"
             },
             "funding": [
                 {
@@ -8911,7 +8909,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-03-23T05:12:41+00:00"
+            "time": "2023-05-01T07:48:21+00:00"
         },
         {
             "name": "sebastian/environment",
@@ -9757,16 +9755,16 @@
         },
         {
             "name": "zenstruck/assert",
-            "version": "v1.3.0",
+            "version": "v1.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zenstruck/assert.git",
-                "reference": "cd7a0e91eaf2287855a327b0c50c81a7e17b5936"
+                "reference": "8fdd1f1b23f3c8612176d78616b52aa60df1be7f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zenstruck/assert/zipball/cd7a0e91eaf2287855a327b0c50c81a7e17b5936",
-                "reference": "cd7a0e91eaf2287855a327b0c50c81a7e17b5936",
+                "url": "https://api.github.com/repos/zenstruck/assert/zipball/8fdd1f1b23f3c8612176d78616b52aa60df1be7f",
+                "reference": "8fdd1f1b23f3c8612176d78616b52aa60df1be7f",
                 "shasum": ""
             },
             "require": {
@@ -9804,7 +9802,7 @@
             ],
             "support": {
                 "issues": "https://github.com/zenstruck/assert/issues",
-                "source": "https://github.com/zenstruck/assert/tree/v1.3.0"
+                "source": "https://github.com/zenstruck/assert/tree/v1.4.0"
             },
             "funding": [
                 {
@@ -9812,7 +9810,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-01-23T19:13:52+00:00"
+            "time": "2023-04-17T15:45:16+00:00"
         },
         {
             "name": "zenstruck/callback",
@@ -9970,7 +9968,8 @@
         "ext-ctype": "*",
         "ext-fileinfo": "*",
         "ext-gd": "*",
-        "ext-iconv": "*"
+        "ext-iconv": "*",
+        "ext-intl": "*"
     },
     "platform-dev": [],
     "plugin-api-version": "2.3.0"

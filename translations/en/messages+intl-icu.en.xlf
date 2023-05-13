@@ -589,5 +589,11 @@
         <target>Scroll</target>
       </segment>
     </unit>
+    <unit id="nHZ06YM" name="label.similar_posts">
+      <segment state="translated">
+        <source>Similar posts</source>
+        <target>Similar posts</target>
+      </segment>
+    </unit>
   </file>
 </xliff>

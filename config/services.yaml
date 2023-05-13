@@ -40,6 +40,9 @@ services:
             - { name: kernel.event_listener, event: security.interactive_login }
             - { name: doctrine.event_listener, event: postUpdate, lazy: true }
 
+    App\Service\SimilarityChecker:
+        public: true
+
 when@test:
     services:
         App\Tests\Factory\:

@@ -1,5 +1,16 @@
 {{ form_start(form) }}
-    {{ form_row(form.file, {'label' : 'label.file'} ) }}
+    <div data-controller="similar" data-similar-url-value="{{ path('app_post_check_similar') }}">
+        {{ form_row(form.file, {'label' : 'label.file', attr: {
+            'data-similar-target': 'input',
+        }} ) }}
+
+        <div data-similar-target="wrapper" class="is-hidden">
+            <br>
+            <label class="label required">{{ 'label.similar_posts'|trans }}</label>
+            <span class="grid grid-posts" data-similar-target="list"></span>
+            <br>
+        </div>
+    </div>
 
     {{ form_row(form.board, {'label' : 'label.board'} ) }}
 

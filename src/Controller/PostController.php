@@ -8,8 +8,10 @@ use App\Entity\Board;
 use App\Entity\Post;
 use App\Form\Type\PostType;
 use App\Repository\TagRepository;
+use App\Service\SimilarityChecker;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -24,6 +26,7 @@ class PostController extends AbstractController
         TranslatorInterface $translator,
         ManagerRegistry $managerRegistry,
         TagRepository $tagRepository,
+        SimilarityChecker $similarityChecker,
         ?Board $board
     ): Response {
         $post = new Post();
@@ -32,6 +35,8 @@ class PostController extends AbstractController
         $form = $this->createForm(PostType::class, $post);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+            $similarityChecker->generateSignature($post);
+
             $post->setUploadedBy($this->getUser());
             if ($form->get('setAsBoardThumbnail')->getData() === true) {
                 $post->getBoard()->setThumbnail($post);
@@ -53,6 +58,22 @@ class PostController extends AbstractController
         ]);
     }
 
+    #[Route(path: '/check-similar', name: 'app_post_check_similar', methods: ['POST'])]
+    public function checkSimilar(Request $request, SimilarityChecker $similarityChecker): JsonResponse
+    {
+        $post = new Post();
+        $post->setFile($request->files->get('file'));
+
+        $similarityChecker->generateSignature($post);
+        $similarPosts = [];
+
+        foreach ($similarityChecker->hasSimilarities($post) as $similarPost) {
+            $similarPosts[] = $this->renderView('App/Post/_similar.html.twig', ['post' => $similarPost['post'], 'strength' => $similarPost['strength']]);
+        }
+
+        return $this->json($similarPosts);
+    }
+
     #[Route(path: '/boards/{slug}/{id}', name: 'app_post_show', methods: ['GET'])]
     public function show(
         #[MapEntity(mapping: ['slug' => 'slug'])] Board $board,
@@ -72,12 +93,15 @@ class PostController extends AbstractController
         TranslatorInterface $translator,
         TagRepository $tagRepository,
         ManagerRegistry $managerRegistry,
+        SimilarityChecker $similarityChecker,
         #[MapEntity(mapping: ['slug' => 'slug'])] Board $board,
         Post $post
     ): Response {
         $form = $this->createForm(PostType::class, $post);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+            $similarityChecker->generateSignature($post);
+
             if ($form->get('setAsBoardThumbnail')->getData() === true) {
                 $board->setThumbnail($post);
             }

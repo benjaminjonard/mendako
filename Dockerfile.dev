@@ -27,6 +27,7 @@ RUN addgroup --gid "$PGID" "$USER" && \
     apt-get install -y \
     ca-certificates \
     apt-transport-https \
+    libpuzzle-dev \
     gnupg2 \
     git \
     unzip \
@@ -50,6 +51,23 @@ RUN addgroup --gid "$PGID" "$USER" && \
 # Set permissions \
     chmod +x /entrypoint.sh && \
     mkdir /run/php
+
+# Build libpuzzle extension
+RUN apt-get install php8.2-dev -y && \
+    cd /tmp && \
+    wget https://github.com/benjaminjonard/libpuzzle-php-extension-builder/archive/refs/heads/main.zip && \
+    unzip main.zip && \
+    cd libpuzzle-php-extension-builder-main/src && \
+    phpize && \
+    ./configure && \
+    make clean && \
+    make && \
+    make install && \
+    echo "extension=libpuzzle.so" >> /etc/php/8.2/fpm/conf.d/php.ini && \
+    echo "extension=libpuzzle.so" >> /etc/php/8.2/cli/php.ini && \
+    rm -rf /tmp/libpuzzle-php-extension-builder-main && \
+    apt remove php8.2-dev -y
+
 
 # Add nginx and PHP config files
 COPY ./docker/default.conf /etc/nginx/nginx.conf

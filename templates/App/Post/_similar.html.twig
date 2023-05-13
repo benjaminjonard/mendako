@@ -1,0 +1,8 @@
+<a href="{{ path('app_post_show', {slug: post.board.slug, id: post.id}) }}" target="_blank">
+    <figure class="image">
+        <div>
+            <span class="tag is-dark has-text-weight-medium">{{ strength }} %</span>
+            <img src="{{ asset(post.path|thumbnail(360)) }}">
+        </div>
+    </figure>
+</a>

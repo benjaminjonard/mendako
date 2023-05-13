@@ -49,6 +49,12 @@ class Post
     #[ORM\Column(type: Types::INTEGER)]
     private int $seenCounter = 0;
 
+    #[ORM\Column(type: Types::STRING, nullable: true)]
+    private ?string $signature = null;
+
+    #[ORM\OneToMany(targetEntity: PostSignatureWord::class, mappedBy: 'post', cascade: ['all'], fetch: 'EXTRA_LAZY')]
+    private Collection $signatureWords;
+
     #[ORM\ManyToOne(targetEntity: Board::class, inversedBy: 'posts')]
     #[Assert\NotBlank]
     private ?Board $board = null;
@@ -75,6 +81,7 @@ class Post
     {
         $this->id = Uuid::v4()->toRfc4122();
         $this->tags = new ArrayCollection();
+        $this->signatureWords = new ArrayCollection();
     }
 
     public function getId(): ?string
@@ -231,6 +238,41 @@ class Post
     public function setUploadedBy(?User $uploadedBy): Post
     {
         $this->uploadedBy = $uploadedBy;
+
+        return $this;
+    }
+
+    public function getSignature(): ?string
+    {
+        return $this->signature;
+    }
+
+    public function setSignature(?string $signature): Post
+    {
+        $this->signature = $signature;
+
+        return $this;
+    }
+
+    public function getSignatureWords(): Collection
+    {
+        return $this->signatureWords;
+    }
+
+    public function addSignatureWord(?PostSignatureWord $signatureWord): Post
+    {
+        if (!$this->signatureWords->contains($signatureWord)) {
+            $this->signatureWords[] = $signatureWord;
+        }
+
+        return $this;
+    }
+
+    public function removeSignatureWord(PostSignatureWord $signatureWord): Post
+    {
+        if ($this->signatureWords->contains($signatureWord)) {
+            $this->signatureWords->removeElement($signatureWord);
+        }
 
         return $this;
     }
