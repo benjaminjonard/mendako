@@ -63,6 +63,10 @@ class SimilarityChecker
 
     public function generateSignature(Post $post): void
     {
+        if ($post->getFile() === null) {
+            return;
+        }
+
         $path = $post->getFile()->getRealPath();
         $thumbnailPath = '/tmp/' . $post->getFile()->getFilename() .  '_600' . $post->getFile()->getExtension();
         $this->thumbnailGenerator->generate($path, $thumbnailPath, 600);
