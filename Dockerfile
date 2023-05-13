@@ -31,6 +31,7 @@ RUN addgroup --gid "$PGID" "$USER" && \
     git \
     unzip \
     nginx-light \
+    libpuzzle-dev \
     openssl \
     ffmpeg \
     php8.2 \
