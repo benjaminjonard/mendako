@@ -34,6 +34,7 @@ RUN addgroup --gid "$PGID" "$USER" && \
     openssl \
     ffmpeg \
     php8.2 \
+    php8.2-dev \
     php8.2-pgsql \
     php8.2-mysql \
     php8.2-mbstring \
@@ -74,8 +75,7 @@ RUN addgroup --gid "$PGID" "$USER" && \
     cp /var/www/mendako/docker/php.ini /etc/php/8.2/fpm/conf.d/php.ini
 
 # Build libpuzzle extension
-RUN apt-get install php-dev -y && \
-    cd /tmp && \
+RUN cd /tmp && \
     wget https://github.com/benjaminjonard/libpuzzle-php-extension-builder/archive/refs/heads/main.zip && \
     unzip main.zip && \
     cd libpuzzle-php-extension-builder-main/src && \
@@ -87,7 +87,8 @@ RUN apt-get install php-dev -y && \
     echo "extension=libpuzzle.so" >> /etc/php/8.2/fpm/conf.d/php.ini && \
     echo "extension=libpuzzle.so" >> /etc/php/8.2/cli/php.ini && \
     rm -rf /tmp/libpuzzle-php-extension-builder-main && \
-    apt remove php-dev -y
+    apt remove php8.2-dev -y
+
 
 EXPOSE 80
 
