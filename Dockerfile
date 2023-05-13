@@ -72,10 +72,9 @@ RUN addgroup --gid "$PGID" "$USER" && \
     mkdir /run/php && \
 # Add nginx and PHP config files
     cp /var/www/mendako/docker/default.conf /etc/nginx/nginx.conf && \
-    cp /var/www/mendako/docker/php.ini /etc/php/8.2/fpm/conf.d/php.ini
-
+    cp /var/www/mendako/docker/php.ini /etc/php/8.2/fpm/conf.d/php.ini && \
 # Build libpuzzle extension
-RUN cd /tmp && \
+    cd /tmp && \
     wget https://github.com/benjaminjonard/libpuzzle-php-extension-builder/archive/refs/heads/main.zip && \
     unzip main.zip && \
     cd libpuzzle-php-extension-builder-main/src && \

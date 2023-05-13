@@ -51,10 +51,9 @@ RUN addgroup --gid "$PGID" "$USER" && \
     curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && \
 # Set permissions \
     chmod +x /entrypoint.sh && \
-    mkdir /run/php
-
+    mkdir /run/php && \
 # Build libpuzzle extension
-RUN cd /tmp && \
+    cd /tmp && \
     wget https://github.com/benjaminjonard/libpuzzle-php-extension-builder/archive/refs/heads/main.zip && \
     unzip main.zip && \
     cd libpuzzle-php-extension-builder-main/src && \
