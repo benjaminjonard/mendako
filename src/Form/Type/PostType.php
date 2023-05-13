@@ -38,14 +38,19 @@ class PostType extends AbstractType
                 'required' => false,
                 'mapped' => false
             ])
-            ->add('board', EntityType::class, [
-                'class' => Board::class,
-                'choice_label' => 'name',
-                'expanded' => false,
-                'multiple' => false,
-                'required' => true
-            ])
         ;
+
+        if ($isEdition === false) {
+            $builder
+                ->add('board', EntityType::class, [
+                    'class' => Board::class,
+                    'choice_label' => 'name',
+                    'expanded' => false,
+                    'multiple' => false,
+                    'required' => true
+                ])
+            ;
+        }
 
         $builder->get('tags')->addModelTransformer($this->stringToTagTransformer);
     }

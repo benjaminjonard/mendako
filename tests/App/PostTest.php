@@ -212,4 +212,35 @@ class PostTest extends WebTestCase
         // Assert
         $this->assertResponseIsSuccessful();
     }
+
+    public function test_can_check_similar_posts(): void
+    {
+        // Arrange
+        $user = UserFactory::createOne()->object();
+        $this->client->loginUser($user);
+
+        $board = BoardFactory::createOne();
+
+        $filesystem = new Filesystem();
+        $uniqId = uniqid();
+        $filesystem->copy(__DIR__.'/../../assets/fixtures/nyancat.png', "/tmp/{$uniqId}.png");
+        $uploadedFile = new UploadedFile("/tmp/{$uniqId}.png", "{$uniqId}.png", test: true);
+        $this->client->request('GET', '/boards/'.$board->getSlug(). '/add');
+        $this->client->submitForm('Submit', [
+            'post[file]' => $uploadedFile,
+            'post[board]' => $board->getId(),
+            'post[tags]' => 'nyancat'
+        ]);
+
+        $uniqId = uniqid();
+        $filesystem->copy(__DIR__.'/../../assets/fixtures/nyancat.png', "/tmp/{$uniqId}.png");
+        $uploadedFile = new UploadedFile("/tmp/{$uniqId}.png", "{$uniqId}.png", test: true);
+
+        // Act
+        $this->client->request('POST', '/check-similar', [], ['file' => $uploadedFile]);
+     
+        // Assert
+        $this->assertResponseIsSuccessful();
+        $this->assertCount(1, json_decode($this->client->getResponse()->getContent()));
+    }
 }

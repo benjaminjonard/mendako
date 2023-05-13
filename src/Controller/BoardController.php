@@ -12,6 +12,7 @@ use App\Repository\TagRepository;
 use App\Service\PaginatorFactory;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -132,6 +133,7 @@ class BoardController extends AbstractController
         TranslatorInterface $translator,
         ManagerRegistry $managerRegistry,
         Board $board,
+        string $publicPath
     ): Response {
         $form = $this->createDeleteForm('app_board_delete', $board);
         $form->handleRequest($request);
@@ -139,6 +141,20 @@ class BoardController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $managerRegistry->getManager()->remove($board);
             $managerRegistry->getManager()->flush();
+
+            $path = $publicPath . '/uploads/boards/' . $board->getId();
+            $files = new \RecursiveIteratorIterator(
+                new \RecursiveDirectoryIterator($path, \RecursiveDirectoryIterator::SKIP_DOTS),
+                \RecursiveIteratorIterator::CHILD_FIRST
+            );
+
+            foreach ($files as $fileinfo) {
+                $todo = ($fileinfo->isDir() ? 'rmdir' : 'unlink');
+                $todo($fileinfo->getRealPath());
+            }
+
+            rmdir($path);
+
             $this->addFlash('notice', $translator->trans('message.board_deleted', ['board' => '&nbsp;<strong>'.$board->getName().'</strong>&nbsp;']));
         }
 

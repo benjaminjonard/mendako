@@ -24,7 +24,7 @@ if (!file_exists($fullThumbnailPath)) {
     try {
         $thumbnailGenerator->generate($fullImagePath, $fullThumbnailPath, $width);
     } catch (Throwable $throwable) {
-        echo $throwable->getMessage();
+        var_dump($throwable->getMessage());
         die();  // IMPORTANT: in case error the response will be base64 encoded
     }
 }

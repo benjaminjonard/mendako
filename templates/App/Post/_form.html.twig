@@ -12,7 +12,9 @@
         </div>
     </div>
 
-    {{ form_row(form.board, {'label' : 'label.board'} ) }}
+    {% if form.board is defined %}
+        {{ form_row(form.board, {'label' : 'label.board'} ) }}
+    {% endif %}
 
     <div data-controller="suggestions">
         <div data-controller="autocomplete">
