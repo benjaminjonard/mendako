@@ -5,7 +5,7 @@ services:
     mendako:
         container_name: mendako
         build:
-            dockerfile: Dockerfile.dev
+            dockerfile: Dockerfile
         restart: unless-stopped
         ports:
             - 81:80

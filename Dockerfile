@@ -57,6 +57,7 @@ RUN addgroup --gid "$PGID" "$USER" && \
     yarn --version && \
     yarn install && \
     yarn build && \
+    yarn cache clean && \
 # Set permissions
     sed -i "s/user = www-data/user = $USER/g" /etc/php/8.2/fpm/pool.d/www.conf && \
     sed -i "s/group = www-data/group = $USER/g" /etc/php/8.2/fpm/pool.d/www.conf && \
@@ -80,7 +81,6 @@ RUN addgroup --gid "$PGID" "$USER" && \
     echo "extension=libpuzzle.so" >> /etc/php/8.2/cli/php.ini && \
     rm -rf /tmp/libpuzzle-php-extension-builder-main && \
 # Clean up \
-    yarn cache clean && \
     rm -rf /var/www/mendako/assets/node_modules && \
     apt-get purge -y wget lsb-release git nodejs yarn apt-transport-https ca-certificates gnupg2 unzip php8.2-dev && \
     apt-get autoremove -y && \
