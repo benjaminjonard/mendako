@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d80b64f402a8ed5cfa1f76aaf7e8c1be",
+    "content-hash": "2a0597373126c9877c89ad83746fed2c",
     "packages": [
         {
             "name": "behat/transliterator",
@@ -8384,16 +8384,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "10.1.2",
+            "version": "10.1.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "6f0cd95be71add539f8fd2be25b2a4a29789000b"
+                "reference": "2379ebafc1737e71cdc84f402acb6b7f04198b9d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/6f0cd95be71add539f8fd2be25b2a4a29789000b",
-                "reference": "6f0cd95be71add539f8fd2be25b2a4a29789000b",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/2379ebafc1737e71cdc84f402acb6b7f04198b9d",
+                "reference": "2379ebafc1737e71cdc84f402acb6b7f04198b9d",
                 "shasum": ""
             },
             "require": {
@@ -8465,7 +8465,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/10.1.2"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/10.1.3"
             },
             "funding": [
                 {
@@ -8481,7 +8481,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-04-22T07:38:19+00:00"
+            "time": "2023-05-11T05:16:22+00:00"
         },
         {
             "name": "rector/rector",
@@ -9870,16 +9870,16 @@
         },
         {
             "name": "zenstruck/foundry",
-            "version": "v1.31.0",
+            "version": "v1.32.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zenstruck/foundry.git",
-                "reference": "5a7e390e16f34ebb4f1a3609005d577d90686e42"
+                "reference": "f28383551d551bfa62cdf09c34bfbe232fd45029"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zenstruck/foundry/zipball/5a7e390e16f34ebb4f1a3609005d577d90686e42",
-                "reference": "5a7e390e16f34ebb4f1a3609005d577d90686e42",
+                "url": "https://api.github.com/repos/zenstruck/foundry/zipball/f28383551d551bfa62cdf09c34bfbe232fd45029",
+                "reference": "f28383551d551bfa62cdf09c34bfbe232fd45029",
                 "shasum": ""
             },
             "require": {
@@ -9947,7 +9947,7 @@
             ],
             "support": {
                 "issues": "https://github.com/zenstruck/foundry/issues",
-                "source": "https://github.com/zenstruck/foundry/tree/v1.31.0"
+                "source": "https://github.com/zenstruck/foundry/tree/v1.32.0"
             },
             "funding": [
                 {
@@ -9955,7 +9955,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-03-27T23:25:08+00:00"
+            "time": "2023-05-11T07:28:34+00:00"
         }
     ],
     "aliases": [],
