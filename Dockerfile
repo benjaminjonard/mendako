@@ -1,4 +1,6 @@
-FROM debian:11-slim
+FROM ubuntu:latest
+
+ARG DEBIAN_FRONTEND=noninteractive
 
 # Environment variables
 ENV APP_ENV='prod'
@@ -13,10 +15,9 @@ RUN addgroup --gid "$PGID" "$USER" && \
     adduser --gecos '' --no-create-home --disabled-password --uid "$PUID" --gid "$PGID" "$USER" && \
 # Install some basics dependencies
     apt-get update && \
-    apt-get install -y curl wget lsb-release && \
+    apt-get install -y curl wget lsb-release software-properties-common && \
 # PHP
-    wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg && \
-    echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/php.list && \
+    add-apt-repository ppa:ondrej/php && \
 # Nodejs
     curl -sL https://deb.nodesource.com/setup_18.x | bash - && \
 # Yarn
@@ -77,12 +78,12 @@ RUN addgroup --gid "$PGID" "$USER" && \
     make clean && \
     make && \
     make install && \
-    echo "extension=libpuzzle.so" >> /etc/php/8.2/fpm/conf.d/php.ini && \
+    echo "extension=libpuzzle.so" >> /etc/php/8.2/fpm/php.ini && \
     echo "extension=libpuzzle.so" >> /etc/php/8.2/cli/php.ini && \
     rm -rf /tmp/libpuzzle-php-extension-builder-main && \
 # Clean up \
     rm -rf /var/www/mendako/assets/node_modules && \
-    apt-get purge -y wget lsb-release git nodejs yarn apt-transport-https ca-certificates gnupg2 unzip php8.2-dev && \
+    apt-get purge -y wget lsb-release software-properties-common git nodejs yarn apt-transport-https ca-certificates gnupg2 unzip php8.2-dev && \
     apt-get autoremove -y && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \

@@ -25,7 +25,7 @@ class Post
     private string $id;
 
     #[Upload(path: 'path')]
-    #[Assert\File(mimeTypes: ['image/png', 'image/jpeg', 'image/webp', 'image/gif', 'video/mp4', 'video/webm'])]
+    #[Assert\File(mimeTypes: ['image/png', 'image/jpeg', 'image/webp', 'image/gif', 'image/avif', 'video/mp4', 'video/webm'])]
     private ?File $file = null;
 
     #[ORM\Column(type: Types::STRING, nullable: true, unique: true)]

@@ -49,13 +49,14 @@ class ThumbnailGenerator
                 'image/png' => imagecreatefrompng($path),
                 'image/webp' => imagecreatefromwebp($path),
                 'image/gif' => imagecreatefromgif($path),
+                'image/avif' => imagecreatefromavif($path),
                 default => throw new \Exception('Your image cannot be processed, please use another one.'),
             };
 
             $thumbnail = imagecreatetruecolor($thumbnailWidth, $thumbnailHeight);
 
             // Transparency
-            if ('image/png' === $mime || 'image/webp' === $mime) {
+            if (in_array($mime, ['image/png', 'image/webp', 'image/avif'])) {
                 imagecolortransparent($thumbnail, imagecolorallocate($thumbnail, 0, 0, 0));
                 imagealphablending($thumbnail, false);
                 imagesavealpha($thumbnail, true);
@@ -65,22 +66,13 @@ class ThumbnailGenerator
             $deg = $this->guessRotation($path);
             $thumbnail = imagerotate($thumbnail, $deg, 0);
 
-            switch ($mime) {
-                case 'image/jpeg':
-                    imagejpeg($thumbnail, $thumbnailPath, 85);
-                    break;
-                case 'image/png':
-                    imagepng($thumbnail, $thumbnailPath, 9);
-                    break;
-                case 'image/webp':
-                    imagewebp($thumbnail, $thumbnailPath, 85);
-                    break;
-                case 'image/gif':
-                    imagegif($thumbnail, $thumbnailPath);
-                    break;
-                default:
-                    break;
-            }
+            match ($mime) {
+                'image/jpeg' => imagejpeg($thumbnail, $thumbnailPath),
+                'image/png' => imagepng($thumbnail, $thumbnailPath),
+                'image/webp' => imagewebp($thumbnail, $thumbnailPath),
+                'image/avif' => imageavif($thumbnail, $thumbnailPath),
+                'image/gif' => imagegif($thumbnail, $thumbnailPath),
+            };
         }
 
         return true;

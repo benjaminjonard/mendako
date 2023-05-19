@@ -167,6 +167,29 @@ class PostTest extends WebTestCase
         $this->assertResponseIsSuccessful();
     }
 
+    public function test_can_upload_avif(): void
+    {
+        // Arrange
+        $user = UserFactory::createOne()->object();
+        $this->client->loginUser($user);
+        $board = BoardFactory::createOne();
+        $filesystem = new Filesystem();
+        $uniqId = uniqid();
+        $filesystem->copy(__DIR__.'/../../assets/fixtures/nyancat.avif', "/tmp/{$uniqId}.avif");
+        $uploadedFile = new UploadedFile("/tmp/{$uniqId}.avif", "{$uniqId}.avif");
+
+        // Act
+        $this->client->request('GET', '/boards/'.$board->getSlug(). '/add');
+        $this->client->submitForm('Submit', [
+            'post[file]' => $uploadedFile,
+            'post[board]' => $board->getId(),
+            'post[tags]' => 'nyancat'
+        ]);
+
+        // Assert
+        $this->assertResponseIsSuccessful();
+    }
+
     public function test_can_upload_gif(): void
     {
         // Arrange
