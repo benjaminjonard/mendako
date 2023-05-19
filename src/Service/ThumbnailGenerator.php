@@ -9,7 +9,7 @@ use FFMpeg\FFMpeg;
 
 class ThumbnailGenerator
 {
-    function generate(string $path, string $thumbnailPath, int $thumbnailWidth): bool
+    function generate(string $path, string $thumbnailPath, int $thumbnailWidth, ?string $thumbnailMimeType = null): bool
     {
         if (!is_file($path)) {
             return false;
@@ -66,6 +66,7 @@ class ThumbnailGenerator
             $deg = $this->guessRotation($path);
             $thumbnail = imagerotate($thumbnail, $deg, 0);
 
+            $mime = $thumbnailMimeType ?? $mime;
             match ($mime) {
                 'image/jpeg' => imagejpeg($thumbnail, $thumbnailPath),
                 'image/png' => imagepng($thumbnail, $thumbnailPath),
