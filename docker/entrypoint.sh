@@ -19,6 +19,7 @@ touch /var/www/mendako/.env.local
 echo "APP_ENV=${APP_ENV:-prod}" >> "/var/www/mendako/.env.local"
 echo "APP_DEBUG=${APP_DEBUG:-0}" >> "/var/www/mendako/.env.local"
 echo "APP_SECRET=${APP_SECRET:-$(openssl rand -base64 21)}" >> "/var/www/mendako/.env.local"
+echo "APP_THUMBNAILS_FORMAT=${APP_THUMBNAILS_FORMAT:-}" >> "/var/www/mendako/.env.local"
 
 echo "DB_NAME=${DB_NAME:-}" >> "/var/www/mendako/.env.local"
 echo "DB_HOST=${DB_HOST:-}" >> "/var/www/mendako/.env.local"

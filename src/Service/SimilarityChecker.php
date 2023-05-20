@@ -69,7 +69,7 @@ class SimilarityChecker
 
         $path = $post->getFile()->getRealPath();
         $thumbnailPath = '/tmp/' . $post->getFile()->getFilename() .  '_600.jpeg';
-        $this->thumbnailGenerator->generate($path, $thumbnailPath, 600, 'image/jpeg');
+        $this->thumbnailGenerator->generate($path, $thumbnailPath, 600, 'jpeg');
 
         $signature = puzzle_fill_cvec_from_file($thumbnailPath);
         if ($signature === false) {

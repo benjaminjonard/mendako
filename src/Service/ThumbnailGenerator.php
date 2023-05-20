@@ -9,7 +9,7 @@ use FFMpeg\FFMpeg;
 
 class ThumbnailGenerator
 {
-    function generate(string $path, string $thumbnailPath, int $thumbnailWidth, ?string $thumbnailMimeType = null): bool
+    function generate(string $path, string $thumbnailPath, int $thumbnailWidth, ?string $thumbnailsFormat = null): bool
     {
         if (!is_file($path)) {
             return false;
@@ -42,7 +42,7 @@ class ThumbnailGenerator
         }
 
         if ($mime === 'video/mp4' || $mime === 'video/webm') {
-            $video->frame(TimeCode::fromSeconds(1))->save($thumbnailPath);;
+            $video->frame(TimeCode::fromSeconds(1))->save($thumbnailPath);
         } else {
             $image = match ($mime) {
                 'image/jpeg' => imagecreatefromjpeg($path),
@@ -66,13 +66,11 @@ class ThumbnailGenerator
             $deg = $this->guessRotation($path);
             $thumbnail = imagerotate($thumbnail, $deg, 0);
 
-            $mime = $thumbnailMimeType ?? $mime;
-            match ($mime) {
-                'image/jpeg' => imagejpeg($thumbnail, $thumbnailPath),
-                'image/png' => imagepng($thumbnail, $thumbnailPath),
-                'image/webp' => imagewebp($thumbnail, $thumbnailPath),
-                'image/avif' => imageavif($thumbnail, $thumbnailPath),
-                'image/gif' => imagegif($thumbnail, $thumbnailPath),
+            match ($thumbnailsFormat) {
+                'jpeg', 'gif' => imagejpeg($thumbnail, $thumbnailPath),
+                'png' => imagepng($thumbnail, $thumbnailPath),
+                'webp' => imagewebp($thumbnail, $thumbnailPath),
+                'avif' => imageavif($thumbnail, $thumbnailPath)
             };
         }
 

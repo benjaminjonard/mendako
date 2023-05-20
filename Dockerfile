@@ -45,7 +45,6 @@ RUN addgroup --gid "$PGID" "$USER" && \
     php8.2-zip \
     php8.2-fpm \
     php8.2-intl \
-    php8.2-apcu \
     nodejs \
     yarn && \
 #Install composer dependencies

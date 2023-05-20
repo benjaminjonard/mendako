@@ -1,39 +1,49 @@
 <?php
 
-require_once dirname(__DIR__).'/vendor/autoload.php';
+require_once \dirname(__DIR__).'/vendor/autoload.php';
 
 use App\Service\ThumbnailGenerator;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\Dotenv\Dotenv;
+
+$dotenv = new Dotenv();
+$dotenv->load(__DIR__.'/../.env.local');
 
 //@TODO Allow only some width
 $width = $_REQUEST['width'];
 $imagePath = $_REQUEST['path'];
-$publicPath = getcwd();
-$fullImagePath = "{$publicPath}/{$imagePath}";
+$fullImagePath = __DIR__."/{$imagePath}";
 
-if (!file_exists($fullImagePath)) {
+if (!\file_exists($fullImagePath)) {
     return new BinaryFileResponse('build/images/default.png');
 }
 
-$info = pathinfo($imagePath);
-$thumbnailPath = $info['dirname'] . '/thumbnails/' . $info['filename'] . '_' . $width . '.' . $info['extension'];
-$fullThumbnailPath = $publicPath . '/' . $thumbnailPath;
+$info = \pathinfo($imagePath);
+$thumbnailsFormat = match ($_ENV['APP_THUMBNAILS_FORMAT']) {
+    'jpeg' => 'jpeg',
+    'png' => 'png',
+    'webp' => 'webp',
+    'avif' => 'avif',
+    default => $info['extension']
+};
+$thumbnailPath = $info['dirname'] . '/thumbnails/' . $info['filename'] . '_' . $width . '.' . $thumbnailsFormat;
+$fullThumbnailPath = __DIR__ . '/' . $thumbnailPath;
 $thumbnailGenerator = new ThumbnailGenerator();
 
-if (!file_exists($fullThumbnailPath)) {
+if (!\file_exists($fullThumbnailPath)) {
     try {
-        $thumbnailGenerator->generate($fullImagePath, $fullThumbnailPath, $width);
+        $thumbnailGenerator->generate($fullImagePath, $fullThumbnailPath, $width, $thumbnailsFormat);
     } catch (Throwable $throwable) {
         var_dump($throwable->getMessage());
-        die();  // IMPORTANT: in case error the response will be base64 encoded
+        die();  // IMPORTANT: in case of error the response will be base64 encoded
     }
 }
 
-header($_SERVER["SERVER_PROTOCOL"] . " 200 OK");
-header("Cache-Control: immutable, max-age=31536000, no-transform, private, s-maxage=31536000");
-header("Content-Type: " . mime_content_type($fullThumbnailPath));
-header("Content-Transfer-Encoding: Binary");
-header("Content-Length:" . filesize($fullThumbnailPath));
-header("Content-Disposition: attachment; filename=" . $info['filename'] . '_' . $width . '.' . $info['extension']);
-readfile($fullThumbnailPath);
+\header($_SERVER["SERVER_PROTOCOL"] . " 200 OK");
+\header("Cache-Control: immutable, max-age=31536000, no-transform, private, s-maxage=31536000");
+\header("Content-Type: " . \mime_content_type($fullThumbnailPath));
+\header("Content-Transfer-Encoding: Binary");
+\header("Content-Length:" . \filesize($fullThumbnailPath));
+\header("Content-Disposition: attachment; filename=" . $info['filename'] . '_' . $width . '.' . $info['extension']);
+\readfile($fullThumbnailPath);
 die();
