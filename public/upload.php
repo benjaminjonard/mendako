@@ -19,12 +19,14 @@ if (!\file_exists($fullImagePath)) {
 }
 
 $info = \pathinfo($imagePath);
+$extension = str_replace('image/', '', mime_content_type($imagePath));
+
 $thumbnailsFormat = match ($_ENV['APP_THUMBNAILS_FORMAT']) {
     'jpeg' => 'jpeg',
     'png' => 'png',
     'webp' => 'webp',
     'avif' => 'avif',
-    default => $info['extension']
+    default => $extension
 };
 
 $dirname = str_replace('uploads', 'thumbnails', $info['dirname']);
