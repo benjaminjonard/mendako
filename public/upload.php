@@ -26,12 +26,14 @@ $thumbnailsFormat = match ($_ENV['APP_THUMBNAILS_FORMAT']) {
     'avif' => 'avif',
     default => $info['extension']
 };
-$thumbnailPath = $info['dirname'] . '/thumbnails/' . $info['filename'] . '_' . $width . '.' . $thumbnailsFormat;
-$fullThumbnailPath = __DIR__ . '/' . $thumbnailPath;
-$thumbnailGenerator = new ThumbnailGenerator();
+
+$dirname = str_replace('uploads', 'thumbnails', $info['dirname']);
+$filename = $info['filename'];
+$fullThumbnailPath = __DIR__ . "/{$dirname}/{$filename}_{$width}.{$thumbnailsFormat}";
 
 if (!\file_exists($fullThumbnailPath)) {
     try {
+        $thumbnailGenerator = new ThumbnailGenerator();
         $thumbnailGenerator->generate($fullImagePath, $fullThumbnailPath, $width, $thumbnailsFormat);
     } catch (Throwable $throwable) {
         var_dump($throwable->getMessage());
