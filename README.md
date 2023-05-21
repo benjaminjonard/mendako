@@ -63,6 +63,7 @@ services:
 # APP_SECRET is automatically generated when using Docker
 #
 # PHP_TZ, see possible values here https://www.w3schools.com/php/php_ref_timezones.asp
+# APP_THUMBNAILS_FORMAT possible values : jpeg, png, webp, avif. Leave empty if you want to keep the original image format
 ########################################################################################################
 
 APP_DEBUG=0
@@ -73,6 +74,7 @@ HTTPS_ENABLED=1
 UPLOAD_MAX_FILESIZE=20M
 PHP_MEMORY_LIMIT=512M
 PHP_TZ=Europe/Paris
+APP_THUMBNAILS_FORMAT=
 
 ########################################################################################################
 #                                                DATABASE
