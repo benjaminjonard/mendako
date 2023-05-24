@@ -38,6 +38,7 @@ services:
             - mendako_postgresql
         volumes:
             - "./volumes/mendako/public/uploads:/uploads"
+            - "./volumes/mendako/public/thumbnails:/thumbnails" #Not mandatory
 
     mendako_postgresql:
         container_name: mendako_postgresql
