@@ -75,6 +75,7 @@ EXPOSE 80
 WORKDIR /var/www/mendako
 
 VOLUME /uploads
+VOLUME /thumbnails
 
 HEALTHCHECK CMD curl --fail http://localhost:80/ || exit 1
 

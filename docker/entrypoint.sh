@@ -6,11 +6,19 @@ echo "**** 1/9 - Make sure /uploads folders exist ****"
 [ ! -f /uploads ] && \
 	mkdir -p /uploads
 
+[ ! -f /thumbnails ] && \
+	mkdir -p /thumbnails
+
 echo "**** 2/9 - Create the symbolic link for the /uploads folder ****"
 [ ! -L /var/www/mendako/public/uploads ] && \
 	cp -r /var/www/mendako/public/uploads/. /uploads && \
 	rm -r /var/www/mendako/public/uploads && \
 	ln -s /uploads /var/www/mendako/public/uploads
+
+[ ! -L /var/www/mendako/public/thumbnails ] && \
+	cp -r /var/www/mendako/public/thumbnails/. /thumbnails && \
+	rm -r /var/www/mendako/public/thumbnails && \
+	ln -s /thumbnails /var/www/mendako/public/thumbnails
 
 echo "**** 3/9 - Setting env variables ****"
 rm -rf /var/www/mendako/.env.local
@@ -54,6 +62,12 @@ find /uploads \( ! -user "$USER" -o ! -group "$USER" \) -exec chown "$USER":"$US
 usermod -a -G "$USER" www-data
 find /uploads -type d \( ! -perm -ug+w -o ! -perm -ugo+rX \) -exec chmod -R ug+w,ugo+rX \{\} \;
 find /uploads \( ! -perm -ug+w -o ! -perm -ugo+rX \) -exec chmod ug+w,ugo+rX \{\} \;
+
+find /thumbnails -type d \( ! -user "$USER" -o ! -group "$USER" \) -exec chown -R "$USER":"$USER" \{\} \;
+find /thumbnails \( ! -user "$USER" -o ! -group "$USER" \) -exec chown "$USER":"$USER" \{\} \;
+usermod -a -G "$USER" www-data
+find /thumbnails -type d \( ! -perm -ug+w -o ! -perm -ugo+rX \) -exec chmod -R ug+w,ugo+rX \{\} \;
+find /thumbnails \( ! -perm -ug+w -o ! -perm -ugo+rX \) -exec chmod ug+w,ugo+rX \{\} \;
 
 echo "**** 7/9 - Create nginx log files ****"
 mkdir -p /logs/nginx

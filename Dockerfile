@@ -91,6 +91,7 @@ RUN addgroup --gid "$PGID" "$USER" && \
 EXPOSE 80
 
 VOLUME /uploads
+VOLUME /thumbnails
 
 WORKDIR /var/www/mendako
 
