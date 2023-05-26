@@ -1,6 +1,21 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.1.3] / 2023-05-26
+### Features
+- Add option to enable infinite scrolling (benjaminjonard)
+- Basic detection of similar images when creating a new post, in beta state (benjaminjonard)
+- Add support for AVIF image format (benjaminjonard)
+- Add `THUMBNAILS_FORMAT` env variable, supports `jpeg`, `png`, `webp` and `avif` (benjaminjonard)
+
+### Fix
+- Fix filename when clicking on download button (benjaminjonard)
+
+### Miscellaneous
+- Move Docker base image from Debian to Ubuntu (benjaminjonard)
+- Move thumbnails to dedicated folder, see README for new Docker volume (benjaminjonard)
+- Update PHP and JS dependencies (benjaminjonard)
+
 ## [1.1.2] / 2023-03-29
 ### Fix
 - Fix permission issues with uploads folder (benjaminjonard)
