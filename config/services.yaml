@@ -10,6 +10,8 @@ services:
         bind:
             $publicPath: '%kernel.project_dir%/public'
             $defaultLocale: '%default_locale%'
+            $release: '%release%'
+            $thumbnailsFormat: '%env(APP_THUMBNAILS_FORMAT)%'
 
     App\:
         resource: '../src/'

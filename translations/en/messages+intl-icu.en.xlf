@@ -595,5 +595,41 @@
         <target>Similar posts</target>
       </segment>
     </unit>
+    <unit id="b9iBNEI" name="title.configuration">
+      <segment state="translated">
+        <source>Configuration</source>
+        <target>Configuration</target>
+      </segment>
+    </unit>
+    <unit id="POjgg0u" name="title.admin">
+      <segment state="translated">
+        <source>Administration</source>
+        <target>Administration</target>
+      </segment>
+    </unit>
+    <unit id="Ex38dow" name="menu.admin">
+      <segment state="translated">
+        <source>Administration</source>
+        <target>Administration</target>
+      </segment>
+    </unit>
+    <unit id="EFVfz6U" name="label.release">
+      <segment state="translated">
+        <source>Release</source>
+        <target>Release</target>
+      </segment>
+    </unit>
+    <unit id="Bkrq207" name="label.thumbnails_format">
+      <segment state="translated">
+        <source>Thumbnails format</source>
+        <target>Thumbnails format</target>
+      </segment>
+    </unit>
+    <unit id="frN0Olf" name="label.disk_usage">
+      <segment state="translated">
+        <source>Disk usage</source>
+        <target>Disk usage</target>
+      </segment>
+    </unit>
   </file>
 </xliff>

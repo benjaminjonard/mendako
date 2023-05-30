@@ -21,7 +21,7 @@ services:
             - DB_VERSION=14
             - PHP_TIMEZONE=Europe\Paris
             - HTTPS_ENABLED=0
-            - APP_THUMBNAILS_FORMAT=
+            - APP_THUMBNAILS_FORMAT=webp
         depends_on:
             - postgresql
         volumes:

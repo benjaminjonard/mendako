@@ -1,0 +1,27 @@
+{% extends 'layout.html.twig' %}
+
+{% block breadcrumb %}
+    <li class="is-active"><a href="#" aria-current="page">{{ 'menu.admin'|trans }}</a></li>
+{% endblock %}
+
+{% block content %}
+    <div class="column"></div>
+
+    <div class="column">
+        <div class="box">
+            <h1 class="title">{{ 'title.admin'|trans }}</h1>
+            <h2 class="subtitle">{{ 'title.configuration'|trans }}</h2>
+            <div>
+                <b>{{ 'label.release'|trans }}</b>: {{ release }}
+            </div>
+            <div>
+                <b>{{ 'label.thumbnails_format'|trans }}</b>: {{ thumbnailsFormat }}
+            </div>
+            <div>
+                <b>{{ 'label.disk_usage'|trans }}</b>: {{ diskUsage|bytes }}
+            </div>
+        </div>
+    </div>
+
+    <div class="column"></div>
+{% endblock %}
