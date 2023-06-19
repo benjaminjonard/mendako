@@ -10,12 +10,12 @@ class SortRuntime implements RuntimeExtensionInterface
 {
     public function naturalSorting(iterable $array): array
     {
-        $array = !\is_array($array) ? $array->toArray() : $array;
+        $array = \is_array($array) ? $array : $array->toArray();
 
         $collator = collator_create('root');
         $collator->setAttribute(\Collator::NUMERIC_COLLATION, \Collator::ON);
 
-        usort($array, function ($a, $b) use ($collator): bool|int {
+        usort($array, static function ($a, $b) use ($collator) : bool|int {
             return $collator->compare($a['name'], $b['name']);
         });
 

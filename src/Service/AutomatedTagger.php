@@ -7,6 +7,7 @@ namespace App\Service;
 use App\Entity\Post;
 use App\Repository\TagRepository;
 use FFMpeg\FFMpeg;
+use FFMpeg\FFProbe\DataMapping\Stream;
 
 class AutomatedTagger
 {
@@ -52,7 +53,7 @@ class AutomatedTagger
     {
         $ffmpeg = FFMpeg::create();
         $video = $ffmpeg->open($this->publicPath.'/'.$post->getPath());
-        if ($video->getStreams()->audios()->first() !== null) {
+        if ($video->getStreams()->audios()->first() instanceof Stream) {
             $withSound = $this->tagRepository->findOneBy(['name' => 'with_sound']);
             $post->addTag($withSound);
         }

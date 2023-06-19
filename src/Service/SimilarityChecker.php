@@ -11,10 +11,11 @@ use Doctrine\DBAL\Connection;
 use FFMpeg\Coordinate\TimeCode;
 use FFMpeg\FFMpeg;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\HttpFoundation\File\File;
 
 class SimilarityChecker
 {
-    private Connection $connection;
+    private readonly Connection $connection;
 
     public function __construct(
         ManagerRegistry $managerRegistry,
@@ -34,12 +35,13 @@ class SimilarityChecker
         foreach ($post->getSignatureWords() as $word) {
             $words[] = "'" . $word->getWord() . "'";
         }
+
         $words = implode(',', $words);
 
         $sql = ("
             SELECT word.post_id AS id, COUNT(word.word) AS strength
             FROM men_post_signature_word word 
-            WHERE word.word IN ($words)
+            WHERE word.word IN ({$words})
             GROUP BY word.post_id
             HAVING COUNT(word.word) > 20
             ORDER BY strength DESC
@@ -63,7 +65,7 @@ class SimilarityChecker
 
     public function generateSignature(Post $post): void
     {
-        if ($post->getFile() === null) {
+        if (!$post->getFile() instanceof File) {
             return;
         }
 
@@ -81,7 +83,7 @@ class SimilarityChecker
 
         $wordLength = 10;
         $wordCount = 100;
-        for ($i = 0; $i < min($wordCount, strlen($signature) - $wordLength + 1); $i++) {
+        for ($i = 0; $i < min($wordCount, strlen($signature) - $wordLength + 1); ++$i) {
             $word = substr($signature, $i, $wordLength);
             $signatureWord = new PostSignatureWord($post, hash('xxh3',$i.'__'.$word));
             $post->addSignatureWord($signatureWord);

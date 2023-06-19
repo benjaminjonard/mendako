@@ -12,7 +12,9 @@ class SortExtension extends AbstractExtension
     public function getFilters(): array
     {
         return [
-            new TwigFilter('naturalSorting', [SortRuntime::class, 'naturalSorting'])
+            new TwigFilter('naturalSorting', static function (iterable $array) : array {
+                return (new SortRuntime())->naturalSorting($array);
+            })
         ];
     }
 }

@@ -9,7 +9,7 @@ use FFMpeg\FFMpeg;
 
 class ThumbnailGenerator
 {
-    function generate(string $path, string $thumbnailPath, int $thumbnailWidth, ?string $thumbnailsFormat = null): bool
+    public function generate(string $path, string $thumbnailPath, int $thumbnailWidth, ?string $thumbnailsFormat = null): bool
     {
         if (!is_file($path)) {
             return false;
@@ -77,7 +77,7 @@ class ThumbnailGenerator
         return true;
     }
 
-    function guessRotation(string $path): int
+    public function guessRotation(string $path): int
     {
         $deg = 0;
 
