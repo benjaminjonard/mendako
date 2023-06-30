@@ -58,6 +58,7 @@ class Uploader
                 ;
             } elseif ($entity->getMimetype() === 'image/gif') {
                 $gifData = $this->gifDataExtractor->extract($absolutePath . $fileName);
+
                 $entity
                     ->setWidth($gifData['width'])
                     ->setHeight($gifData['height'])

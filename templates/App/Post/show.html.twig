@@ -20,7 +20,7 @@
             <div>{{ 'label.uploaded_by'|trans }}: {{ post.uploadedBy.username }}</div>
             <div>{{ 'label.size'|trans }}: {{ post.size|bytes }}</div>
             <div>{{ 'label.dimensions'|trans }}: {{ post.width }}*{{ post.height }}</div>
-            {% if post.duration %}
+            {% if post.duration is not null %}
                 <div>{{ 'label.duration'|trans }}: {{ post.duration|minutes }}</div>
             {% endif %}
             <div>{{ 'label.mimetype'|trans }}: {{ post.mimetype }}</div>
