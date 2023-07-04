@@ -6,7 +6,13 @@
 
 {% block breadcrumb %}
     <li><a href="{{ path('app_board_index') }}">{{ 'menu.boards'|trans }}</a></li>
-    <li class="is-active"><a href="#" aria-current="page">{{ board.name }}</a></li>
+
+    {% if search is empty %}
+        <li class="is-active"><a href="#">{{ board.name }}</a></li>
+    {% else %}
+        <li><a href="{{ path('app_board_show', {slug: board.slug}) }}">{{ board.name }}</a></li>
+        <li class="is-active"><a href="#" aria-current="page">{{ search }}</a></li>
+    {% endif %}
 {% endblock %}
 
 {% block content %}
