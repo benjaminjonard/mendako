@@ -46,6 +46,9 @@ class Post
     #[ORM\Column(type: Types::INTEGER, nullable: true)]
     private ?int $duration = null; //in seconds
 
+    #[ORM\Column(type: Types::BOOLEAN, nullable: false, options: ['default' => false])]
+    private bool $hasSound = false;
+
     #[ORM\Column(type: Types::INTEGER)]
     private int $seenCounter = 0;
 
@@ -275,6 +278,16 @@ class Post
         }
 
         return $this;
+    }
+
+    public function hasSound(): bool
+    {
+        return $this->hasSound;
+    }
+
+    public function setHasSound(bool $hasSound): void
+    {
+        $this->hasSound = $hasSound;
     }
 
     public function getCreatedAt(): ?\DateTimeImmutable

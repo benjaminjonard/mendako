@@ -7,6 +7,7 @@ namespace App\Service;
 use App\Attribute\Upload;
 use App\Entity\Post;
 use FFMpeg\FFMpeg;
+use FFMpeg\FFProbe\DataMapping\Stream;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\PropertyAccess\PropertyAccess;
@@ -18,7 +19,6 @@ class Uploader
 
     public function __construct(
         private readonly RandomStringGenerator $randomStringGenerator,
-        private readonly GifDataExtractor $gifDataExtractor,
         private readonly string $publicPath
     )
     {
@@ -47,22 +47,17 @@ class Uploader
                 ->setSize(filesize($absolutePath . $fileName))
             ;
 
-            if ($entity->getMimetype() === 'video/mp4' || $entity->getMimetype() === 'video/webm') {
+            if ($entity->getMimetype() === 'video/mp4' || $entity->getMimetype() === 'video/webm' || $entity->getMimetype() === 'image/gif') {
                 $ffmpeg = FFMpeg::create();
                 $video = $ffmpeg->open($absolutePath . $fileName);
                 $stream = $video->getStreams()->videos()->first();
+                $hasSound = $video->getStreams()->audios()->first() instanceof Stream;
+
                 $entity
                     ->setDuration((int) round((float) $video->getFormat()->get('duration')))
                     ->setHeight($stream->getDimensions()->getHeight())
                     ->setWidth($stream->getDimensions()->getWidth())
-                ;
-            } elseif ($entity->getMimetype() === 'image/gif') {
-                $gifData = $this->gifDataExtractor->extract($absolutePath . $fileName);
-
-                $entity
-                    ->setWidth($gifData['width'])
-                    ->setHeight($gifData['height'])
-                    ->setDuration((int) round((float) $gifData['duration']));
+                    ->setHasSound($hasSound)
                 ;
             } else {
                 $dimensions = getimagesize($absolutePath . $fileName);

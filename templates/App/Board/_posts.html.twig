@@ -3,7 +3,12 @@
         <figure class="image">
             <div>
                 {% if post.duration is not null %}
-                    <span class="tag is-dark has-text-weight-medium">{{ post.duration|minutes }}</span>
+                    <span class="tag is-dark has-text-weight-medium">
+                        {{ post.duration|minutes }}
+                        {% if post.hasSound %}
+                            &nbsp;🕩
+                        {% endif %}
+                    </span>
                 {% endif %}
 
                 <img src="{{ asset(post.path|thumbnail(360)) }}">

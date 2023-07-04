@@ -24,10 +24,10 @@ final class Version20230513081258 extends AbstractMigration implements Container
 
     public function up(Schema $schema): void
     {
+        $this->skipIf('postgresql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'postgresql\'.');
+
         $similarityChecker = $this->container->get(SimilarityChecker::class);
         $publicPath = $this->container->getParameter('kernel.project_dir') . '/public';
-
-        $this->skipIf('postgresql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'postgresql\'.');
 
         $this->addSql('CREATE TABLE men_post_signature_word (id CHAR(36) NOT NULL, post_id CHAR(36) DEFAULT NULL, word VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_3CF651044B89032C ON men_post_signature_word (post_id)');
