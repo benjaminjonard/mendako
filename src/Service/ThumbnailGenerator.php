@@ -16,7 +16,7 @@ class ThumbnailGenerator
         }
 
         $mime = mime_content_type($path);
-        if ($mime === 'video/mp4' || $mime === 'video/webm') {
+        if ($mime === 'video/mp4' || $mime === 'video/webm' || $mime === 'image/gif') {
             $ffmpeg = FFMpeg::create();
             $video = $ffmpeg->open($path);
             $stream = $video->getStreams()->videos()->first();
@@ -41,14 +41,13 @@ class ThumbnailGenerator
             throw new \Exception('There was a problem while creating the thumbnail. Please try again!');
         }
 
-        if ($mime === 'video/mp4' || $mime === 'video/webm') {
-            $video->frame(TimeCode::fromSeconds(1))->save($thumbnailPath);
+        if ($mime === 'video/mp4' || $mime === 'video/webm' || $mime === 'image/gif') {
+            $video->frame(TimeCode::fromSeconds(0))->save($thumbnailPath);
         } else {
             $image = match ($mime) {
                 'image/jpeg' => imagecreatefromjpeg($path),
                 'image/png' => imagecreatefrompng($path),
                 'image/webp' => imagecreatefromwebp($path),
-                'image/gif' => imagecreatefromgif($path),
                 'image/avif' => imagecreatefromavif($path),
                 default => throw new \Exception('Your image cannot be processed, please use another one.'),
             };
@@ -67,7 +66,7 @@ class ThumbnailGenerator
             $thumbnail = imagerotate($thumbnail, $deg, 0);
 
             match ($thumbnailsFormat) {
-                'jpeg', 'gif' => imagejpeg($thumbnail, $thumbnailPath),
+                'jpeg' => imagejpeg($thumbnail, $thumbnailPath),
                 'png' => imagepng($thumbnail, $thumbnailPath),
                 'webp' => imagewebp($thumbnail, $thumbnailPath),
                 'avif' => imageavif($thumbnail, $thumbnailPath)
