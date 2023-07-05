@@ -1,6 +1,19 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.1.4] / 2023-07-05
+### Features
+- Add basic admin dashboard (benjaminjonard)
+
+### Fix
+- Fix duration display when duration < 1 sec (benjaminjonard)
+- Use ffmpeg to generate better gif thumbnails (benjaminjonard)
+
+### Miscellaneous
+- Update PHP and JS dependencies (benjaminjonard)
+- Add volume icon on posts that have sound (benjaminjonard)
+- Update breadcrumb for search (benjaminjonard)
+
 ## [1.1.3] / 2023-05-26
 ### Features
 - Add option to enable infinite scrolling (benjaminjonard)
