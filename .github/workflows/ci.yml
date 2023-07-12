@@ -108,7 +108,6 @@ jobs:
           sudo make install
           echo "extension=libpuzzle.so" >> /etc/php/8.2/fpm/php.ini
           echo "extension=libpuzzle.so" >> /etc/php/8.2/cli/php.ini
-          rm -rf /tmp/libpuzzle-php-extension-builder-main
 
       # Setup test environment
       - run: chmod +x bin/console
