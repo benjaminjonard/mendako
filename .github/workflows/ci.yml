@@ -95,19 +95,20 @@ jobs:
       - run: sudo apt install -y ffmpeg
 
       # Build libpuzzle extension
-      - run: sudo apt install -y wget
-      - run: cd /tmp
-      - run: wget https://github.com/benjaminjonard/libpuzzle-php-extension-builder/archive/refs/heads/main.zip
-      - run: unzip main.zip
-      - run: cd libpuzzle-php-extension-builder-main/src
-      - run: phpize
-      - run: ./configure
-      - run: make clean
-      - run: make
-      - run: make install
-      - run: echo "extension=libpuzzle.so" >> /etc/php/8.2/fpm/php.ini
-      - run: echo "extension=libpuzzle.so" >> /etc/php/8.2/cli/php.ini
-      - run: rm -rf /tmp/libpuzzle-php-extension-builder-main
+      - run: |
+          sudo apt install -y wget      
+          cd /tmp
+          wget https://github.com/benjaminjonard/libpuzzle-php-extension-builder/archive/refs/heads/main.zip
+          unzip main.zip
+          cd libpuzzle-php-extension-builder-main/src
+          phpize
+          ./configure
+          make clean
+          make
+          make install
+          echo "extension=libpuzzle.so" >> /etc/php/8.2/fpm/php.ini
+          echo "extension=libpuzzle.so" >> /etc/php/8.2/cli/php.ini
+          rm -rf /tmp/libpuzzle-php-extension-builder-main
 
       # Setup test environment
       - run: chmod +x bin/console
