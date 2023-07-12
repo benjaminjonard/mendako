@@ -69,8 +69,7 @@ jobs:
       - uses: addnab/docker-run-action@v3
         with:
           image: local-mendako-test:latest
-          run: |
-          # Setup environment variables
+          run: |          
             sed -i "s|APP_ENV=.*|APP_ENV=test|i" ".env"
             sed -i "s|DB_NAME=.*|DB_NAME=mendako|i" ".env"
             sed -i "s|DB_HOST=.*|DB_HOST=127.0.0.1|i" ".env"
@@ -78,12 +77,8 @@ jobs:
             sed -i "s|DB_USER=.*|DB_USER=postgres|i" ".env"
             sed -i "s|DB_PASSWORD=.*|DB_PASSWORD=root|i" ".env"
             sed -i "s|DB_VERSION=.*|DB_VERSION=${{ matrix.postgres }}|i" ".env"
-            sed -i "s|HTTPS_ENABLED=.*|HTTPS_ENABLED=0|i" ".env"
-
-          # Setup test environment
+            sed -i "s|HTTPS_ENABLED=.*|HTTPS_ENABLED=0|i" ".env"          
             chmod +x bin/console
             bin/console doctrine:database:create --env=test
-            bin/console doctrine:migration:migrate --no-interaction --allow-no-migration --env=test
-
-          ## Run tests
+            bin/console doctrine:migration:migrate --no-interaction --allow-no-migration --env=test          
             php ./vendor/bin/paratest --runner=WrapperRunner
