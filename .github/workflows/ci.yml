@@ -103,9 +103,9 @@ jobs:
           cd libpuzzle-php-extension-builder-main/src
           phpize
           ./configure
-          make clean
-          make
-          make install
+          sudo make clean
+          sudo make
+          sudo make install
           echo "extension=libpuzzle.so" >> /etc/php/8.2/fpm/php.ini
           echo "extension=libpuzzle.so" >> /etc/php/8.2/cli/php.ini
           rm -rf /tmp/libpuzzle-php-extension-builder-main
