@@ -55,18 +55,16 @@ jobs:
       - uses: actions/checkout@v3
 
       # Setup php env and install dependencies
-      - uses: shivammathur/setup-php@v2
+      - uses: docker/setup-buildx-action@v2
+      - uses: docker/build-push-action@v4
         with:
-          php-version: 8.2
-          extensions: ctype, fileinfo, gd, iconv, intl, json
-      - uses: actions/cache@v3
-        id: cache-composer
-        with:
-          path: vendor
-          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-php-
-      - run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+          context: .
+          file: "Dockerfile"
+          tags: local-mendako-test:latest
+          load: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          push: false
 
       # Setup environment variables
       - run: sed -i "s|APP_ENV=.*|APP_ENV=test|i" ".env"
@@ -76,23 +74,7 @@ jobs:
       - run: sed -i "s|DB_USER=.*|DB_USER=postgres|i" ".env"
       - run: sed -i "s|DB_PASSWORD=.*|DB_PASSWORD=root|i" ".env"
       - run: sed -i "s|DB_VERSION=.*|DB_VERSION=${{ matrix.postgres }}|i" ".env"
-
-      # Setup yarn
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 14
-      - uses: actions/cache@v3
-        id: cache-node-modules
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/composer.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
-      - run: (cd assets && yarn install)
-      - run: (cd assets && yarn dev)
-
-      # install ffmpeg
-      - run: sudo apt install -y ffmpeg
+      - run: sed -i "s|HTTPS_ENABLED=.*|HTTPS_ENABLED=0|i" ".env"
 
       # Setup test environment
       - run: chmod +x bin/console
