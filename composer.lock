@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6de1ab3a368ccb00442aa5ff6c8c8461",
+    "content-hash": "d941b5d2f9d67856f744c0a0ef7a179c",
     "packages": [
         {
             "name": "behat/transliterator",
@@ -7693,16 +7693,16 @@
         },
         {
             "name": "fakerphp/faker",
-            "version": "v1.22.0",
+            "version": "v1.23.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/FakerPHP/Faker.git",
-                "reference": "f85772abd508bd04e20bb4b1bbe260a68d0066d2"
+                "reference": "e3daa170d00fde61ea7719ef47bb09bb8f1d9b01"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/FakerPHP/Faker/zipball/f85772abd508bd04e20bb4b1bbe260a68d0066d2",
-                "reference": "f85772abd508bd04e20bb4b1bbe260a68d0066d2",
+                "url": "https://api.github.com/repos/FakerPHP/Faker/zipball/e3daa170d00fde61ea7719ef47bb09bb8f1d9b01",
+                "reference": "e3daa170d00fde61ea7719ef47bb09bb8f1d9b01",
                 "shasum": ""
             },
             "require": {
@@ -7755,9 +7755,9 @@
             ],
             "support": {
                 "issues": "https://github.com/FakerPHP/Faker/issues",
-                "source": "https://github.com/FakerPHP/Faker/tree/v1.22.0"
+                "source": "https://github.com/FakerPHP/Faker/tree/v1.23.0"
             },
-            "time": "2023-05-14T12:31:37+00:00"
+            "time": "2023-06-12T08:44:38+00:00"
         },
         {
             "name": "fidry/cpu-core-counter",
@@ -8489,16 +8489,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "10.2.4",
+            "version": "10.2.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "68484779b5a2ed711fbdeba6ca01910d87acdff2"
+                "reference": "1c17815c129f133f3019cc18e8d0c8622e6d9bcd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/68484779b5a2ed711fbdeba6ca01910d87acdff2",
-                "reference": "68484779b5a2ed711fbdeba6ca01910d87acdff2",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/1c17815c129f133f3019cc18e8d0c8622e6d9bcd",
+                "reference": "1c17815c129f133f3019cc18e8d0c8622e6d9bcd",
                 "shasum": ""
             },
             "require": {
@@ -8570,7 +8570,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/10.2.4"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/10.2.6"
             },
             "funding": [
                 {
@@ -8586,20 +8586,20 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-07-10T04:06:08+00:00"
+            "time": "2023-07-17T12:08:28+00:00"
         },
         {
             "name": "rector/rector",
-            "version": "0.17.3",
+            "version": "0.17.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rectorphp/rector.git",
-                "reference": "dbd0b13b4fe1787c04ae4732e3d54310bdc0c22b"
+                "reference": "ec40080b9bdaf39eb0c0a9276cd7b4a778c03f21"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rectorphp/rector/zipball/dbd0b13b4fe1787c04ae4732e3d54310bdc0c22b",
-                "reference": "dbd0b13b4fe1787c04ae4732e3d54310bdc0c22b",
+                "url": "https://api.github.com/repos/rectorphp/rector/zipball/ec40080b9bdaf39eb0c0a9276cd7b4a778c03f21",
+                "reference": "ec40080b9bdaf39eb0c0a9276cd7b4a778c03f21",
                 "shasum": ""
             },
             "require": {
@@ -8639,7 +8639,7 @@
             ],
             "support": {
                 "issues": "https://github.com/rectorphp/rector/issues",
-                "source": "https://github.com/rectorphp/rector/tree/0.17.3"
+                "source": "https://github.com/rectorphp/rector/tree/0.17.6"
             },
             "funding": [
                 {
@@ -8647,7 +8647,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-07-10T13:32:43+00:00"
+            "time": "2023-07-14T09:54:15+00:00"
         },
         {
             "name": "sebastian/cli-parser",
@@ -9975,16 +9975,16 @@
         },
         {
             "name": "zenstruck/foundry",
-            "version": "v1.33.0",
+            "version": "v1.34.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zenstruck/foundry.git",
-                "reference": "3c46a2f2aa3ad8a1d74583a28a6be05e8c0a46ee"
+                "reference": "0b29af2f701da8a6a15c5daa4dbbe636a7720baf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zenstruck/foundry/zipball/3c46a2f2aa3ad8a1d74583a28a6be05e8c0a46ee",
-                "reference": "3c46a2f2aa3ad8a1d74583a28a6be05e8c0a46ee",
+                "url": "https://api.github.com/repos/zenstruck/foundry/zipball/0b29af2f701da8a6a15c5daa4dbbe636a7720baf",
+                "reference": "0b29af2f701da8a6a15c5daa4dbbe636a7720baf",
                 "shasum": ""
             },
             "require": {
@@ -10010,7 +10010,7 @@
                 "doctrine/orm": "^2.9",
                 "matthiasnoback/symfony-dependency-injection-test": "^4.1",
                 "symfony/framework-bundle": "^5.4|^6.0",
-                "symfony/maker-bundle": "^1.30",
+                "symfony/maker-bundle": "^1.49",
                 "symfony/phpunit-bridge": "^5.4|^6.0",
                 "symfony/translation-contracts": "^2.5|^3.0"
             },
@@ -10052,7 +10052,7 @@
             ],
             "support": {
                 "issues": "https://github.com/zenstruck/foundry/issues",
-                "source": "https://github.com/zenstruck/foundry/tree/v1.33.0"
+                "source": "https://github.com/zenstruck/foundry/tree/v1.34.0"
             },
             "funding": [
                 {
@@ -10060,7 +10060,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-05-23T16:21:57+00:00"
+            "time": "2023-07-12T07:19:34+00:00"
         }
     ],
     "aliases": [],
