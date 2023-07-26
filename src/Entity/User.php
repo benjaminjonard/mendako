@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Enum\Locale;
 use App\Enum\PaginationType;
 use App\Enum\Theme;
 use App\Repository\UserRepository;
+use App\Validator as AppAssert;
 use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -52,9 +52,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \String
     #[Assert\Timezone]
     private ?string $timezone = null;
 
-    #[ORM\Column(type: Types::STRING, length: 2, options: ['default' => Locale::EN->value])]
-    #[Assert\Choice(choices: Locale::LOCALES)]
-    private string $locale = Locale::EN->value;
+    #[ORM\Column(type: Types::STRING, length: 2, options: ['default' => 'en'])]
+    #[AppAssert\AvailableLocale]
+    private string $locale = 'en';
 
     #[ORM\Column(type: Types::STRING, options: ['default' => Theme::BROWSER->value])]
     #[Assert\Choice(choices: Theme::THEMES)]

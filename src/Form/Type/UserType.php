@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Form\Type;
 
 use App\Entity\User;
-use App\Enum\Locale;
 use App\Enum\PaginationType;
 use App\Enum\Theme;
+use App\Service\LocaleHelper;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
@@ -20,6 +20,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class UserType extends AbstractType
 {
+    public function __construct(
+        private LocaleHelper $localeHelper
+    ) {}
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $isEdition = $builder->getData()->getCreatedAt() !== null;
@@ -42,7 +46,7 @@ class UserType extends AbstractType
                 'required' => true,
             ])
             ->add('locale', ChoiceType::class, [
-                'choices' => array_flip(Locale::getLocaleLabels()),
+                'choices' => array_flip($this->localeHelper->getLocaleLabels()),
                 'required' => true,
             ])
         ;

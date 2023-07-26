@@ -15,7 +15,8 @@ readonly class LocaleListener
 {
     public function __construct(
         private RequestStack $requestStack,
-        private string $defaultLocale
+        private string $defaultLocale,
+        private array $enabledLocales
     ) {
     }
 
@@ -29,7 +30,7 @@ readonly class LocaleListener
 
         $locale = $request->query->get('_locale');
 
-        if ($locale && \in_array($locale, Locale::LOCALES, false)) {
+        if ($locale && \in_array($locale, $this->enabledLocales)) {
             $request->getSession()->set('_locale', $locale);
             $request->setLocale($request->getSession()->get('_locale', $locale));
         } else {

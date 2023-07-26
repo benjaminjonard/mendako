@@ -529,24 +529,6 @@
         <target>Configuración regional</target>
       </segment>
     </unit>
-    <unit id="TjepIwh" name="global.locale.en">
-      <notes>
-        <note>Do not translate, keep same as source string</note>
-      </notes>
-      <segment state="translated">
-        <source>English</source>
-        <target>Inglés</target>
-      </segment>
-    </unit>
-    <unit id="Acw13X3" name="global.locale.fr">
-      <notes>
-        <note>Do not translate, keep same as source string</note>
-      </notes>
-      <segment state="translated">
-        <source>Français</source>
-        <target>Francés</target>
-      </segment>
-    </unit>
     <unit id="9lTWEs2" name="global.theme.browser">
       <segment state="translated">
         <source>Default browser theme</source>

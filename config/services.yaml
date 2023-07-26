@@ -8,8 +8,9 @@ services:
         autowire: true
         autoconfigure: true
         bind:
-            $publicPath: '%kernel.project_dir%/public'
             $defaultLocale: '%default_locale%'
+            $enabledLocales: '%kernel.enabled_locales%'
+            $publicPath: '%kernel.project_dir%/public'
             $release: '%release%'
             $thumbnailsFormat: '%env(APP_THUMBNAILS_FORMAT)%'
 
