@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:2.0" version="2.0" srcLang="en" trgLang="es">
+  <file id="validators.en">
+    <unit id="7OcgSlg" name="error.email.not_unique">
+      <segment state="translated">
+        <source>Email address already used</source>
+        <target>La dirección de correo electrónico ya está en uso.</target>
+      </segment>
+    </unit>
+    <unit id="qoRxC7z" name="error.username.not_unique">
+      <segment state="translated">
+        <source>Username already used</source>
+        <target>El nombre de usuario ya está en uso</target>
+      </segment>
+    </unit>
+    <unit id="QICeEeg" name="error.name.not_unique">
+      <segment state="translated">
+        <source>Name already used</source>
+        <target>Nombre ya en uso</target>
+      </segment>
+    </unit>
+    <unit id="PjAj0XF" name="error.username.incorrect">
+      <segment state="translated">
+        <source>Username must have between 2 and 32 characters (only letters, numbers and underscores are allowed)</source>
+        <target>El nombre de usuario debe tener entre 2 y 32 caracteres (solo letras, números y guion bajo están permitidos)</target>
+      </segment>
+    </unit>
+    <unit id="4Bdfyy1" name="error.password.incorrect">
+      <segment state="translated">
+        <source>Your password must contain at least 8 characters (with at least 1 letter and 1 number)</source>
+        <target>Tu contraseña debe tener al menos 8 caracteres (al menos 1 letra y 1 número)</target>
+      </segment>
+    </unit>
+    <unit id="4m1Sgo3" name="error.password.not_matching">
+      <segment state="translated">
+        <source>The two passwords are not identical</source>
+        <target>Las dos contraseñas no son iguales</target>
+      </segment>
+    </unit>
+  </file>
+</xliff>
