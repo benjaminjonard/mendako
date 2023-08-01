@@ -65,6 +65,7 @@ services:
 #
 # PHP_TZ, see possible values here https://www.w3schools.com/php/php_ref_timezones.asp
 # APP_THUMBNAILS_FORMAT possible values : jpeg, png, webp, avif. Leave empty if you want to keep the original image format
+# APP_POST_PER_PAGE and APP_INFINITE_SCROLL_POST_PER_PAGE are limited to 200
 ########################################################################################################
 
 APP_DEBUG=0
@@ -75,7 +76,10 @@ HTTPS_ENABLED=1
 UPLOAD_MAX_FILESIZE=20M
 PHP_MEMORY_LIMIT=512M
 PHP_TZ=Europe/Paris
+
 APP_THUMBNAILS_FORMAT=
+APP_POST_PER_PAGE=20
+APP_INFINITE_SCROLL_POST_PER_PAGE=50
 
 ########################################################################################################
 #                                                DATABASE

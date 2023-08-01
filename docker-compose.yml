@@ -22,6 +22,8 @@ services:
             - PHP_TIMEZONE=Europe\Paris
             - HTTPS_ENABLED=0
             - APP_THUMBNAILS_FORMAT=webp
+            - POST_PER_PAGE=20
+            - INFINITE_SCROLL_POST_PER_PAGE=50
         depends_on:
             - postgresql
         volumes:

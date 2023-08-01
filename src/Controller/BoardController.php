@@ -64,12 +64,14 @@ class BoardController extends AbstractController
         PostRepository $postRepository,
         TagRepository $tagRepository,
         PaginatorFactory $paginatorFactory,
+        int $postPerPage,
+        int $infiniteScrollPostPerPage,
     ): Response {
         $page = $request->query->get('page', 1);
         $tags = $request->query->get('tags', '');
-        $posts = $postRepository->filterByTags($board, $tags, $page);
 
         if ($request->isXmlHttpRequest()) {
+            $posts = $postRepository->filterByTags($board, $tags, $page, $infiniteScrollPostPerPage);
             $postsHtml = $this->renderView('App/Board/_posts.html.twig', [
                 'board' => $board,
                 'posts' => $posts,
@@ -94,6 +96,7 @@ class BoardController extends AbstractController
             ]);
         }
 
+        $posts = $postRepository->filterByTags($board, $tags, $page, $postPerPage);
         $postsCount = $postRepository->countFilterByTags($board, $tags);
         return $this->render('App/Board/show.html.twig', [
             'board' => $board,

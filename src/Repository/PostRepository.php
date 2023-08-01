@@ -16,8 +16,10 @@ class PostRepository extends ServiceEntityRepository
         parent::__construct($registry, Post::class);
     }
 
-    public function filterByTags(Board $board, string $tags, $page): array
+    public function filterByTags(Board $board, string $tags, $page, int $postPerPage): array
     {
+        $postPerPage = min($postPerPage, 200);
+
         $tags = explode(' ', $tags);
         $tags = array_filter($tags);
 
@@ -25,8 +27,8 @@ class PostRepository extends ServiceEntityRepository
             ->createQueryBuilder('post')
             ->where('post.board = :board')
             ->orderBy('post.createdAt', \Doctrine\Common\Collections\Criteria::DESC)
-            ->setFirstResult(($page - 1) * 20)
-            ->setMaxResults(20)
+            ->setFirstResult(($page - 1) * $postPerPage)
+            ->setMaxResults($postPerPage)
             ->setParameter('board', $board)
         ;
 
