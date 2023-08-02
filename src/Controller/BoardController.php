@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\Board;
+use App\Enum\PaginationType;
 use App\Form\Type\BoardType;
 use App\Repository\BoardRepository;
 use App\Repository\PostRepository;
@@ -69,9 +70,12 @@ class BoardController extends AbstractController
     ): Response {
         $page = $request->query->get('page', 1);
         $tags = $request->query->get('tags', '');
+        if ($this->getUser()->getPaginationType() === PaginationType::SCROLL->value) {
+            $postPerPage = $infiniteScrollPostPerPage;
+        }
 
         if ($request->isXmlHttpRequest()) {
-            $posts = $postRepository->filterByTags($board, $tags, $page, $infiniteScrollPostPerPage);
+            $posts = $postRepository->filterByTags($board, $tags, $page, $postPerPage);
             $postsHtml = $this->renderView('App/Board/_posts.html.twig', [
                 'board' => $board,
                 'posts' => $posts,
@@ -98,6 +102,7 @@ class BoardController extends AbstractController
 
         $posts = $postRepository->filterByTags($board, $tags, $page, $postPerPage);
         $postsCount = $postRepository->countFilterByTags($board, $tags);
+
         return $this->render('App/Board/show.html.twig', [
             'board' => $board,
             'posts' => $posts,
