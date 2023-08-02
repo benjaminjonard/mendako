@@ -613,5 +613,29 @@
         <target>Disk usage</target>
       </segment>
     </unit>
+    <unit id="1eJbqEE" name="label.posts">
+      <segment state="translated">
+        <source>Posts</source>
+        <target>Posts</target>
+      </segment>
+    </unit>
+    <unit id="voTL8JN" name="label.boards">
+      <segment state="translated">
+        <source>Boards</source>
+        <target>Boards</target>
+      </segment>
+    </unit>
+    <unit id="a7Dly6T" name="label.post_per_page">
+      <segment state="translated">
+        <source>Posts per page</source>
+        <target>Post per page</target>
+      </segment>
+    </unit>
+    <unit id="LUkHVyj" name="label.infinite_scroll_post_per_page">
+      <segment state="translated">
+        <source>Infinite scroll posts per page</source>
+        <target>Infinite scroll posts per page</target>
+      </segment>
+    </unit>
   </file>
 </xliff>
