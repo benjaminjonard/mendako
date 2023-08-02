@@ -616,7 +616,7 @@
     <unit id="a7Dly6T" name="label.post_per_page">
       <segment state="translated">
         <source>Posts per page</source>
-        <target>Post per page</target>
+        <target>Posts per page</target>
       </segment>
     </unit>
   </file>
