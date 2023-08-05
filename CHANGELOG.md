@@ -1,6 +1,15 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.1.5] / 2023-08-05
+### Features
+- Add Spanish language (phampyk)
+- Add env variables to change number of posts per page (benjaminjonard)
+
+### Miscellaneous
+- Update PHP and JS dependencies (benjaminjonard)
+- Add a few data in admin dashboard (benjaminjonard)
+
 ## [1.1.4] / 2023-07-05
 ### Features
 - Add basic admin dashboard (benjaminjonard)
