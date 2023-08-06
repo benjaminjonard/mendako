@@ -613,5 +613,11 @@
         <target>Uso de disco</target>
       </segment>
     </unit>
+    <unit id="a7Dly6T" name="label.post_per_page">
+      <segment state="translated">
+        <source>Posts per page</source>
+        <target>Publicaciones por página</target>
+      </segment>
+    </unit>
   </file>
 </xliff>
