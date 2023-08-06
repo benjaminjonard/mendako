@@ -619,5 +619,23 @@
         <target>Posts par page</target>
       </segment>
     </unit>
+    <unit id="VojSfvJ" name="label.posts">
+      <segment state="translated">
+        <source>Posts</source>
+        <target>Posts</target>
+      </segment>
+    </unit>
+    <unit id="oAVwmgc" name="label.boards">
+      <segment state="translated">
+        <source>Boards</source>
+        <target>Boards</target>
+      </segment>
+    </unit>
+    <unit id="uRSMCBL" name="label.infinite_scroll_post_per_page">
+      <segment state="translated">
+        <source>Infinite scroll posts per page</source>
+        <target>Scroll infini posts par page</target>
+      </segment>
+    </unit>
   </file>
 </xliff>
