@@ -1,13 +1,13 @@
 {
     "devDependencies": {
-        "@babel/core": "7.22.9",
-        "@babel/preset-env": "7.22.9",
-        "@hotwired/stimulus": "3.2.1",
+        "@babel/core": "7.22.10",
+        "@babel/preset-env": "7.22.10",
+        "@hotwired/stimulus": "3.2.2",
         "@symfony/stimulus-bridge": "3.2.2",
         "@symfony/webpack-encore": "4.4.0",
         "copy-webpack-plugin": "11.0.0",
         "core-js": "3.32.0",
-        "regenerator-runtime": "0.13.11",
+        "regenerator-runtime": "0.14.0",
         "webpack": "5.88.2",
         "webpack-cli": "5.1.4",
         "webpack-notifier": "1.15.0"
@@ -23,7 +23,7 @@
     "dependencies": {
         "bulma": "0.9.4",
         "bulma-toast": "2.4.2",
-        "stimulus": "3.2.1",
+        "stimulus": "3.2.2",
         "stimulus-use": "^0.52.0"
     }
 }
