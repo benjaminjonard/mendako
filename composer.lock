@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "976cccf9d7260718411dbc7a3cda25cd",
+    "content-hash": "703553a5917904ed7c2334d4a4aed76a",
     "packages": [
         {
             "name": "behat/transliterator",
@@ -54,6 +54,62 @@
                 "source": "https://github.com/Behat/Transliterator/tree/v1.5.0"
             },
             "time": "2022-03-30T09:27:43+00:00"
+        },
+        {
+            "name": "contao/imagine-svg",
+            "version": "1.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/contao/imagine-svg.git",
+                "reference": "913cf57746fbbf00ab7eba5e0585e2ef47a05b99"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/contao/imagine-svg/zipball/913cf57746fbbf00ab7eba5e0585e2ef47a05b99",
+                "reference": "913cf57746fbbf00ab7eba5e0585e2ef47a05b99",
+                "shasum": ""
+            },
+            "require": {
+                "ext-dom": "*",
+                "imagine/imagine": "^1.1",
+                "php": "^7.2 || ^8.0"
+            },
+            "require-dev": {
+                "contao/easy-coding-standard": "^3.0",
+                "contao/test-case": "^4.4",
+                "phpstan/phpstan": "^0.12",
+                "phpstan/phpstan-phpunit": "^0.12.8",
+                "phpstan/phpstan-symfony": "^0.12.6",
+                "phpunit/phpunit": "^8.5.4",
+                "psalm/plugin-phpunit": "^0.15",
+                "psalm/plugin-symfony": "^2.0",
+                "slam/phpstan-extensions": "^5.0",
+                "symfony/filesystem": "^5.0",
+                "thecodingmachine/phpstan-strict-rules": "^0.12",
+                "vimeo/psalm": "^4.1"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Contao\\ImagineSvg\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-3.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Martin Auswöger",
+                    "homepage": "https://github.com/ausi"
+                }
+            ],
+            "description": "Contao Imagine SVG library",
+            "support": {
+                "issues": "https://github.com/contao/imagine-svg/issues",
+                "source": "https://github.com/contao/imagine-svg/tree/1.0.3"
+            },
+            "time": "2021-08-10T09:33:50+00:00"
         },
         {
             "name": "doctrine/annotations",
@@ -1699,6 +1755,68 @@
                 }
             ],
             "time": "2023-07-08T20:38:42+00:00"
+        },
+        {
+            "name": "imagine/imagine",
+            "version": "1.3.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-imagine/Imagine.git",
+                "reference": "7151d553edec4dc2bbac60419f7a74ff34700e7f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-imagine/Imagine/zipball/7151d553edec4dc2bbac60419f7a74ff34700e7f",
+                "reference": "7151d553edec4dc2bbac60419f7a74ff34700e7f",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.8 || ^5.7 || ^6.5 || ^7.5 || ^8.4 || ^9.3"
+            },
+            "suggest": {
+                "ext-exif": "to read EXIF metadata",
+                "ext-gd": "to use the GD implementation",
+                "ext-gmagick": "to use the Gmagick implementation",
+                "ext-imagick": "to use the Imagick implementation"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-develop": "1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Imagine\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Bulat Shakirzyanov",
+                    "email": "mallluhuct@gmail.com",
+                    "homepage": "http://avalanche123.com"
+                }
+            ],
+            "description": "Image processing for PHP 5.3",
+            "homepage": "http://imagine.readthedocs.org/",
+            "keywords": [
+                "drawing",
+                "graphics",
+                "image manipulation",
+                "image processing"
+            ],
+            "support": {
+                "issues": "https://github.com/php-imagine/Imagine/issues",
+                "source": "https://github.com/php-imagine/Imagine/tree/1.3.5"
+            },
+            "time": "2023-06-07T14:49:52+00:00"
         },
         {
             "name": "laminas/laminas-code",

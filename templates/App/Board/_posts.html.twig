@@ -10,8 +10,12 @@
                         {% endif %}
                     </span>
                 {% endif %}
-
-                <img src="{{ asset(post.path|thumbnail(360)) }}">
+                
+                {% if post.mimetype == 'image/svg+xml' %}
+                    <img src="{{ asset(post.path) }}">
+                {% else %}
+                    <img src="{{ asset(post.path|thumbnail(360)) }}">
+                {% endif %}
             </div>
         </figure>
     </a>

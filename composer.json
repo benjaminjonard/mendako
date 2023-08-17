@@ -10,6 +10,7 @@
         "ext-gd": "*",
         "ext-iconv": "*",
         "ext-intl": "*",
+        "contao/imagine-svg": "^1.0",
         "doctrine/doctrine-bundle": "2.10.2",
         "doctrine/doctrine-migrations-bundle": "3.2.4",
         "doctrine/orm": "2.16.1",

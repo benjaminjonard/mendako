@@ -21,17 +21,6 @@ if (!\file_exists($fullImagePath)) {
 $info = \pathinfo($imagePath);
 $extension = str_replace('image/', '', mime_content_type($imagePath));
 
-if ($extension === 'svg') {
-    \header($_SERVER["SERVER_PROTOCOL"] . " 200 OK");
-    \header("Cache-Control: immutable, max-age=31536000, no-transform, private, s-maxage=31536000");
-    \header("Content-Type: " . \mime_content_type($imagePath));
-    \header("Content-Transfer-Encoding: Binary");
-    \header("Content-Length:" . \filesize($imagePath));
-    \header("Content-Disposition: attachment; filename=" . $info['filename'] . '.' . $info['extension']);
-    \readfile($imagePath);
-    die();
-}
-
 $thumbnailsFormat = match ($_ENV['APP_THUMBNAILS_FORMAT']) {
     'jpeg' => 'jpeg',
     'png' => 'png',

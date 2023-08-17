@@ -6,6 +6,7 @@ namespace App\Service;
 
 use App\Attribute\Upload;
 use App\Entity\Post;
+use Contao\ImagineSvg\Imagine;
 use FFMpeg\FFMpeg;
 use FFMpeg\FFProbe\DataMapping\Stream;
 use Symfony\Component\HttpFoundation\File\File;
@@ -60,9 +61,13 @@ class Uploader
                     ->setHasSound($hasSound)
                 ;
             } else if ($entity->getMimetype() === 'image/svg+xml') {
+                $size = (new Imagine())
+                    ->open($absolutePath . $fileName)
+                    ->getSize();
+
                 $entity
-                    ->setWidth(null)
-                    ->setHeight(null)
+                    ->setWidth($size->getWidth())
+                    ->setHeight($size->getHeight())
                 ;
             } else {
                 $dimensions = getimagesize($absolutePath . $fileName);
