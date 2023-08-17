@@ -59,6 +59,11 @@ class Uploader
                     ->setWidth($stream->getDimensions()->getWidth())
                     ->setHasSound($hasSound)
                 ;
+            } else if ($entity->getMimetype() === 'image/svg+xml') {
+                $entity
+                    ->setWidth(null)
+                    ->setHeight(null)
+                ;
             } else {
                 $dimensions = getimagesize($absolutePath . $fileName);
                 $entity

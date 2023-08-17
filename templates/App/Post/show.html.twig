@@ -19,7 +19,9 @@
             <div>{{ 'label.uploaded_at'|trans }}: {{ post.createdAt|ago }}</div>
             <div>{{ 'label.uploaded_by'|trans }}: {{ post.uploadedBy.username }}</div>
             <div>{{ 'label.size'|trans }}: {{ post.size|bytes }}</div>
-            <div>{{ 'label.dimensions'|trans }}: {{ post.width }}*{{ post.height }}</div>
+            {% if post.width is not null and post.height is not null %}
+                <div>{{ 'label.dimensions'|trans }}: {{ post.width }}*{{ post.height }}</div>
+            {% endif %}
             {% if post.duration is not null %}
                 <div>{{ 'label.duration'|trans }}: {{ post.duration|minutes }}</div>
             {% endif %}

@@ -16,6 +16,11 @@ class ThumbnailGenerator
         }
 
         $mime = mime_content_type($path);
+
+        if ($mime === 'image/svg+xml') {
+            return true;
+        }
+
         if ($mime === 'video/mp4' || $mime === 'video/webm' || $mime === 'image/gif') {
             $ffmpeg = FFMpeg::create();
             $video = $ffmpeg->open($path);
