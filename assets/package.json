@@ -6,7 +6,7 @@
         "@symfony/stimulus-bridge": "3.2.2",
         "@symfony/webpack-encore": "4.4.0",
         "copy-webpack-plugin": "11.0.0",
-        "core-js": "3.32.0",
+        "core-js": "3.32.1",
         "regenerator-runtime": "0.14.0",
         "webpack": "5.88.2",
         "webpack-cli": "5.1.4",
