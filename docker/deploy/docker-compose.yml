@@ -16,7 +16,7 @@ services:
 
     mendako_postgresql:
         container_name: mendako_postgresql
-        image: postgres:15
+        image: postgres:16
         restart: unless-stopped
         env_file:
             - .env
