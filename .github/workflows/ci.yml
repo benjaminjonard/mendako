@@ -78,7 +78,7 @@ jobs:
       - run: sed -i "s|DB_VERSION=.*|DB_VERSION=${{ matrix.postgres }}|i" ".env"
 
       # Setup yarn
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: 14
       - uses: actions/cache@v3
