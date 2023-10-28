@@ -13,7 +13,6 @@
         "webpack-notifier": "1.15.0"
     },
     "license": "MIT",
-    "private": false,
     "scripts": {
         "dev-server": "encore dev-server",
         "dev": "encore dev",
@@ -25,5 +24,6 @@
         "bulma-toast": "2.4.3",
         "stimulus": "3.2.2",
         "stimulus-use": "^0.52.0"
-    }
+    },
+    "packageManager": "yarn@4.0.1"
 }
