@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2d004d96f398353f8223e5df3ddf995d",
+    "content-hash": "f2dd5bafa5f2a4110cea2565b0d9faab",
     "packages": [
         {
             "name": "behat/transliterator",
@@ -1951,16 +1951,16 @@
         },
         {
             "name": "monolog/monolog",
-            "version": "3.3.1",
+            "version": "3.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Seldaek/monolog.git",
-                "reference": "9b5daeaffce5b926cac47923798bba91059e60e2"
+                "reference": "c915e2634718dbc8a4a15c61b0e62e7a44e14448"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/9b5daeaffce5b926cac47923798bba91059e60e2",
-                "reference": "9b5daeaffce5b926cac47923798bba91059e60e2",
+                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/c915e2634718dbc8a4a15c61b0e62e7a44e14448",
+                "reference": "c915e2634718dbc8a4a15c61b0e62e7a44e14448",
                 "shasum": ""
             },
             "require": {
@@ -1975,7 +1975,7 @@
                 "doctrine/couchdb": "~1.0@dev",
                 "elasticsearch/elasticsearch": "^7 || ^8",
                 "ext-json": "*",
-                "graylog2/gelf-php": "^1.4.2 || ^2@dev",
+                "graylog2/gelf-php": "^1.4.2 || ^2.0",
                 "guzzlehttp/guzzle": "^7.4.5",
                 "guzzlehttp/psr7": "^2.2",
                 "mongodb/mongodb": "^1.8",
@@ -1983,7 +1983,7 @@
                 "phpstan/phpstan": "^1.9",
                 "phpstan/phpstan-deprecation-rules": "^1.0",
                 "phpstan/phpstan-strict-rules": "^1.4",
-                "phpunit/phpunit": "^9.5.26",
+                "phpunit/phpunit": "^10.1",
                 "predis/predis": "^1.1 || ^2",
                 "ruflin/elastica": "^7",
                 "symfony/mailer": "^5.4 || ^6",
@@ -2036,7 +2036,7 @@
             ],
             "support": {
                 "issues": "https://github.com/Seldaek/monolog/issues",
-                "source": "https://github.com/Seldaek/monolog/tree/3.3.1"
+                "source": "https://github.com/Seldaek/monolog/tree/3.5.0"
             },
             "funding": [
                 {
@@ -2048,7 +2048,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-02-06T13:46:10+00:00"
+            "time": "2023-10-27T15:32:31+00:00"
         },
         {
             "name": "php-ffmpeg/php-ffmpeg",
@@ -4621,16 +4621,16 @@
         },
         {
             "name": "symfony/monolog-bridge",
-            "version": "v6.3.0",
+            "version": "v6.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/monolog-bridge.git",
-                "reference": "d45a22a6cca0a0a2a60171bdf137d9001ac5531b"
+                "reference": "04b04b8e465e0fa84940e5609b6796a8b4e51bf1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/monolog-bridge/zipball/d45a22a6cca0a0a2a60171bdf137d9001ac5531b",
-                "reference": "d45a22a6cca0a0a2a60171bdf137d9001ac5531b",
+                "url": "https://api.github.com/repos/symfony/monolog-bridge/zipball/04b04b8e465e0fa84940e5609b6796a8b4e51bf1",
+                "reference": "04b04b8e465e0fa84940e5609b6796a8b4e51bf1",
                 "shasum": ""
             },
             "require": {
@@ -4679,7 +4679,7 @@
             "description": "Provides integration for Monolog with various Symfony components",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/monolog-bridge/tree/v6.3.0"
+                "source": "https://github.com/symfony/monolog-bridge/tree/v6.3.1"
             },
             "funding": [
                 {
@@ -4695,34 +4695,34 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-04-24T14:22:26+00:00"
+            "time": "2023-06-08T11:13:32+00:00"
         },
         {
             "name": "symfony/monolog-bundle",
-            "version": "v3.8.0",
+            "version": "v3.10.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/monolog-bundle.git",
-                "reference": "a41bbcdc1105603b6d73a7d9a43a3788f8e0fb7d"
+                "reference": "414f951743f4aa1fd0f5bf6a0e9c16af3fe7f181"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/monolog-bundle/zipball/a41bbcdc1105603b6d73a7d9a43a3788f8e0fb7d",
-                "reference": "a41bbcdc1105603b6d73a7d9a43a3788f8e0fb7d",
+                "url": "https://api.github.com/repos/symfony/monolog-bundle/zipball/414f951743f4aa1fd0f5bf6a0e9c16af3fe7f181",
+                "reference": "414f951743f4aa1fd0f5bf6a0e9c16af3fe7f181",
                 "shasum": ""
             },
             "require": {
-                "monolog/monolog": "^1.22 || ^2.0 || ^3.0",
-                "php": ">=7.1.3",
-                "symfony/config": "~4.4 || ^5.0 || ^6.0",
-                "symfony/dependency-injection": "^4.4 || ^5.0 || ^6.0",
-                "symfony/http-kernel": "~4.4 || ^5.0 || ^6.0",
-                "symfony/monolog-bridge": "~4.4 || ^5.0 || ^6.0"
+                "monolog/monolog": "^1.25.1 || ^2.0 || ^3.0",
+                "php": ">=7.2.5",
+                "symfony/config": "^5.4 || ^6.0 || ^7.0",
+                "symfony/dependency-injection": "^5.4 || ^6.0 || ^7.0",
+                "symfony/http-kernel": "^5.4 || ^6.0 || ^7.0",
+                "symfony/monolog-bridge": "^5.4 || ^6.0 || ^7.0"
             },
             "require-dev": {
-                "symfony/console": "~4.4 || ^5.0 || ^6.0",
-                "symfony/phpunit-bridge": "^5.2 || ^6.0",
-                "symfony/yaml": "~4.4 || ^5.0 || ^6.0"
+                "symfony/console": "^5.4 || ^6.0 || ^7.0",
+                "symfony/phpunit-bridge": "^6.3 || ^7.0",
+                "symfony/yaml": "^5.4 || ^6.0 || ^7.0"
             },
             "type": "symfony-bundle",
             "extra": {
@@ -4760,7 +4760,7 @@
             ],
             "support": {
                 "issues": "https://github.com/symfony/monolog-bundle/issues",
-                "source": "https://github.com/symfony/monolog-bundle/tree/v3.8.0"
+                "source": "https://github.com/symfony/monolog-bundle/tree/v3.10.0"
             },
             "funding": [
                 {
@@ -4776,7 +4776,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-05-10T14:24:36+00:00"
+            "time": "2023-11-06T17:08:13+00:00"
         },
         {
             "name": "symfony/options-resolver",
@@ -7664,16 +7664,16 @@
     "packages-dev": [
         {
             "name": "brianium/paratest",
-            "version": "v7.3.0",
+            "version": "v7.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/paratestphp/paratest.git",
-                "reference": "2951d3f773ea91451c7440f48122287778634b0d"
+                "reference": "551f46f52a93177d873f3be08a1649ae886b4a30"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/paratestphp/paratest/zipball/2951d3f773ea91451c7440f48122287778634b0d",
-                "reference": "2951d3f773ea91451c7440f48122287778634b0d",
+                "url": "https://api.github.com/repos/paratestphp/paratest/zipball/551f46f52a93177d873f3be08a1649ae886b4a30",
+                "reference": "551f46f52a93177d873f3be08a1649ae886b4a30",
                 "shasum": ""
             },
             "require": {
@@ -7681,13 +7681,13 @@
                 "ext-pcre": "*",
                 "ext-reflection": "*",
                 "ext-simplexml": "*",
-                "fidry/cpu-core-counter": "^0.5.1",
+                "fidry/cpu-core-counter": "^0.5.1 || ^1.0.0",
                 "jean85/pretty-package-versions": "^2.0.5",
                 "php": "~8.1.0 || ~8.2.0 || ~8.3.0",
                 "phpunit/php-code-coverage": "^10.1.7",
                 "phpunit/php-file-iterator": "^4.1.0",
                 "phpunit/php-timer": "^6.0",
-                "phpunit/phpunit": "^10.4.1",
+                "phpunit/phpunit": "^10.4.2",
                 "sebastian/environment": "^6.0.1",
                 "symfony/console": "^6.3.4 || ^7.0.0",
                 "symfony/process": "^6.3.4 || ^7.0.0"
@@ -7696,11 +7696,11 @@
                 "doctrine/coding-standard": "^12.0.0",
                 "ext-pcov": "*",
                 "ext-posix": "*",
-                "infection/infection": "^0.27.4",
-                "phpstan/phpstan": "^1.10.38",
+                "infection/infection": "^0.27.6",
+                "phpstan/phpstan": "^1.10.40",
                 "phpstan/phpstan-deprecation-rules": "^1.1.4",
                 "phpstan/phpstan-phpunit": "^1.3.15",
-                "phpstan/phpstan-strict-rules": "^1.5.1",
+                "phpstan/phpstan-strict-rules": "^1.5.2",
                 "squizlabs/php_codesniffer": "^3.7.2",
                 "symfony/filesystem": "^6.3.1 || ^7.0.0"
             },
@@ -7743,7 +7743,7 @@
             ],
             "support": {
                 "issues": "https://github.com/paratestphp/paratest/issues",
-                "source": "https://github.com/paratestphp/paratest/tree/v7.3.0"
+                "source": "https://github.com/paratestphp/paratest/tree/v7.3.1"
             },
             "funding": [
                 {
@@ -7755,7 +7755,7 @@
                     "type": "paypal"
                 }
             ],
-            "time": "2023-10-10T15:11:25+00:00"
+            "time": "2023-10-31T09:24:17+00:00"
         },
         {
             "name": "dama/doctrine-test-bundle",
@@ -7894,16 +7894,16 @@
         },
         {
             "name": "fidry/cpu-core-counter",
-            "version": "0.5.1",
+            "version": "1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/theofidry/cpu-core-counter.git",
-                "reference": "b58e5a3933e541dc286cc91fc4f3898bbc6f1623"
+                "reference": "85193c0b0cb5c47894b5eaec906e946f054e7077"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/theofidry/cpu-core-counter/zipball/b58e5a3933e541dc286cc91fc4f3898bbc6f1623",
-                "reference": "b58e5a3933e541dc286cc91fc4f3898bbc6f1623",
+                "url": "https://api.github.com/repos/theofidry/cpu-core-counter/zipball/85193c0b0cb5c47894b5eaec906e946f054e7077",
+                "reference": "85193c0b0cb5c47894b5eaec906e946f054e7077",
                 "shasum": ""
             },
             "require": {
@@ -7911,13 +7911,13 @@
             },
             "require-dev": {
                 "fidry/makefile": "^0.2.0",
+                "fidry/php-cs-fixer-config": "^1.1.2",
                 "phpstan/extension-installer": "^1.2.0",
                 "phpstan/phpstan": "^1.9.2",
                 "phpstan/phpstan-deprecation-rules": "^1.0.0",
                 "phpstan/phpstan-phpunit": "^1.2.2",
                 "phpstan/phpstan-strict-rules": "^1.4.4",
-                "phpunit/phpunit": "^9.5.26 || ^8.5.31",
-                "theofidry/php-cs-fixer-config": "^1.0",
+                "phpunit/phpunit": "^8.5.31 || ^9.5.26",
                 "webmozarts/strict-phpunit": "^7.5"
             },
             "type": "library",
@@ -7943,7 +7943,7 @@
             ],
             "support": {
                 "issues": "https://github.com/theofidry/cpu-core-counter/issues",
-                "source": "https://github.com/theofidry/cpu-core-counter/tree/0.5.1"
+                "source": "https://github.com/theofidry/cpu-core-counter/tree/1.0.0"
             },
             "funding": [
                 {
@@ -7951,7 +7951,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2022-12-24T12:35:10+00:00"
+            "time": "2023-09-17T21:38:23+00:00"
         },
         {
             "name": "jean85/pretty-package-versions",
