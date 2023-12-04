@@ -24,7 +24,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.2
+          php-version: 8.3
           extensions: ctype, fileinfo, gd, iconv, intl, json
       - uses: actions/cache@v3
         id: cache-composer
@@ -57,7 +57,7 @@ jobs:
       # Setup php env and install dependencies
       - uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.2
+          php-version: 8.3
           extensions: ctype, fileinfo, gd, iconv, intl, json
       - uses: actions/cache@v3
         id: cache-composer
@@ -70,6 +70,8 @@ jobs:
 
       # Setup environment variables
       - run: sed -i "s|APP_ENV=.*|APP_ENV=test|i" ".env"
+      - run: sed -i "s|APP_DEBUG=.*|APP_DEBUG=1|i" ".env"
+      - run: sed -i "s|APP_SECRET=.*|APP_SECRET=aRandomSecret|i" ".env"
       - run: sed -i "s|DB_NAME=.*|DB_NAME=koillection|i" ".env"
       - run: sed -i "s|DB_HOST=.*|DB_HOST=127.0.0.1|i" ".env"
       - run: sed -i "s|DB_PORT=.*|DB_PORT=5432|i" ".env"
@@ -106,8 +108,8 @@ jobs:
           sudo make clean
           sudo make
           sudo make install
-          echo "extension=libpuzzle.so" >> /etc/php/8.2/fpm/php.ini
-          echo "extension=libpuzzle.so" >> /etc/php/8.2/cli/php.ini
+          echo "extension=libpuzzle.so" >> /etc/php/8.3/fpm/php.ini
+          echo "extension=libpuzzle.so" >> /etc/php/8.3/cli/php.ini
 
       # Setup test environment
       - run: chmod +x bin/console

@@ -34,16 +34,16 @@ RUN addgroup --gid "$PGID" "$USER" && \
     libpuzzle-dev \
     openssl \
     ffmpeg \
-    php8.2 \
-    php8.2-dev \
-    php8.2-pgsql \
-    php8.2-mysql \
-    php8.2-mbstring \
-    php8.2-gd \
-    php8.2-xml \
-    php8.2-zip \
-    php8.2-fpm \
-    php8.2-intl \
+    php8.3 \
+    php8.3-dev \
+    php8.3-pgsql \
+    php8.3-mysql \
+    php8.3-mbstring \
+    php8.3-gd \
+    php8.3-xml \
+    php8.3-zip \
+    php8.3-fpm \
+    php8.3-intl \
     nodejs && \
 #Install composer dependencies
     curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && \
@@ -58,14 +58,14 @@ RUN addgroup --gid "$PGID" "$USER" && \
     yarn build && \
     yarn cache clean && \
 # Set permissions
-    sed -i "s/user = www-data/user = $USER/g" /etc/php/8.2/fpm/pool.d/www.conf && \
-    sed -i "s/group = www-data/group = $USER/g" /etc/php/8.2/fpm/pool.d/www.conf && \
+    sed -i "s/user = www-data/user = $USER/g" /etc/php/8.3/fpm/pool.d/www.conf && \
+    sed -i "s/group = www-data/group = $USER/g" /etc/php/8.3/fpm/pool.d/www.conf && \
     chown -R "$USER":"$USER" /var/www/mendako && \
     chmod +x /var/www/mendako/docker/entrypoint.sh && \
     mkdir /run/php && \
 # Add nginx and PHP config files
     cp /var/www/mendako/docker/default.conf /etc/nginx/nginx.conf && \
-    cp /var/www/mendako/docker/php.ini /etc/php/8.2/fpm/conf.d/php.ini && \
+    cp /var/www/mendako/docker/php.ini /etc/php/8.3/fpm/conf.d/php.ini && \
 # Build libpuzzle extension
     cd /tmp && \
     wget https://github.com/benjaminjonard/libpuzzle-php-extension-builder/archive/refs/heads/main.zip && \
@@ -76,15 +76,15 @@ RUN addgroup --gid "$PGID" "$USER" && \
     make clean && \
     make && \
     make install && \
-    echo "extension=libpuzzle.so" >> /etc/php/8.2/fpm/php.ini && \
-    echo "extension=libpuzzle.so" >> /etc/php/8.2/cli/php.ini && \
+    echo "extension=libpuzzle.so" >> /etc/php/8.3/fpm/php.ini && \
+    echo "extension=libpuzzle.so" >> /etc/php/8.3/cli/php.ini && \
     rm -rf /tmp/libpuzzle-php-extension-builder-main && \
 # Clean up \
     rm -rf /var/www/mendako/assets/node_modules && \
     yarn cache clean --all && \
     rm -rf /var/www/koillection/assets/.yarn/cache && \
     rm -rf /var/www/koillection/assets/.yarn/install-state.gz && \
-    apt-get purge -y wget lsb-release software-properties-common git nodejs apt-transport-https ca-certificates gnupg2 unzip php8.2-dev && \
+    apt-get purge -y wget lsb-release software-properties-common git nodejs apt-transport-https ca-certificates gnupg2 unzip php8.3-dev && \
     apt-get autoremove -y && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*

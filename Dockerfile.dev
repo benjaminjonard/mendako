@@ -34,16 +34,16 @@ RUN addgroup --gid "$PGID" "$USER" && \
     nginx-light \
     openssl \
     ffmpeg \
-    php8.2 \
-    php8.2-dev \
-    php8.2-pgsql \
-    php8.2-mysql \
-    php8.2-mbstring \
-    php8.2-gd \
-    php8.2-xml \
-    php8.2-zip \
-    php8.2-fpm \
-    php8.2-intl \
+    php8.3 \
+    php8.3-dev \
+    php8.3-pgsql \
+    php8.3-mysql \
+    php8.3-mbstring \
+    php8.3-gd \
+    php8.3-xml \
+    php8.3-zip \
+    php8.3-fpm \
+    php8.3-intl \
     nodejs && \
     corepack enable && \
 #Install composer dependencies
@@ -61,10 +61,10 @@ RUN addgroup --gid "$PGID" "$USER" && \
     make clean && \
     make && \
     make install && \
-    echo "extension=libpuzzle.so" >> /etc/php/8.2/fpm/php.ini && \
-    echo "extension=libpuzzle.so" >> /etc/php/8.2/cli/php.ini && \
+    echo "extension=libpuzzle.so" >> /etc/php/8.3/fpm/php.ini && \
+    echo "extension=libpuzzle.so" >> /etc/php/8.3/cli/php.ini && \
     rm -rf /tmp/libpuzzle-php-extension-builder-main && \
-    apt remove php8.2-dev -y
+    apt remove php8.3-dev -y
 
 # Add nginx and PHP config files
 COPY ./docker/default.conf /etc/nginx/nginx.conf
