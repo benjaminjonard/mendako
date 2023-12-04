@@ -87,8 +87,7 @@ RUN addgroup --gid "$PGID" "$USER" && \
     apt-get purge -y wget lsb-release software-properties-common git nodejs apt-transport-https ca-certificates gnupg2 unzip php8.2-dev && \
     apt-get autoremove -y && \
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/* && \
-    rm -rf /usr/local/bin/composer
+    rm -rf /var/lib/apt/lists/*
 
 EXPOSE 80
 
