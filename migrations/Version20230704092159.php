@@ -8,16 +8,19 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 use FFMpeg\FFMpeg;
 use FFMpeg\FFProbe\DataMapping\Stream;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
-final class Version20230704092159 extends AbstractMigration implements ContainerAwareInterface
+final class Version20230704092159 extends AbstractMigration
 {
-    use ContainerAwareTrait;
+    private $container;
 
     public function getDescription(): string
     {
         return '[Postgresql] Add hasSound property to `men_post`';
+    }
+
+    public function setContainer($container)
+    {
+        $this->container = $container;
     }
 
     public function up(Schema $schema): void

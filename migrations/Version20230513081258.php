@@ -8,18 +8,21 @@ use App\Entity\Post;
 use App\Service\SimilarityChecker;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Uid\Uuid;
 
-final class Version20230513081258 extends AbstractMigration implements ContainerAwareInterface
+final class Version20230513081258 extends AbstractMigration
 {
-    use ContainerAwareTrait;
+    private $container;
 
     public function getDescription(): string
     {
         return '[Postgresql] Add signature properties for checking images similarities';
+    }
+
+    public function setContainer($container)
+    {
+        $this->container = $container;
     }
 
     public function up(Schema $schema): void

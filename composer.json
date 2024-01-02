@@ -1,6 +1,8 @@
 {
+    "name": "benjaminjonard/mendako",
+    "description": "Koillection is a self-hosted service allowing users to manage any kind of collection.",
     "type": "project",
-    "license": "proprietary",
+    "license": "MIT",
     "minimum-stability": "stable",  
     "prefer-stable": true,
     "require": {
@@ -15,8 +17,8 @@
         "doctrine/doctrine-migrations-bundle": "3.3.0",
         "doctrine/orm": "2.17.1",
         "gedmo/doctrine-extensions": "3.14.0",
-        "php-ffmpeg/php-ffmpeg": "1.1.0",
-        "stof/doctrine-extensions-bundle": "1.9.0",
+        "php-ffmpeg/php-ffmpeg": "1.2.0",
+        "stof/doctrine-extensions-bundle": "1.10.1",
         "symfony/asset": "7.0.0",
         "symfony/browser-kit": "7.0.0",
         "symfony/cache": "7.0.0",
@@ -81,15 +83,6 @@
             "App\\Tests\\": "tests/"
         }
     },
-    "replace": {
-        "symfony/polyfill-ctype": "*",
-        "symfony/polyfill-iconv": "*",
-        "symfony/polyfill-php72": "*",
-        "symfony/polyfill-php73": "*",
-        "symfony/polyfill-php74": "*",
-        "symfony/polyfill-php80": "*",
-        "symfony/polyfill-php81": "*"
-    },
     "scripts": {
         "auto-scripts": {
             "cache:clear": "symfony-cmd",
@@ -107,9 +100,11 @@
             "./vendor/phpunit/phpunit/phpunit --color=always --coverage-html=\"output/code-coverage\""
         ],
         "test:phpunit": [
+            "Composer\\Config::disableProcessTimeout",
             "./vendor/phpunit/phpunit/phpunit"
         ],
         "test:paratest": [
+            "Composer\\Config::disableProcessTimeout",
             "./vendor/bin/paratest --runner=WrapperRunner"
         ]
     },
@@ -119,6 +114,7 @@
     "extra": {
         "symfony": {
             "allow-contrib": false,
+            "docker": false,
             "require": "7.0.*"
         }
     }
