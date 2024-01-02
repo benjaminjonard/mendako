@@ -2,9 +2,16 @@
 All notable changes to this project will be documented in this file.
 
 ## [1.2.0] / 2024-01-02
+### Features
+- Add support for SVG files (benjaminjonard)
+
+### Fix
+- Fix missing translations (benjaminjonard)
+
 ### Miscellaneous
 - Update to PHP 8.3 (benjaminjonard)
 - Upgrade PHP (Symfony 7.0) and JS dependencies (benjaminjonard)
+- Update to yarn 4 (benjaminjonard)
 
 ## [1.1.5] / 2023-08-05
 ### Features
