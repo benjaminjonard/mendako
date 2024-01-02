@@ -81,9 +81,8 @@ RUN addgroup --gid "$PGID" "$USER" && \
     rm -rf /tmp/libpuzzle-php-extension-builder-main && \
 # Clean up \
     rm -rf /var/www/mendako/assets/node_modules && \
-    yarn cache clean --all && \
-    rm -rf /var/www/koillection/assets/.yarn/cache && \
-    rm -rf /var/www/koillection/assets/.yarn/install-state.gz && \
+    rm -rf /var/www/mendako/assets/.yarn/cache && \
+    rm -rf /var/www/mendako/assets/.yarn/install-state.gz && \
     apt-get purge -y wget lsb-release software-properties-common git nodejs apt-transport-https ca-certificates gnupg2 unzip php8.3-dev && \
     apt-get autoremove -y && \
     apt-get clean && \
