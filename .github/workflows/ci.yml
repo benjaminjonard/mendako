@@ -42,7 +42,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        postgres: [ 15 ]
+        postgres: [ 15, 16 ]
     services:
       postgres:
         image: postgres:${{ matrix.postgres }}
@@ -94,6 +94,7 @@ jobs:
       - run: (cd assets && yarn dev)
 
       # Install ffmpeg
+      - run: sudo apt update
       - run: sudo apt install -y ffmpeg
 
       # Build libpuzzle extension
