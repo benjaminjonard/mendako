@@ -1,6 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.2.1] / 2024-01-11
+### Fix
+- Fix modal not appearing (benjaminjonard)
+
+### Miscellaneous
+- Fix deprecations (benjaminjonard)
+- Upgrade PHP and JS dependencies, fix CVE-2023-26159 (benjaminjonard)
+
 ## [1.2.0] / 2024-01-02
 ### Features
 - Add support for SVG files (benjaminjonard)
