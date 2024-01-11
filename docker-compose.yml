@@ -5,7 +5,7 @@ services:
     mendako:
         container_name: mendako
         build:
-            dockerfile: Dockerfile
+            dockerfile: Dockerfile.dev
         restart: unless-stopped
         ports:
             - 84:80
@@ -28,7 +28,7 @@ services:
             - postgresql
         volumes:
             - "./docker/volumes/mendako/public/uploads:/var/www/mendako/public/uploads"
-            #- ./:/var/www/mendako
+            - ./:/var/www/mendako
 
     postgresql:
         image: postgres:16

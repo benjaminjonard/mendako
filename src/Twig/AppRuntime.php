@@ -24,7 +24,7 @@ class AppRuntime implements RuntimeExtensionInterface
 
     public function minutes(int $seconds): string
     {
-        $minutes = floor($seconds / 60 % 60);
+        $minutes = floor((int) ($seconds / 60) % 60);
 
         $seconds = floor($seconds % 60);
         if ($seconds < 10) {
@@ -39,29 +39,27 @@ class AppRuntime implements RuntimeExtensionInterface
         $now = new \DateTimeImmutable();
         $diff = $now->diff($ago);
 
-        $diff->w = floor($diff->d / 7);
-        $diff->d -= $diff->w * 7;
+        $week = (int) floor($diff->d / 7);
+        $day = $diff->d - $week * 7;
 
-        $string = [
-            'y' => 'year',
-            'm' => 'month',
-            'w' => 'week',
-            'd' => 'day',
-            'h' => 'hour',
-            'i' => 'minute',
-            's' => 'second',
-        ];
-        foreach ($string as $k => &$v) {
-            if ($diff->$k) {
-                $v = $this->translator->trans("global.time.{$v}", ['count' => $diff->$k]);
-            } else {
-                unset($string[$k]);
-            }
+        $parts = array_filter([
+            'year' => $diff->y,
+            'month' => $diff->m,
+            'week' => $week,
+            'day' => $day,
+            'hour' => $diff->h,
+            'minute' => $diff->m,
+            'second' => $diff->s,
+        ]);
+
+        $key = array_key_first($parts);
+
+        if ($key) {
+            $time = $this->translator->trans("global.time.{$key}", ['count' => $parts[$key]]);
+
+            return $this->translator->trans('global.time.ago', ['time' => $time]);
+        } else {
+            return $this->translator->trans('global.time.just_now');
         }
-
-        $string = \array_slice($string, 0, 1);
-
-        return $string !== [] ?
-            $this->translator->trans('global.time.ago', ['time' => implode(', ', $string)]) : $this->translator->trans('global.time.just_now');
     }
 }

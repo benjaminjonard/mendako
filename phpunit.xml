@@ -7,6 +7,7 @@
          bootstrap="tests/bootstrap.php"
          cacheDirectory=".phpunit.cache"
          displayDetailsOnTestsThatTriggerDeprecations="true"
+         displayDetailsOnTestsThatTriggerWarnings="true"
 >
     <php>
         <ini name="display_errors" value="1"/>
@@ -17,7 +18,6 @@
         <server name="SYMFONY_PHPUNIT_VERSION" value="10.5"/>
         <server name="SYMFONY_DEPRECATIONS_HELPER" value="weak"/>
         <server name="KERNEL_CLASS" value="App\Kernel"/>
-        <server name="FOUNDRY_RESET_MODE" value="migrate"/>
     </php>
     <testsuites>
         <testsuite name="Project Test Suite">
