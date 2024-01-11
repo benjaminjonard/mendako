@@ -7,6 +7,7 @@ namespace App\Controller;
 use App\Repository\BoardRepository;
 use App\Repository\PostRepository;
 use App\Service\DiskUsageCalculator;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -19,11 +20,11 @@ class AdminController extends AbstractController
         DiskUsageCalculator $diskUsageCalculator,
         BoardRepository $boardRepository,
         PostRepository $postRepository,
-        string $release,
-        string $thumbnailsFormat,
-        string $publicPath,
-        string $postPerPage,
-        string $infiniteScrollPostPerPage
+        #[Autowire('%release%')] string $release,
+        #[Autowire('%kernel.project_dir%/public/uploads')] string $uploadsPath,
+        #[Autowire('%env(APP_THUMBNAILS_FORMAT)%')] string $thumbnailsFormat,
+        #[Autowire('%env(APP_POST_PER_PAGE)%')] int $postPerPage,
+        #[Autowire('%env(APP_INFINITE_SCROLL_POST_PER_PAGE)%')] int $infiniteScrollPostPerPage
     ): Response
     {
         return $this->render('App/Admin/index.html.twig', [
@@ -31,7 +32,7 @@ class AdminController extends AbstractController
             'thumbnailsFormat' => $thumbnailsFormat,
             'postPerPage' => $postPerPage,
             'infiniteScrollPostPerPage' => $infiniteScrollPostPerPage,
-            'diskUsage' => $diskUsageCalculator->getFolderSize($publicPath.'/uploads') + $diskUsageCalculator->getFolderSize($publicPath.'/thumbnails'),
+            'diskUsage' => $diskUsageCalculator->getFolderSize($uploadsPath) + $diskUsageCalculator->getFolderSize($uploadsPath),
             'posts' => $postRepository->count([]),
             'boards' => $boardRepository->count([])
         ]);

@@ -9,7 +9,7 @@ enum PaginationType: string
     case PAGE = 'page';
     case SCROLL = 'scroll';
 
-    public const PAGINATION_TYPES = [
+    public const array PAGINATION_TYPES = [
         self::PAGE->value,
         self::SCROLL->value
     ];

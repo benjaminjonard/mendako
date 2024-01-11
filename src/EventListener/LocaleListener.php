@@ -7,6 +7,7 @@ namespace App\EventListener;
 use App\Entity\User;
 use App\Enum\Locale;
 use Doctrine\ORM\Event\PostUpdateEventArgs;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
@@ -15,8 +16,8 @@ readonly class LocaleListener
 {
     public function __construct(
         private RequestStack $requestStack,
-        private string $defaultLocale,
-        private array $enabledLocales
+        #[Autowire('%default_locale%')] private string $defaultLocale,
+        #[Autowire('%kernel.enabled_locales%')] private array $enabledLocales
     ) {
     }
 

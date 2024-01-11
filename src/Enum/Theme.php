@@ -10,7 +10,7 @@ enum Theme: string
     case LIGHT = 'light';
     case DARK = 'dark';
 
-    public const THEMES = [
+    public const array THEMES = [
         self::BROWSER->value,
         self::LIGHT->value,
         self::DARK->value,

@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace App\Twig;
 
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Twig\Extension\RuntimeExtensionInterface;
 
 class ThumbnailRuntime implements RuntimeExtensionInterface
 {
     public function __construct(
-        private readonly string $publicPath
+        #[Autowire('%kernel.project_dir%/public')] private readonly string $publicPath
     ) {}
 
     public function thumbnail(?string $path, int $width, bool $round = false): string

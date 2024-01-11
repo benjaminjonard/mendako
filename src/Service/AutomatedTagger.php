@@ -8,12 +8,13 @@ use App\Entity\Post;
 use App\Repository\TagRepository;
 use FFMpeg\FFMpeg;
 use FFMpeg\FFProbe\DataMapping\Stream;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 class AutomatedTagger
 {
     public function __construct(
         private readonly TagRepository $tagRepository,
-        private readonly string $publicPath
+        #[Autowire('%kernel.project_dir%/public')] private readonly string $publicPath
     ) {
     }
 

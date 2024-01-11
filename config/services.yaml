@@ -7,14 +7,6 @@ services:
     _defaults:
         autowire: true
         autoconfigure: true
-        bind:
-            $defaultLocale: '%default_locale%'
-            $enabledLocales: '%kernel.enabled_locales%'
-            $publicPath: '%kernel.project_dir%/public'
-            $release: '%release%'
-            $thumbnailsFormat: '%env(APP_THUMBNAILS_FORMAT)%'
-            $postPerPage: '%env(APP_POST_PER_PAGE)%'
-            $infiniteScrollPostPerPage: '%env(APP_INFINITE_SCROLL_POST_PER_PAGE)%'
 
     App\:
         resource: '../src/'

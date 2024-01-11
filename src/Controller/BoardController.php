@@ -13,6 +13,7 @@ use App\Repository\TagRepository;
 use App\Service\PaginatorFactory;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -65,8 +66,8 @@ class BoardController extends AbstractController
         PostRepository $postRepository,
         TagRepository $tagRepository,
         PaginatorFactory $paginatorFactory,
-        int $postPerPage,
-        int $infiniteScrollPostPerPage,
+        #[Autowire('%env(APP_POST_PER_PAGE)%')] int $postPerPage,
+        #[Autowire('%env(APP_INFINITE_SCROLL_POST_PER_PAGE)%')] int $infiniteScrollPostPerPage,
     ): Response {
         $page = $request->query->get('page', 1);
         $tags = $request->query->get('tags', '');
@@ -142,7 +143,7 @@ class BoardController extends AbstractController
         TranslatorInterface $translator,
         ManagerRegistry $managerRegistry,
         Board $board,
-        string $publicPath
+        #[Autowire('%kernel.project_dir%/public/uploads/boards/')] string $boardsUploadsPath
     ): Response {
         $form = $this->createDeleteForm('app_board_delete', $board);
         $form->handleRequest($request);
@@ -151,7 +152,7 @@ class BoardController extends AbstractController
             $managerRegistry->getManager()->remove($board);
             $managerRegistry->getManager()->flush();
 
-            $path = $publicPath . '/uploads/boards/' . $board->getId();
+            $path = $boardsUploadsPath . $board->getId();
             $files = new \RecursiveIteratorIterator(
                 new \RecursiveDirectoryIterator($path, \RecursiveDirectoryIterator::SKIP_DOTS),
                 \RecursiveIteratorIterator::CHILD_FIRST

@@ -9,6 +9,7 @@ use App\Entity\Post;
 use Contao\ImagineSvg\Imagine;
 use FFMpeg\FFMpeg;
 use FFMpeg\FFProbe\DataMapping\Stream;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\PropertyAccess\PropertyAccess;
@@ -20,7 +21,7 @@ class Uploader
 
     public function __construct(
         private readonly RandomStringGenerator $randomStringGenerator,
-        private readonly string $publicPath
+        #[Autowire('%kernel.project_dir%/public')] private readonly string $publicPath
     )
     {
         $this->accessor = PropertyAccess::createPropertyAccessor();
