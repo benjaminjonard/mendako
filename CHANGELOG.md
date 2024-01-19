@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.2.2] / 2024-01-19
+### Fix
+- Fix board infinite scroll (benjaminjonard)
+
+### Miscellaneous
+- Upgrade PHP and JS dependencies (benjaminjonard)
+
 ## [1.2.1] / 2024-01-11
 ### Fix
 - Fix modal not appearing (benjaminjonard)
