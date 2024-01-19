@@ -5065,6 +5065,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"mendako@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "mendako@workspace:."
+  dependencies:
+    "@babel/core": "npm:7.23.7"
+    "@babel/preset-env": "npm:7.23.8"
+    "@hotwired/stimulus": "npm:3.2.2"
+    "@symfony/stimulus-bridge": "npm:3.2.2"
+    "@symfony/webpack-encore": "npm:4.5.0"
+    bulma: "npm:0.9.4"
+    bulma-toast: "npm:2.4.3"
+    copy-webpack-plugin: "npm:12.0.1"
+    core-js: "npm:3.35.0"
+    regenerator-runtime: "npm:0.14.1"
+    stimulus: "npm:3.2.2"
+    stimulus-use: "npm:^0.52.0"
+    webpack: "npm:5.89.0"
+    webpack-cli: "npm:5.1.4"
+    webpack-notifier: "npm:1.15.0"
+  languageName: unknown
+  linkType: soft
+
 "merge-descriptors@npm:1.0.1":
   version: 1.0.1
   resolution: "merge-descriptors@npm:1.0.1"
@@ -6468,28 +6490,6 @@ __metadata:
   checksum: 063ffaccaaaca2cfd0ef3beafb12d6a03dd7ff1260d752d62a6077b5dfff6ae81bea571f655bb6b589d366930ec1bdd285d40d560c0dae9b12f125e54eb743d5
   languageName: node
   linkType: hard
-
-"root-workspace-0b6124@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "root-workspace-0b6124@workspace:."
-  dependencies:
-    "@babel/core": "npm:7.23.7"
-    "@babel/preset-env": "npm:7.23.8"
-    "@hotwired/stimulus": "npm:3.2.2"
-    "@symfony/stimulus-bridge": "npm:3.2.2"
-    "@symfony/webpack-encore": "npm:4.5.0"
-    bulma: "npm:0.9.4"
-    bulma-toast: "npm:2.4.3"
-    copy-webpack-plugin: "npm:12.0.1"
-    core-js: "npm:3.35.0"
-    regenerator-runtime: "npm:0.14.1"
-    stimulus: "npm:3.2.2"
-    stimulus-use: "npm:^0.52.0"
-    webpack: "npm:5.89.0"
-    webpack-cli: "npm:5.1.4"
-    webpack-notifier: "npm:1.15.0"
-  languageName: unknown
-  linkType: soft
 
 "run-parallel@npm:^1.1.9":
   version: 1.2.0
