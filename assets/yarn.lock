@@ -1866,9 +1866,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@symfony/webpack-encore@npm:4.5.0":
-  version: 4.5.0
-  resolution: "@symfony/webpack-encore@npm:4.5.0"
+"@symfony/webpack-encore@npm:4.6.0":
+  version: 4.6.0
+  resolution: "@symfony/webpack-encore@npm:4.6.0"
   dependencies:
     "@nuxt/friendly-errors-webpack-plugin": "npm:^2.5.1"
     assets-webpack-plugin: "npm:7.0.*"
@@ -1911,7 +1911,7 @@ __metadata:
     postcss: ^8.3.0
     postcss-loader: ^7.0.0
     sass: ^1.17.0
-    sass-loader: ^13.0.0
+    sass-loader: ^13.0.0 || ^14.0.0
     stylus: ^0.58.1
     stylus-loader: ^7.0.0
     ts-loader: ^9.0.0
@@ -1987,7 +1987,7 @@ __metadata:
       optional: true
   bin:
     encore: bin/encore.js
-  checksum: 62373e0d2ec5072241b8ad772b0f1c695a7820cc669a2c054aab573c09489b6b56f95598df566bd44561dadde02ca2cbd3a767f4f5303f9a0b385bf8c645dea9
+  checksum: a3748e675a14800a01e3cf4cd628211db8bbff5078b05ba0c07b5d0c9eedff07b099c03d846634a79130ea7d5999156e1b58aa199e75bc57fb2e4be6dba4a6c6
   languageName: node
   linkType: hard
 
@@ -3299,9 +3299,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"copy-webpack-plugin@npm:12.0.1":
-  version: 12.0.1
-  resolution: "copy-webpack-plugin@npm:12.0.1"
+"copy-webpack-plugin@npm:12.0.2":
+  version: 12.0.2
+  resolution: "copy-webpack-plugin@npm:12.0.2"
   dependencies:
     fast-glob: "npm:^3.3.2"
     glob-parent: "npm:^6.0.1"
@@ -3311,7 +3311,7 @@ __metadata:
     serialize-javascript: "npm:^6.0.2"
   peerDependencies:
     webpack: ^5.1.0
-  checksum: 177b4b8394a4d0334458f531f4a4c8d9a2fe01b7a22880be3e9489925a95ac9587308d2751c914337e0abc3368c8407ef369dd9a8e385c1581b6fe0348d47a53
+  checksum: 674725d4d9556b7b9a32bb85393532ef2bb75ffce785d942681b3575a86d900751f67cebbb089ddd050757f58c84edc18732e17880f12c45c9775ca94328526c
   languageName: node
   linkType: hard
 
@@ -3333,10 +3333,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"core-js@npm:3.35.0":
-  version: 3.35.0
-  resolution: "core-js@npm:3.35.0"
-  checksum: 0815fce6bcc91d79d4b28885975453b0faa4d17fc2230635102b4f3832cd621035e4032aa3307e1dbe0ee14d5e34bcb64b507fd89bd8f567aedaf29538522e6a
+"core-js@npm:3.35.1":
+  version: 3.35.1
+  resolution: "core-js@npm:3.35.1"
+  checksum: 5d31f22eb05cf66bd1a2088a04b7106faa5d0b91c1ffa5d72c5203e4974c31bd7e11969297f540a806c00c74c23991eaad5639592df8b5dbe4412fff3c075cd5
   languageName: node
   linkType: hard
 
@@ -5073,11 +5073,11 @@ __metadata:
     "@babel/preset-env": "npm:7.23.8"
     "@hotwired/stimulus": "npm:3.2.2"
     "@symfony/stimulus-bridge": "npm:3.2.2"
-    "@symfony/webpack-encore": "npm:4.5.0"
+    "@symfony/webpack-encore": "npm:4.6.0"
     bulma: "npm:0.9.4"
     bulma-toast: "npm:2.4.3"
-    copy-webpack-plugin: "npm:12.0.1"
-    core-js: "npm:3.35.0"
+    copy-webpack-plugin: "npm:12.0.2"
+    core-js: "npm:3.35.1"
     regenerator-runtime: "npm:0.14.1"
     stimulus: "npm:3.2.2"
     stimulus-use: "npm:^0.52.0"
