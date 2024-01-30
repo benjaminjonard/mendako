@@ -9,5 +9,10 @@
       "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
       "automerge": true
     }
+  ],
+  "hostRules": [
+    {
+      "timeout": 600000
+    }
   ]
 }
