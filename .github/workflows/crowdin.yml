@@ -1,7 +1,5 @@
 name: Crowdin sync
 on:
-  push:
-    branches: [ 1.2 ]
   schedule:
     - cron: "0 */12 * * *"
   workflow_dispatch:
