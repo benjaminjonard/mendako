@@ -325,3 +325,20 @@ html.loading:before {
 .left-block .block {
   margin-bottom: 1.5rem;
 }
+
+.right {
+  float: right;
+}
+
+.dropdown {
+  font-weight: 400;
+}
+
+.dropdown .icon-chevron-left {
+  font-size: 0.75rem;
+  transform: rotate(270deg);
+}
+
+.flag {
+  margin-right: 5px;
+}

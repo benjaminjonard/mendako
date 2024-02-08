@@ -46,7 +46,7 @@ class UserType extends AbstractType
                 'required' => true,
             ])
             ->add('locale', ChoiceType::class, [
-                'choices' => array_flip($this->localeHelper->getLocaleLabels()),
+                'choices' => array_flip($this->localeHelper->getLocaleLabelsWithFlag()),
                 'required' => true,
             ])
         ;

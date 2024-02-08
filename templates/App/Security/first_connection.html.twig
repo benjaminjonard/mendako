@@ -8,6 +8,7 @@
     <div class="box unauthenticated">
         <h1 class="title">
             {{ 'title.first_connection.user'|trans }}
+            <span class="right">{{ include('App/Security/_locales_select.html.twig') }}</span>
         </h1>
 
         {{ form_start(form) }}

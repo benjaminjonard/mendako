@@ -1,0 +1,19 @@
+<div class="dropdown" data-controller="dropdown" data-action="click->dropdown#display">
+    <div class="dropdown-trigger">
+        <button class="button" aria-haspopup="true" aria-controls="locale-menu">
+            <span><span class="flag">{{ getCountryFlag(app.request.locale) }}</span> {{ getLocaleLabel(app.request.locale) }}</span>
+            <span class="icon">
+                <i class="icon-chevron-left" aria-hidden="true"></i>
+            </span>
+        </button>
+    </div>
+    <div class="dropdown-menu" id="locale-menu" role="menu">
+        <div class="dropdown-content">
+            {% for key, locale in getLocales() %}
+                <a class="dropdown-item {{ app.request.locale == key ? 'is-active' }}" href="{{ path(app.request.attributes.get('_route')) }}?_locale={{ key }}">
+                    <span class="flag">{{ getCountryFlag(key) }}</span>{{ locale|trans }}
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+</div>
