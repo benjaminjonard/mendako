@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:2.0" version="2.0" srcLang="en" trgLang="hu">
+  <file id="validators.en">
+    <unit id="7OcgSlg" name="error.email.not_unique">
+      <segment state="translated">
+        <source>Email address already used</source>
+        <target>Ez az email cím már használatban van</target>
+      </segment>
+    </unit>
+    <unit id="qoRxC7z" name="error.username.not_unique">
+      <segment state="translated">
+        <source>Username already used</source>
+        <target>Ez a felhasználónév már használatban van</target>
+      </segment>
+    </unit>
+    <unit id="QICeEeg" name="error.name.not_unique">
+      <segment state="translated">
+        <source>Name already used</source>
+        <target>Ez a név már használatban van</target>
+      </segment>
+    </unit>
+    <unit id="PjAj0XF" name="error.username.incorrect">
+      <segment state="translated">
+        <source>Username must have between 2 and 32 characters (only letters, numbers and underscores are allowed)</source>
+        <target>A felhasználónévnek 2-32 karakterből kell, hogy álljon (csak a betűk, számok, és az aláhúzások engedélyezettek)</target>
+      </segment>
+    </unit>
+    <unit id="4Bdfyy1" name="error.password.incorrect">
+      <segment state="translated">
+        <source>Your password must contain at least 8 characters (with at least 1 letter and 1 number)</source>
+        <target>A jelszavadnak legalább 8 karakterből kell, hogy álljon (1 betűvel és 1 számmal legalább)</target>
+      </segment>
+    </unit>
+    <unit id="4m1Sgo3" name="error.password.not_matching">
+      <segment state="translated">
+        <source>The two passwords are not identical</source>
+        <target>A 2 jelszó nem egyezik</target>
+      </segment>
+    </unit>
+  </file>
+</xliff>
