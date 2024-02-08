@@ -66,7 +66,7 @@ class LoginTest extends WebTestCase
         ]);
 
         // Assert
-        $this->assertSame('Sign in', $crawler->filter('h1')->text());
+        $this->assertSame('Sign in', $crawler->filter('h1')->innerText());
         $this->assertSame('Invalid credentials.', $crawler->filter('.has-text-danger')->text());
     }
 
@@ -83,7 +83,7 @@ class LoginTest extends WebTestCase
         ]);
 
         // Assert
-        $this->assertSame('Sign in', $crawler->filter('h1')->text());
+        $this->assertSame('Sign in', $crawler->filter('h1')->innerText());
         $this->assertSame('User not activated', $crawler->filter('.has-text-danger')->text());
     }
 }
