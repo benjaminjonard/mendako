@@ -1,6 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.2.3] / 2024-02-09
+### Feature
+- Add Hungarian language (forms55)
+- Add language selector on login page (benjaminjonard)
+
+### Miscellaneous
+- Upgrade PHP and JS dependencies (benjaminjonard)
+
 ## [1.2.2] / 2024-01-19
 ### Fix
 - Fix board infinite scroll (benjaminjonard)
