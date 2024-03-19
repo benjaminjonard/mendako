@@ -19,6 +19,7 @@
         "doctrine/orm": "2.19.0",
         "gedmo/doctrine-extensions": "3.15.0",
         "php-ffmpeg/php-ffmpeg": "1.2.0",
+        "runtime/frankenphp-symfony": "^0.2.0",
         "stof/doctrine-extensions-bundle": "1.11.0",
         "symfony/asset": "7.0.3",
         "symfony/browser-kit": "7.0.3",
@@ -117,6 +118,9 @@
             "allow-contrib": false,
             "docker": false,
             "require": "7.0.*"
+        },
+        "runtime": {
+            "class": "Runtime\\FrankenPhpSymfony\\Runtime"
         }
     }
 }

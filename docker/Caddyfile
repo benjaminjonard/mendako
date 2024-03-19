@@ -1,0 +1,34 @@
+{
+	{$CADDY_GLOBAL_OPTIONS}
+
+	frankenphp {
+		{$FRANKENPHP_CONFIG}
+	}
+
+	order php_server before file_server
+	order php before file_server
+}
+
+{$CADDY_EXTRA_CONFIG}
+
+{$FRANKENPHP_SERVER_NAME:localhost} {
+	root * public/
+	encode zstd gzip
+
+	header {
+	    Referrer-Policy no-referrer
+	    Permissions-Policy interest-cohort=()
+	    Strict-Transport-Security "max-age=31536000; includeSubdomains; preload;"
+	    X-XSS-Protection 1; mode=block
+	    X-Content-Type-Options nosniff
+	    X-Frame-Options Deny
+	}
+
+	request_body {
+      max_size {$UPLOAD_MAX_FILESIZE:100M}
+    }
+
+	{$CADDY_SERVER_EXTRA_DIRECTIVES}
+
+	php_server
+}
