@@ -2999,10 +2999,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bulma@npm:0.9.4":
-  version: 0.9.4
-  resolution: "bulma@npm:0.9.4"
-  checksum: 10/d2696c3685d5f2389891c7b6d41be82c8de6deb5ed4ccbc9905383828089caf5d8c08ea7c4d09f4dec2df9358563440fd6c5e10492d1adf9e857e0d3d7b80c50
+"bulma@npm:1.0.0":
+  version: 1.0.0
+  resolution: "bulma@npm:1.0.0"
+  dependencies:
+    sass: "npm:^1.71.1"
+  checksum: 10/c4666217c2d62c81183fceb33cd77f72c23633de08b24cf0126cb878fbb4ab423f0853a82872e217a336307f655247d50802bed1ac3c2c996869392a7168246a
   languageName: node
   linkType: hard
 
@@ -3135,6 +3137,25 @@ __metadata:
     ansi-styles: "npm:^4.1.0"
     supports-color: "npm:^7.1.0"
   checksum: 10/cb3f3e594913d63b1814d7ca7c9bafbf895f75fbf93b92991980610dfd7b48500af4e3a5d4e3a8f337990a96b168d7eb84ee55efdce965e2ee8efc20f8c8f139
+  languageName: node
+  linkType: hard
+
+"chokidar@npm:>=3.0.0 <4.0.0":
+  version: 3.6.0
+  resolution: "chokidar@npm:3.6.0"
+  dependencies:
+    anymatch: "npm:~3.1.2"
+    braces: "npm:~3.0.2"
+    fsevents: "npm:~2.3.2"
+    glob-parent: "npm:~5.1.2"
+    is-binary-path: "npm:~2.1.0"
+    is-glob: "npm:~4.0.1"
+    normalize-path: "npm:~3.0.0"
+    readdirp: "npm:~3.6.0"
+  dependenciesMeta:
+    fsevents:
+      optional: true
+  checksum: 10/c327fb07704443f8d15f7b4a7ce93b2f0bc0e6cea07ec28a7570aa22cd51fcf0379df589403976ea956c369f25aa82d84561947e227cd925902e1751371658df
   languageName: node
   linkType: hard
 
@@ -4680,6 +4701,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"immutable@npm:^4.0.0":
+  version: 4.3.5
+  resolution: "immutable@npm:4.3.5"
+  checksum: 10/dbc1b8c808b9aa18bfce2e0c7bc23714a47267bc311f082145cc9220b2005e9b9cd2ae78330f164a19266a2b0f78846c60f4f74893853ac16fd68b5ae57092d2
+  languageName: node
+  linkType: hard
+
 "import-local@npm:^3.0.2":
   version: 3.1.0
   resolution: "import-local@npm:3.1.0"
@@ -5175,7 +5203,7 @@ __metadata:
     "@hotwired/stimulus": "npm:3.2.2"
     "@symfony/stimulus-bridge": "npm:3.2.2"
     "@symfony/webpack-encore": "npm:4.6.1"
-    bulma: "npm:0.9.4"
+    bulma: "npm:1.0.0"
     bulma-toast: "npm:2.4.4"
     copy-webpack-plugin: "npm:12.0.2"
     core-js: "npm:3.36.1"
@@ -6615,6 +6643,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"sass@npm:^1.71.1":
+  version: 1.72.0
+  resolution: "sass@npm:1.72.0"
+  dependencies:
+    chokidar: "npm:>=3.0.0 <4.0.0"
+    immutable: "npm:^4.0.0"
+    source-map-js: "npm:>=0.6.2 <2.0.0"
+  bin:
+    sass: sass.js
+  checksum: 10/637b002f9ca7888c4535a51819a3983a4638dd0a1f31aab817ae276b7fc2c3a7ab2a268d8249131810fbbd6d2cb9bd25d045008b01eda53c3ff8aa843850348d
+  languageName: node
+  linkType: hard
+
 "schema-utils@npm:^3.0.0, schema-utils@npm:^3.1.1":
   version: 3.1.1
   resolution: "schema-utils@npm:3.1.1"
@@ -6886,6 +6927,13 @@ __metadata:
     ip: "npm:^2.0.0"
     smart-buffer: "npm:^4.2.0"
   checksum: 10/5074f7d6a13b3155fa655191df1c7e7a48ce3234b8ccf99afa2ccb56591c195e75e8bb78486f8e9ea8168e95a29573cbaad55b2b5e195160ae4d2ea6811ba833
+  languageName: node
+  linkType: hard
+
+"source-map-js@npm:>=0.6.2 <2.0.0":
+  version: 1.2.0
+  resolution: "source-map-js@npm:1.2.0"
+  checksum: 10/74f331cfd2d121c50790c8dd6d3c9de6be21926de80583b23b37029b0f37aefc3e019fa91f9a10a5e120c08135297e1ecf312d561459c45908cb1e0e365f49e5
   languageName: node
   linkType: hard
 

@@ -21,7 +21,7 @@
         "webpack-notifier": "1.15.0"
     },
     "dependencies": {
-        "bulma": "0.9.4",
+        "bulma": "1.0.0",
         "bulma-toast": "2.4.4",
         "stimulus": "3.2.2",
         "stimulus-use": "^0.52.0"
