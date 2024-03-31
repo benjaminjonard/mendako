@@ -342,3 +342,31 @@ html.loading:before {
 .flag {
   margin-right: 5px;
 }
+
+.button.is-primary, .button.is-danger, .button.is-info {
+  color: white;
+}
+
+.breadcrumb li.is-active a {
+   color: hsl(var(--bulma-navbar-h),var(--bulma-navbar-s),var(--bulma-navbar-item-color-l))
+}
+
+.control .button.is-info {
+  height: 40px;
+}
+
+.logout {
+  margin-top: 6px;
+}
+
+a {
+  color: #485fc7;
+}
+
+.card-content {
+  background-color: white;
+}
+
+.box, .card {
+  --bulma-card-radius: 0.25rem;
+}

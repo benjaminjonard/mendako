@@ -37,3 +37,21 @@ html, .navbar, .autocomplete-dropdown-textarea, .navbar-menu {
 .navbar i, .navbar-burger {
     color: #ccc;
 }
+
+.box {
+    box-shadow: 0 .5em 1em -.125em hsla(0,0%,4%,.1),0 0 0 1px hsla(0,0%,4%,.02);
+    color: #4a4a4a;
+    display: block;
+    padding: 1.25rem;
+}
+
+.input, .select select, textarea {
+    border-color: #dbdbdb;
+    border-radius: 4px;
+    color: #363636;
+}
+
+label.checkbox {
+    color: #ccc;
+}
+

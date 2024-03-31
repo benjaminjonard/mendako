@@ -5,7 +5,7 @@ services:
     mendako:
         container_name: mendako
         build:
-            dockerfile: Dockerfile.frankenphp
+            dockerfile: Dockerfile.dev
         restart: unless-stopped
         ports:
             - 84:80
@@ -29,7 +29,7 @@ services:
         volumes:
             - "./docker/volumes/mendako/public/uploads:/app/public/public/uploads"
             #- ./:/app/public
-            #- ./:/var/www/mendako
+            - ./:/var/www/mendako
 
     postgresql:
         image: postgres:16
