@@ -74,7 +74,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \String
 
     public function __construct()
     {
-        $this->id = Uuid::v4()->toRfc4122();
+        $this->id = Uuid::v7()->toRfc4122();
     }
 
     public function getUserIdentifier(): string

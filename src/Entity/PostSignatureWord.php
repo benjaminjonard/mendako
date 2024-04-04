@@ -28,7 +28,7 @@ class PostSignatureWord
 
     public function __construct(Post $post, string $word)
     {
-        $this->id = Uuid::v4()->toRfc4122();
+        $this->id = Uuid::v7()->toRfc4122();
         $this->post = $post;
         $this->word = $word;
     }

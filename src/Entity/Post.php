@@ -82,7 +82,7 @@ class Post
 
     public function __construct()
     {
-        $this->id = Uuid::v4()->toRfc4122();
+        $this->id = Uuid::v7()->toRfc4122();
         $this->tags = new ArrayCollection();
         $this->signatureWords = new ArrayCollection();
     }

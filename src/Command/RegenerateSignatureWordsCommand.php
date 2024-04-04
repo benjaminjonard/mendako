@@ -71,7 +71,7 @@ class RegenerateSignatureWordsCommand extends Command
             $connection->prepare($sql)->execute();
 
             foreach ($post->getSignatureWords() as $word) {
-                $id = Uuid::v4()->toRfc4122();
+                $id = Uuid::v7()->toRfc4122();
                 $word = $word->getWord();
                 $sql = "INSERT INTO men_post_signature_word (id, post_id, word) VALUES ('{$id}', '{$postId}', '{$word}')";
                 $connection->prepare($sql)->execute();

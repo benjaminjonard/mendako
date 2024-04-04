@@ -49,7 +49,7 @@ class Board
     public function __construct()
     {
         $this->posts = new ArrayCollection();
-        $this->id = Uuid::v4()->toRfc4122();
+        $this->id = Uuid::v7()->toRfc4122();
     }
 
     public function getId(): ?string
