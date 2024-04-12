@@ -54,7 +54,7 @@ final class Version20230513081258 extends AbstractMigration
             $this->addSql("UPDATE men_post SET signature = '$signature' WHERE id = '$postId'");
 
             foreach ($post->getSignatureWords() as $word) {
-                $id = Uuid::v4()->toRfc4122();
+                $id = Uuid::v7()->toRfc4122();
                 $word = $word->getWord();
                 $this->addSql("INSERT INTO men_post_signature_word (id, post_id, word) VALUES ('$id', '$postId', '$word')");
             }

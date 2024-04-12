@@ -22,16 +22,16 @@ final class Version20220929153937 extends AbstractMigration
 
         $category = TagCategory::META->value;
 
-        $id = Uuid::v4()->toRfc4122();
+        $id = Uuid::v7()->toRfc4122();
         $this->addSql("INSERT INTO men_tag (id, name, category, created_at) VALUES ('$id', 'animated', '$category', NOW())");
 
-        $id = Uuid::v4()->toRfc4122();
+        $id = Uuid::v7()->toRfc4122();
         $this->addSql("INSERT INTO men_tag (id, name, category, created_at) VALUES ('$id', 'with_sound', '$category', NOW())");
 
-        $id = Uuid::v4()->toRfc4122();
+        $id = Uuid::v7()->toRfc4122();
         $this->addSql("INSERT INTO men_tag (id, name, category, created_at) VALUES ('$id', 'video', '$category', NOW())");
 
-        $id = Uuid::v4()->toRfc4122();
+        $id = Uuid::v7()->toRfc4122();
         $this->addSql("INSERT INTO men_tag (id, name, category, created_at) VALUES ('$id', 'gif', '$category', NOW())");
     }
 
