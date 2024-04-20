@@ -46,9 +46,9 @@
         "symfony/validator": "7.0.6",
         "symfony/webpack-encore-bundle": "2.1.1",
         "symfony/yaml": "7.0.3",
-        "twig/extra-bundle": "3.9.0",
-        "twig/intl-extra": "3.9.0",
-        "twig/twig": "3.9.2"
+        "twig/extra-bundle": "3.9.3",
+        "twig/intl-extra": "3.9.2",
+        "twig/twig": "3.9.3"
     },
     "require-dev": {
         "brianium/paratest": "7.4.3",
