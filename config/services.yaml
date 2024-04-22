@@ -15,28 +15,6 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
-    App\EventListener\UserListener:
-        tags:
-            - { name: doctrine.event_listener, event: prePersist, lazy: true }
-            - { name: doctrine.event_listener, event: preUpdate, lazy: true }
-
-    App\EventListener\UploadListener:
-        tags:
-            - { name: doctrine.event_listener, event: prePersist, lazy: true }
-            - { name: doctrine.event_listener, event: onFlush, lazy: true }
-            - { name: doctrine.event_listener, event: postRemove, lazy: true }
-            - { name: doctrine.event_listener, event: postLoad, lazy: true }
-
-    App\EventListener\SeenListener:
-        tags:
-            - { name: kernel.event_listener, event: kernel.response }
-
-    App\EventListener\LocaleListener:
-        tags:
-            - { name: kernel.event_listener, event: kernel.request, priority: 15 }
-            - { name: kernel.event_listener, event: security.interactive_login }
-            - { name: doctrine.event_listener, event: postUpdate, lazy: true }
-
     App\Service\SimilarityChecker:
         public: true
 

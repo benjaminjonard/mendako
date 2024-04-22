@@ -8,11 +8,17 @@ use App\Attribute\UploadAnnotationReader;
 use App\Service\AutomatedTagger;
 use App\Service\SimilarityChecker;
 use App\Service\Uploader;
+use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Event\PostLoadEventArgs;
 use Doctrine\ORM\Event\PostRemoveEventArgs;
 use Doctrine\ORM\Event\PrePersistEventArgs;
+use Doctrine\ORM\Events;
 
+#[AsDoctrineListener(event: Events::prePersist)]
+#[AsDoctrineListener(event: Events::onFlush)]
+#[AsDoctrineListener(event: Events::postRemove)]
+#[AsDoctrineListener(event: Events::postLoad)]
 final readonly class UploadListener
 {
     public function __construct(
