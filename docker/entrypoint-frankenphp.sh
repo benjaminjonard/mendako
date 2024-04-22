@@ -28,6 +28,7 @@ echo "APP_ENV=${APP_ENV:-prod}" >> "/app/public/.env.local"
 echo "APP_DEBUG=${APP_DEBUG:-0}" >> "/app/public/.env.local"
 echo "APP_SECRET=${APP_SECRET:-$(openssl rand -base64 21)}" >> "/app/public/.env.local"
 echo "APP_THUMBNAILS_FORMAT=${APP_THUMBNAILS_FORMAT:-}" >> "/app/public/.env.local"
+echo "APP_ENABLE_METRICS=${APP_ENABLE_METRICS:-0}" >> "/app/public/.env.local"
 
 echo "DB_NAME=${DB_NAME:-}" >> "/app/public/.env.local"
 echo "DB_HOST=${DB_HOST:-}" >> "/app/public/.env.local"

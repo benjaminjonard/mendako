@@ -25,6 +25,7 @@ security:
     access_control:
         - { path: ^/login, role: PUBLIC_ACCESS }
         - { path: ^/first-connection, role: PUBLIC_ACCESS }
+        - { path: ^/metrics, role: PUBLIC_ACCESS }
         - { path: ^/, role: ROLE_USER }
 
 when@test:
