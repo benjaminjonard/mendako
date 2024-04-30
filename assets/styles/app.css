@@ -370,3 +370,7 @@ a {
 .box, .card {
   --bulma-card-radius: 0.25rem;
 }
+
+.card-content {
+  --bulma-card-content-padding: 15px;
+}

@@ -14,11 +14,10 @@ use App\Service\PaginatorFactory;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class BoardController extends AbstractController
@@ -30,6 +29,7 @@ class BoardController extends AbstractController
         $boards = $boardRepository->findBy([], ['name' => Criteria::ASC]);
 
         return $this->render('App/Board/index.html.twig', [
+            'counters' => $boardRepository->getPostCounters(),
             'boards' => $boards,
         ]);
     }

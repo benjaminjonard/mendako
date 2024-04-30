@@ -4,19 +4,20 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 # Environment variables
 ENV APP_ENV='prod'
-ENV PUID='1000'
-ENV PGID='1000'
+ENV PUID='1001'
+ENV PGID='1001'
 ENV USER='mendako'
 ENV COMPOSER_ALLOW_SUPERUSER=1
 
 COPY ./ /var/www/mendako
 
-# Add User and Group
-RUN addgroup --gid "$PGID" "$USER" && \
-    adduser --gecos '' --no-create-home --disabled-password --uid "$PUID" --gid "$PGID" "$USER" && \
+
 # Install some basics dependencies
-    apt-get update && \
+RUN apt-get update && \
     apt-get install -y curl wget lsb-release gnupg2 software-properties-common && \
+# Add User and Group
+    addgroup --gid "$PGID" "$USER" && \
+    adduser --gecos '' --no-create-home --disabled-password --uid "$PUID" --gid "$PGID" "$USER" && \
 # PHP
     add-apt-repository ppa:ondrej/php && \
 # Nodejs
@@ -63,7 +64,6 @@ RUN addgroup --gid "$PGID" "$USER" && \
     sed -i "s/group = www-data/group = $USER/g" /etc/php/8.3/fpm/pool.d/www.conf && \
     chown -R "$USER":"$USER" /var/www/mendako && \
     chmod +x /var/www/mendako/docker/entrypoint.sh && \
-    mkdir /run/php && \
 # Add nginx and PHP config files
     cp /var/www/mendako/docker/default.conf /etc/nginx/nginx.conf && \
     cp /var/www/mendako/docker/php.ini /etc/php/8.3/fpm/conf.d/php.ini && \

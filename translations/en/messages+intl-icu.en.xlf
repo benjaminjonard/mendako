@@ -637,5 +637,11 @@
         <target>Infinite scroll posts per page</target>
       </segment>
     </unit>
+    <unit id="posts" name="counters.posts">
+      <segment state="translated">
+        <source>{count, plural, one {# post} other {# posts}}</source>
+        <target>{count, plural, one {# posts} other {# posts}}</target>
+      </segment>
+    </unit>
   </file>
 </xliff>

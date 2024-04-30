@@ -14,4 +14,20 @@ class BoardRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Board::class);
     }
+
+    public function getPostCounters(): array
+    {
+        $qb = $this->createQueryBuilder('b')
+            ->select('b.id, COUNT(posts) AS counter')
+            ->leftJoin('b.posts', 'posts')
+            ->groupBy('b.id')
+        ;
+
+        $counters = [];
+        foreach ($qb->getQuery()->getArrayResult() as $result) {
+            $counters[$result['id']] = $result['counter'];
+        }
+
+        return $counters;
+    }
 }

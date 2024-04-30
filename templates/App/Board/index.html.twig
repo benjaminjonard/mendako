@@ -28,6 +28,7 @@
                     <div class="card-content">
                         <div class="content">
                             <a href="{{ path('app_board_show', {slug: board.slug}) }}">{{ board.name }}</a>
+                            <div>{{ 'counters.posts'|trans({'count': counters[board.id]}) }}</div>
                         </div>
                     </div>
                 </div>
