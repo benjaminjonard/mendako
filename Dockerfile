@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM ubuntu:jammy
 
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -64,6 +64,7 @@ RUN apt-get update && \
     sed -i "s/group = www-data/group = $USER/g" /etc/php/8.3/fpm/pool.d/www.conf && \
     chown -R "$USER":"$USER" /var/www/mendako && \
     chmod +x /var/www/mendako/docker/entrypoint.sh && \
+    mkdir /run/php && \
 # Add nginx and PHP config files
     cp /var/www/mendako/docker/default.conf /etc/nginx/nginx.conf && \
     cp /var/www/mendako/docker/php.ini /etc/php/8.3/fpm/conf.d/php.ini && \
