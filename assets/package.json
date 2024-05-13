@@ -8,8 +8,8 @@
         "node": ">= 14.0.0"
     },
     "devDependencies": {
-        "@babel/core": "7.24.4",
-        "@babel/preset-env": "7.24.4",
+        "@babel/core": "7.24.5",
+        "@babel/preset-env": "7.24.5",
         "@hotwired/stimulus": "3.2.2",
         "@symfony/stimulus-bridge": "3.2.2",
         "@symfony/webpack-encore": "4.6.1",
@@ -32,5 +32,5 @@
         "watch": "encore dev --watch",
         "build": "encore production --progress"
     },
-    "packageManager": "yarn@4.1.1"
+    "packageManager": "yarn@4.2.2"
 }
