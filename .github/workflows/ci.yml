@@ -73,6 +73,7 @@ jobs:
 
   phpunit_postgres:
     name: PHPUnit tests with Postgres ${{ matrix.postgres }}
+    needs: [ build_docker_ci_container ]
     runs-on: ubuntu-latest
     strategy:
       matrix:
