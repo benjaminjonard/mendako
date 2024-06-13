@@ -51,13 +51,13 @@
         "twig/twig": "3.10.3"
     },
     "require-dev": {
-        "brianium/paratest": "7.4.5",
+        "brianium/paratest": "7.5.0",
         "dama/doctrine-test-bundle": "8.2.0",
         "phpunit/php-code-coverage": "11.0.3",
-        "phpunit/phpunit": "11.2.0",
+        "phpunit/phpunit": "11.2.1",
         "rector/rector": "1.1.0",
         "symfony/debug-bundle": "7.1.1",
-        "symfony/maker-bundle": "1.59.1",
+        "symfony/maker-bundle": "1.60.0",
         "symfony/stopwatch": "7.1.1",
         "symfony/web-profiler-bundle": "7.1.1",
         "zenstruck/foundry": "1.38.0"
