@@ -1,5 +1,12 @@
 when@dev: &dev
     zenstruck_foundry:
-        auto_refresh_proxies: true
+        instantiator:
+            use_constructor: true
+        orm:
+            auto_persist: true
+            reset:
+                connections: [ default ]
+                entity_managers: [ default ]
+                mode: migrate
 
 when@test: *dev

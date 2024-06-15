@@ -30,7 +30,7 @@ class BoardTest extends WebTestCase
     public function test_can_get_board_list(): void
     {
         // Arrange
-        $user = UserFactory::createOne()->object();
+        $user = UserFactory::createOne()->_real();
         $this->client->loginUser($user);
         BoardFactory::createMany(3);
 
@@ -46,7 +46,7 @@ class BoardTest extends WebTestCase
     public function test_can_get_board(): void
     {
         // Arrange
-        $user = UserFactory::createOne()->object();
+        $user = UserFactory::createOne()->_real();
         $this->client->loginUser($user);
         $board = BoardFactory::createOne();
         PostFactory::createMany(3, ['board' => $board]);
@@ -63,7 +63,7 @@ class BoardTest extends WebTestCase
     public function test_can_post_board(): void
     {
         // Arrange
-        $user = UserFactory::createOne()->object();
+        $user = UserFactory::createOne()->_real();
         $this->client->loginUser($user);
 
         // Act
@@ -80,7 +80,7 @@ class BoardTest extends WebTestCase
     public function test_can_edit_board(): void
     {
         // Arrange
-        $user = UserFactory::createOne()->object();
+        $user = UserFactory::createOne()->_real();
         $this->client->loginUser($user);
         $board = BoardFactory::createOne();
 
@@ -98,7 +98,7 @@ class BoardTest extends WebTestCase
     public function test_can_delete_board(): void
     {
         // Arrange
-        $user = UserFactory::createOne()->object();
+        $user = UserFactory::createOne()->_real();
         $this->client->loginUser($user);
         $board = BoardFactory::createOne();
 

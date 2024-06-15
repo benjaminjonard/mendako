@@ -33,7 +33,7 @@ class CommandTest extends KernelTestCase
         $command = $application->find('app:regenerate-signature-words');
         $commandTester = new CommandTester($command);
 
-        $user = UserFactory::createOne()->object();
+        $user = UserFactory::createOne()->_real();
         $board = BoardFactory::createOne();
         $post = PostFactory::createOne(['board' => $board, 'uploadedBy' => $user]);
 
@@ -42,8 +42,8 @@ class CommandTest extends KernelTestCase
 
         $filesystem->copy(__DIR__.'/../../assets/fixtures/nyancat.avif', "/tmp/{$uniqId}.avif");
         $uploadedFile = new UploadedFile("/tmp/{$uniqId}.avif", "{$uniqId}.avif", null, null, true);
-        $post->object()->setFile($uploadedFile);
-        $post->save();
+        $post->_real()->setFile($uploadedFile);
+        $post->_save();
 
         // Act
         $commandTester->execute([]);

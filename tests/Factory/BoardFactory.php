@@ -3,33 +3,11 @@
 namespace App\Tests\Factory;
 
 use App\Entity\Board;
-use App\Repository\BoardRepository;
-use Zenstruck\Foundry\ModelFactory;
-use Zenstruck\Foundry\Proxy;
-use Zenstruck\Foundry\RepositoryProxy;
+use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 
-/**
- * @extends ModelFactory<Board>
- *
- * @method static Board|Proxy createOne(array $attributes = [])
- * @method static Board[]|Proxy[] createMany(int $number, array|callable $attributes = [])
- * @method static Board[]|Proxy[] createSequence(array|callable $sequence)
- * @method static Board|Proxy find(object|array|mixed $criteria)
- * @method static Board|Proxy findOrCreate(array $attributes)
- * @method static Board|Proxy first(string $sortedField = 'id')
- * @method static Board|Proxy last(string $sortedField = 'id')
- * @method static Board|Proxy random(array $attributes = [])
- * @method static Board|Proxy randomOrCreate(array $attributes = [])
- * @method static Board[]|Proxy[] all()
- * @method static Board[]|Proxy[] findBy(array $attributes)
- * @method static Board[]|Proxy[] randomSet(int $number, array $attributes = [])
- * @method static Board[]|Proxy[] randomRange(int $min, int $max, array $attributes = [])
- * @method static BoardRepository|RepositoryProxy repository()
- * @method Board|Proxy create(array|callable $attributes = [])
- */
-final class BoardFactory extends ModelFactory
+final class BoardFactory extends PersistentProxyObjectFactory
 {
-    protected function getDefaults(): array
+    protected function defaults(): array
     {
         return [
             'name' => self::faker()->unique()->word(),
@@ -37,12 +15,12 @@ final class BoardFactory extends ModelFactory
         ];
     }
 
-    protected function initialize(): self
+    protected function initialize(): static
     {
         return $this;
     }
 
-    protected static function getClass(): string
+    public static function class(): string
     {
         return Board::class;
     }

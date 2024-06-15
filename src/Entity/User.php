@@ -92,9 +92,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \String
         return [$this->id, $this->username, $this->password];
     }
 
-    public function __unserialize($serialized): void
+    public function __unserialize(array $data): void
     {
-        [$this->id, $this->username, $this->password] = $serialized;
+        [$this->id, $this->username, $this->password] = $data;
     }
 
     public function eraseCredentials(): void

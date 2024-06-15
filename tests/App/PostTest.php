@@ -27,16 +27,12 @@ class PostTest extends WebTestCase
     {
         $this->client = static::createClient();
         $this->client->followRedirects();
-        TagFactory::createOne(['name' => 'video', 'category' => TagCategory::META]);
-        TagFactory::createOne(['name' => 'gif', 'category' => TagCategory::META]);
-        TagFactory::createOne(['name' => 'animated', 'category' => TagCategory::META]);
-        TagFactory::createOne(['name' => 'with_sound', 'category' => TagCategory::META]);
     }
 
     public function test_can_get_post(): void
     {
         // Arrange
-        $user = UserFactory::createOne()->object();
+        $user = UserFactory::createOne()->_real();
         $this->client->loginUser($user);
         $board = BoardFactory::createOne();
         $filesystem = new Filesystem();
@@ -56,7 +52,7 @@ class PostTest extends WebTestCase
     public function test_can_edit_post(): void
     {
         // Arrange
-        $user = UserFactory::createOne()->object();
+        $user = UserFactory::createOne()->_real();
         $this->client->loginUser($user);
         $board = BoardFactory::createOne();
         $filesystem = new Filesystem();
@@ -79,7 +75,7 @@ class PostTest extends WebTestCase
     public function test_can_delete_post(): void
     {
         // Arrange
-        $user = UserFactory::createOne()->object();
+        $user = UserFactory::createOne()->_real();
         $this->client->loginUser($user);
         $board = BoardFactory::createOne();
         $filesystem = new Filesystem();
@@ -100,7 +96,7 @@ class PostTest extends WebTestCase
     public function test_can_upload_png(): void
     {
         // Arrange
-        $user = UserFactory::createOne()->object();
+        $user = UserFactory::createOne()->_real();
         $this->client->loginUser($user);
         $board = BoardFactory::createOne();
         $filesystem = new Filesystem();
@@ -124,7 +120,7 @@ class PostTest extends WebTestCase
     public function test_can_upload_jpg(): void
     {
         // Arrange
-        $user = UserFactory::createOne()->object();
+        $user = UserFactory::createOne()->_real();
         $this->client->loginUser($user);
         $board = BoardFactory::createOne();
         $filesystem = new Filesystem();
@@ -147,7 +143,7 @@ class PostTest extends WebTestCase
     public function test_can_upload_webp(): void
     {
         // Arrange
-        $user = UserFactory::createOne()->object();
+        $user = UserFactory::createOne()->_real();
         $this->client->loginUser($user);
         $board = BoardFactory::createOne();
         $filesystem = new Filesystem();
@@ -170,7 +166,7 @@ class PostTest extends WebTestCase
     public function test_can_upload_avif(): void
     {
         // Arrange
-        $user = UserFactory::createOne()->object();
+        $user = UserFactory::createOne()->_real();
         $this->client->loginUser($user);
         $board = BoardFactory::createOne();
         $filesystem = new Filesystem();
@@ -193,7 +189,7 @@ class PostTest extends WebTestCase
     public function test_can_upload_gif(): void
     {
         // Arrange
-        $user = UserFactory::createOne()->object();
+        $user = UserFactory::createOne()->_real();
         $this->client->loginUser($user);
         $board = BoardFactory::createOne();
         $filesystem = new Filesystem();
@@ -216,7 +212,7 @@ class PostTest extends WebTestCase
     public function test_can_upload_mp4(): void
     {
         // Arrange
-        $user = UserFactory::createOne()->object();
+        $user = UserFactory::createOne()->_real();
         $this->client->loginUser($user);
         $board = BoardFactory::createOne();
         $filesystem = new Filesystem();
@@ -239,7 +235,7 @@ class PostTest extends WebTestCase
     public function test_can_check_similar_posts(): void
     {
         // Arrange
-        $user = UserFactory::createOne()->object();
+        $user = UserFactory::createOne()->_real();
         $this->client->loginUser($user);
 
         $board = BoardFactory::createOne();

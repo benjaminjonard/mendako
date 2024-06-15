@@ -26,7 +26,7 @@ class ProfileTest extends WebTestCase
     public function test_can_edit_profile(): void
     {
         // Arrange
-        $user = UserFactory::createOne()->object();
+        $user = UserFactory::createOne()->_real();
         $this->client->loginUser($user);
 
         // Act

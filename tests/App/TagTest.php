@@ -30,7 +30,7 @@ class TagTest extends WebTestCase
     public function test_can_get_tag_list(): void
     {
         // Arrange
-        $user = UserFactory::createOne()->object();
+        $user = UserFactory::createOne()->_real();
         $this->client->loginUser($user);
         TagFactory::createMany(3);
 
@@ -40,20 +40,20 @@ class TagTest extends WebTestCase
         // Assert
         $this->assertResponseIsSuccessful();
         $this->assertRouteSame('app_tag_index');
-        $this->assertCount(3, $crawler->filter('tbody tr'));
+        $this->assertCount(7, $crawler->filter('tbody tr')); // 7 because 4 tags are included in migrations (4 + 3)
     }
 
     public function test_can_edit_tag(): void
     {
         // Arrange
-        $user = UserFactory::createOne()->object();
+        $user = UserFactory::createOne()->_real();
         $this->client->loginUser($user);
         $tag = TagFactory::createOne();
 
         // Act
         $this->client->request('GET', '/tags/'.$tag->getId().'/edit');
         $this->client->submitForm('Submit', [
-            'tag[name]' => 'animated',
+            'tag[name]' => 'frieren',
             'tag[category]' => TagCategory::META->value
         ]);
 
@@ -62,7 +62,7 @@ class TagTest extends WebTestCase
         $this->assertRouteSame('app_tag_index');
         TagFactory::assert()->exists([
             'id' => $tag->getId(),
-            'name' => 'animated',
+            'name' => 'frieren',
             'category' => TagCategory::META->value
         ]);
     }
@@ -70,7 +70,7 @@ class TagTest extends WebTestCase
     public function test_can_delete_tag(): void
     {
         // Arrange
-        $user = UserFactory::createOne()->object();
+        $user = UserFactory::createOne()->_real();
         $this->client->loginUser($user);
         $tag = TagFactory::createOne();
 
@@ -80,13 +80,13 @@ class TagTest extends WebTestCase
 
         // Assert
         $this->assertRouteSame('app_tag_index');
-        TagFactory::assert()->count(0);
+        TagFactory::assert()->notExists(['id' => $tag->getId()]);
     }
 
     public function test_can_get_tag_autocomplete(): void
     {
         // Arrange
-        $user = UserFactory::createOne()->object();
+        $user = UserFactory::createOne()->_real();
         $this->client->loginUser($user);
         TagFactory::createOne(['name' => 'dog']);
         TagFactory::createOne(['name' => 'otter']);
