@@ -72,6 +72,35 @@ class PostTest extends WebTestCase
         $this->assertResponseIsSuccessful();
     }
 
+    public function test_post_file_is_moved_when_board_is_changed(): void
+    {
+        // Arrange
+        $user = UserFactory::createOne()->_real();
+        $this->client->loginUser($user);
+        $board = BoardFactory::createOne();
+        $newBoard = BoardFactory::createOne();
+        $filesystem = new Filesystem();
+        $uniqId = uniqid();
+        $filesystem->copy(__DIR__.'/../../assets/fixtures/nyancat.png', "/tmp/{$uniqId}.png");
+        $uploadedFile = new UploadedFile("/tmp/{$uniqId}.png", "{$uniqId}.png", test: true);
+        $post = PostFactory::createOne(['board' => $board, 'file' => $uploadedFile, 'uploadedBy' => $user]);
+        $filename = basename($post->getPath());
+
+        // Act
+        $this->client->request('GET', '/boards/'.$board->getSlug(). '/' . $post->getId() .'/edit');
+        $this->client->submitForm('Submit', [
+            'post[board]' => $newBoard->getId(),
+        ]);
+
+        // Assert
+
+        $this->assertResponseIsSuccessful();
+        PostFactory::assert()->exists([
+            'id' => $post->getId(),
+            'path' => "uploads/boards/{$newBoard->getId()}/{$filename}",
+        ]);
+    }
+
     public function test_can_delete_post(): void
     {
         // Arrange
