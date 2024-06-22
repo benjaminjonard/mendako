@@ -54,13 +54,13 @@
         "brianium/paratest": "7.5.0",
         "dama/doctrine-test-bundle": "8.2.0",
         "phpunit/php-code-coverage": "11.0.3",
-        "phpunit/phpunit": "11.2.2",
-        "rector/rector": "1.1.0",
+        "phpunit/phpunit": "11.2.5",
+        "rector/rector": "1.1.1",
         "symfony/debug-bundle": "7.1.1",
         "symfony/maker-bundle": "1.60.0",
         "symfony/stopwatch": "7.1.1",
         "symfony/web-profiler-bundle": "7.1.1",
-        "zenstruck/foundry": "2.0.2"
+        "zenstruck/foundry": "2.0.4"
     },
     "config": {
         "allow-plugins": {
