@@ -60,7 +60,7 @@
         "symfony/maker-bundle": "1.60.0",
         "symfony/stopwatch": "7.1.1",
         "symfony/web-profiler-bundle": "7.1.2",
-        "zenstruck/foundry": "2.0.6"
+        "zenstruck/foundry": "2.0.7"
     },
     "config": {
         "allow-plugins": {
