@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "629f240a6c0776fb8dca3132008dd102",
+    "content-hash": "6e4c7b094351acb710f47703a4d23794",
     "packages": [
         {
             "name": "behat/transliterator",
@@ -10233,16 +10233,16 @@
         },
         {
             "name": "zenstruck/foundry",
-            "version": "v2.0.6",
+            "version": "v2.0.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zenstruck/foundry.git",
-                "reference": "4780e1a73e6a20e9cc9f3b16c32f3b815291d070"
+                "reference": "a6fb78a57bb5f1bbc222b4babe02b1b32b5c668e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zenstruck/foundry/zipball/4780e1a73e6a20e9cc9f3b16c32f3b815291d070",
-                "reference": "4780e1a73e6a20e9cc9f3b16c32f3b815291d070",
+                "url": "https://api.github.com/repos/zenstruck/foundry/zipball/a6fb78a57bb5f1bbc222b4babe02b1b32b5c668e",
+                "reference": "a6fb78a57bb5f1bbc222b4babe02b1b32b5c668e",
                 "shasum": ""
             },
             "require": {
@@ -10318,7 +10318,7 @@
             ],
             "support": {
                 "issues": "https://github.com/zenstruck/foundry/issues",
-                "source": "https://github.com/zenstruck/foundry/tree/v2.0.6"
+                "source": "https://github.com/zenstruck/foundry/tree/v2.0.7"
             },
             "funding": [
                 {
@@ -10326,7 +10326,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-07-04T20:00:27+00:00"
+            "time": "2024-07-12T16:00:49+00:00"
         }
     ],
     "aliases": [],
