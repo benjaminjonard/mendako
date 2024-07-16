@@ -637,5 +637,17 @@
         <target>Scroll infini posts par page</target>
       </segment>
     </unit>
+    <unit id="posts" name="counters.posts">
+      <segment state="translated">
+        <source>{count, plural, one {# post} other {# posts}}</source>
+        <target>{count, plural, one {# post} other {# posts}}</target>
+      </segment>
+    </unit>
+    <unit id="WAXhQr6" name="label.comment">
+      <segment state="translated">
+        <source>Comment</source>
+        <target>Commentaire</target>
+      </segment>
+    </unit>
   </file>
 </xliff>
