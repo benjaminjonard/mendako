@@ -1,6 +1,16 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.2.4] / 2024-07-16
+### Feature
+- Add metrics endpoint using OpenTelemetry format, used for statistics (benjaminjonard)
+- Allow changing board when editing a Post (benjaminjonard)
+- Add ability to add a comment on a Post (benjaminjonard)
+
+### Miscellaneous
+- Upgrade PHP and JS dependencies (benjaminjonard)
+- Update to Bulma v1 (benjaminjonard)
+
 ## [1.2.3] / 2024-02-09
 ### Feature
 - Add Hungarian language (forms55)
