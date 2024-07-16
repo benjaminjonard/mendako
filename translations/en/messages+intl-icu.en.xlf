@@ -643,5 +643,11 @@
         <target>{count, plural, one {# posts} other {# posts}}</target>
       </segment>
     </unit>
+    <unit id="WAXhQr6" name="label.comment">
+      <segment>
+        <source>Comment</source>
+        <target>Comment</target>
+      </segment>
+     </unit>
   </file>
 </xliff>

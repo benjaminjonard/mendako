@@ -40,6 +40,8 @@
 
     {{ form_row(form.setAsBoardThumbnail, {'label' : 'label.set_as_board_thumbnail'} ) }}
 
+    {{ form_row(form.comment, {'label' : 'label.comment'}) }}
+
     <div class="footer-button">
         <button class="button is-primary" type="submit">{{ 'btn.submit'|trans }}</button>
         {% if board is defined and board is not null %}

@@ -34,6 +34,9 @@ class PostType extends AbstractType
             ->add('tags', TextareaType::class, [
                 'required' => false
             ])
+            ->add('comment', TextareaType::class, [
+                'required' => false
+            ])
             ->add('setAsBoardThumbnail', CheckboxType::class, [
                 'required' => false,
                 'mapped' => false

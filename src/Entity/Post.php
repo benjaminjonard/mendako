@@ -31,6 +31,9 @@ class Post
     #[ORM\Column(type: Types::STRING, nullable: true, unique: true)]
     private ?string $path = null;
 
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $comment = null;
+
     #[ORM\Column(type: Types::STRING)]
     private ?string $mimetype = null;
 
@@ -288,6 +291,18 @@ class Post
     public function setHasSound(bool $hasSound): void
     {
         $this->hasSound = $hasSound;
+    }
+
+    public function getComment(): ?string
+    {
+        return $this->comment;
+    }
+
+    public function setComment(?string $comment): Post
+    {
+        $this->comment = $comment;
+
+        return $this;
     }
 
     public function getCreatedAt(): ?\DateTimeImmutable
