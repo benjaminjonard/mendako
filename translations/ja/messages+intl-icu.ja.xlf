@@ -637,5 +637,17 @@
         <target>無限スクロールの投稿数</target>
       </segment>
     </unit>
+    <unit id="posts" name="counters.posts">
+      <segment state="translated">
+        <source>{count, plural, one {# post} other {# posts}}</source>
+        <target>{count, plural, other {# 投稿}}</target>
+      </segment>
+    </unit>
+    <unit id="WAXhQr6" name="label.comment">
+      <segment state="translated">
+        <source>Comment</source>
+        <target>コメント</target>
+      </segment>
+    </unit>
   </file>
 </xliff>

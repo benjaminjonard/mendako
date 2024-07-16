@@ -644,10 +644,10 @@
       </segment>
     </unit>
     <unit id="WAXhQr6" name="label.comment">
-      <segment>
+      <segment state="translated">
         <source>Comment</source>
         <target>Comment</target>
       </segment>
-     </unit>
+    </unit>
   </file>
 </xliff>
