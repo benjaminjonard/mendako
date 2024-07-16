@@ -45,13 +45,16 @@ html, .navbar, .autocomplete-dropdown-textarea, .navbar-menu {
     padding: 1.25rem;
 }
 
-.input, .select select, textarea {
+.input, .select select, .textarea {
     border-color: #dbdbdb;
     border-radius: 4px;
     color: #363636;
 }
 
-label.checkbox {
+label.checkbox, .config {
     color: #ccc;
 }
 
+.toast {
+    color: white;
+}
