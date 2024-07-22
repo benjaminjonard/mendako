@@ -637,7 +637,7 @@
         <target>Infinite scroll posts per page</target>
       </segment>
     </unit>
-    <unit id="posts" name="counters.posts">
+    <unit id="SW41Qug" name="counters.posts">
       <segment state="translated">
         <source>{count, plural, one {# post} other {# posts}}</source>
         <target>{count, plural, one {# posts} other {# posts}}</target>
@@ -649,19 +649,19 @@
         <target>Comment</target>
       </segment>
     </unit>
-    <unit id="WAXhQr6" name="menu.board">
+    <unit id="CJm9OVi" name="menu.board">
       <segment state="translated">
         <source>Board</source>
         <target>Board</target>
       </segment>
     </unit>
-    <unit id="WAXhQr6" name="menu.tag">
+    <unit id="0sdRJOC" name="menu.tag">
       <segment state="translated">
         <source>Tag</source>
         <target>Tag</target>
       </segment>
     </unit>
-    <unit id="WAXhQr6" name="menu.post">
+    <unit id="9yxbGqQ" name="menu.post">
       <segment state="translated">
         <source>Post</source>
         <target>Post</target>

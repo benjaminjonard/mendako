@@ -637,7 +637,7 @@
         <target>Végtelen bejegyzések pörgetése oldalonként</target>
       </segment>
     </unit>
-    <unit id="posts" name="counters.posts">
+    <unit id="SW41Qug" name="counters.posts">
       <segment state="translated">
         <source>{count, plural, one {# post} other {# posts}}</source>
         <target>{count, plural, one {# bejegyzés} other {# bejegyzés}}</target>
