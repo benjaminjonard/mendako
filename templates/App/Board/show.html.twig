@@ -1,5 +1,9 @@
 {% extends 'layout.html.twig' %}
 
+{% block title %}
+    {{ 'menu.board'|trans }} · {{ board.name }} {% if app.request.query.has('tags') and app.request.query.get('tags') is not empty %} | {{ app.request.query.get('tags') }} {% endif %}
+{% endblock %}
+
 {% block buttons %}
     <a class="button is-primary" href="{{ path('app_post_add', {slug: board.slug}) }}">{{ 'menu.upload'|trans }}</a>
 {% endblock %}

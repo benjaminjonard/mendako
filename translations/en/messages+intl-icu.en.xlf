@@ -649,5 +649,23 @@
         <target>Comment</target>
       </segment>
     </unit>
+    <unit id="WAXhQr6" name="menu.board">
+      <segment state="translated">
+        <source>Board</source>
+        <target>Board</target>
+      </segment>
+    </unit>
+    <unit id="WAXhQr6" name="menu.tag">
+      <segment state="translated">
+        <source>Tag</source>
+        <target>Tag</target>
+      </segment>
+    </unit>
+    <unit id="WAXhQr6" name="menu.post">
+      <segment state="translated">
+        <source>Post</source>
+        <target>Post</target>
+      </segment>
+    </unit>
   </file>
 </xliff>

@@ -1,5 +1,9 @@
 {% extends 'layout.html.twig' %}
 
+{% block title %}
+    {{ 'menu.board'|trans }} · {{ board.name }} · {{ 'menu.edit'|trans }}
+{% endblock %}
+
 {% block buttons %}
     <a class="button is-primary" href="{{ path('app_post_add', {slug: board.slug}) }}">{{ 'menu.upload'|trans }}</a>
 {% endblock %}

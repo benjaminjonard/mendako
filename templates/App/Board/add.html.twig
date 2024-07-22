@@ -1,5 +1,9 @@
 {% extends 'layout.html.twig' %}
 
+{% block title %}
+    {{ 'menu.board'|trans }} · {{ 'menu.add_board'|trans }}
+{% endblock %}
+
 {% block breadcrumb %}
     <li><a href="{{ path('app_board_index') }}">{{ 'menu.boards'|trans }}</a></li>
     <li class="is-active"><a href="#" aria-current="page">{{ 'menu.add_board'|trans }}</a></li>

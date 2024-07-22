@@ -1,5 +1,9 @@
 {% extends 'layout.html.twig' %}
 
+{% block title %}
+    {{ 'menu.tags'|trans }}
+{% endblock %}
+
 {% block breadcrumb %}
     <li class="is-active"><a href="{{ path('app_tag_index') }}" aria-current="page">{{ 'menu.tags'|trans }}</a></li>
 {% endblock %}
