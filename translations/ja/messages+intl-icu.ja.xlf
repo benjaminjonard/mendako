@@ -649,5 +649,17 @@
         <target>コメント</target>
       </segment>
     </unit>
+    <unit id="0sdRJOC" name="menu.tag">
+      <segment state="translated">
+        <source>Tag</source>
+        <target>Tag</target>
+      </segment>
+    </unit>
+    <unit id="9yxbGqQ" name="menu.post">
+      <segment state="translated">
+        <source>Post</source>
+        <target>Post</target>
+      </segment>
+    </unit>
   </file>
 </xliff>
