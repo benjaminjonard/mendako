@@ -8,8 +8,8 @@
         "node": ">= 14.0.0"
     },
     "devDependencies": {
-        "@babel/core": "7.24.9",
-        "@babel/preset-env": "7.24.8",
+        "@babel/core": "7.25.2",
+        "@babel/preset-env": "7.25.3",
         "@hotwired/stimulus": "3.2.2",
         "@symfony/stimulus-bridge": "3.2.2",
         "@symfony/webpack-encore": "4.6.1",
@@ -21,7 +21,7 @@
         "webpack-notifier": "1.15.0"
     },
     "dependencies": {
-        "bulma": "1.0.1",
+        "bulma": "1.0.2",
         "bulma-toast": "2.4.4",
         "stimulus": "3.2.2",
         "stimulus-use": "^0.52.0"
@@ -32,5 +32,5 @@
         "watch": "encore dev --watch",
         "build": "encore production --progress"
     },
-    "packageManager": "yarn@4.3.1"
+    "packageManager": "yarn@4.4.0"
 }
