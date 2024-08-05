@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App;
+namespace App\Tests\App;
 
 use App\Enum\DatumTypeEnum;
 use App\Tests\Factory\BoardFactory;
