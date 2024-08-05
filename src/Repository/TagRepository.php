@@ -20,7 +20,7 @@ class TagRepository extends ServiceEntityRepository
 
     public function findWithCounters(): array
     {
-        $countQuery = $this->_em
+        $countQuery = $this->getEntityManager()
             ->createQueryBuilder()
             ->select('COUNT(DISTINCT i2.id)')
             ->from(Tag::class, 't2')
@@ -29,7 +29,7 @@ class TagRepository extends ServiceEntityRepository
             ->getDQL()
         ;
 
-        $qb = $this->_em
+        $qb = $this->getEntityManager()
             ->createQueryBuilder()
             ->select("t.id, t.name, t.category, t.suggested, ({$countQuery}) AS counter")
             ->from(Tag::class, 't')
@@ -41,7 +41,7 @@ class TagRepository extends ServiceEntityRepository
 
     public function findForPosts(Board $board, array $posts): array
     {
-        $countQuery = $this->_em
+        $countQuery = $this->getEntityManager()
             ->createQueryBuilder()
             ->select('COUNT(DISTINCT i2.id)')
             ->from(Tag::class, 't2')
@@ -50,7 +50,7 @@ class TagRepository extends ServiceEntityRepository
             ->getDQL()
         ;
 
-        $qb = $this->_em
+        $qb = $this->getEntityManager()
             ->createQueryBuilder()
             ->distinct()
             ->select("t.id, t.name, t.category, ({$countQuery}) AS counter")
@@ -71,7 +71,7 @@ class TagRepository extends ServiceEntityRepository
 
     public function findByIdForInfiniteScroll(Board $board, array $ids): array
     {
-        $countQuery = $this->_em
+        $countQuery = $this->getEntityManager()
             ->createQueryBuilder()
             ->select('COUNT(DISTINCT i2.id)')
             ->from(Tag::class, 't2')
@@ -80,7 +80,7 @@ class TagRepository extends ServiceEntityRepository
             ->getDQL()
         ;
 
-        $qb = $this->_em
+        $qb = $this->getEntityManager()
             ->createQueryBuilder()
             ->distinct()
             ->select("t.id, t.name, t.category, ({$countQuery}) AS counter")
