@@ -16,7 +16,7 @@
         "contao/imagine-svg": "^1.0",
         "doctrine/doctrine-bundle": "2.12.0",
         "doctrine/doctrine-migrations-bundle": "3.3.1",
-        "doctrine/orm": "2.19.6",
+        "doctrine/orm": "3.2.1",
         "gedmo/doctrine-extensions": "3.16.1",
         "php-ffmpeg/php-ffmpeg": "1.2.0",
         "runtime/frankenphp-symfony": "^0.2.0",
