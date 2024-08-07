@@ -78,6 +78,7 @@ RUN addgroup --gid "$PGID" "$USER" && \
     cp /app/public/docker/php-frankenphp.ini /usr/local/etc/php/conf.d/php.ini
 
 VOLUME /uploads
+VOLUME /thumbnails
 
 EXPOSE 80
 EXPOSE 443
