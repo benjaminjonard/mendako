@@ -35,7 +35,9 @@ class SimilarityChecker
             SELECT id, BIT_COUNT(cast (hash0 as bit varying) # cast ('{$post->getHash0()}' as bit varying)) + BIT_COUNT(cast (hash1 as bit varying) # cast ('{$post->getHash1()}' as bit varying)) + BIT_COUNT(cast (hash2 as bit varying) # cast ('{$post->getHash2()}' as bit varying)) + BIT_COUNT(cast (hash3 as bit varying) # cast ('{$post->getHash3()}' as bit varying)) AS strength 
             FROM men_post 
             WHERE hash0 IS NOT NULL
-            AND BIT_COUNT(cast (hash0 as bit varying) # cast ('{$post->getHash0()}' as bit varying)) + BIT_COUNT(cast (hash1 as bit varying) # cast ('{$post->getHash1()}' as bit varying)) + BIT_COUNT(cast (hash2 as bit varying) # cast ('{$post->getHash2()}' as bit varying)) + BIT_COUNT(cast (hash3 as bit varying) # cast ('{$post->getHash3()}' as bit varying)) <=3
+            AND BIT_COUNT(cast (hash0 as bit varying) # cast ('{$post->getHash0()}' as bit varying)) + BIT_COUNT(cast (hash1 as bit varying) # cast ('{$post->getHash1()}' as bit varying)) + BIT_COUNT(cast (hash2 as bit varying) # cast ('{$post->getHash2()}' as bit varying)) + BIT_COUNT(cast (hash3 as bit varying) # cast ('{$post->getHash3()}' as bit varying)) <=3            
+            ORDER BY strength DESC
+            LIMIT 5
         ");
 
         $stmt = $this->connection->prepare($sql);
