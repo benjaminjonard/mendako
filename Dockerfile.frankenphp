@@ -64,6 +64,7 @@ RUN addgroup --gid "$PGID" "$USER" && \
     mkdir /run/php
 
 VOLUME /uploads
+VOLUME /thumbnails
 
 EXPOSE 80
 EXPOSE 443

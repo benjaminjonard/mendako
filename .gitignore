@@ -19,13 +19,13 @@ yarn-error.log
 /assets/node_modules/
 /.idea/
 
-/public/tmp/
+/public/tmp/*
 !/public/tmp/.gitkeep
 
-/public/thumbnails/
+/public/thumbnails/*
 !/public/thumbnails/.gitkeep
 
-/public/uploads/
+/public/uploads/*
 !/public/uploads/.gitkeep
 
 /.docker-compose.yml
