@@ -253,18 +253,6 @@ class Post
         return $this;
     }
 
-    public function getSignature(): ?string
-    {
-        return $this->signature;
-    }
-
-    public function setSignature(?string $signature): Post
-    {
-        $this->signature = $signature;
-
-        return $this;
-    }
-
     public function hasSound(): bool
     {
         return $this->hasSound;

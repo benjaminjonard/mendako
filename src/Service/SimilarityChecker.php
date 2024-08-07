@@ -27,7 +27,7 @@ class SimilarityChecker
 
     public function hasSimilarities(Post $post): array
     {
-        if ($post->getSignature() === null) {
+        if ($post->getHash0() === null) {
             return [];
         }
 
@@ -68,7 +68,6 @@ class SimilarityChecker
 
         $signature = $imageComparator->convertHashToBinaryString($imageComparator->hashImage($thumbnailPath));
 
-        $post->setSignature($signature);
         $post->setHash0(substr($signature, 0, 16));
         $post->setHash1(substr($signature, 16, 16));
         $post->setHash2(substr($signature, 32, 16));
