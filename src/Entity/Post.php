@@ -56,10 +56,16 @@ class Post
     private int $seenCounter = 0;
 
     #[ORM\Column(type: Types::STRING, nullable: true)]
-    private ?string $signature = null;
+    private ?string $hash0 = null;
 
-    #[ORM\OneToMany(targetEntity: PostSignatureWord::class, mappedBy: 'post', cascade: ['all'], fetch: 'EXTRA_LAZY')]
-    private Collection $signatureWords;
+    #[ORM\Column(type: Types::STRING, nullable: true)]
+    private ?string $hash1 = null;
+
+    #[ORM\Column(type: Types::STRING, nullable: true)]
+    private ?string $hash2 = null;
+
+    #[ORM\Column(type: Types::STRING, nullable: true)]
+    private ?string $hash3 = null;
 
     #[ORM\ManyToOne(targetEntity: Board::class, inversedBy: 'posts')]
     #[Assert\NotBlank]
@@ -87,7 +93,6 @@ class Post
     {
         $this->id = Uuid::v7()->toRfc4122();
         $this->tags = new ArrayCollection();
-        $this->signatureWords = new ArrayCollection();
     }
 
     public function getId(): ?string
@@ -260,29 +265,6 @@ class Post
         return $this;
     }
 
-    public function getSignatureWords(): Collection
-    {
-        return $this->signatureWords;
-    }
-
-    public function addSignatureWord(?PostSignatureWord $signatureWord): Post
-    {
-        if (!$this->signatureWords->contains($signatureWord)) {
-            $this->signatureWords[] = $signatureWord;
-        }
-
-        return $this;
-    }
-
-    public function removeSignatureWord(PostSignatureWord $signatureWord): Post
-    {
-        if ($this->signatureWords->contains($signatureWord)) {
-            $this->signatureWords->removeElement($signatureWord);
-        }
-
-        return $this;
-    }
-
     public function hasSound(): bool
     {
         return $this->hasSound;
@@ -325,6 +307,54 @@ class Post
     public function setUpdatedAt(?\DateTimeImmutable $updatedAt): Post
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getHash0(): ?string
+    {
+        return $this->hash0;
+    }
+
+    public function setHash0(?string $hash0): Post
+    {
+        $this->hash0 = $hash0;
+
+        return $this;
+    }
+
+    public function getHash1(): ?string
+    {
+        return $this->hash1;
+    }
+
+    public function setHash1(?string $hash1): Post
+    {
+        $this->hash1 = $hash1;
+
+        return $this;
+    }
+
+    public function getHash2(): ?string
+    {
+        return $this->hash2;
+    }
+
+    public function setHash2(?string $hash2): Post
+    {
+        $this->hash2 = $hash2;
+
+        return $this;
+    }
+
+    public function getHash3(): ?string
+    {
+        return $this->hash3;
+    }
+
+    public function setHash3(?string $hash3): Post
+    {
+        $this->hash3 = $hash3;
 
         return $this;
     }

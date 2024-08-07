@@ -19,10 +19,10 @@ use Symfony\Component\Uid\Uuid;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AsCommand(
-    name: 'app:regenerate-signature-words',
-    description: 'Regenerate signature words for similarity checking'
+    name: 'app:regenerate-signatures',
+    description: 'Regenerate signatures for similarity checking'
 )]
-class RegenerateSignatureWordsCommand extends Command
+class RegenerateSignaturesCommand extends Command
 {
     public function __construct(
         private readonly SimilarityChecker $similarityChecker,
@@ -36,10 +36,6 @@ class RegenerateSignatureWordsCommand extends Command
     {
         $connection = $this->managerRegistry->getConnection();
 
-        $output->writeln('Clearing existing signature words...');
-        $sql = "TRUNCATE men_post_signature_word;";
-        $connection->prepare($sql)->execute();
-
         $output->writeln('Getting posts...');
         $results = $this->managerRegistry->getRepository(Post::class)->createQueryBuilder('p')
             ->select('p.id, p.path')
@@ -47,7 +43,6 @@ class RegenerateSignatureWordsCommand extends Command
             ->getArrayResult()
         ;
 
-        $output->writeln('Starting to regenerate signature words...');
         $progressBar = new ProgressBar($output, \count($results));
         foreach ($results as $result) {
             $progressBar->advance();
@@ -61,21 +56,8 @@ class RegenerateSignatureWordsCommand extends Command
             $post->setFile(new File($path));
             $this->similarityChecker->generateSignature($post);
 
-            $postId = $result['id'];
-            $signature = $post->getSignature();
-            if ($signature === null) {
-                continue;
-            }
-
-            $sql = "UPDATE men_post SET signature = '{$signature}' WHERE id = '{$postId}';";
+            $sql = "UPDATE men_post SET hash0 = '{$post->getHash0()}', hash1 = '{$post->getHash1()}', hash2 = '{$post->getHash2()}' , hash3 = '{$post->getHash3()}' WHERE id = '{$result['id']}';";
             $connection->prepare($sql)->execute();
-
-            foreach ($post->getSignatureWords() as $word) {
-                $id = Uuid::v7()->toRfc4122();
-                $word = $word->getWord();
-                $sql = "INSERT INTO men_post_signature_word (id, post_id, word) VALUES ('{$id}', '{$postId}', '{$word}')";
-                $connection->prepare($sql)->execute();
-            }
         }
 
         $output->writeln('Done!');

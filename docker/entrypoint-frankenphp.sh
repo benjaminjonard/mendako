@@ -46,7 +46,7 @@ echo "post_max_size=${UPLOAD_MAX_FILESIZE:-'100M'}" >> /usr/local/etc/php/conf.d
 
 echo "**** 4/8 - Migrate the database ****"
 cd /app/public && \
-php bin/console doctrine:migration:migrate --no-interaction --allow-no-migration --env=prod
+#php bin/console doctrine:migration:migrate --no-interaction --allow-no-migration --env=prod
 
 echo "**** 5/8 - Create user and use PUID/PGID ****"
 PUID=${PUID:-1000}

@@ -30,11 +30,10 @@ RUN addgroup --gid "$PGID" "$USER" && \
     nodejs \
     git \
     unzip \
-    libpuzzle-dev \
     ffmpeg \
     openssl && \
 # Install PHP extensions
-    install-php-extensions opcache pdo_pgsql intl gd zip curl && \
+    install-php-extensions opcache pdo_pgsql intl gd zip curl xdebug && \
 #Install composer dependencies
     curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && \
     cd /app/public && \
@@ -46,19 +45,8 @@ RUN addgroup --gid "$PGID" "$USER" && \
     yarn --version && \
     yarn install && \
     yarn build && \
-# Build libpuzzle extension
-    cd /tmp && \
-    wget https://github.com/benjaminjonard/libpuzzle-php-extension-builder/archive/refs/heads/main.zip && \
-    unzip main.zip && \
-    cd libpuzzle-php-extension-builder-main/src && \
-    phpize && \
-    ./configure && \
-    make clean && \
-    make && \
-    make install && \
-    echo "extension=libpuzzle.so" >> /usr/local/etc/php/conf.d/php.ini && \
-    echo "extension=libpuzzle.so" >> /usr/local/etc/php/conf.d/php.ini && \
-    rm -rf /tmp/libpuzzle-php-extension-builder-main && \
+# Add PHP config files
+    cp /app/public/docker/php-frankenphp.ini /usr/local/etc/php/conf.d/php.ini && \
 # Clean up \
     cd /app/public/assets && \
     yarn cache clean --all && \
@@ -73,9 +61,7 @@ RUN addgroup --gid "$PGID" "$USER" && \
 # Set permissions
     chown -R "$USER":"$USER" /app/public && \
     chmod +x /app/public/docker/entrypoint-frankenphp.sh && \
-    mkdir /run/php && \
-# Add PHP config files
-    cp /app/public/docker/php-frankenphp.ini /usr/local/etc/php/conf.d/php.ini
+    mkdir /run/php
 
 VOLUME /uploads
 

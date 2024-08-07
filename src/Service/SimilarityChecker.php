@@ -8,9 +8,9 @@ use App\Entity\Post;
 use App\Entity\PostSignatureWord;
 use App\Repository\PostRepository;
 use Doctrine\DBAL\Connection;
-use FFMpeg\Coordinate\TimeCode;
-use FFMpeg\FFMpeg;
+use SapientPro\ImageComparator\ImageComparator;
 use Doctrine\Persistence\ManagerRegistry;
+use SapientPro\ImageComparator\Strategy\DifferenceHashStrategy;
 use Symfony\Component\HttpFoundation\File\File;
 
 class SimilarityChecker
@@ -20,7 +20,7 @@ class SimilarityChecker
     public function __construct(
         ManagerRegistry $managerRegistry,
         private readonly PostRepository $postRepository,
-        private readonly ThumbnailGenerator $thumbnailGenerator
+        private readonly ThumbnailGenerator $thumbnailGenerator,
     ) {
         $this->connection = $managerRegistry->getConnection();
     }
@@ -31,21 +31,11 @@ class SimilarityChecker
             return [];
         }
 
-        $words = [];
-        foreach ($post->getSignatureWords() as $word) {
-            $words[] = "'" . $word->getWord() . "'";
-        }
-
-        $words = implode(',', $words);
-
         $sql = ("
-            SELECT word.post_id AS id, COUNT(word.word) AS strength
-            FROM men_post_signature_word word 
-            WHERE word.word IN ({$words})
-            GROUP BY word.post_id
-            HAVING COUNT(word.word) > 20
-            ORDER BY strength DESC
-            LIMIT 5
+            SELECT id, BIT_COUNT(cast (hash0 as bit varying) # cast ('{$post->getHash0()}' as bit varying)) + BIT_COUNT(cast (hash1 as bit varying) # cast ('{$post->getHash1()}' as bit varying)) + BIT_COUNT(cast (hash2 as bit varying) # cast ('{$post->getHash2()}' as bit varying)) + BIT_COUNT(cast (hash3 as bit varying) # cast ('{$post->getHash3()}' as bit varying)) AS strength 
+            FROM men_post 
+            WHERE hash0 IS NOT NULL
+            AND BIT_COUNT(cast (hash0 as bit varying) # cast ('{$post->getHash0()}' as bit varying)) + BIT_COUNT(cast (hash1 as bit varying) # cast ('{$post->getHash1()}' as bit varying)) + BIT_COUNT(cast (hash2 as bit varying) # cast ('{$post->getHash2()}' as bit varying)) + BIT_COUNT(cast (hash3 as bit varying) # cast ('{$post->getHash3()}' as bit varying)) <=3
         ");
 
         $stmt = $this->connection->prepare($sql);
@@ -56,7 +46,7 @@ class SimilarityChecker
             $similarPost = $this->postRepository->find($result['id']);
             $similarPosts[] = [
                 'post' => $similarPost,
-                'strength' => $result['strength']
+                'strength' => 100 - ($result['strength'] * 10)
             ];
         }
 
@@ -69,24 +59,19 @@ class SimilarityChecker
             return;
         }
 
+        $imageComparator = new ImageComparator();
+        $imageComparator->setHashStrategy(new DifferenceHashStrategy());
+
         $path = $post->getFile()->getRealPath();
         $thumbnailPath = '/tmp/' . $post->getFile()->getFilename() .  '_600.jpeg';
         $this->thumbnailGenerator->generate($path, $thumbnailPath, 600, 'jpeg');
 
-        $signature = puzzle_fill_cvec_from_file($thumbnailPath);
-        if ($signature === false) {
-            return;
-        }
+        $signature = $imageComparator->convertHashToBinaryString($imageComparator->hashImage($thumbnailPath));
 
-        $post->getSignatureWords()->clear();
-        $post->setSignature(hash('xxh3', $signature));
-
-        $wordLength = 10;
-        $wordCount = 100;
-        for ($i = 0; $i < min($wordCount, strlen($signature) - $wordLength + 1); ++$i) {
-            $word = substr($signature, $i, $wordLength);
-            $signatureWord = new PostSignatureWord($post, hash('xxh3',$i.'__'.$word));
-            $post->addSignatureWord($signatureWord);
-        }
+        $post->setSignature($signature);
+        $post->setHash0(substr($signature, 0, 16));
+        $post->setHash1(substr($signature, 16, 16));
+        $post->setHash2(substr($signature, 32, 16));
+        $post->setHash3(substr($signature, 48, 16));
     }
 }

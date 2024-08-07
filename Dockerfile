@@ -33,7 +33,6 @@ RUN apt-get update && \
     git \
     unzip \
     nginx-light \
-    libpuzzle-dev \
     openssl \
     ffmpeg \
     php8.3 \
@@ -67,19 +66,6 @@ RUN apt-get update && \
 # Add nginx and PHP config files
     cp /var/www/mendako/docker/default.conf /etc/nginx/nginx.conf && \
     cp /var/www/mendako/docker/php.ini /etc/php/8.3/fpm/conf.d/php.ini && \
-# Build libpuzzle extension
-    cd /tmp && \
-    wget https://github.com/benjaminjonard/libpuzzle-php-extension-builder/archive/refs/heads/main.zip && \
-    unzip main.zip && \
-    cd libpuzzle-php-extension-builder-main/src && \
-    phpize && \
-    ./configure && \
-    make clean && \
-    make && \
-    make install && \
-    echo "extension=libpuzzle.so" >> /etc/php/8.3/fpm/php.ini && \
-    echo "extension=libpuzzle.so" >> /etc/php/8.3/cli/php.ini && \
-    rm -rf /tmp/libpuzzle-php-extension-builder-main && \
 # Clean up \
     rm -rf /var/www/mendako/assets/node_modules && \
     rm -rf /var/www/mendako/assets/.yarn/cache && \

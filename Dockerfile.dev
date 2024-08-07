@@ -27,7 +27,6 @@ RUN apt-get update && \
     apt-get install -y \
     ca-certificates \
     apt-transport-https \
-    libpuzzle-dev \
     gnupg2 \
     git \
     unzip \
@@ -49,21 +48,7 @@ RUN apt-get update && \
 #Install composer dependencies
     curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && \
 # Set permissions \
-    chmod +x /entrypoint.sh && \
-# Build libpuzzle extension
-    cd /tmp && \
-    wget https://github.com/benjaminjonard/libpuzzle-php-extension-builder/archive/refs/heads/main.zip && \
-    unzip main.zip && \
-    cd libpuzzle-php-extension-builder-main/src && \
-    phpize && \
-    ./configure && \
-    make clean && \
-    make && \
-    make install && \
-    echo "extension=libpuzzle.so" >> /etc/php/8.3/fpm/php.ini && \
-    echo "extension=libpuzzle.so" >> /etc/php/8.3/cli/php.ini && \
-    rm -rf /tmp/libpuzzle-php-extension-builder-main && \
-    apt remove php8.3-dev -y
+    chmod +x /entrypoint.sh
 
 # Add nginx and PHP config files
 COPY ./docker/default.conf /etc/nginx/nginx.conf
