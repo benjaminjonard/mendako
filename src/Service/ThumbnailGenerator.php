@@ -25,7 +25,6 @@ class ThumbnailGenerator
             $ffmpeg = FFMpeg::create();
             $video = $ffmpeg->open($path);
             $stream = $video->getStreams()->videos()->first();
-            $duration = $stream->get('duration');
             $width = $stream->getDimensions()->getWidth();
             $height = $stream->getDimensions()->getHeight();
         } else {
@@ -48,7 +47,7 @@ class ThumbnailGenerator
         }
 
         if ($mime === 'video/mp4' || $mime === 'video/webm' || $mime === 'image/gif') {
-            $second = $duration * 0.1;
+            $second = $video->getFormat()->get('duration') * 0.1;
             $video->frame(TimeCode::fromSeconds($second))->save($thumbnailPath);
         } else {
             $image = match ($mime) {
