@@ -4,9 +4,6 @@
 All in assets directory
 ###### Reload assets
 - `yarn build`
-###### Generate stats
-- `yarn run --silent build --json > stats.json`
-- `yarn webpack-bundle-analyzer stats.json ../public/build`
 
 ## Tools
 ###### PhpUnit

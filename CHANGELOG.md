@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.2.5] / 2024-08-16
+### Miscellaneous
+- Delay thumbnail generation by 10% of the video length, trying to avoid all black or white thumbnails  (benjaminjonard)
+- Upgrade PHP and JS dependencies (benjaminjonard)
+- Update docker image to Ubuntu 24 noble (benjaminjonard)
+
 ## [1.2.4] / 2024-07-16
 ### Feature
 - Add metrics endpoint using OpenTelemetry format, used for statistics (benjaminjonard)
@@ -9,7 +15,7 @@ All notable changes to this project will be documented in this file.
 
 ### Miscellaneous
 - Upgrade PHP and JS dependencies (benjaminjonard)
-- Update to Bulma v1 (benjaminjonard)
+- Update to Bulma v1 (benjaminjonard)**
 
 ## [1.2.3] / 2024-02-09
 ### Feature

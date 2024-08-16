@@ -3,7 +3,7 @@
     "description": "Mendako is a self-hosted, private, light booru like image board, supports multiple boards. ",
     "type": "project",
     "license": "MIT",
-    "version": "1.2.4",
+    "version": "1.2.5",
     "minimum-stability": "stable",  
     "prefer-stable": true,
     "require": {
