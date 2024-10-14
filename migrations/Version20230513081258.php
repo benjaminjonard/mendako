@@ -6,6 +6,7 @@ namespace DoctrineMigrations;
 
 use App\Entity\Post;
 use App\Service\SimilarityChecker;
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 use Symfony\Component\HttpFoundation\File\File;
@@ -27,7 +28,7 @@ final class Version20230513081258 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $this->skipIf('postgresql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'postgresql\'.');
+        $this->skipIf($this->connection->getDatabasePlatform() instanceof PostgreSQLPlatform, 'Migration can only be executed safely on \'postgresql\'.');
 
         $similarityChecker = $this->container->get(SimilarityChecker::class);
         $publicPath = $this->container->getParameter('kernel.project_dir') . '/public';
