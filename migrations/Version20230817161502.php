@@ -17,7 +17,7 @@ final class Version20230817161502 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $this->skipIf($this->connection->getDatabasePlatform() instanceof PostgreSQLPlatform, 'Migration can only be executed safely on \'postgresql\'.');
+        $this->skipIf(!$this->connection->getDatabasePlatform() instanceof PostgreSQLPlatform, 'Migration can only be executed safely on \'postgresql\'.');
 
         $this->addSql('ALTER TABLE men_post ALTER height DROP NOT NULL');
         $this->addSql('ALTER TABLE men_post ALTER width DROP NOT NULL');

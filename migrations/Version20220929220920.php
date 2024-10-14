@@ -17,7 +17,7 @@ final class Version20220929220920 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $this->skipIf($this->connection->getDatabasePlatform() instanceof PostgreSQLPlatform, 'Migration can only be executed safely on \'postgresql\'.');
+        $this->skipIf(!$this->connection->getDatabasePlatform() instanceof PostgreSQLPlatform, 'Migration can only be executed safely on \'postgresql\'.');
 
         $this->addSql('ALTER TABLE men_user ADD dark_mode_enabled BOOLEAN DEFAULT false NOT NULL');
     }
