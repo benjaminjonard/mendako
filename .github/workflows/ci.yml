@@ -78,7 +78,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        postgres: [ 15, 16 ]
+        postgres: [ 15, 16, 17 ]
     services:
       postgres:
         image: postgres:${{ matrix.postgres }}
