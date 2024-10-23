@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xliff xmlns="urn:oasis:names:tc:xliff:document:2.0" version="2.0" srcLang="en" trgLang="es">
+<xliff xmlns="urn:oasis:names:tc:xliff:document:2.0" version="2.0" srcLang="en" trgLang="pt-BR">
   <file id="messages.en">
     <unit id="jsUGqKL" name="global.byte_abbreviation">
       <segment state="translated">
@@ -10,37 +10,37 @@
     <unit id="NZyoXlL" name="title.first_connection.user">
       <segment state="translated">
         <source>First connection</source>
-        <target>Primer acceso</target>
+        <target>Primeira conexão</target>
       </segment>
     </unit>
     <unit id="pswVxwC" name="label.username">
       <segment state="translated">
         <source>Username</source>
-        <target>Usuario</target>
+        <target>Nome de usuário</target>
       </segment>
     </unit>
     <unit id="PcL0yFM" name="label.email">
       <segment state="translated">
         <source>Email</source>
-        <target>Email</target>
+        <target>E-mail</target>
       </segment>
     </unit>
     <unit id="IUdC3Ts" name="label.password">
       <segment state="translated">
         <source>Password</source>
-        <target>Contraseña</target>
+        <target>Senha</target>
       </segment>
     </unit>
     <unit id="DB4pMNT" name="label.repeat_password">
       <segment state="translated">
         <source>Repeat password</source>
-        <target>Repetir contraseña</target>
+        <target>Repita a senha</target>
       </segment>
     </unit>
     <unit id="gH03B8x" name="label.timezone">
       <segment state="translated">
         <source>Timezone</source>
-        <target>Zona horaria</target>
+        <target>Horário</target>
       </segment>
     </unit>
     <unit id="5CwltOC" name="btn.submit">
@@ -52,49 +52,49 @@
     <unit id="ccbzRo3" name="title.sign_in">
       <segment state="translated">
         <source>Sign in</source>
-        <target>Iniciar sesión</target>
+        <target>Entrar</target>
       </segment>
     </unit>
     <unit id="cPBY2Ea" name="label.login">
       <segment state="translated">
         <source>Username or email</source>
-        <target>Nombre de usuario o email</target>
+        <target>Nome de usuário ou e-mail</target>
       </segment>
     </unit>
     <unit id="WjdjjsW" name="btn.sign_in">
       <segment state="translated">
         <source>Sign in</source>
-        <target>Iniciar sesión</target>
+        <target>Entrar</target>
       </segment>
     </unit>
     <unit id="kDW7Moz" name="menu.tags">
       <segment state="translated">
         <source>Tags</source>
-        <target>Etiquetas</target>
+        <target>Tags</target>
       </segment>
     </unit>
     <unit id="5CgT51i" name="menu.boards">
       <segment state="translated">
         <source>Boards</source>
-        <target>Tableros</target>
+        <target>Quadros</target>
       </segment>
     </unit>
     <unit id="k3fde4i" name="btn.add_board">
       <segment state="translated">
         <source>New board</source>
-        <target>Nuevo tablero</target>
+        <target>Novo quadro</target>
       </segment>
     </unit>
     <unit id="cHm0S00" name="title.add_board">
       <segment state="translated">
         <source>New board</source>
-        <target>Nuevo tablero</target>
+        <target>Novo quadro</target>
       </segment>
     </unit>
     <unit id="5sUTuAz" name="label.name">
       <segment state="translated">
         <source>Name</source>
-        <target>Nombre</target>
+        <target>Nome</target>
       </segment>
     </unit>
     <unit id="uMdsXWM" name="btn.cancel">
@@ -112,49 +112,49 @@
     <unit id="hsfUMa3" name="btn.add_post">
       <segment state="translated">
         <source>New post</source>
-        <target>Nueva publicación</target>
+        <target>Nova publicação</target>
       </segment>
     </unit>
     <unit id="T4Ac2ly" name="title.add_post">
       <segment state="translated">
         <source>New post</source>
-        <target>Nueva publicación</target>
+        <target>Nova publicação</target>
       </segment>
     </unit>
     <unit id="Xwv9noo" name="label.file">
       <segment state="translated">
         <source>File</source>
-        <target>Archivo</target>
+        <target>Arquivo</target>
       </segment>
     </unit>
     <unit id="jG1w1gs" name="label.tags">
       <segment state="translated">
         <source>Tags</source>
-        <target>Etiquetas</target>
+        <target>Tags</target>
       </segment>
     </unit>
     <unit id="KCu1VIr" name="label.set_as_board_thumbnail">
       <segment state="translated">
         <source>Set as board thumbnail</source>
-        <target>Establecer como miniatura del tablero</target>
+        <target>Definir como miniatura do quadro</target>
       </segment>
     </unit>
     <unit id="0Dk8ay9" name="menu.add_post">
       <segment state="translated">
         <source>New post</source>
-        <target>Nueva publicación</target>
+        <target>Nova publicação</target>
       </segment>
     </unit>
     <unit id="gl3tQ00" name="menu.add_board">
       <segment state="translated">
         <source>New board</source>
-        <target>Nuevo tablero</target>
+        <target>Novo quadro</target>
       </segment>
     </unit>
     <unit id="SThGArP" name="title.edit_board">
       <segment state="translated">
         <source>Edit board {name}</source>
-        <target>Editar tablero {name}</target>
+        <target>Editar quadro {name}</target>
       </segment>
     </unit>
     <unit id="ebr4n9D" name="menu.edit">
@@ -166,19 +166,19 @@
     <unit id="3P3Jiec" name="app.enum.tag.category.general">
       <segment state="translated">
         <source>General</source>
-        <target>General</target>
+        <target>Geral</target>
       </segment>
     </unit>
     <unit id="avV1E1K" name="app.enum.tag.category.character">
       <segment state="translated">
         <source>Character</source>
-        <target>Personaje</target>
+        <target>Personagem</target>
       </segment>
     </unit>
     <unit id="pb3mEAb" name="app.enum.tag.category.copyright">
       <segment state="translated">
         <source>Copyright</source>
-        <target>Copyright</target>
+        <target>Direitos autorais</target>
       </segment>
     </unit>
     <unit id="DBBQ5C2" name="app.enum.tag.category.artist">
@@ -196,25 +196,25 @@
     <unit id="duAGPgR" name="title.informations">
       <segment state="translated">
         <source>Informations</source>
-        <target>Información</target>
+        <target>Informações</target>
       </segment>
     </unit>
     <unit id="nzJtITL" name="label.uploaded_at">
       <segment state="translated">
         <source>Added</source>
-        <target>Añadido</target>
+        <target>Adicionado</target>
       </segment>
     </unit>
     <unit id="xhpnrWB" name="label.size">
       <segment state="translated">
         <source>Size</source>
-        <target>Tamaño</target>
+        <target>Tamanho</target>
       </segment>
     </unit>
     <unit id="bv1h4Br" name="label.dimensions">
       <segment state="translated">
         <source>Dimensions</source>
-        <target>Dimensiones</target>
+        <target>Dimensões</target>
       </segment>
     </unit>
     <unit id="3meulB5" name="label.mimetype">
@@ -226,61 +226,61 @@
     <unit id="9mbqscI" name="label.uploaded_by">
       <segment state="translated">
         <source>Uploaded by</source>
-        <target>Subido por</target>
+        <target>Enviado por</target>
       </segment>
     </unit>
     <unit id="jmyZpbm" name="title.edit_post">
       <segment state="translated">
         <source>Edit post</source>
-        <target>Editar publicación</target>
+        <target>Editar publicação</target>
       </segment>
     </unit>
     <unit id="IeD4bW4" name="label.duration">
       <segment state="translated">
         <source>Duration</source>
-        <target>Duración</target>
+        <target>Duração</target>
       </segment>
     </unit>
     <unit id="CVkjT1w" name="label.category">
       <segment state="translated">
         <source>Category</source>
-        <target>Categoría</target>
+        <target>Categoria</target>
       </segment>
     </unit>
     <unit id="dNIZRmO" name="title.edit_tag">
       <segment state="translated">
         <source>Edit tag {name}</source>
-        <target>Editar etiqueta {name}</target>
+        <target>Editar tag {name}</target>
       </segment>
     </unit>
     <unit id="jEeQjDx" name="message.offline">
       <segment state="translated">
         <source>You are offline, please check your connection.</source>
-        <target>Estás desconectado, por favor comprueba tu conexión.</target>
+        <target>Você está offline, verifique sua conexão.</target>
       </segment>
     </unit>
     <unit id="bKzhzsy" name="global.time.ago">
       <segment state="translated">
         <source>{time} ago</source>
-        <target>Hace {time}</target>
+        <target>{time} atrás</target>
       </segment>
     </unit>
     <unit id="kBJEdcf" name="global.time.just_now">
       <segment state="translated">
         <source>Just now</source>
-        <target>Justo ahora</target>
+        <target>Agora mesmo</target>
       </segment>
     </unit>
     <unit id="S3BSG8X" name="global.time.year">
       <segment state="translated">
         <source>{count, plural, one {# year} other {# years}}</source>
-        <target>{count, plural, one {# año} other {# años}}</target>
+        <target>{count, plural, one {# ano} other {# anos}}</target>
       </segment>
     </unit>
     <unit id="I6EoiYa" name="global.time.month">
       <segment state="translated">
         <source>{count, plural, one {# month} other {# months}}</source>
-        <target>{count, plural, one {# mes} other {# meses}}</target>
+        <target>{count, plural, one {# mês} other {# meses}}</target>
       </segment>
     </unit>
     <unit id="BXLOUij" name="global.time.week">
@@ -292,7 +292,7 @@
     <unit id="r1RqqRg" name="global.time.day">
       <segment state="translated">
         <source>{count, plural, one {# day} other {# days}}</source>
-        <target>{count, plural, one {# día} other {# días}}</target>
+        <target>{count, plural, one {# dia} other {# dias}}</target>
       </segment>
     </unit>
     <unit id="QeraM7P" name="global.time.hour">
@@ -304,7 +304,7 @@
     <unit id="UN2onP4" name="global.time.minute">
       <segment state="translated">
         <source>{count, plural, one {# minute} other {# minutes}}</source>
-        <target>en {count, plural, one {# minuto} other {# minutos}}</target>
+        <target>{count, plural, one {# minuto} other {# minutos}}</target>
       </segment>
     </unit>
     <unit id="JQSurmk" name="global.time.second">
@@ -316,49 +316,49 @@
     <unit id="DeWr6L7" name="menu.upload">
       <segment state="translated">
         <source>Upload</source>
-        <target>Subir</target>
+        <target>Enviar</target>
       </segment>
     </unit>
     <unit id="kRZ49xu" name="btn.delete">
       <segment state="translated">
         <source>Delete</source>
-        <target>Eliminar</target>
+        <target>Excluir</target>
       </segment>
     </unit>
     <unit id="LnS3Ycb" name="btn.agree">
       <segment state="translated">
         <source>Agree</source>
-        <target>Aceptar</target>
+        <target>Concordar</target>
       </segment>
     </unit>
     <unit id="UGDnz12" name="message.delete_post">
       <segment state="translated">
         <source>Delete post</source>
-        <target>Eliminar publicación</target>
+        <target>Excluir publicação</target>
       </segment>
     </unit>
     <unit id="s4Ym2Rj" name="message.warning_delete_post">
       <segment state="translated">
         <source>This action is irreversible, are you sure ?</source>
-        <target>Esta acción es irreversible, ¿estás seguro?</target>
+        <target>Esta ação é irreversível, você tem certeza?</target>
       </segment>
     </unit>
     <unit id="UhArzPN" name="title.actions">
       <segment state="translated">
         <source>Actions</source>
-        <target>Acciones</target>
+        <target>Ações</target>
       </segment>
     </unit>
     <unit id="rUEPvWW" name="message.delete_board">
       <segment state="translated">
         <source>Delete board</source>
-        <target>Eliminar tablero</target>
+        <target>Excluir quadro</target>
       </segment>
     </unit>
     <unit id="YupPOqE" name="message.warning_delete_board">
       <segment state="translated">
         <source>This action is irreversible, are you sure ? All posts inside this board will be lost.</source>
-        <target>Esta acción es irreversible, ¿estás seguro? Todas las publicaciones dentro de este tablero se perderán.</target>
+        <target>Esta ação é irreversível, você tem certeza? Todas as publicações no quadro serão perdidas.</target>
       </segment>
     </unit>
     <unit id="qkghpHS" name="menu.profile">
@@ -376,67 +376,67 @@
     <unit id="AdYO6y5" name="title.info">
       <segment state="translated">
         <source>Info</source>
-        <target>Información</target>
+        <target>Informações</target>
       </segment>
     </unit>
     <unit id="CsFP1yZ" name="title.password">
       <segment state="translated">
         <source>Password</source>
-        <target>Contraseña</target>
+        <target>Senha</target>
       </segment>
     </unit>
     <unit id="cdAEVCP" name="label.new_password">
       <segment state="translated">
         <source>New password</source>
-        <target>Nueva contraseña</target>
+        <target>Nova senha</target>
       </segment>
     </unit>
     <unit id="WhQRujz" name="message.board_added">
       <segment state="translated">
         <source>Board {board} added</source>
-        <target>Tablero {board} añadido</target>
+        <target>Quadro {board} adicionado</target>
       </segment>
     </unit>
     <unit id="0XYMTSn" name="message.board_edited">
       <segment state="translated">
         <source>Board {board} updated</source>
-        <target>Tablero {board} actualizado</target>
+        <target>Quadro {board} atualizado</target>
       </segment>
     </unit>
     <unit id="rrWW5B2" name="message.board_deleted">
       <segment state="translated">
         <source>Board {board} deleted</source>
-        <target>Tablero {board} eliminado</target>
+        <target>Quadro {board} excluído</target>
       </segment>
     </unit>
     <unit id="yoTXthl" name="message.post_added">
       <segment state="translated">
         <source>Post added</source>
-        <target>Publicación añadida</target>
+        <target>Publicação adicionada</target>
       </segment>
     </unit>
     <unit id="aM5UzdZ" name="message.post_edited">
       <segment state="translated">
         <source>Post updated</source>
-        <target>Publicación actualizada</target>
+        <target>Publicação atualizada</target>
       </segment>
     </unit>
     <unit id="b411mvt" name="message.post_deleted">
       <segment state="translated">
         <source>Post deleted</source>
-        <target>Publicación eliminada</target>
+        <target>Publicação excluída</target>
       </segment>
     </unit>
     <unit id="TYeiHH6" name="message.profile_updated">
       <segment state="translated">
         <source>Profile updated</source>
-        <target>Perfil actualizado</target>
+        <target>Perfil atualizado</target>
       </segment>
     </unit>
     <unit id="xncFQxj" name="message.tag_edited">
       <segment state="translated">
         <source>Tag {tag} updated</source>
-        <target>Etiqueta {tag} actualizada</target>
+        <target>Tag {tag} atualizada</target>
       </segment>
     </unit>
     <unit id="7cCZaHF" name="label.theme">
@@ -448,7 +448,7 @@
     <unit id="97NQmwC" name="btn.download">
       <segment state="translated">
         <source>Download</source>
-        <target>Descargar</target>
+        <target>Baixar</target>
       </segment>
     </unit>
     <unit id="Lb7V3vA" name="label.suggested">
@@ -460,13 +460,13 @@
     <unit id="wipGyLj" name="global.yes">
       <segment state="translated">
         <source>Yes</source>
-        <target>Si</target>
+        <target>Sim</target>
       </segment>
     </unit>
     <unit id="7giXLGI" name="global.no">
       <segment state="translated">
         <source>No</source>
-        <target>No</target>
+        <target>Não</target>
       </segment>
     </unit>
     <unit id="jjr18nl" name="label.seen">
@@ -484,55 +484,55 @@
     <unit id="cPEsbv9" name="label.board">
       <segment state="translated">
         <source>Board</source>
-        <target>Tablero</target>
+        <target>Quadro</target>
       </segment>
     </unit>
     <unit id="subwYGS" name="btn.show_full_size">
       <segment state="translated">
         <source>Show full size</source>
-        <target>Mostrar tamaño completo</target>
+        <target>Exibir tamanho completo</target>
       </segment>
     </unit>
     <unit id="kuxPqRP" name="btn.show_small_size">
       <segment state="translated">
         <source>Show small size</source>
-        <target>Mostrar tamaño pequeño</target>
+        <target>Exibir tamanho pequeno</target>
       </segment>
     </unit>
     <unit id="xj4swqZ" name="error.user_not_enabled">
       <segment state="translated">
         <source>User not activated</source>
-        <target>Usuario no activado</target>
+        <target>Usuário não ativo</target>
       </segment>
     </unit>
     <unit id="PxEpuFm" name="message.tag_deleted">
       <segment state="translated">
         <source>Tag {tag} deleted</source>
-        <target>Etiqueta {tag} eliminada</target>
+        <target>Tag {tag} excluída</target>
       </segment>
     </unit>
     <unit id="00UO23T" name="message.delete_tag">
       <segment state="translated">
         <source>Delete tag</source>
-        <target>Eliminar etiqueta</target>
+        <target>Excluir tag</target>
       </segment>
     </unit>
     <unit id="k1uPkXw" name="message.warning_delete_tag">
       <segment state="translated">
         <source>This action is irreversible, are you sure ?</source>
-        <target>Esta acción es irreversible, ¿estás seguro?</target>
+        <target>Esta ação é irreversível, você tem certeza?</target>
       </segment>
     </unit>
     <unit id="mEDsKHk" name="label.locale">
       <segment state="translated">
         <source>Locale</source>
-        <target>Configuración regional</target>
+        <target>Opção regional</target>
       </segment>
     </unit>
     <unit id="9lTWEs2" name="global.theme.browser">
       <segment state="translated">
         <source>Default browser theme</source>
-        <target>Tema del navegador</target>
+        <target>Tema padrão do navegador</target>
       </segment>
     </unit>
     <unit id="uLAIl7f" name="global.theme.light">
@@ -544,19 +544,19 @@
     <unit id="wO3QBHA" name="global.theme.dark">
       <segment state="translated">
         <source>Dark</source>
-        <target>Oscuro</target>
+        <target>Escuro</target>
       </segment>
     </unit>
     <unit id="ym0vXcZ" name="global.welcome">
       <segment state="translated">
         <source>Welcome to Mendako</source>
-        <target>Bienvenido a Mendako</target>
+        <target>Bem-vindo(a) à Mendako</target>
       </segment>
     </unit>
     <unit id="HE1ISwE" name="label.pagination_type">
       <segment state="translated">
         <source>Pagination type</source>
-        <target>Tipo de paginación</target>
+        <target>Tipo de paginação</target>
       </segment>
     </unit>
     <unit id="f4wOvft" name="global.pagination_type.page">
@@ -568,37 +568,37 @@
     <unit id="uDWfwP8" name="global.pagination_type.scroll">
       <segment state="translated">
         <source>Scroll</source>
-        <target>Desplazar</target>
+        <target>Rolar</target>
       </segment>
     </unit>
     <unit id="nHZ06YM" name="label.similar_posts">
       <segment state="translated">
         <source>Similar posts</source>
-        <target>Publicaciones similares</target>
+        <target>Publicações similares</target>
       </segment>
     </unit>
     <unit id="b9iBNEI" name="title.configuration">
       <segment state="translated">
         <source>Configuration</source>
-        <target>Configuración</target>
+        <target>Configuração</target>
       </segment>
     </unit>
     <unit id="POjgg0u" name="title.admin">
       <segment state="translated">
         <source>Administration</source>
-        <target>Administración</target>
+        <target>Administração</target>
       </segment>
     </unit>
     <unit id="Ex38dow" name="menu.admin">
       <segment state="translated">
         <source>Administration</source>
-        <target>Administración</target>
+        <target>Administração</target>
       </segment>
     </unit>
     <unit id="EFVfz6U" name="label.release">
       <segment state="translated">
         <source>Release</source>
-        <target>Versión</target>
+        <target>Versão</target>
       </segment>
     </unit>
     <unit id="Bkrq207" name="label.thumbnails_format">
@@ -610,55 +610,55 @@
     <unit id="frN0Olf" name="label.disk_usage">
       <segment state="translated">
         <source>Disk usage</source>
-        <target>Uso de disco</target>
+        <target>Uso do disco</target>
       </segment>
     </unit>
     <unit id="a7Dly6T" name="label.post_per_page">
       <segment state="translated">
         <source>Posts per page</source>
-        <target>Publicaciones por página</target>
+        <target>Publicações por página</target>
       </segment>
     </unit>
     <unit id="VojSfvJ" name="label.posts">
       <segment state="translated">
         <source>Posts</source>
-        <target>Publicaciones</target>
+        <target>Publicações</target>
       </segment>
     </unit>
     <unit id="oAVwmgc" name="label.boards">
       <segment state="translated">
         <source>Boards</source>
-        <target>Tableros</target>
+        <target>Quadros</target>
       </segment>
     </unit>
     <unit id="uRSMCBL" name="label.infinite_scroll_post_per_page">
       <segment state="translated">
         <source>Infinite scroll posts per page</source>
-        <target>Entradas de scroll infinito por página</target>
+        <target>Rolagem infinita de publicações por página</target>
       </segment>
     </unit>
     <unit id="SW41Qug" name="counters.posts">
       <segment state="translated">
         <source>{count, plural, one {# post} other {# posts}}</source>
-        <target>{count, plural, one {# post} other {# posts}}</target>
+        <target>{count, plural, one {# publicação} other {# publicações}}</target>
       </segment>
     </unit>
     <unit id="WAXhQr6" name="label.comment">
       <segment state="translated">
         <source>Comment</source>
-        <target>Comentario</target>
+        <target>Comentário</target>
       </segment>
     </unit>
     <unit id="CJm9OVi" name="menu.board">
       <segment state="translated">
         <source>Board</source>
-        <target>Tablero</target>
+        <target>Quadro</target>
       </segment>
     </unit>
     <unit id="0sdRJOC" name="menu.tag">
       <segment state="translated">
         <source>Tag</source>
-        <target>Etiqueta</target>
+        <target>Tag</target>
       </segment>
     </unit>
     <unit id="9yxbGqQ" name="menu.post">
