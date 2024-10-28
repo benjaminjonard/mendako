@@ -1,6 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.2.6] / 2024-10-28
+### Feature
+- Add Portuguese (Brazilian) language (Lucasofchirstms)
+
+### Miscellaneous
+- Fix deprecations (benjaminjonard)
+- Upgrade PHP and JS dependencies (benjaminjonard)
+
 ## [1.2.5] / 2024-08-16
 ### Miscellaneous
 - Delay thumbnail generation by 10% of the video length, trying to avoid all black or white thumbnails  (benjaminjonard)
