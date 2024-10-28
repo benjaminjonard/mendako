@@ -38,7 +38,7 @@ class RegenerateSignatureWordsCommand extends Command
 
         $output->writeln('Clearing existing signature words...');
         $sql = "TRUNCATE men_post_signature_word;";
-        $connection->prepare($sql)->execute();
+        $connection->prepare($sql)->executeStatement();
 
         $output->writeln('Getting posts...');
         $results = $this->managerRegistry->getRepository(Post::class)->createQueryBuilder('p')
@@ -68,13 +68,13 @@ class RegenerateSignatureWordsCommand extends Command
             }
 
             $sql = "UPDATE men_post SET signature = '{$signature}' WHERE id = '{$postId}';";
-            $connection->prepare($sql)->execute();
+            $connection->prepare($sql)->executeStatement();
 
             foreach ($post->getSignatureWords() as $word) {
                 $id = Uuid::v7()->toRfc4122();
                 $word = $word->getWord();
                 $sql = "INSERT INTO men_post_signature_word (id, post_id, word) VALUES ('{$id}', '{$postId}', '{$word}')";
-                $connection->prepare($sql)->execute();
+                $connection->prepare($sql)->executeStatement();
             }
         }
 
