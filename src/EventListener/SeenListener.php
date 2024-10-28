@@ -24,7 +24,7 @@ final readonly class SeenListener
             $id = $event->getRequest()->get('id');
             $sql = "UPDATE men_post SET seen_counter = seen_counter + 1 WHERE id = ?";
             $stmt = $this->managerRegistry->getManager()->getConnection()->prepare($sql);
-            $stmt->bindParam(1, $id);
+            $stmt->bindValue(1, $id);
             $stmt->execute();
         }
     }
