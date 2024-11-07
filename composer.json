@@ -47,7 +47,7 @@
         "symfony/yaml": "7.1.6",
         "twig/extra-bundle": "3.13.0",
         "twig/intl-extra": "3.13.0",
-        "twig/twig": "3.14.0"
+        "twig/twig": "3.14.1"
     },
     "require-dev": {
         "brianium/paratest": "7.6.0",
