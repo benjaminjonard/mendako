@@ -36,7 +36,7 @@
         "symfony/mime": "7.1.6",
         "symfony/monolog-bundle": "3.10.0",
         "symfony/routing": "7.1.6",
-        "symfony/runtime": "7.1.6",
+        "symfony/runtime": "7.1.7",
         "symfony/security-bundle": "7.1.6",
         "symfony/string": "7.1.6",
         "symfony/translation": "7.1.6",
