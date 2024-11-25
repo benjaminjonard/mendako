@@ -77,11 +77,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \String
         $this->id = Uuid::v7()->toRfc4122();
     }
 
+    #[\Override]
     public function getUserIdentifier(): string
     {
         return (string) $this->getUsername();
     }
 
+    #[\Override]
     public function __toString(): string
     {
         return (string) $this->getUsername();
@@ -97,6 +99,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \String
         [$this->id, $this->username, $this->password] = $data;
     }
 
+    #[\Override]
     public function eraseCredentials(): void
     {
     }
@@ -111,6 +114,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \String
         return $this;
     }
 
+    #[\Override]
     public function getPassword(): ?string
     {
         return $this->password;
@@ -136,6 +140,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \String
         return $this;
     }
 
+    #[\Override]
     public function getRoles(): array
     {
         $roles = $this->roles;

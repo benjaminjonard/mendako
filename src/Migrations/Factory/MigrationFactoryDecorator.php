@@ -16,6 +16,7 @@ class MigrationFactoryDecorator implements MigrationFactory
     ) {
     }
 
+    #[\Override]
     public function createVersion(string $migrationClassName): AbstractMigration
     {
         $instance = $this->migrationFactory->createVersion($migrationClassName);

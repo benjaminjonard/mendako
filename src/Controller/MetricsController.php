@@ -34,7 +34,7 @@ class MetricsController extends AbstractController
         DiskUsageCalculator $diskUsageCalculator
     ): Response
     {
-        if ($enableMetrics !== true) {
+        if (!$enableMetrics) {
             throw new AccessDeniedHttpException();
         }
 
@@ -62,12 +62,13 @@ class MetricsController extends AbstractController
         $metrics = implode(PHP_EOL, $this->lines);
         $response = new Response();
         $response->setContent($metrics);
+
         $response->headers->set('Content-Type', 'text/plain');
 
         return $response;
     }
 
-    public function addCounter(string $name, array $values, string $help, string $unit = null): void
+    public function addCounter(string $name, array $values, string $help, ?string $unit = null): void
     {
         //$name = "mendako_{$name}";
 
@@ -75,6 +76,7 @@ class MetricsController extends AbstractController
         if ($unit !== null) {
             $this->lines[] = "# UNIT {$name} {$unit}";
         }
+
         $this->lines[] = "# TYPE {$name} counter";
 
         foreach ($values as $value) {

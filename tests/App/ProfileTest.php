@@ -7,6 +7,7 @@ namespace App\Tests\App;
 use App\Tests\Factory\UserFactory;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Request;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
 
@@ -17,6 +18,7 @@ class ProfileTest extends WebTestCase
 
     private KernelBrowser $client;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->client = static::createClient();
@@ -30,7 +32,7 @@ class ProfileTest extends WebTestCase
         $this->client->loginUser($user);
 
         // Act
-        $this->client->request('GET', '/profile');
+        $this->client->request(Request::METHOD_GET, '/profile');
         $this->client->submitForm('Submit', [
             'user[username]' => 'Stitch',
             'user[email]' => 'stitch@koillection.com',

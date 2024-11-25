@@ -54,18 +54,16 @@ class Uploader
                 $video = $ffmpeg->open($absolutePath . $fileName);
                 $stream = $video->getStreams()->videos()->first();
                 $hasSound = $video->getStreams()->audios()->first() instanceof Stream;
-
                 $entity
                     ->setDuration((int) round((float) $video->getFormat()->get('duration')))
                     ->setHeight($stream->getDimensions()->getHeight())
                     ->setWidth($stream->getDimensions()->getWidth())
                     ->setHasSound($hasSound)
                 ;
-            } else if ($entity->getMimetype() === 'image/svg+xml') {
+            } elseif ($entity->getMimetype() === 'image/svg+xml') {
                 $size = (new Imagine())
                     ->open($absolutePath . $fileName)
                     ->getSize();
-
                 $entity
                     ->setWidth($size->getWidth())
                     ->setHeight($size->getHeight())

@@ -11,6 +11,7 @@ use App\Tests\Factory\TagFactory;
 use App\Tests\Factory\UserFactory;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Request;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
 
@@ -21,6 +22,7 @@ class TagTest extends WebTestCase
 
     private KernelBrowser $client;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->client = static::createClient();
@@ -35,7 +37,7 @@ class TagTest extends WebTestCase
         TagFactory::createMany(3);
 
         // Act
-        $crawler = $this->client->request('GET', '/tags');
+        $crawler = $this->client->request(Request::METHOD_GET, '/tags');
 
         // Assert
         $this->assertResponseIsSuccessful();
@@ -51,7 +53,7 @@ class TagTest extends WebTestCase
         $tag = TagFactory::createOne();
 
         // Act
-        $this->client->request('GET', '/tags/'.$tag->getId().'/edit');
+        $this->client->request(Request::METHOD_GET, '/tags/'.$tag->getId().'/edit');
         $this->client->submitForm('Submit', [
             'tag[name]' => 'frieren',
             'tag[category]' => TagCategory::META->value
@@ -75,7 +77,7 @@ class TagTest extends WebTestCase
         $tag = TagFactory::createOne();
 
         // Act
-        $this->client->request('GET', '/tags/'.$tag->getId().'/edit');
+        $this->client->request(Request::METHOD_GET, '/tags/'.$tag->getId().'/edit');
         $this->client->submitForm('Agree');
 
         // Assert
@@ -93,7 +95,7 @@ class TagTest extends WebTestCase
         TagFactory::createOne(['name' => 'capybara']);
 
         // Act
-        $this->client->request('GET', '/tags/autocomplete?query=capy');
+        $this->client->request(Request::METHOD_GET, '/tags/autocomplete?query=capy');
 
         // Assert
         $this->assertResponseIsSuccessful();

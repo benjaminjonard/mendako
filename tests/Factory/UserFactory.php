@@ -12,6 +12,7 @@ use Zenstruck\Foundry\RepositoryProxy;
 
 final class UserFactory extends PersistentProxyObjectFactory
 {
+    #[\Override]
     protected function defaults(): array
     {
         return [
@@ -26,11 +27,13 @@ final class UserFactory extends PersistentProxyObjectFactory
         ];
     }
 
+    #[\Override]
     protected function initialize(): static
     {
         return $this;
     }
 
+    #[\Override]
     public static function class(): string
     {
         return User::class;

@@ -10,8 +10,8 @@ use Symfony\Component\Intl\Languages;
 readonly class LocaleHelper
 {
     public function __construct(
-        #[Autowire('%default_locale%')] private string $defaultLocale,
-        #[Autowire('%kernel.enabled_locales%')] private array $enabledLocales
+        #[Autowire(param: 'default_locale')] private string $defaultLocale,
+        #[Autowire(param: 'kernel.enabled_locales')] private array $enabledLocales
     ) {
     }
 

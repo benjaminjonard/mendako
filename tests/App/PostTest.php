@@ -13,6 +13,7 @@ use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\Request;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
 
@@ -23,6 +24,7 @@ class PostTest extends WebTestCase
 
     private KernelBrowser $client;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->client = static::createClient();
@@ -42,7 +44,7 @@ class PostTest extends WebTestCase
         $post = PostFactory::createOne(['board' => $board, 'file' => $uploadedFile, 'uploadedBy' => $user]);
 
         // Act
-        $this->client->request('GET', '/boards/'.$board->getSlug(). '/'.$post->getId());
+        $this->client->request(Request::METHOD_GET, '/boards/'.$board->getSlug(). '/'.$post->getId());
 
         // Assert
         $this->assertResponseIsSuccessful();
@@ -62,7 +64,7 @@ class PostTest extends WebTestCase
         $post = PostFactory::createOne(['board' => $board, 'file' => $uploadedFile, 'uploadedBy' => $user]);
 
         // Act
-        $this->client->request('GET', '/boards/'.$board->getSlug(). '/' . $post->getId() .'/edit');
+        $this->client->request(Request::METHOD_GET, '/boards/'.$board->getSlug(). '/' . $post->getId() .'/edit');
         $this->client->submitForm('Submit', [
             'post[tags]' => 'nyancat cat rainbow',
             'post[setAsBoardThumbnail]' => true,
@@ -87,7 +89,7 @@ class PostTest extends WebTestCase
         $filename = basename($post->getPath());
 
         // Act
-        $this->client->request('GET', '/boards/'.$board->getSlug(). '/' . $post->getId() .'/edit');
+        $this->client->request(Request::METHOD_GET, '/boards/'.$board->getSlug(). '/' . $post->getId() .'/edit');
         $this->client->submitForm('Submit', [
             'post[board]' => $newBoard->getId(),
         ]);
@@ -114,7 +116,7 @@ class PostTest extends WebTestCase
         $post = PostFactory::createOne(['board' => $board, 'file' => $uploadedFile, 'uploadedBy' => $user]);
 
         // Act
-        $this->client->request('GET', '/boards/'.$board->getSlug(). '/' . $post->getId());
+        $this->client->request(Request::METHOD_GET, '/boards/'.$board->getSlug(). '/' . $post->getId());
         $this->client->submitForm('Agree');
 
         // Assert
@@ -134,7 +136,7 @@ class PostTest extends WebTestCase
         $uploadedFile = new UploadedFile("/tmp/{$uniqId}.png", "{$uniqId}.png");
 
         // Act
-        $this->client->request('GET', '/boards/'.$board->getSlug(). '/add');
+        $this->client->request(Request::METHOD_GET, '/boards/'.$board->getSlug(). '/add');
         $this->client->submitForm('Submit', [
             'post[file]' => $uploadedFile,
             'post[board]' => $board->getId(),
@@ -158,7 +160,7 @@ class PostTest extends WebTestCase
         $uploadedFile = new UploadedFile("/tmp/{$uniqId}.jpg", "{$uniqId}.jpg");
 
         // Act
-        $this->client->request('GET', '/boards/'.$board->getSlug(). '/add');
+        $this->client->request(Request::METHOD_GET, '/boards/'.$board->getSlug(). '/add');
         $this->client->submitForm('Submit', [
             'post[file]' => $uploadedFile,
             'post[board]' => $board->getId(),
@@ -181,7 +183,7 @@ class PostTest extends WebTestCase
         $uploadedFile = new UploadedFile("/tmp/{$uniqId}.webp", "{$uniqId}.webp");
 
         // Act
-        $this->client->request('GET', '/boards/'.$board->getSlug(). '/add');
+        $this->client->request(Request::METHOD_GET, '/boards/'.$board->getSlug(). '/add');
         $this->client->submitForm('Submit', [
             'post[file]' => $uploadedFile,
             'post[board]' => $board->getId(),
@@ -204,7 +206,7 @@ class PostTest extends WebTestCase
         $uploadedFile = new UploadedFile("/tmp/{$uniqId}.avif", "{$uniqId}.avif");
 
         // Act
-        $this->client->request('GET', '/boards/'.$board->getSlug(). '/add');
+        $this->client->request(Request::METHOD_GET, '/boards/'.$board->getSlug(). '/add');
         $this->client->submitForm('Submit', [
             'post[file]' => $uploadedFile,
             'post[board]' => $board->getId(),
@@ -227,7 +229,7 @@ class PostTest extends WebTestCase
         $uploadedFile = new UploadedFile("/tmp/{$uniqId}.gif", "{$uniqId}.gif");
 
         // Act
-        $this->client->request('GET', '/boards/'.$board->getSlug(). '/add');
+        $this->client->request(Request::METHOD_GET, '/boards/'.$board->getSlug(). '/add');
         $this->client->submitForm('Submit', [
             'post[file]' => $uploadedFile,
             'post[board]' => $board->getId(),
@@ -250,7 +252,7 @@ class PostTest extends WebTestCase
         $uploadedFile = new UploadedFile("/tmp/{$uniqId}.mp4", "{$uniqId}.mp4");
 
         // Act
-        $this->client->request('GET', '/boards/'.$board->getSlug(). '/add');
+        $this->client->request(Request::METHOD_GET, '/boards/'.$board->getSlug(). '/add');
         $this->client->submitForm('Submit', [
             'post[file]' => $uploadedFile,
             'post[board]' => $board->getId(),
@@ -273,7 +275,7 @@ class PostTest extends WebTestCase
         $uniqId = uniqid();
         $filesystem->copy(__DIR__.'/../../assets/fixtures/nyancat.png', "/tmp/{$uniqId}.png");
         $uploadedFile = new UploadedFile("/tmp/{$uniqId}.png", "{$uniqId}.png", test: true);
-        $this->client->request('GET', '/boards/'.$board->getSlug(). '/add');
+        $this->client->request(Request::METHOD_GET, '/boards/'.$board->getSlug(). '/add');
         $this->client->submitForm('Submit', [
             'post[file]' => $uploadedFile,
             'post[board]' => $board->getId(),
@@ -285,7 +287,7 @@ class PostTest extends WebTestCase
         $uploadedFile = new UploadedFile("/tmp/{$uniqId}.png", "{$uniqId}.png", test: true);
 
         // Act
-        $this->client->request('POST', '/check-similar', [], ['file' => $uploadedFile]);
+        $this->client->request(Request::METHOD_POST, '/check-similar', [], ['file' => $uploadedFile]);
 
         // Assert
         $this->assertResponseIsSuccessful();

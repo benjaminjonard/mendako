@@ -11,6 +11,7 @@ use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\Request;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
 
@@ -21,6 +22,7 @@ class BoardTest extends WebTestCase
 
     private KernelBrowser $client;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->client = static::createClient();
@@ -35,7 +37,7 @@ class BoardTest extends WebTestCase
         BoardFactory::createMany(3);
 
         // Act
-        $crawler = $this->client->request('GET', '');
+        $crawler = $this->client->request(Request::METHOD_GET, '');
 
         // Assert
         $this->assertResponseIsSuccessful();
@@ -52,7 +54,7 @@ class BoardTest extends WebTestCase
         PostFactory::createMany(3, ['board' => $board]);
 
         // Act
-        $crawler = $this->client->request('GET', '/boards/'.$board->getSlug());
+        $crawler = $this->client->request(Request::METHOD_GET, '/boards/'.$board->getSlug());
 
         // Assert
         $this->assertResponseIsSuccessful();
@@ -67,7 +69,7 @@ class BoardTest extends WebTestCase
         $this->client->loginUser($user);
 
         // Act
-        $this->client->request('GET', '/boards/add');
+        $this->client->request(Request::METHOD_GET, '/boards/add');
         $this->client->submitForm('Submit', [
             'board[name]' => 'Space',
         ]);
@@ -85,7 +87,7 @@ class BoardTest extends WebTestCase
         $board = BoardFactory::createOne();
 
         // Act
-        $this->client->request('GET', '/boards/'.$board->getSlug().'/edit');
+        $this->client->request(Request::METHOD_GET, '/boards/'.$board->getSlug().'/edit');
         $this->client->submitForm('Submit', [
             'board[name]' => 'Animals',
         ]);
@@ -109,7 +111,7 @@ class BoardTest extends WebTestCase
         PostFactory::createOne(['board' => $board, 'file' => $uploadedFile, 'uploadedBy' => $user]);
 
         // Act
-        $this->client->request('GET', '/boards/'.$board->getSlug());
+        $this->client->request(Request::METHOD_GET, '/boards/'.$board->getSlug());
         $this->client->submitForm('Agree');
 
         // Assert

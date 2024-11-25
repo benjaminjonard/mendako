@@ -7,6 +7,7 @@ use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 
 final class BoardFactory extends PersistentProxyObjectFactory
 {
+    #[\Override]
     protected function defaults(): array
     {
         return [
@@ -15,11 +16,13 @@ final class BoardFactory extends PersistentProxyObjectFactory
         ];
     }
 
+    #[\Override]
     protected function initialize(): static
     {
         return $this;
     }
 
+    #[\Override]
     public static function class(): string
     {
         return Board::class;

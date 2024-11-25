@@ -16,6 +16,7 @@ class StringToTagTransformer implements DataTransformerInterface
     ) {
     }
 
+    #[\Override]
     public function transform($tags): string
     {
         $results = [];
@@ -26,6 +27,7 @@ class StringToTagTransformer implements DataTransformerInterface
         return implode(' ', $results);
     }
 
+    #[\Override]
     public function reverseTransform($string): array
     {
         if (empty($string)) {
@@ -37,7 +39,7 @@ class StringToTagTransformer implements DataTransformerInterface
         foreach ($parts as $part) {
             $name = trim($part);
 
-            if ('' == $name) {
+            if ('' === $name) {
                 continue;
             }
 

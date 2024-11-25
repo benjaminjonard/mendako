@@ -19,13 +19,13 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Filesystem\Filesystem;
 
 #[AsDoctrineListener(event: Events::onFlush)]
-final class PostListener
+final readonly class PostListener
 {
     public function __construct(
-        #[Autowire('%kernel.project_dir%/public')] private readonly string $publicPath
+        #[Autowire('%kernel.project_dir%/public')]
+        private string $publicPath
     ) {
     }
-
     public function onFlush(OnFlushEventArgs $args): void
     {
         $em = $args->getObjectManager();

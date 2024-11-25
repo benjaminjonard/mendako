@@ -7,6 +7,7 @@ namespace App\Tests\App;
 use App\Tests\Factory\UserFactory;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
@@ -18,6 +19,7 @@ class AdminTest extends WebTestCase
 
     private KernelBrowser $client;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->client = static::createClient();
@@ -31,7 +33,7 @@ class AdminTest extends WebTestCase
         $this->client->loginUser($user);
 
         // Act
-        $this->client->request('GET', '/admin');
+        $this->client->request(Request::METHOD_GET, '/admin');
 
         // Assert
         $this->assertResponseIsSuccessful();
@@ -44,7 +46,7 @@ class AdminTest extends WebTestCase
         $this->client->loginUser($user);
 
         // Act
-        $this->client->request('GET', '/admin');
+        $this->client->request(Request::METHOD_GET, '/admin');
 
         // Assert
         $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);

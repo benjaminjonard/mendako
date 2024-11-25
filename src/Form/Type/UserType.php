@@ -21,9 +21,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class UserType extends AbstractType
 {
     public function __construct(
-        private LocaleHelper $localeHelper
+        private readonly LocaleHelper $localeHelper
     ) {}
 
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $isEdition = $builder->getData()->getCreatedAt() !== null;
@@ -65,6 +66,7 @@ class UserType extends AbstractType
         }
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([

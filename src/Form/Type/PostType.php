@@ -22,6 +22,7 @@ class PostType extends AbstractType
     ) {
     }
 
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $isEdition = $builder->getData()->getCreatedAt() !== null;
@@ -54,6 +55,7 @@ class PostType extends AbstractType
         $builder->get('tags')->addModelTransformer($this->stringToTagTransformer);
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([

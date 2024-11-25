@@ -7,6 +7,7 @@ namespace App\Tests\App;
 use App\Tests\Factory\UserFactory;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Request;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
 
@@ -17,6 +18,7 @@ class FirstConnectionTest extends WebTestCase
 
     private KernelBrowser $client;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->client = static::createClient();
@@ -28,7 +30,7 @@ class FirstConnectionTest extends WebTestCase
         // Arrange
 
         // Act
-        $this->client->request('GET', '/login');
+        $this->client->request(Request::METHOD_GET, '/login');
 
         // Assert
         $this->assertRouteSame('app_security_first_connection');
@@ -39,7 +41,7 @@ class FirstConnectionTest extends WebTestCase
         // Arrange
 
         // Act
-        $this->client->request('GET', '/first-connection');
+        $this->client->request(Request::METHOD_GET, '/first-connection');
         $this->client->submitForm('Submit', [
             'user[username]' => 'Stitch',
             'user[email]' => 'stitch@koillection.com',
@@ -58,7 +60,7 @@ class FirstConnectionTest extends WebTestCase
         UserFactory::createOne()->_real();
 
         // Act
-        $this->client->request('GET', '/first-connection');
+        $this->client->request(Request::METHOD_GET, '/first-connection');
 
         // Assert
         $this->assertRouteSame('app_security_login');

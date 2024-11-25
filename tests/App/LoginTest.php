@@ -7,6 +7,7 @@ namespace App\Tests\App;
 use App\Tests\Factory\UserFactory;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Request;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
 
@@ -17,6 +18,7 @@ class LoginTest extends WebTestCase
 
     private KernelBrowser $client;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->client = static::createClient();
@@ -29,7 +31,7 @@ class LoginTest extends WebTestCase
         $user = UserFactory::createOne()->_real();
 
         // Act
-        $this->client->request('GET', '/');
+        $this->client->request(Request::METHOD_GET, '/');
         $this->client->submitForm('Sign in', [
             '_login' => $user->getUsername(),
             '_password' => $user->getPlainPassword()
@@ -47,7 +49,7 @@ class LoginTest extends WebTestCase
         $this->client->loginUser($user);
 
         // Act
-        $this->client->request('GET', '/login');
+        $this->client->request(Request::METHOD_GET, '/login');
 
         // Assert
         $this->assertRouteSame('app_board_index');
@@ -59,7 +61,7 @@ class LoginTest extends WebTestCase
         $user = UserFactory::createOne(['plainPassword' => 'password']);
 
         // Act
-        $this->client->request('GET', '/');
+        $this->client->request(Request::METHOD_GET, '/');
         $crawler = $this->client->submitForm('Sign in', [
             '_login' => $user->getUsername(),
             '_password' => 'wrong password'
@@ -76,7 +78,7 @@ class LoginTest extends WebTestCase
         $user = UserFactory::createOne(['enabled' => false]);
 
         // Act
-        $this->client->request('GET', '/');
+        $this->client->request(Request::METHOD_GET, '/');
         $crawler = $this->client->submitForm('Sign in', [
             '_login' => $user->getUsername(),
             '_password' => $user->getPlainPassword()

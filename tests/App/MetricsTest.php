@@ -6,6 +6,7 @@ namespace App\Tests\App;
 
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
@@ -17,6 +18,7 @@ class MetricsTest extends WebTestCase
 
     private KernelBrowser $client;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->client = static::createClient();
@@ -29,7 +31,7 @@ class MetricsTest extends WebTestCase
         $_ENV['APP_ENABLE_METRICS'] = 1;
 
         // Act
-        $this->client->request('GET', '/metrics');
+        $this->client->request(Request::METHOD_GET, '/metrics');
 
         // Assert
         $this->assertResponseIsSuccessful();

@@ -8,6 +8,7 @@ use Rector\CodingStyle\Rector\Encapsed\EncapsedStringsToSprintfRector;
 use Rector\Config\RectorConfig;
 use Rector\Doctrine\CodeQuality\Rector\Property\ImproveDoctrineCollectionDocTypeInEntityRector;
 use Rector\Doctrine\Set\DoctrineSetList;
+use Rector\Php84\Rector\Param\ExplicitNullableParamTypeRector;
 use Rector\PHPUnit\Set\PHPUnitSetList;
 use Rector\Set\ValueObject\SetList;
 use Rector\Symfony\CodeQuality\Rector\Class_\EventListenerToEventSubscriberRector;
@@ -67,6 +68,8 @@ return static function (RectorConfig $rectorConfig): void {
         AddOverrideAttributeToOverriddenMethodsRector::class,
         AddTypeToConstRector::class,
 
+        // PHP 8.4
+        ExplicitNullableParamTypeRector::class,
 
         //Type declaration
         AddVoidReturnTypeWhereNoReturnRector::class,

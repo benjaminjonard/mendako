@@ -7,6 +7,7 @@ use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 
 final class PostFactory extends PersistentProxyObjectFactory
 {
+    #[\Override]
     protected function defaults(): array
     {
         return [
@@ -19,11 +20,13 @@ final class PostFactory extends PersistentProxyObjectFactory
         ];
     }
 
+    #[\Override]
     protected function initialize(): static
     {
         return $this;
     }
 
+    #[\Override]
     public static function class(): string
     {
         return Post::class;
