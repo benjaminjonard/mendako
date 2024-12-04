@@ -667,5 +667,17 @@
         <target>Post</target>
       </segment>
     </unit>
+    <unit id="Cs2h4Jr" name="label.php_version">
+      <segment state="translated">
+        <source>PHP version</source>
+        <target>PHP version</target>
+      </segment>
+    </unit>
+    <unit id="f5dsFMw" name="label.symfony_version">
+      <segment state="translated">
+        <source>Symfony version</source>
+        <target>Symfony version</target>
+      </segment>
+    </unit>
   </file>
 </xliff>

@@ -9,6 +9,7 @@ use App\Repository\PostRepository;
 use App\Service\DiskUsageCalculator;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -34,7 +35,9 @@ class AdminController extends AbstractController
             'infiniteScrollPostPerPage' => $infiniteScrollPostPerPage,
             'diskUsage' => $diskUsageCalculator->getFolderSize($uploadsPath) + $diskUsageCalculator->getFolderSize($uploadsPath),
             'posts' => $postRepository->count([]),
-            'boards' => $boardRepository->count([])
+            'boards' => $boardRepository->count([]),
+            'phpVersion' => phpversion(),
+            'symfonyVersion' => Kernel::VERSION,
         ]);
     }
 }
