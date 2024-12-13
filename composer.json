@@ -54,7 +54,7 @@
         "dama/doctrine-test-bundle": "8.2.0",
         "phpunit/php-code-coverage": "11.0.7",
         "phpunit/phpunit": "11.4.2",
-        "rector/rector": "1.2.8",
+        "rector/rector": "2.0.3",
         "symfony/debug-bundle": "7.2.0",
         "symfony/maker-bundle": "1.61.0",
         "symfony/stopwatch": "7.2.0",
