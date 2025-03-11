@@ -22,7 +22,7 @@
     <unit id="PjAj0XF" name="error.username.incorrect">
       <segment state="translated">
         <source>Username must have between 2 and 32 characters (only letters, numbers and underscores are allowed)</source>
-        <target>O nome de usuário deve conter entre 2 e 32 caracteres (apenas letras, números e sublinhados são permitidos)</target>
+        <target>O nome de usuário deve conter entre 2 e 32 caracteres (apenas letras, números e underline são permitidos)</target>
       </segment>
     </unit>
     <unit id="4Bdfyy1" name="error.password.incorrect">
