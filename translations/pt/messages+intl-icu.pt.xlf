@@ -667,5 +667,17 @@
         <target>Publicar</target>
       </segment>
     </unit>
+    <unit id="Cs2h4Jr" name="label.php_version">
+      <segment state="translated">
+        <source>PHP version</source>
+        <target>Versão PHP</target>
+      </segment>
+    </unit>
+    <unit id="f5dsFMw" name="label.symfony_version">
+      <segment state="translated">
+        <source>Symfony version</source>
+        <target>Versão Symfony</target>
+      </segment>
+    </unit>
   </file>
 </xliff>
