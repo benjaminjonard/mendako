@@ -649,5 +649,35 @@
         <target>コメント</target>
       </segment>
     </unit>
+    <unit id="CJm9OVi" name="menu.board">
+      <segment state="translated">
+        <source>Board</source>
+        <target>掲示板</target>
+      </segment>
+    </unit>
+    <unit id="0sdRJOC" name="menu.tag">
+      <segment state="translated">
+        <source>Tag</source>
+        <target>タグ</target>
+      </segment>
+    </unit>
+    <unit id="9yxbGqQ" name="menu.post">
+      <segment state="translated">
+        <source>Post</source>
+        <target>投稿</target>
+      </segment>
+    </unit>
+    <unit id="Cs2h4Jr" name="label.php_version">
+      <segment state="translated">
+        <source>PHP version</source>
+        <target>PHPバージョン</target>
+      </segment>
+    </unit>
+    <unit id="f5dsFMw" name="label.symfony_version">
+      <segment state="translated">
+        <source>Symfony version</source>
+        <target>Symfony バージョン</target>
+      </segment>
+    </unit>
   </file>
 </xliff>
