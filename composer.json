@@ -115,7 +115,7 @@
         "symfony": {
             "allow-contrib": false,
             "docker": false,
-            "require": "7.2.*"
+            "require": "7.3.*"
         },
         "runtime": {
             "class": "Runtime\\FrankenPhpSymfony\\Runtime"
