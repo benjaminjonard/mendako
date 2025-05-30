@@ -4,18 +4,22 @@ declare(strict_types=1);
 
 namespace App\Twig;
 
-use Twig\Extension\AbstractExtension;
-use Twig\TwigFilter;
+use Twig\Attribute\AsTwigFilter;
 
-class SortExtension extends AbstractExtension
+class SortExtension
 {
-    #[\Override]
-    public function getFilters(): array
+    #[AsTwigFilter('naturalSorting')]
+    public function naturalSorting(iterable $array): array
     {
-        return [
-            new TwigFilter('naturalSorting', static function (iterable $array) : array {
-                return (new SortRuntime())->naturalSorting($array);
-            })
-        ];
+        $array = \is_array($array) ? $array : $array->toArray();
+
+        $collator = collator_create('root');
+        $collator->setAttribute(\Collator::NUMERIC_COLLATION, \Collator::ON);
+
+        usort($array, static function ($a, $b) use ($collator) : bool|int {
+            return $collator->compare($a['name'], $b['name']);
+        });
+
+        return $array;
     }
 }

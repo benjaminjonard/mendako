@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Twig;
 
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Twig\Attribute\AsTwigFilter;
 use Twig\Extension\RuntimeExtensionInterface;
 
 class ThumbnailRuntime implements RuntimeExtensionInterface
@@ -13,6 +14,7 @@ class ThumbnailRuntime implements RuntimeExtensionInterface
         #[Autowire('%kernel.project_dir%/public')] private readonly string $publicPath
     ) {}
 
+    #[AsTwigFilter('thumbnail')]
     public function thumbnail(?string $path, int $width, bool $round = false): string
     {
         $fullImagePath = $this->publicPath . '/' . $path;
