@@ -49,7 +49,7 @@ class Uploader
                 ->setSize(filesize($absolutePath . $fileName))
             ;
 
-            if ($entity->getMimetype() === 'video/mp4' || $entity->getMimetype() === 'video/webm' || $entity->getMimetype() === 'image/gif') {
+            if ($entity->getMimetype() === 'video/mp4' || $entity->getMimetype() === 'video/webm' || $entity->getMimetype() === 'image/gif' || $entity->getMimetype() === 'video/x-m4v') {
                 $ffmpeg = FFMpeg::create();
                 $video = $ffmpeg->open($absolutePath . $fileName);
                 $stream = $video->getStreams()->videos()->first();

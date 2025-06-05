@@ -50,7 +50,7 @@
             {% endif %}
 
             <figure class="image-display" data-fullsize-target="image">
-                {% if post.mimeType == 'video/mp4' or post.mimeType == 'video/webm' %}
+                {% if post.mimeType == 'video/mp4' or post.mimeType == 'video/webm' or post.mimeType == 'video/x-m4v' %}
                     <video controls>
                         <source src="{{ asset(post.path) }}" type="video/mp4">
                     </video>

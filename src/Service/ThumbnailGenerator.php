@@ -21,7 +21,7 @@ class ThumbnailGenerator
             return true;
         }
 
-        if ($mime === 'video/mp4' || $mime === 'video/webm' || $mime === 'image/gif') {
+        if ($mime === 'video/mp4' || $mime === 'video/webm' || $mime === 'image/gif' || $mime === 'video/x-m4v') {
             $ffmpeg = FFMpeg::create();
             $video = $ffmpeg->open($path);
             $stream = $video->getStreams()->videos()->first();
@@ -46,7 +46,7 @@ class ThumbnailGenerator
             throw new \Exception('There was a problem while creating the thumbnail. Please try again!');
         }
 
-        if ($mime === 'video/mp4' || $mime === 'video/webm' || $mime === 'image/gif') {
+        if ($mime === 'video/mp4' || $mime === 'video/webm' || $mime === 'image/gif' || $mime === 'video/x-m4v') {
             $second = $video->getFormat()->get('duration') * 0.1;
             $video->frame(TimeCode::fromSeconds($second))->save($thumbnailPath);
         } else {

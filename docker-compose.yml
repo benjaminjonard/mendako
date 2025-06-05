@@ -24,6 +24,7 @@ services:
             - APP_THUMBNAILS_FORMAT=webp
             - POST_PER_PAGE=20
             - INFINITE_SCROLL_POST_PER_PAGE=50
+            - UPLOAD_MAX_FILESIZE=200M
         depends_on:
             - postgresql
         volumes:
