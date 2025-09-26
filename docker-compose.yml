@@ -33,7 +33,7 @@ services:
             - ./:/var/www/mendako
 
     postgresql:
-        image: postgres:17
+        image: postgres:18
         environment:
             - POSTGRES_DB=mendako
             - POSTGRES_USER=postgres
