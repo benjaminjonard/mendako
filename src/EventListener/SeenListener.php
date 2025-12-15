@@ -18,10 +18,10 @@ final readonly class SeenListener
 
     public function onKernelResponse(ResponseEvent $event): void
     {
-        $route = $event->getRequest()->get('_route');
+        $route = $event->getRequest()->attributes->get('_route');
 
         if ($route === 'app_post_show') {
-            $id = $event->getRequest()->get('id');
+            $id = $event->getRequest()->attributes->get('id');
             $sql = "UPDATE men_post SET seen_counter = seen_counter + 1 WHERE id = ?";
             $stmt = $this->managerRegistry->getManager()->getConnection()->prepare($sql);
             $stmt->bindValue(1, $id);

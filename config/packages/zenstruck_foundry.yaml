@@ -3,10 +3,12 @@ when@dev: &dev
         instantiator:
             use_constructor: true
         orm:
-            auto_persist: true
             reset:
                 connections: [ default ]
                 entity_managers: [ default ]
                 mode: migrate
+        persistence:
+            flush_once: true
+        enable_auto_refresh_with_lazy_objects: true
 
 when@test: *dev
