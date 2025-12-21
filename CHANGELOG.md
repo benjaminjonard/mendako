@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.3.1] / 2025-12-21
+### Miscellaneous
+- Upgrade PHP (Symfony 7.4) and JS dependencies (benjaminjonard)
+
 ## [1.3.0] / 2025-06-05
 ### Feature
 - Allow video/x-m4v mime type (benjaminjonard)
