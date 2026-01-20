@@ -32,7 +32,7 @@ class TagTest extends WebTestCase
     public function test_can_get_tag_list(): void
     {
         // Arrange
-        $user = UserFactory::createOne()->_real();
+        $user = UserFactory::createOne();
         $this->client->loginUser($user);
         TagFactory::createMany(3);
 
@@ -48,7 +48,7 @@ class TagTest extends WebTestCase
     public function test_can_edit_tag(): void
     {
         // Arrange
-        $user = UserFactory::createOne()->_real();
+        $user = UserFactory::createOne();
         $this->client->loginUser($user);
         $tag = TagFactory::createOne();
 
@@ -72,7 +72,7 @@ class TagTest extends WebTestCase
     public function test_can_delete_tag(): void
     {
         // Arrange
-        $user = UserFactory::createOne()->_real();
+        $user = UserFactory::createOne();
         $this->client->loginUser($user);
         $tag = TagFactory::createOne();
 
@@ -88,7 +88,7 @@ class TagTest extends WebTestCase
     public function test_can_get_tag_autocomplete(): void
     {
         // Arrange
-        $user = UserFactory::createOne()->_real();
+        $user = UserFactory::createOne();
         $this->client->loginUser($user);
         TagFactory::createOne(['name' => 'dog']);
         TagFactory::createOne(['name' => 'otter']);

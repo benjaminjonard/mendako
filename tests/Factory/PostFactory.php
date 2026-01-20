@@ -5,7 +5,10 @@ namespace App\Tests\Factory;
 use App\Entity\Post;
 use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 
-final class PostFactory extends PersistentProxyObjectFactory
+/**
+ * @extends \Zenstruck\Foundry\Persistence\PersistentObjectFactory<\App\Entity\Post>
+ */
+final class PostFactory extends \Zenstruck\Foundry\Persistence\PersistentObjectFactory
 {
     #[\Override]
     protected function defaults(): array

@@ -28,13 +28,13 @@ class LoginTest extends WebTestCase
     public function test_can_login(): void
     {
         // Arrange
-        $user = UserFactory::createOne()->_real();
+        $user = UserFactory::createOne(['plainPassword' => 'password']);
 
         // Act
         $this->client->request(Request::METHOD_GET, '/');
         $this->client->submitForm('Sign in', [
             '_login' => $user->getUsername(),
-            '_password' => $user->getPlainPassword()
+            '_password' => "password"
         ]);
 
         // Assert
@@ -45,7 +45,7 @@ class LoginTest extends WebTestCase
     public function test_user_redirected_if_already_logged_in(): void
     {
         // Arrange
-        $user = UserFactory::createOne()->_real();
+        $user = UserFactory::createOne();
         $this->client->loginUser($user);
 
         // Act

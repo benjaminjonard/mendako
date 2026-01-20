@@ -29,7 +29,7 @@ class AdminTest extends WebTestCase
     public function test_admin_can_access_administration(): void
     {
         // Arrange
-        $user = UserFactory::createOne(['roles' => ['ROLE_ADMIN']])->_real();
+        $user = UserFactory::createOne(['roles' => ['ROLE_ADMIN']]);
         $this->client->loginUser($user);
 
         // Act
@@ -42,7 +42,7 @@ class AdminTest extends WebTestCase
     public function test_user_cannot_access_administration(): void
     {
         // Arrange
-        $user = UserFactory::createOne(['roles' => ['ROLE_USER']])->_real();
+        $user = UserFactory::createOne(['roles' => ['ROLE_USER']]);
         $this->client->loginUser($user);
 
         // Act

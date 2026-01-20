@@ -99,11 +99,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \String
         [$this->id, $this->username, $this->password] = $data;
     }
 
-    #[\Override]
-    public function eraseCredentials(): void
-    {
-    }
-
     public function getUsername(): ?string
     {
         return $this->username;

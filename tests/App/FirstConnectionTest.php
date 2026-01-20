@@ -57,7 +57,7 @@ class FirstConnectionTest extends WebTestCase
     public function test_cant_redo_first_connection(): void
     {
         // Arrange
-        UserFactory::createOne()->_real();
+        UserFactory::createOne();
 
         // Act
         $this->client->request(Request::METHOD_GET, '/first-connection');

@@ -36,16 +36,16 @@ RUN apt-get update && \
     libpuzzle-dev \
     openssl \
     ffmpeg \
-    php8.4 \
-    php8.4-dev \
-    php8.4-pgsql \
-    php8.4-mysql \
-    php8.4-mbstring \
-    php8.4-gd \
-    php8.4-xml \
-    php8.4-zip \
-    php8.4-fpm \
-    php8.4-intl \
+    php8.5 \
+    php8.5-dev \
+    php8.5-pgsql \
+    php8.5-mysql \
+    php8.5-mbstring \
+    php8.5-gd \
+    php8.5-xml \
+    php8.5-zip \
+    php8.5-fpm \
+    php8.5-intl \
     nodejs && \
 #Install composer dependencies
     curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && \
@@ -84,7 +84,7 @@ RUN apt-get update && \
     rm -rf /var/www/mendako/assets/node_modules && \
     rm -rf /var/www/mendako/assets/.yarn/cache && \
     rm -rf /var/www/mendako/assets/.yarn/install-state.gz && \
-    apt-get purge -y wget lsb-release software-properties-common git nodejs apt-transport-https ca-certificates gnupg2 unzip php8.4-dev && \
+    apt-get purge -y wget lsb-release software-properties-common git nodejs apt-transport-https ca-certificates gnupg2 unzip php8.5-dev && \
     apt-get autoremove -y && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*

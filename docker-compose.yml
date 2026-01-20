@@ -28,12 +28,11 @@ services:
         depends_on:
             - postgresql
         volumes:
-            - "./docker/volumes/mendako/public/uploads:/app/public/public/uploads"
-            #- ./:/app/public
+            - "./docker/volumes/mendako/public/uploads:/var/www/mendako/public/uploads"
             - ./:/var/www/mendako
 
     postgresql:
-        image: postgres:18
+        image: postgres:16
         environment:
             - POSTGRES_DB=mendako
             - POSTGRES_USER=postgres

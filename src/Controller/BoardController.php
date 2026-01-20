@@ -13,6 +13,7 @@ use App\Repository\TagRepository;
 use App\Service\PaginatorFactory;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -62,7 +63,7 @@ class BoardController extends AbstractController
     #[Route(path: '/boards/{slug}', name: 'app_board_show', methods: ['GET', 'POST'])]
     public function show(
         Request $request,
-        Board $board,
+        #[MapEntity(mapping: ['slug' => 'slug'])] Board $board,
         PostRepository $postRepository,
         TagRepository $tagRepository,
         PaginatorFactory $paginatorFactory,
@@ -116,7 +117,7 @@ class BoardController extends AbstractController
     #[Route(path: '/boards/{slug}/edit', name: 'app_board_edit', methods: ['GET', 'POST'])]
     public function edit(
         Request $request,
-        Board $board,
+        #[MapEntity(mapping: ['slug' => 'slug'])] Board $board,
         TranslatorInterface $translator,
         ManagerRegistry $managerRegistry
     ): Response {
@@ -142,7 +143,7 @@ class BoardController extends AbstractController
         Request $request,
         TranslatorInterface $translator,
         ManagerRegistry $managerRegistry,
-        Board $board,
+        #[MapEntity(mapping: ['slug' => 'slug'])] Board $board,
         #[Autowire('%kernel.project_dir%/public/uploads/boards/')] string $boardsUploadsPath
     ): Response {
         $form = $this->createDeleteForm('app_board_delete', $board);

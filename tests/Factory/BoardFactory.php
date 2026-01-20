@@ -5,7 +5,10 @@ namespace App\Tests\Factory;
 use App\Entity\Board;
 use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 
-final class BoardFactory extends PersistentProxyObjectFactory
+/**
+ * @extends \Zenstruck\Foundry\Persistence\PersistentObjectFactory<\App\Entity\Board>
+ */
+final class BoardFactory extends \Zenstruck\Foundry\Persistence\PersistentObjectFactory
 {
     #[\Override]
     protected function defaults(): array
