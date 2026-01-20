@@ -60,13 +60,13 @@ RUN apt-get update && \
     yarn build && \
     yarn cache clean && \
 # Set permissions
-    sed -i "s/user = www-data/user = $USER/g" /etc/php/8.4/fpm/pool.d/www.conf && \
-    sed -i "s/group = www-data/group = $USER/g" /etc/php/8.4/fpm/pool.d/www.conf && \
+    sed -i "s/user = www-data/user = $USER/g" /etc/php/8.5/fpm/pool.d/www.conf && \
+    sed -i "s/group = www-data/group = $USER/g" /etc/php/8.5/fpm/pool.d/www.conf && \
     chown -R "$USER":"$USER" /var/www/mendako && \
     chmod +x /var/www/mendako/docker/entrypoint.sh && \
 # Add nginx and PHP config files
     cp /var/www/mendako/docker/default.conf /etc/nginx/nginx.conf && \
-    cp /var/www/mendako/docker/php.ini /etc/php/8.4/fpm/conf.d/php.ini && \
+    cp /var/www/mendako/docker/php.ini /etc/php/8.5/fpm/conf.d/php.ini && \
 # Build libpuzzle extension
     cd /tmp && \
     wget https://github.com/benjaminjonard/libpuzzle-php-extension-builder/archive/refs/heads/main.zip && \
@@ -77,8 +77,8 @@ RUN apt-get update && \
     make clean && \
     make && \
     make install && \
-    echo "extension=libpuzzle.so" >> /etc/php/8.4/fpm/php.ini && \
-    echo "extension=libpuzzle.so" >> /etc/php/8.4/cli/php.ini && \
+    echo "extension=libpuzzle.so" >> /etc/php/8.5/fpm/php.ini && \
+    echo "extension=libpuzzle.so" >> /etc/php/8.5/cli/php.ini && \
     rm -rf /tmp/libpuzzle-php-extension-builder-main && \
 # Clean up \
     rm -rf /var/www/mendako/assets/node_modules && \
