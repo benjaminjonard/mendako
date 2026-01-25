@@ -4,16 +4,9 @@ declare(strict_types=1);
 
 namespace App\EventListener;
 
-use App\Attribute\UploadAnnotationReader;
 use App\Entity\Post;
-use App\Service\AutomatedTagger;
-use App\Service\SimilarityChecker;
-use App\Service\Uploader;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Event\OnFlushEventArgs;
-use Doctrine\ORM\Event\PostLoadEventArgs;
-use Doctrine\ORM\Event\PostRemoveEventArgs;
-use Doctrine\ORM\Event\PrePersistEventArgs;
 use Doctrine\ORM\Events;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Filesystem\Filesystem;

@@ -30,7 +30,7 @@ class CommandTest extends KernelTestCase
         // Arrange
         $kernel = self::bootKernel();
         $application = new Application($kernel);
-        $command = $application->find('app:regenerate-signature-words');
+        $command = $application->find('app:regenerate-vectors');
         $commandTester = new CommandTester($command);
 
         $user = UserFactory::createOne();

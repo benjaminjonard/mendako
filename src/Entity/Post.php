@@ -55,11 +55,8 @@ class Post
     #[ORM\Column(type: Types::INTEGER)]
     private int $seenCounter = 0;
 
-    #[ORM\Column(type: Types::STRING, nullable: true)]
-    private ?string $signature = null;
-
-    #[ORM\OneToMany(targetEntity: PostSignatureWord::class, mappedBy: 'post', cascade: ['all'], fetch: 'EXTRA_LAZY')]
-    private Collection $signatureWords;
+    #[ORM\Column(type: 'vector', nullable: true, options: ['dimensions' => 271])]
+    private ?string $vector = null;
 
     #[ORM\ManyToOne(targetEntity: Board::class, inversedBy: 'posts')]
     #[Assert\NotBlank]
@@ -87,7 +84,6 @@ class Post
     {
         $this->id = Uuid::v7()->toRfc4122();
         $this->tags = new ArrayCollection();
-        $this->signatureWords = new ArrayCollection();
     }
 
     public function getId(): ?string
@@ -248,41 +244,6 @@ class Post
         return $this;
     }
 
-    public function getSignature(): ?string
-    {
-        return $this->signature;
-    }
-
-    public function setSignature(?string $signature): Post
-    {
-        $this->signature = $signature;
-
-        return $this;
-    }
-
-    public function getSignatureWords(): Collection
-    {
-        return $this->signatureWords;
-    }
-
-    public function addSignatureWord(?PostSignatureWord $signatureWord): Post
-    {
-        if (!$this->signatureWords->contains($signatureWord)) {
-            $this->signatureWords[] = $signatureWord;
-        }
-
-        return $this;
-    }
-
-    public function removeSignatureWord(PostSignatureWord $signatureWord): Post
-    {
-        if ($this->signatureWords->contains($signatureWord)) {
-            $this->signatureWords->removeElement($signatureWord);
-        }
-
-        return $this;
-    }
-
     public function hasSound(): bool
     {
         return $this->hasSound;
@@ -301,6 +262,18 @@ class Post
     public function setComment(?string $comment): Post
     {
         $this->comment = $comment;
+
+        return $this;
+    }
+
+    public function getVector(): ?string
+    {
+        return $this->vector;
+    }
+
+    public function setVector(?string $vector): Post
+    {
+        $this->vector = $vector;
 
         return $this;
     }

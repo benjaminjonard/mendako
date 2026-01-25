@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace App\Command;
 
 use App\Entity\Post;
-use App\Entity\PostSignatureWord;
-use App\Service\SimilarityChecker;
+use App\Service\PostVectorService;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -15,17 +14,15 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\File\File;
-use Symfony\Component\Uid\Uuid;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AsCommand(
-    name: 'app:regenerate-signature-words',
+    name: 'app:regenerate-vectors',
     description: 'Regenerate signature words for similarity checking'
 )]
 class RegenerateSignatureWordsCommand extends Command
 {
     public function __construct(
-        private readonly SimilarityChecker $similarityChecker,
+        private readonly PostVectorService $postVectorService,
         private readonly ManagerRegistry $managerRegistry,
         #[Autowire('%kernel.project_dir%/public')] private readonly string $publicPath
     ) {
@@ -37,10 +34,6 @@ class RegenerateSignatureWordsCommand extends Command
     {
         $connection = $this->managerRegistry->getConnection();
 
-        $output->writeln('Clearing existing signature words...');
-        $sql = "TRUNCATE men_post_signature_word;";
-        $connection->prepare($sql)->executeStatement();
-
         $output->writeln('Getting posts...');
         $results = $this->managerRegistry->getRepository(Post::class)->createQueryBuilder('p')
             ->select('p.id, p.path')
@@ -48,7 +41,7 @@ class RegenerateSignatureWordsCommand extends Command
             ->getArrayResult()
         ;
 
-        $output->writeln('Starting to regenerate signature words...');
+        $output->writeln('Starting to regenerate vectors...');
         $progressBar = new ProgressBar($output, \count($results));
         foreach ($results as $result) {
             $progressBar->advance();
@@ -60,23 +53,12 @@ class RegenerateSignatureWordsCommand extends Command
 
             $post = new Post();
             $post->setFile(new File($path));
-            $this->similarityChecker->generateSignature($post);
+            $vector = $this->postVectorService->generateVector($post->getFile());
 
             $postId = $result['id'];
-            $signature = $post->getSignature();
-            if ($signature === null) {
-                continue;
-            }
 
-            $sql = "UPDATE men_post SET signature = '{$signature}' WHERE id = '{$postId}';";
+            $sql = "UPDATE men_post SET vector = '{$vector}' WHERE id = '{$postId}';";
             $connection->prepare($sql)->executeStatement();
-
-            foreach ($post->getSignatureWords() as $word) {
-                $id = Uuid::v7()->toRfc4122();
-                $word = $word->getWord();
-                $sql = "INSERT INTO men_post_signature_word (id, post_id, word) VALUES ('{$id}', '{$postId}', '{$word}')";
-                $connection->prepare($sql)->executeStatement();
-            }
         }
 
         $output->writeln('Done!');

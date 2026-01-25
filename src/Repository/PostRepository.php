@@ -72,4 +72,34 @@ class PostRepository extends ServiceEntityRepository
 
         return $result === [] ? 0 : $result[0]['count'];
     }
+
+    public function findSimilarByVector(string $vector, float $maxDistance = 0.3, int $limit = 3): array {
+        $conn = $this->getEntityManager()->getConnection();
+
+        // Use L2 distance operator <->
+        // Lower distance = more similar
+        $sql = "
+            SELECT 
+                post.id,
+                post.path,
+                post.mimetype,
+                post.created_at AS created_at,
+                (1 - (post.vector <-> :vector)) * 100 as distance,
+                board.id AS board_id,
+                board.slug AS board_slug
+            FROM men_post post
+            LEFT JOIN men_board board ON post.board_id = board.id 
+            WHERE post.vector IS NOT NULL
+            AND post.vector <-> :vector < :max_distance
+            ORDER BY post.vector <-> :vector
+            LIMIT :limit
+        ";
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(':vector', $vector);
+        $stmt->bindValue(':max_distance', $maxDistance);
+        $stmt->bindValue(':limit', $limit);
+
+        return $stmt->executeQuery()->fetchAllAssociative();
+    }
 }

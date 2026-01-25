@@ -6,7 +6,6 @@ namespace App\EventListener;
 
 use App\Attribute\UploadAnnotationReader;
 use App\Service\AutomatedTagger;
-use App\Service\SimilarityChecker;
 use App\Service\Uploader;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Event\OnFlushEventArgs;

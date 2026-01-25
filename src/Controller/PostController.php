@@ -7,8 +7,9 @@ namespace App\Controller;
 use App\Entity\Board;
 use App\Entity\Post;
 use App\Form\Type\PostType;
+use App\Repository\PostRepository;
 use App\Repository\TagRepository;
-use App\Service\SimilarityChecker;
+use App\Service\PostVectorService;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -26,7 +27,7 @@ class PostController extends AbstractController
         TranslatorInterface $translator,
         ManagerRegistry $managerRegistry,
         TagRepository $tagRepository,
-        SimilarityChecker $similarityChecker,
+        PostVectorService $postVectorService,
         ?Board $board
     ): Response {
         $post = new Post();
@@ -35,9 +36,11 @@ class PostController extends AbstractController
         $form = $this->createForm(PostType::class, $post);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $similarityChecker->generateSignature($post);
+            $post
+                ->setUploadedBy($this->getUser())
+                ->setVector($postVectorService->generateVector($post->getFile()))
+            ;
 
-            $post->setUploadedBy($this->getUser());
             if ($form->get('setAsBoardThumbnail')->getData() === true) {
                 $post->getBoard()->setThumbnail($post);
             }
@@ -59,16 +62,18 @@ class PostController extends AbstractController
     }
 
     #[Route(path: '/check-similar', name: 'app_post_check_similar', methods: ['POST'])]
-    public function checkSimilar(Request $request, SimilarityChecker $similarityChecker): JsonResponse
+    public function checkSimilar(Request $request, PostVectorService $postVectorService, PostRepository $postRepository): JsonResponse
     {
         $post = new Post();
         $post->setFile($request->files->get('file'));
 
-        $similarityChecker->generateSignature($post);
+        $vector = $postVectorService->generateVector($post->getFile());
         $similarPosts = [];
 
-        foreach ($similarityChecker->hasSimilarities($post) as $similarPost) {
-            $similarPosts[] = $this->renderView('App/Post/_similar.html.twig', ['post' => $similarPost['post'], 'strength' => $similarPost['strength']]);
+        foreach ($postRepository->findSimilarByVector($vector) as $similarPost) {
+            $similarPosts[] = $this->renderView('App/Post/_similar.html.twig', [
+                'post' => $similarPost
+            ]);
         }
 
         return $this->json($similarPosts);
@@ -93,14 +98,17 @@ class PostController extends AbstractController
         TranslatorInterface $translator,
         TagRepository $tagRepository,
         ManagerRegistry $managerRegistry,
-        SimilarityChecker $similarityChecker,
+        PostVectorService $postVectorService,
         #[MapEntity(mapping: ['slug' => 'slug'])] Board $board,
         Post $post
     ): Response {
         $form = $this->createForm(PostType::class, $post);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $similarityChecker->generateSignature($post);
+            $post
+                ->setUploadedBy($this->getUser())
+                ->setVector($postVectorService->generateVector($post->getFile()))
+            ;
 
             if ($form->get('setAsBoardThumbnail')->getData() === true) {
                 $board->setThumbnail($post);

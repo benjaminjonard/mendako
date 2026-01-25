@@ -15,7 +15,7 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
-    App\Service\SimilarityChecker:
+    App\Service\PostVectorService:
         public: true
 
     Doctrine\Migrations\Version\DbalMigrationFactory: ~

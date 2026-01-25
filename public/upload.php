@@ -33,6 +33,7 @@ $dirname = str_replace('uploads', 'thumbnails', $info['dirname']);
 $filename = $info['filename'];
 $fullThumbnailPath = __DIR__ . "/{$dirname}/{$filename}_{$width}.{$thumbnailsFormat}";
 
+
 if (!\file_exists($fullThumbnailPath)) {
     try {
         $thumbnailGenerator = new ThumbnailGenerator();

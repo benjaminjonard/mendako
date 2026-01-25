@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "22236f631a721ffd832185be46bd12e7",
+    "content-hash": "80c96662ef326ec624399cfe571ec78b",
     "packages": [
         {
             "name": "contao/imagine-svg",
@@ -9998,7 +9998,7 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=8.4",
+        "php": ">=8.5",
         "ext-ctype": "*",
         "ext-fileinfo": "*",
         "ext-gd": "*",
