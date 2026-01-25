@@ -280,8 +280,9 @@ class PostVectorService
         $path = $file->getRealPath();
         $thumbnailPath = '/tmp/' . $file->getFilename() .  '_600.jpeg';
         $this->thumbnailGenerator->generate($path, $thumbnailPath, 600, 'jpeg');
+        $image = @imagecreatefromjpeg($thumbnailPath);
 
-        return @imagecreatefromjpeg($thumbnailPath);
+        return $image instanceof \GdImage ? $image : null;
     }
 
     private function rgbToGray(int $rgb): int

@@ -51,7 +51,10 @@ final class Version20260125155325 extends AbstractMigration
             $file = new File($publicPath . '/' . $result['path']);
             $vector = $postVectorService->generateVector($file);
             $postId = $result['id'];
-            $this->addSql("UPDATE men_post SET vector = '$vector' WHERE id = '$postId'");
+
+            if ($vector) {
+                $this->addSql("UPDATE men_post SET vector = '$vector' WHERE id = '$postId'");
+            }
         }
     }
 
