@@ -679,5 +679,11 @@
         <target>Symfony version</target>
       </segment>
     </unit>
+    <unit id="W4WEASu" name="label.frankenphp_version">
+      <segment state="translated">
+        <source>FrankenPHP version</source>
+        <target>FrankenPHP version</target>
+      </segment>
+    </unit>
   </file>
 </xliff>

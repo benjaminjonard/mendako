@@ -28,7 +28,7 @@ class PostController extends AbstractController
         ManagerRegistry $managerRegistry,
         TagRepository $tagRepository,
         PostVectorService $postVectorService,
-        ?Board $board
+        #[MapEntity(mapping: ['slug' => 'slug'])] ?Board $board
     ): Response {
         $post = new Post();
         $post->setBoard($board);

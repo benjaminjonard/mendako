@@ -1,10 +1,10 @@
-name: Build beta image for Docker Hub
+name: Build beta image using Frankenphp for Docker Hub
 on:
   workflow_dispatch:
 
 jobs:
   push_beta_image:
-    name: Build beta image for Docker Hub
+    name: Build beta image using Frankenphp for Docker Hub
     runs-on: ubuntu-latest
 
     steps:
@@ -30,7 +30,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          file: Dockerfile
+          file: Dockerfile.frankenphp
           push: true
           tags: ${{ secrets.BETA_REPO_URL }}:mendako
           platforms: linux/amd64,linux/arm64

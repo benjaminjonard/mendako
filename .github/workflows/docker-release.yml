@@ -1,4 +1,4 @@
-name: Build release image for Docker Hub
+name: Build release image using Frankenphp for Docker Hub
 on:
   workflow_dispatch:
   release:
@@ -6,7 +6,7 @@ on:
 
 jobs:
   push_release_image:
-    name: Build release image for Docker Hub
+    name: Build release image using Frankenphp for Docker Hub
     runs-on: ubuntu-latest
 
     steps:
@@ -32,7 +32,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          file: Dockerfile
+          file: Dockerfile.frankenphp
           push: true
-          tags: docker.io/benjaminjonard/mendako:latest,docker.io/benjaminjonard/mendako:1.4.0
+          tags: docker.io/mendako/mendako,docker.io/mendako/mendako:latest,docker.io/mendako/mendako:1.4.0
           platforms: linux/amd64,linux/arm64

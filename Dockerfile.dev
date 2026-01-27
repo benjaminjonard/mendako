@@ -1,23 +1,23 @@
-FROM ubuntu:noble
-
-ARG DEBIAN_FRONTEND=noninteractive
+FROM dunglas/frankenphp:php8.5
 
 # Environment variables
-ENV APP_ENV='prod'
-ENV PUID='1001'
-ENV PGID='1001'
-ENV USER='mendako'
+ENV APP_ENV=prod
+ENV PUID=1000
+ENV PGID=1000
+ENV USER=mendako
+ENV FRANKENPHP_CONFIG="worker /app/public/public/index.php"
+ENV FRANKENPHP_SERVER_NAME=":80"
+ENV APP_RUNTIME="Symfony\\Component\\Runtime\\SymfonyRuntime"
+ENV COMPOSER_ALLOW_SUPERUSER=1
 
-COPY ./docker/entrypoint-dev.sh /entrypoint.sh
+COPY ./docker/Caddyfile-dev /etc/caddy/Caddyfile
 
 # Install some basics dependencies
 RUN apt-get update && \
-    apt-get install -y curl wget lsb-release software-properties-common gnupg2 && \
+    apt-get install -y curl wget ffmpeg gnupg2 && \
 # Add User and Group
     addgroup --gid "$PGID" "$USER" && \
     adduser --gecos '' --no-create-home --disabled-password --uid "$PUID" --gid "$PGID" "$USER" && \
-# PHP
-    add-apt-repository ppa:ondrej/php && \
 # Nodejs
     curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg && \
     NODE_MAJOR=21 && \
@@ -26,43 +26,25 @@ RUN apt-get update && \
     apt-get update && \
     apt-get install -y \
     ca-certificates \
-    apt-transport-https \
-    gnupg2 \
+    nodejs \
     git \
-    unzip \
-    nginx-light \
-    openssl \
     ffmpeg \
-    php8.5 \
-    php8.5-dev \
-    php8.5-pgsql \
-    php8.5-mysql \
-    php8.5-mbstring \
-    php8.5-gd \
-    php8.5-xml \
-    php8.5-zip \
-    php8.5-fpm \
-    php8.5-intl \
-    nodejs && \
-    corepack enable && \
+    unzip \
+    openssl && \
+# Install PHP extensions
+    install-php-extensions opcache pdo_pgsql intl gd zip curl ; \
 #Install composer dependencies
     curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && \
-# Set permissions \
-    chmod +x /entrypoint.sh && \
-    apt remove php8.5-dev -y
-
-# Add nginx and PHP config files
-COPY ./docker/default.conf /etc/nginx/nginx.conf
+# Install javascript dependencies and build assets
+    corepack enable && \
+# Add PHP config files
+    mkdir /run/php
 
 EXPOSE 80
+EXPOSE 443
 
-WORKDIR /var/www/mendako
-
-VOLUME /uploads
-VOLUME /thumbnails
+WORKDIR /app/public
 
 HEALTHCHECK CMD curl --fail http://localhost:80/ || exit 1
 
-ENTRYPOINT ["sh", "/entrypoint.sh" ]
-
-CMD [ "nginx" ]
+ENTRYPOINT ["sh", "/app/public/docker/entrypoint-dev.sh" ]

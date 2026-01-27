@@ -27,6 +27,8 @@ final class Version20260125155325 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
+        ini_set('memory_limit', '-1');
+
         $this->skipIf(!$this->connection->getDatabasePlatform() instanceof PostgreSQLPlatform, 'Migration can only be executed safely on \'postgresql\'.');
 
         $this->addSql('CREATE EXTENSION IF NOT EXISTS vector');

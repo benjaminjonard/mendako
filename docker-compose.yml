@@ -1,6 +1,4 @@
 #This docker-compose file is provided for dev purposes
-version: '3.4'
-
 services:
     mendako:
         container_name: mendako
@@ -28,8 +26,9 @@ services:
         depends_on:
             - postgresql
         volumes:
-            - "./docker/volumes/mendako/public/uploads:/var/www/mendako/public/uploads"
-            - ./:/var/www/mendako
+            - "./docker/volumes/mendako/public/uploads:/uploads"
+            - "./docker/volumes/mendako/public/thumbnails:/thumbnails"
+            - ./:/app/public
 
     postgresql:
         image: pgvector/pgvector:pg16

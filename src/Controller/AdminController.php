@@ -38,6 +38,7 @@ class AdminController extends AbstractController
             'boards' => $boardRepository->count([]),
             'phpVersion' => phpversion(),
             'symfonyVersion' => Kernel::VERSION,
+            'frankenPhpVersion' => \extension_loaded('frankenphp') ? str_replace('v', '', phpversion('frankenphp')) : null
         ]);
     }
 }
