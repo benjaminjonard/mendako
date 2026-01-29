@@ -81,7 +81,7 @@ jobs:
         postgres: [ 15, 16, 17 ]
     services:
       postgres:
-        image: postgres:${{ matrix.postgres }}
+        image: pgvector/pgvector:pg${{ matrix.postgres }}
         env:
           POSTGRES_PASSWORD: root
         ports:
