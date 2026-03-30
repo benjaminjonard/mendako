@@ -24,7 +24,7 @@ jobs:
           outputs: type=docker,dest=/tmp/ci-container.tar
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: ci-container
           path: /tmp/ci-container.tar
@@ -57,7 +57,7 @@ jobs:
     needs: [ build_docker_ci_container ]
     steps:
       - name: Download artifact
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: ci-container
           path: /tmp
@@ -81,7 +81,7 @@ jobs:
         postgres: [ 15, 16, 17 ]
     steps:
       - name: Download artifact
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: ci-container
           path: /tmp
