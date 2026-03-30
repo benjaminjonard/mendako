@@ -52,7 +52,7 @@
         "brianium/paratest": "7.16.1",
         "dama/doctrine-test-bundle": "8.5.0",
         "phpunit/php-code-coverage": "12.5.2",
-        "phpunit/phpunit": "12.5.8",
+        "phpunit/phpunit": "13.0.5",
         "rector/rector": "2.3.2",
         "symfony/debug-bundle": "8.0.0",
         "symfony/maker-bundle": "1.65.1",
