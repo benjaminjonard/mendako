@@ -105,7 +105,7 @@ jobs:
         uses: addnab/docker-run-action@v3
         with:
           image: ci-image
-          options: --network test-network
+          options: --network test-network -e APP_ENV=test
           run: |
             sed -i "s|APP_ENV=.*|APP_ENV=test|i" ".env"
             sed -i "s|APP_DEBUG=.*|APP_DEBUG=1|i" ".env"
