@@ -79,14 +79,6 @@ jobs:
     strategy:
       matrix:
         postgres: [ 15, 16, 17 ]
-    services:
-      postgres:
-        image: pgvector/pgvector:pg${{ matrix.postgres }}
-        env:
-          POSTGRES_PASSWORD: root
-        ports:
-          - 5432:5432
-        options: --health-cmd pg_isready --health-interval=10s --health-timeout=5s --health-retries=5
     steps:
       - name: Download artifact
         uses: actions/download-artifact@v7
@@ -97,22 +89,33 @@ jobs:
       - name: Load image
         run: docker load --input /tmp/ci-container.tar
 
+      - name: Create Docker network
+        run: docker network create test-network
+
+      - name: Start PostgreSQL with pgvector
+        run: |
+          docker run -d --name postgres --network test-network \
+            -e POSTGRES_PASSWORD=root \
+            pgvector/pgvector:pg${{ matrix.postgres }}
+
+      - name: Wait for PostgreSQL to be ready
+        run: timeout 60 bash -c 'until docker exec postgres pg_isready -U postgres; do sleep 2; done'
+
       - name: Run tests
         uses: addnab/docker-run-action@v3
         with:
           image: ci-image
-          options: |
-            --add-host=host.docker.internal:host-gateway
+          options: --network test-network
           run: |
             sed -i "s|APP_ENV=.*|APP_ENV=test|i" ".env"
             sed -i "s|APP_DEBUG=.*|APP_DEBUG=1|i" ".env"
             sed -i "s|APP_SECRET=.*|APP_SECRET=aRandomSecret|i" ".env"
             sed -i "s|DB_NAME=.*|DB_NAME=mendako|i" ".env"
-            sed -i "s|DB_HOST=.*|DB_HOST=host.docker.internal|i" ".env"
+            sed -i "s|DB_HOST=.*|DB_HOST=postgres|i" ".env"
             sed -i "s|DB_PORT=.*|DB_PORT=5432|i" ".env"
             sed -i "s|DB_USER=.*|DB_USER=postgres|i" ".env"
             sed -i "s|DB_PASSWORD=.*|DB_PASSWORD=root|i" ".env"
-            sed -i "s|DB_VERSION=.*|DB_VERSION=${{ matrix.postgres }}|i" ".env"            
+            sed -i "s|DB_VERSION=.*|DB_VERSION=${{ matrix.postgres }}|i" ".env"
             bin/console doctrine:database:create --env=test
-            bin/console doctrine:migration:migrate --no-interaction --allow-no-migration --env=test            
+            bin/console doctrine:migration:migrate --no-interaction --allow-no-migration --env=test
             php ./vendor/bin/paratest --runner=WrapperRunner
