@@ -51,7 +51,7 @@
     "require-dev": {
         "brianium/paratest": "7.20.0",
         "dama/doctrine-test-bundle": "8.6.0",
-        "phpunit/php-code-coverage": "12.5.3",
+        "phpunit/php-code-coverage": "14.1.8",
         "phpunit/phpunit": "12.5.14",
         "rector/rector": "2.3.9",
         "symfony/debug-bundle": "8.0.7",
