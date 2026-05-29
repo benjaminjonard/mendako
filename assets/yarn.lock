@@ -1818,7 +1818,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"browserslist@npm:^4.0.0, browserslist@npm:^4.24.0, browserslist@npm:^4.28.1":
+"browserslist@npm:^4.0.0, browserslist@npm:^4.24.0, browserslist@npm:^4.28.1, browserslist@npm:^4.28.2":
   version: 4.28.2
   resolution: "browserslist@npm:4.28.2"
   dependencies:
@@ -3083,14 +3083,14 @@ __metadata:
   linkType: hard
 
 "postcss-convert-values@npm:^7.0.9":
-  version: 7.0.9
-  resolution: "postcss-convert-values@npm:7.0.9"
+  version: 7.0.12
+  resolution: "postcss-convert-values@npm:7.0.12"
   dependencies:
-    browserslist: "npm:^4.28.1"
+    browserslist: "npm:^4.28.2"
     postcss-value-parser: "npm:^4.2.0"
   peerDependencies:
-    postcss: ^8.4.32
-  checksum: 10/656fb2270cedbaea3f8979e40a480a7ea436c040e37a87e13dc143a4f462469d6feb84489a22a525a5674e9eb8a793393e57754f0242b91ae40dfd45997f2e8b
+    postcss: ^8.5.13
+  checksum: 10/c32c4bd56d53b313b3d9b73fc5efffb29912123a0905f68dba66ab18e65ac668deddb2fd9e6eeaaf65b710ba603d79fea01cf9b177b84f51d7966108634387a6
   languageName: node
   linkType: hard
 
