@@ -31,7 +31,7 @@
         "symfony/expression-language": "8.0.8",
         "symfony/flex": "2.10.0",
         "symfony/form": "8.0.9",
-        "symfony/framework-bundle": "8.0.11",
+        "symfony/framework-bundle": "8.0.13",
         "symfony/mime": "8.0.13",
         "symfony/monolog-bundle": "4.0.2",
         "symfony/routing": "8.0.13",
