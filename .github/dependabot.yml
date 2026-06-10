@@ -5,27 +5,20 @@ updates:
     schedule:
       interval: "daily"
     groups:
-        symfony:
-          patterns:
-            - "symfony/*"
-        doctrine:
-          patterns:
-            - "doctrine/*"
-        twig:
-          patterns:
-            - "twig/*"
-        php-testing:
-          patterns:
-            - "phpunit/*"
-            - "brianium/paratest"
-            - "dama/doctrine-test-bundle"
-            - "zenstruck/foundry"
-        composer-misc:
-          patterns:
-            - "*"
-          update-types:
-            - "minor"
-            - "patch"
+      symfony-major:
+        patterns:
+          - "symfony/*"
+        update-types:
+          - "major"
+      twig-major:
+        patterns:
+          - "twig/*"
+        update-types:
+          - "major"
+      composer-non-major:
+        update-types:
+          - "minor"
+          - "patch"
 
   - package-ecosystem: "npm"
     directory: "/assets"
