@@ -14,7 +14,7 @@
         "ext-iconv": "*",
         "ext-intl": "*",
         "contao/imagine-svg": "^1.0",
-        "doctrine/doctrine-bundle": "3.2.2",
+        "doctrine/doctrine-bundle": "3.2.4",
         "doctrine/doctrine-migrations-bundle": "4.0.0",
         "doctrine/orm": "3.6.7",
         "gedmo/doctrine-extensions": "3.22.0",
