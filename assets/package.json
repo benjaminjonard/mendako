@@ -16,8 +16,8 @@
         "copy-webpack-plugin": "14.0.0",
         "core-js": "3.49.0",
         "regenerator-runtime": "0.14.1",
-        "webpack": "5.107.2",
-        "webpack-cli": "7.0.3",
+        "webpack": "5.108.1",
+        "webpack-cli": "7.1.0",
         "webpack-notifier": "1.15.0"
     },
     "dependencies": {
