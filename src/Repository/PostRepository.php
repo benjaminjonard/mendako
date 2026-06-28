@@ -6,7 +6,10 @@ namespace App\Repository;
 
 use App\Entity\Board;
 use App\Entity\Post;
+use App\Entity\Tag;
+use App\Enum\TagCategory;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\Persistence\ManagerRegistry;
 
 class PostRepository extends ServiceEntityRepository
@@ -14,6 +17,34 @@ class PostRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Post::class);
+    }
+
+    /**
+     * Returns posts that have no "real" tag, i.e. no tag whose category is anything other than meta.
+     * A post tagged only with meta tags (audio, video, animated, ...) — or with no tag at all — counts as untagged.
+     *
+     * @return Post[]
+     */
+    public function findWithoutTags(): array
+    {
+        $realTagQuery = $this->getEntityManager()
+            ->createQueryBuilder()
+            ->select('1')
+            ->from(Tag::class, 'realTag')
+            ->join('realTag.posts', 'taggedPost')
+            ->where('taggedPost = post')
+            ->andWhere('realTag.category IS NULL OR realTag.category != :metaCategory')
+            ->getDQL()
+        ;
+
+        return $this
+            ->createQueryBuilder('post')
+            ->where(sprintf('NOT EXISTS (%s)', $realTagQuery))
+            ->orderBy('post.createdAt', Criteria::DESC)
+            ->setParameter('metaCategory', TagCategory::META->value)
+            ->getQuery()
+            ->getResult()
+        ;
     }
 
     public function filterByTags(Board $board, string $tags, $page, int $postPerPage): array

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Attribute\Upload;
-use App\Entity\Post;
+use App\Entity\UploadableInterface;
 use Contao\ImagineSvg\Imagine;
 use FFMpeg\FFMpeg;
 use FFMpeg\FFProbe\DataMapping\Stream;
@@ -27,11 +27,11 @@ class Uploader
         $this->accessor = PropertyAccess::createPropertyAccessor();
     }
 
-    public function upload(Post $entity, string $property, Upload $attribute): void
+    public function upload(UploadableInterface $entity, string $property, Upload $attribute): void
     {
         $file = $this->accessor->getValue($entity, $property);
         if ($file instanceof UploadedFile) {
-            $relativePath = 'uploads/boards/' . $entity->getBoard()->getId() . '/';
+            $relativePath = $entity->getUploadRelativeDirectory() . '/';
             $absolutePath = $this->publicPath . '/' . $relativePath;
 
             if (!is_dir($absolutePath) && !mkdir($absolutePath, recursive: true) && !is_dir($absolutePath)) {

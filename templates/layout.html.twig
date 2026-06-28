@@ -30,6 +30,7 @@
                 <span class="navbar-item is-hidden-mobile">|</span>
                 <a class="navbar-item" href="{{ path('app_board_index') }}">{{ 'menu.boards'|trans }}</a>
                 <a class="navbar-item" href="{{ path('app_tag_index') }}">{{ 'menu.tags'|trans }}</a>
+                <a class="navbar-item" href="{{ path('app_staged_index') }}">{{ 'menu.staging'|trans }}</a>
                 <a class="navbar-item" href="{{ path('app_profile_index') }}">{{ 'menu.profile'|trans }}</a>
                 {% if is_granted('ROLE_ADMIN') %}
                     <a class="navbar-item" href="{{ path('app_admin_index') }}">{{ 'menu.admin'|trans }}</a>

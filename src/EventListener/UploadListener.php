@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\EventListener;
 
 use App\Attribute\UploadAnnotationReader;
+use App\Entity\Post;
 use App\Service\AutomatedTagger;
 use App\Service\Uploader;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
@@ -32,7 +33,9 @@ final readonly class UploadListener
         $entity = $args->getObject();
         foreach ($this->reader->getUploadFields($entity) as $property => $attribute) {
             $this->uploader->upload($entity, $property, $attribute);
-            $this->automatedTagger->tag($entity);
+            if ($entity instanceof Post) {
+                $this->automatedTagger->tag($entity);
+            }
         }
     }
 
@@ -44,7 +47,9 @@ final readonly class UploadListener
         foreach ($uow->getScheduledEntityUpdates() as $entity) {
             foreach ($this->reader->getUploadFields($entity) as $property => $attribute) {
                 $this->uploader->upload($entity, $property, $attribute);
-                $this->automatedTagger->tag($entity);
+                if ($entity instanceof Post) {
+                    $this->automatedTagger->tag($entity);
+                }
                 $uow->recomputeSingleEntityChangeSet($em->getClassMetadata($entity::class), $entity);
             }
         }

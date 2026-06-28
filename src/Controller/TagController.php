@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Entity\Post;
 use App\Entity\Tag;
+use App\Form\DataTransformer\StringToTagTransformer;
 use App\Form\Type\TagType;
+use App\Repository\PostRepository;
 use App\Repository\TagRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
@@ -40,6 +43,38 @@ class TagController extends AbstractController
         }, $tagRepository->findLike($query));
 
         return $this->json($tags);
+    }
+
+    #[Route(path: '/tags/untagged', name: 'app_tag_untagged', methods: ['GET'])]
+    public function untagged(PostRepository $postRepository): Response
+    {
+        return $this->render('App/Tag/untagged.html.twig', [
+            'posts' => $postRepository->findWithoutTags(),
+        ]);
+    }
+
+    #[Route(path: '/tags/untagged/{id}', name: 'app_tag_untagged_add', methods: ['POST'])]
+    public function untaggedAdd(
+        Request $request,
+        TranslatorInterface $translator,
+        ManagerRegistry $managerRegistry,
+        StringToTagTransformer $stringToTagTransformer,
+        Post $post,
+    ): Response {
+        if (!$this->isCsrfTokenValid('untag_post', (string) $request->request->get('_token'))) {
+            return $this->redirectToRoute('app_tag_untagged');
+        }
+
+        foreach ($stringToTagTransformer->reverseTransform((string) $request->request->get('tags')) as $tag) {
+            $post->addTag($tag);
+        }
+
+        $managerRegistry->getManager()->persist($post);
+        $managerRegistry->getManager()->flush();
+
+        $this->addFlash('notice', $translator->trans('message.post_edited'));
+
+        return $this->redirectToRoute('app_tag_untagged');
     }
 
     #[Route(path: '/tags/{id}/edit', name: 'app_tag_edit', methods: ['GET', 'POST'])]

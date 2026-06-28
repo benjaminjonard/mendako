@@ -1,0 +1,42 @@
+<figure class="image staged-card" data-bulk-upload-target="card" data-staged-id="{{ stagedUpload.id }}">
+    <label class="checkbox staged-card-select">
+        <input type="checkbox" data-action="change->bulk-upload#toggleSelection">
+    </label>
+
+    {% if stagedUpload.isDuplicate %}
+        <button type="button" class="staged-card-duplicate"
+                title="{{ 'staging.duplicate'|trans }}" aria-label="{{ 'staging.duplicate'|trans }}"
+                data-action="bulk-upload#showDuplicates"
+                data-similar-url="{{ path('app_staged_similar', {id: stagedUpload.id}) }}">⚠</button>
+    {% endif %}
+
+    <div class="staged-card-media"
+         data-action="click->bulk-upload#openViewer"
+         data-media-src="{{ asset(stagedUpload.path) }}"
+         data-media-mimetype="{{ stagedUpload.mimetype }}"
+    >
+        {% if stagedUpload.duration is not null %}
+            <span class="tag is-dark has-text-weight-medium">
+                {{ stagedUpload.duration|minutes }}
+                {% if stagedUpload.hasSound %}
+                    &nbsp;🕩
+                {% endif %}
+            </span>
+        {% endif %}
+
+        {% if stagedUpload.mimetype == 'image/svg+xml' %}
+            <img src="{{ asset(stagedUpload.path) }}">
+        {% else %}
+            <img src="{{ asset(stagedUpload.path|thumbnail(360)) }}">
+        {% endif %}
+    </div>
+
+    <div class="staged-card-actions buttons">
+        <button type="button" class="button is-small is-primary" data-action="bulk-upload#assignOne" data-staged-id="{{ stagedUpload.id }}">
+            {{ 'staging.assign'|trans }}
+        </button>
+        <button type="button" class="button is-small is-danger" data-action="bulk-upload#deleteOne" data-staged-id="{{ stagedUpload.id }}">
+            {{ 'btn.delete'|trans }}
+        </button>
+    </div>
+</figure>

@@ -312,6 +312,217 @@ html.loading:before {
     display: contents;
 }
 
+/* ---------- Bulk upload / staging ---------- */
+.staging-dropzone {
+  border: 2px dashed #b5b5b5;
+  border-radius: 6px;
+  padding: 40px 20px;
+  text-align: center;
+  color: #7a7a7a;
+  cursor: pointer;
+  max-width: 600px;
+  margin: 0 auto 20px;
+  transition: border-color 0.15s, background-color 0.15s;
+}
+
+.staging-dropzone.is-dragover {
+  border-color: #485fc7;
+  background-color: rgba(72, 95, 199, 0.06);
+}
+
+.staging-bulk-bar {
+  position: sticky;
+  top: 3.25rem; /* sits just below the fixed navbar */
+  z-index: 20;
+  background-color: #fff;
+  padding: 10px 0;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+/* Fixed-size square container so the checkbox/buttons/duplicate icon are always at
+   the same spot regardless of the image. The image keeps its natural aspect ratio,
+   centered inside the square (no distortion). Transparent background = the page
+   background shows around the image, in any theme. */
+.grid-posts figure.staged-card {
+  position: relative;
+  width: 100%;
+  max-width: 180px;
+  max-height: none;
+  aspect-ratio: 1 / 1;
+  height: auto;
+  margin: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+}
+
+@media(max-width: 450px) {
+  .grid-posts figure.staged-card {
+    max-width: 150px;
+  }
+}
+
+.staged-card-media {
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.staged-card-media img {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  margin: 0;
+}
+
+/* Duration tag bottom-left so it never collides with the checkbox (top-left). */
+.staged-card .tag {
+  top: auto;
+  bottom: 4px;
+  left: 4px;
+  z-index: 2;
+}
+
+.staged-card-select {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  z-index: 3;
+}
+
+.staged-card-select input[type="checkbox"] {
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+}
+
+.staged-card-duplicate {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  z-index: 3;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  border-radius: 50%;
+  background: #ffe08a;
+  color: #946c00;
+  font-size: 15px;
+  line-height: 1;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.staged-card-actions {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 3;
+  justify-content: center;
+  gap: 10px;
+  padding: 6px;
+  margin: 0;
+  background: rgba(0, 0, 0, 0.45);
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.staged-card-actions .button {
+  margin: 0;
+}
+
+.staged-card:hover .staged-card-actions {
+  opacity: 1;
+}
+
+.staged-viewer .modal-content {
+  width: auto;
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.staged-viewer .modal-content > img,
+.staged-viewer .modal-content > video {
+  max-width: 90vw;
+  max-height: 90vh;
+  object-fit: contain;
+}
+
+.staged-viewer .modal-content .staged-duplicates {
+  width: 90vw;
+  max-width: 900px;
+  background-color: #fff;
+  padding: 1rem;
+  border-radius: 6px;
+}
+
+.staging-progress-counter {
+  font-weight: 600;
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto 8px;
+}
+
+.staging-progress {
+  max-width: 600px;
+  margin: 0 auto 20px;
+}
+
+.staging-progress:empty {
+  display: none;
+}
+
+.staging-progress-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 12px;
+  border: 1px solid #ededed;
+  border-left-width: 4px;
+  border-radius: 4px;
+  margin-bottom: 4px;
+  font-size: 0.9rem;
+}
+
+.staging-progress-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.staging-progress-status {
+  flex: 0 0 auto;
+  color: #7a7a7a;
+}
+
+.staging-progress-item[data-state="uploading"] {
+  border-left-color: #485fc7;
+}
+
+.staging-progress-item[data-state="error"] {
+  border-left-color: #f14668;
+}
+
+.staging-progress-item[data-state="error"] .staging-progress-status {
+  color: #f14668;
+}
+
 .left-block {
   position: sticky;
   display: inline-block;

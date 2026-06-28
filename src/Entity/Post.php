@@ -18,7 +18,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: PostRepository::class)]
 #[ORM\Table(name: 'men_post')]
-class Post
+class Post implements UploadableInterface
 {
     #[ORM\Id]
     #[ORM\Column(type: Types::STRING, length: 36, unique: true, options: ['fixed' => true])]
@@ -176,6 +176,11 @@ class Post
         $this->duration = $duration;
 
         return $this;
+    }
+
+    public function getUploadRelativeDirectory(): string
+    {
+        return 'uploads/boards/' . $this->getBoard()->getId();
     }
 
     public function getBoard(): ?Board

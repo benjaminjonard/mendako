@@ -73,6 +73,18 @@
         <target>タグ</target>
       </segment>
     </unit>
+    <unit id="untag01" name="menu.untagged">
+      <segment state="translated">
+        <source>Untagged</source>
+        <target>タグなし</target>
+      </segment>
+    </unit>
+    <unit id="untag02" name="message.no_untagged_posts">
+      <segment state="translated">
+        <source>No untagged posts.</source>
+        <target>タグなしの投稿はありません。</target>
+      </segment>
+    </unit>
     <unit id="5CgT51i" name="menu.boards">
       <segment state="translated">
         <source>Boards</source>
@@ -677,6 +689,60 @@
       <segment state="translated">
         <source>Symfony version</source>
         <target>Symfony バージョン</target>
+      </segment>
+    </unit>
+    <unit id="stg00m1" name="menu.staging">
+      <segment state="translated">
+        <source>Staging</source>
+        <target>Staging</target>
+      </segment>
+    </unit>
+    <unit id="stg00d1" name="staging.dropzone">
+      <segment state="translated">
+        <source>Drag and drop files here, or click to select</source>
+        <target>Drag and drop files here, or click to select</target>
+      </segment>
+    </unit>
+    <unit id="stg00d2" name="staging.duplicate">
+      <segment state="translated">
+        <source>Potential duplicate</source>
+        <target>Potential duplicate</target>
+      </segment>
+    </unit>
+    <unit id="stg00a1" name="staging.assign">
+      <segment state="translated">
+        <source>Assign</source>
+        <target>Assign</target>
+      </segment>
+    </unit>
+    <unit id="stg00a2" name="staging.assign_selected">
+      <segment state="translated">
+        <source>Assign to board</source>
+        <target>Assign to board</target>
+      </segment>
+    </unit>
+    <unit id="stg00a3" name="staging.delete_selected">
+      <segment state="translated">
+        <source>Delete selected</source>
+        <target>Delete selected</target>
+      </segment>
+    </unit>
+    <unit id="stg00m2" name="message.staged_assigned">
+      <segment state="translated">
+        <source>Files assigned to board</source>
+        <target>Files assigned to board</target>
+      </segment>
+    </unit>
+    <unit id="stg00m3" name="message.staged_deleted">
+      <segment state="translated">
+        <source>Files deleted</source>
+        <target>Files deleted</target>
+      </segment>
+    </unit>
+    <unit id="stg00a4" name="staging.select_all">
+      <segment state="translated">
+        <source>Select all</source>
+        <target>Select all</target>
       </segment>
     </unit>
   </file>
