@@ -34,5 +34,13 @@ jobs:
         with:
           file: Dockerfile.frankenphp
           push: true
-          tags: docker.io/mendako/mendako,docker.io/mendako/mendako:latest,docker.io/mendako/mendako:1.4.0
+          tags: docker.io/benjaminjonard/mendako,docker.io/benjaminjonard/mendako:latest,docker.io/benjaminjonard/mendako:1.4.0
+          platforms: linux/amd64,linux/arm64
+
+      - name: Build and push ML sidecar
+        uses: docker/build-push-action@v7
+        with:
+          context: ./ml
+          push: true
+          tags: docker.io/benjaminjonard/mendako-ml,docker.io/benjaminjonard/mendako-ml:latest
           platforms: linux/amd64,linux/arm64

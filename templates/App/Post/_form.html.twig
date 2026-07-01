@@ -16,7 +16,7 @@
         {{ form_row(form.board, {'label' : 'label.board'} ) }}
     {% endif %}
 
-    <div data-controller="suggestions">
+    <div data-controller="suggestions"{% if autoTagSuggestionsUrl is defined and autoTagSuggestionsUrl %} data-suggestions-url-value="{{ autoTagSuggestionsUrl }}" data-suggestions-source-labels-value="{{ {'wd': 'label.source_wd'|trans, 'clip': 'label.source_clip'|trans, 'knn': 'label.source_custom'|trans}|json_encode }}"{% endif %}>
         <div data-controller="autocomplete">
             {{ form_row(form.tags, {'label' : 'label.tags', 'attr': {
                 'data-suggestions-target': 'input',
@@ -24,6 +24,16 @@
                 'data-action': 'keyup->autocomplete#autocomplete'
             }} ) }}
         </div>
+
+        {% if autoTagSuggestionsUrl is defined and autoTagSuggestionsUrl %}
+            <div class="block is-hidden" data-suggestions-target="analyzing">
+                <em>{{ 'label.analyzing_suggestions'|trans }}</em>
+            </div>
+            <div class="block is-hidden" data-suggestions-target="pending">
+                <p class="label is-small">{{ 'label.tag_suggestions'|trans }}</p>
+                <ul class="suggestion-list" data-suggestions-target="list"></ul>
+            </div>
+        {% endif %}
 
         {% if suggestedTags is not empty %}
             <div class="block">

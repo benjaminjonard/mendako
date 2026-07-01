@@ -73,18 +73,6 @@
         <target>タグ</target>
       </segment>
     </unit>
-    <unit id="untag01" name="menu.untagged">
-      <segment state="translated">
-        <source>Untagged</source>
-        <target>タグなし</target>
-      </segment>
-    </unit>
-    <unit id="untag02" name="message.no_untagged_posts">
-      <segment state="translated">
-        <source>No untagged posts.</source>
-        <target>タグなしの投稿はありません。</target>
-      </segment>
-    </unit>
     <unit id="5CgT51i" name="menu.boards">
       <segment state="translated">
         <source>Boards</source>
@@ -743,6 +731,36 @@
       <segment state="translated">
         <source>Select all</source>
         <target>Select all</target>
+      </segment>
+    </unit>
+    <unit id="sugTagLst" name="label.tag_suggestions">
+      <segment state="translated">
+        <source>Tag suggestions</source>
+        <target>タグの提案</target>
+      </segment>
+    </unit>
+    <unit id="sugSrcWd" name="label.source_wd">
+      <segment state="translated">
+        <source>WD</source>
+        <target>WD</target>
+      </segment>
+    </unit>
+    <unit id="sugSrcClip" name="label.source_clip">
+      <segment state="translated">
+        <source>CLIP</source>
+        <target>CLIP</target>
+      </segment>
+    </unit>
+    <unit id="sugSrcCust" name="label.source_custom">
+      <segment state="translated">
+        <source>Custom</source>
+        <target>カスタム</target>
+      </segment>
+    </unit>
+    <unit id="catRating" name="app.enum.tag.category.rating">
+      <segment state="translated">
+        <source>Rating</source>
+        <target>レーティング</target>
       </segment>
     </unit>
   </file>

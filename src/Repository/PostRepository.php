@@ -6,10 +6,10 @@ namespace App\Repository;
 
 use App\Entity\Board;
 use App\Entity\Post;
-use App\Entity\Tag;
-use App\Enum\TagCategory;
+use App\Entity\TagSuggestion;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\DBAL\ParameterType;
 use Doctrine\Persistence\ManagerRegistry;
 
 class PostRepository extends ServiceEntityRepository
@@ -17,34 +17,6 @@ class PostRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Post::class);
-    }
-
-    /**
-     * Returns posts that have no "real" tag, i.e. no tag whose category is anything other than meta.
-     * A post tagged only with meta tags (audio, video, animated, ...) — or with no tag at all — counts as untagged.
-     *
-     * @return Post[]
-     */
-    public function findWithoutTags(): array
-    {
-        $realTagQuery = $this->getEntityManager()
-            ->createQueryBuilder()
-            ->select('1')
-            ->from(Tag::class, 'realTag')
-            ->join('realTag.posts', 'taggedPost')
-            ->where('taggedPost = post')
-            ->andWhere('realTag.category IS NULL OR realTag.category != :metaCategory')
-            ->getDQL()
-        ;
-
-        return $this
-            ->createQueryBuilder('post')
-            ->where(sprintf('NOT EXISTS (%s)', $realTagQuery))
-            ->orderBy('post.createdAt', Criteria::DESC)
-            ->setParameter('metaCategory', TagCategory::META->value)
-            ->getQuery()
-            ->getResult()
-        ;
     }
 
     public function filterByTags(Board $board, string $tags, $page, int $postPerPage): array
@@ -130,6 +102,118 @@ class PostRepository extends ServiceEntityRepository
         $stmt->bindValue(':vector', $vector);
         $stmt->bindValue(':max_distance', $maxDistance);
         $stmt->bindValue(':limit', $limit);
+
+        return $stmt->executeQuery()->fetchAllAssociative();
+    }
+
+    /**
+     * kNN over the semantic CLIP embedding: the confirmed tags of the nearest
+     * already-tagged Posts (same CLIP model), for learned tag suggestions.
+     *
+     * Returns rows {similarity, name, category} — one per (neighbour, tag) — for the
+     * `k` nearest neighbours within the similarity floor. Read-only; never writes.
+     *
+     * @return array<int, array{similarity: float, name: string, category: ?string}>
+     */
+    /**
+     * Stream every post (for `--all` retroactive tagging). `toIterable()` so a large
+     * back-catalogue isn't fully hydrated at once.
+     *
+     * @return iterable<Post>
+     */
+    public function findAllIterable(): iterable
+    {
+        return $this->createQueryBuilder('p')->getQuery()->toIterable();
+    }
+
+    /**
+     * Stream posts that have no automatic tagging suggestion yet (never processed) — the default
+     * retroactive set. `men_tag_suggestion` is polymorphic (no FK), so this is a
+     * correlated NOT EXISTS on (target_type='post', target_id = post id).
+     *
+     * @return iterable<Post>
+     */
+    public function findWithoutSuggestionsIterable(): iterable
+    {
+        $qb = $this->createQueryBuilder('p');
+        $sub = $this->getEntityManager()->createQueryBuilder()
+            ->select('1')
+            ->from(TagSuggestion::class, 's')
+            ->where('s.targetType = :targetType')
+            ->andWhere('s.targetId = p.id');
+
+        return $qb
+            ->where($qb->expr()->not($qb->expr()->exists($sub->getDQL())))
+            ->setParameter('targetType', 'post')
+            ->getQuery()
+            ->toIterable();
+    }
+
+    public function countAll(): int
+    {
+        return (int) $this->createQueryBuilder('p')->select('COUNT(p.id)')->getQuery()->getSingleScalarResult();
+    }
+
+    /**
+     * Number of posts with no automatic tagging suggestion yet (the un-processed backlog) — the COUNT
+     * form of findWithoutSuggestionsIterable().
+     */
+    public function countWithoutSuggestions(): int
+    {
+        $qb = $this->createQueryBuilder('p')->select('COUNT(p.id)');
+        $sub = $this->getEntityManager()->createQueryBuilder()
+            ->select('1')
+            ->from(TagSuggestion::class, 's')
+            ->where('s.targetType = :targetType')
+            ->andWhere('s.targetId = p.id');
+
+        return (int) $qb
+            ->where($qb->expr()->not($qb->expr()->exists($sub->getDQL())))
+            ->setParameter('targetType', 'post')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    public function findNearestConfirmedTagsByClipVector(
+        string $clipVector,
+        string $clipModelId,
+        ?string $excludePostId,
+        int $k,
+        float $minSimilarity,
+    ): array {
+        $conn = $this->getEntityManager()->getConnection();
+
+        // Cosine distance operator <=> (the clip_vector hnsw index uses vector_cosine_ops);
+        // similarity = 1 - distance. Filter to the producing model so cross-model
+        // distances are never mixed, and only consider Posts that carry a confirmed tag.
+        $sql = "
+            WITH neighbours AS (
+                SELECT post.id, (1 - (post.clip_vector <=> :vector)) AS similarity
+                FROM men_post post
+                WHERE post.clip_vector IS NOT NULL
+                  AND post.clip_model_id = :model
+                  AND post.id != :self
+                  AND (post.clip_vector <=> :vector) <= :max_distance
+                  AND EXISTS (SELECT 1 FROM men_post_tag pt WHERE pt.post_id = post.id)
+                ORDER BY post.clip_vector <=> :vector
+                LIMIT :k
+            )
+            SELECT neighbours.similarity AS similarity, tag.name AS name, tag.category AS category
+            FROM neighbours
+            JOIN men_post_tag pt ON pt.post_id = neighbours.id
+            JOIN men_tag tag ON tag.id = pt.tag_id
+            -- 'meta' tags (animated/video/gif/with_sound) describe the file format,
+            -- not visual content, so they must not propagate by image similarity.
+            WHERE tag.category IS DISTINCT FROM 'meta'
+        ";
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(':vector', $clipVector);
+        $stmt->bindValue(':model', $clipModelId);
+        // null exclude → a sentinel that matches no uuid, so nothing is excluded.
+        $stmt->bindValue(':self', $excludePostId ?? '');
+        $stmt->bindValue(':max_distance', 1 - $minSimilarity);
+        $stmt->bindValue(':k', $k, ParameterType::INTEGER);
 
         return $stmt->executeQuery()->fetchAllAssociative();
     }

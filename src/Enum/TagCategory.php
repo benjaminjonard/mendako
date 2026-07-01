@@ -11,4 +11,5 @@ enum TagCategory: string
     case COPYRIGHT = 'copyright';
     case ARTIST = 'artist';
     case META = 'meta';
+    case RATING = 'rating';
 }

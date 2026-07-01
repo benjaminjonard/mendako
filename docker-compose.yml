@@ -30,6 +30,60 @@ services:
             - "./docker/volumes/mendako/public/thumbnails:/thumbnails"
             - ./:/app/public
 
+    # Optional tagging inference service
+    mendako_ml:
+        container_name: mendako_ml
+        build: ./ml
+        restart: unless-stopped
+        # Models are baked into the image (see ml/Dockerfile). The persisted text-embedding
+        # cache lets the tag vocabulary be encoded once and survive restarts/rebuilds (host
+        # uid 1000 == the container's 'mendako' user). The app bind-mount is a dev convenience:
+        # the image already contains this code, but mounting the source lets ML code changes
+        # apply on a container restart without a multi-GB rebuild.
+        volumes:
+            - "./docker/volumes/ml/text-cache:/text-cache"
+            - "./ml/app:/app/app"
+
+    # Optional tagging worker
+    mendako_worker:
+        container_name: mendako_worker
+        build:
+            dockerfile: Dockerfile.dev
+        restart: unless-stopped
+        environment:
+            - APP_ENV=dev
+            - DB_DRIVER=pdo_pgsql
+            - DB_NAME=mendako
+            - DB_HOST=postgresql
+            - DB_PORT=5432
+            - DB_USER=postgres
+            - DB_PASSWORD=password
+            - DB_VERSION=16
+            - PHP_TIMEZONE=Europe\Paris
+        depends_on:
+            - postgresql
+        volumes:
+            # The worker reads the source media to generate thumbnails for tagging, so it needs
+            # the same uploads/thumbnails volumes as the web app (public/uploads & public/thumbnails
+            # are symlinks to these mounts — without them the worker sees dangling links).
+            - "./docker/volumes/mendako/public/uploads:/uploads"
+            - "./docker/volumes/mendako/public/thumbnails:/thumbnails"
+            - ./:/app/public
+        working_dir: /app/public
+        # This is a Messenger consumer, not a web server: the image's default HTTP healthcheck
+        # (curl localhost:80) always fails and marks it 'unhealthy'. Disable it.
+        healthcheck:
+            disable: true
+        # Consume autotag_batch BEFORE autotag_interactive. Messenger restarts the receiver
+        # loop as soon as a transport yields (continue 2), so with a large backlog the worker
+        # keeps pulling from autotag_batch and never polls the (empty) interactive queue —
+        # which, polled first under a full backlog, was wedging each item for ~53s. With the
+        # batch queue empty (normal use) it falls straight through to interactive, so live
+        # uploads are still served promptly; only a running backlog defers them.
+        # Higher memory ceiling: a backlog run fans out one message per item and, in the dev
+        # profiler, every dispatched message is collected in-memory — 128M OOMs on a large library.
+        entrypoint: ["php", "-d", "memory_limit=1G", "bin/console", "messenger:consume", "autotag_batch", "autotag_interactive", "--time-limit=3600", "--memory-limit=512M"]
+
     postgresql:
         image: pgvector/pgvector:pg16
         environment:

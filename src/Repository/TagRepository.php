@@ -18,6 +18,40 @@ class TagRepository extends ServiceEntityRepository
         parent::__construct($registry, Tag::class);
     }
 
+    /**
+     * The most-used tag names (capped) — the candidate vocabulary for zero-shot scoring.
+     * Capped so a large library can't blow the per-item text-encode cost / request timeout;
+     * the common vocabulary is always covered, rare one-offs are left to kNN.
+     *
+     * @return string[]
+     */
+    public function findMostUsedNames(int $limit): array
+    {
+        return array_map('strval', $this->createQueryBuilder('t')
+            ->select('t.name')
+            ->leftJoin('t.posts', 'p')
+            ->groupBy('t.id')
+            ->orderBy('COUNT(p.id)', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getSingleColumnResult());
+    }
+
+    /**
+     * Every tag name (for zero-shot scoring). The inference service encodes each name once
+     * and persists the embedding, so passing the whole vocabulary is cheap after warm-up.
+     *
+     * @return string[]
+     */
+    public function findAllNames(): array
+    {
+        return array_map('strval', $this->createQueryBuilder('t')
+            ->select('t.name')
+            ->orderBy('t.name', 'ASC')
+            ->getQuery()
+            ->getSingleColumnResult());
+    }
+
     public function findWithCounters(): array
     {
         $countQuery = $this->getEntityManager()

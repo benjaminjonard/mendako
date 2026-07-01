@@ -4,11 +4,60 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use FFMpeg\Coordinate\Dimension;
 use FFMpeg\Coordinate\TimeCode;
 use FFMpeg\FFMpeg;
 
 class ThumbnailGenerator
 {
+    public const array VIDEO_MIMETYPES = ['video/mp4', 'video/webm', 'video/x-m4v', 'image/gif'];
+
+    /**
+     * Extract up to `$count` resized JPEG frames at evenly-spaced timecodes — used to
+     * sample a video's content for automatic tagging. Returns the written frame paths (fewer
+     * than `$count` if the clip is too short to yield distinct frames). Non-video → [].
+     *
+     * @return string[]
+     */
+    public function extractVideoFrames(string $path, string $destDir, int $count, int $width): array
+    {
+        if (!is_file($path) || !in_array(mime_content_type($path), self::VIDEO_MIMETYPES, true)) {
+            return [];
+        }
+
+        if (!is_dir($destDir) && !mkdir($destDir, 0700, true) && !is_dir($destDir)) {
+            throw new \Exception('Could not create the frame directory.');
+        }
+
+        $video = FFMpeg::create()->open($path);
+        $stream = $video->getStreams()->videos()->first();
+        $originalWidth = $stream->getDimensions()->getWidth();
+        $originalHeight = $stream->getDimensions()->getHeight();
+
+        $targetWidth = min($width, $originalWidth);
+        $targetHeight = max(1, (int) floor($originalHeight * ($targetWidth / $originalWidth)));
+        $video->filters()->resize(new Dimension($targetWidth, $targetHeight))->synchronize();
+
+        $duration = (float) $video->getFormat()->get('duration');
+        // A static gif / missing duration metadata reports ~0; sample a single frame
+        // rather than `$count` identical ones at t=0.
+        if ($duration <= 0.0) {
+            $count = 1;
+        }
+
+        $paths = [];
+        for ($i = 0; $i < $count; ++$i) {
+            $second = $count === 1 ? 0.0 : $duration * (($i + 1) / ($count + 1));
+            $framePath = $destDir.'/frame-'.$i.'.jpeg';
+            $video->frame(TimeCode::fromSeconds($second))->save($framePath);
+            if (is_file($framePath) && filesize($framePath) > 0) {
+                $paths[] = $framePath;
+            }
+        }
+
+        return $paths;
+    }
+
     public function generate(string $path, string $thumbnailPath, int $thumbnailWidth, ?string $thumbnailsFormat = null): bool
     {
         if (!is_file($path)) {

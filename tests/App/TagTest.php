@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\App;
 
 use App\Enum\TagCategory;
-use App\Tests\Factory\BoardFactory;
-use App\Tests\Factory\PostFactory;
 use App\Tests\Factory\TagFactory;
 use App\Tests\Factory\UserFactory;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -105,48 +103,4 @@ class TagTest extends WebTestCase
         );
     }
 
-    public function test_can_get_untagged_posts_list(): void
-    {
-        // Arrange
-        $user = UserFactory::createOne();
-        $this->client->loginUser($user);
-        $board = BoardFactory::createOne();
-        $metaTag = TagFactory::createOne(['name' => 'long_video', 'category' => TagCategory::META]);
-        $generalTag = TagFactory::createOne(['name' => 'nyancat', 'category' => TagCategory::GENERAL]);
-
-        PostFactory::createOne(['board' => $board]); // no tag at all -> untagged
-        PostFactory::createOne(['board' => $board, 'tags' => [$metaTag]]); // only meta tag -> untagged
-        PostFactory::createOne(['board' => $board, 'tags' => [$generalTag]]); // real tag -> excluded
-
-        // Act
-        $crawler = $this->client->request(Request::METHOD_GET, '/tags/untagged');
-
-        // Assert
-        $this->assertResponseIsSuccessful();
-        $this->assertRouteSame('app_tag_untagged');
-        $this->assertCount(2, $crawler->filter('.untagged-post')); // post with no tag + post with only a meta tag
-    }
-
-    public function test_can_add_tags_to_untagged_post(): void
-    {
-        // Arrange
-        $user = UserFactory::createOne();
-        $this->client->loginUser($user);
-        $board = BoardFactory::createOne();
-        $post = PostFactory::createOne(['board' => $board]);
-
-        // Act
-        $crawler = $this->client->request(Request::METHOD_GET, '/tags/untagged');
-        $this->assertCount(1, $crawler->filter('.untagged-post'));
-        $this->client->submit($crawler->filter('.untagged-post form')->form(['tags' => 'nyancat cat']));
-
-        // Assert
-        $this->assertResponseIsSuccessful();
-        $this->assertRouteSame('app_tag_untagged');
-        TagFactory::assert()->exists(['name' => 'nyancat']);
-        TagFactory::assert()->exists(['name' => 'cat']);
-        $this->assertCount(2, PostFactory::find($post->getId())->getTags());
-        // Post now has real tags, so it no longer shows up in the untagged list
-        $this->assertCount(0, $this->client->getCrawler()->filter('.untagged-post'));
-    }
 }

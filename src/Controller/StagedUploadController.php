@@ -9,6 +9,7 @@ use App\Entity\StagedUpload;
 use App\Repository\BoardRepository;
 use App\Repository\PostRepository;
 use App\Repository\StagedUploadRepository;
+use App\Service\AutoTag\TaggingDispatcher;
 use App\Service\PostVectorService;
 use App\Service\RandomStringGenerator;
 use Doctrine\Persistence\ManagerRegistry;
@@ -65,6 +66,7 @@ class StagedUploadController extends AbstractController
         PostVectorService $postVectorService,
         PostRepository $postRepository,
         ValidatorInterface $validator,
+        TaggingDispatcher $taggingDispatcher,
     ): JsonResponse {
         if (!$this->isCsrfTokenValid('staged_action', (string) $request->request->get('_token'))) {
             return $this->json(['error' => 'Invalid CSRF token'], Response::HTTP_FORBIDDEN);
@@ -94,6 +96,8 @@ class StagedUploadController extends AbstractController
         $managerRegistry->getManager()->persist($stagedUpload);
         $managerRegistry->getManager()->flush();
 
+        $taggingDispatcher->dispatch($stagedUpload);
+
         return $this->json([
             'id' => $stagedUpload->getId(),
             'card' => $this->renderView('App/StagedUpload/_card.html.twig', ['stagedUpload' => $stagedUpload]),
@@ -107,6 +111,7 @@ class StagedUploadController extends AbstractController
         ManagerRegistry $managerRegistry,
         StagedUploadRepository $stagedUploadRepository,
         BoardRepository $boardRepository,
+        TaggingDispatcher $taggingDispatcher,
     ): JsonResponse {
         if (!$this->isCsrfTokenValid('staged_action', (string) $request->request->get('_token'))) {
             return $this->json(['error' => 'Invalid CSRF token'], Response::HTTP_FORBIDDEN);
@@ -121,6 +126,7 @@ class StagedUploadController extends AbstractController
         $manager = $managerRegistry->getManager();
         $removedIds = [];
         $failedIds = [];
+        $createdPosts = [];
 
         $relativeDir = 'uploads/boards/' . $board->getId();
         $absoluteDir = $this->publicPath . '/' . $relativeDir;
@@ -161,6 +167,7 @@ class StagedUploadController extends AbstractController
             ;
             $post->setHasSound($stagedUpload->hasSound()); // Post::setHasSound() returns void (not fluent)
             $manager->persist($post);
+            $createdPosts[] = $post;
 
             // Null the staged path BEFORE removal so postRemove/removeOldFile does NOT
             // unlink the file we just moved into the board directory.
@@ -171,6 +178,10 @@ class StagedUploadController extends AbstractController
         }
 
         $manager->flush();
+
+        foreach ($createdPosts as $createdPost) {
+            $taggingDispatcher->dispatch($createdPost);
+        }
 
         if ($removedIds !== []) {
             $this->addFlash('notice', $translator->trans('message.staged_assigned'));

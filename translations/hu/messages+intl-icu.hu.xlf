@@ -73,18 +73,6 @@
         <target>Címkék</target>
       </segment>
     </unit>
-    <unit id="untag01" name="menu.untagged">
-      <segment state="translated">
-        <source>Untagged</source>
-        <target>Címkézetlen</target>
-      </segment>
-    </unit>
-    <unit id="untag02" name="message.no_untagged_posts">
-      <segment state="translated">
-        <source>No untagged posts.</source>
-        <target>Nincsenek címkézetlen bejegyzések.</target>
-      </segment>
-    </unit>
     <unit id="5CgT51i" name="menu.boards">
       <segment state="translated">
         <source>Boards</source>
@@ -707,6 +695,36 @@
       <segment state="translated">
         <source>Select all</source>
         <target>Select all</target>
+      </segment>
+    </unit>
+    <unit id="sugTagLst" name="label.tag_suggestions">
+      <segment state="translated">
+        <source>Tag suggestions</source>
+        <target>Címkejavaslatok</target>
+      </segment>
+    </unit>
+    <unit id="sugSrcWd" name="label.source_wd">
+      <segment state="translated">
+        <source>WD</source>
+        <target>WD</target>
+      </segment>
+    </unit>
+    <unit id="sugSrcClip" name="label.source_clip">
+      <segment state="translated">
+        <source>CLIP</source>
+        <target>CLIP</target>
+      </segment>
+    </unit>
+    <unit id="sugSrcCust" name="label.source_custom">
+      <segment state="translated">
+        <source>Custom</source>
+        <target>Egyéni</target>
+      </segment>
+    </unit>
+    <unit id="catRating" name="app.enum.tag.category.rating">
+      <segment state="translated">
+        <source>Rating</source>
+        <target>Besorolás</target>
       </segment>
     </unit>
   </file>

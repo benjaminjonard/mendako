@@ -9,6 +9,9 @@ use App\Entity\Post;
 use App\Form\Type\PostType;
 use App\Repository\PostRepository;
 use App\Repository\TagRepository;
+use App\Repository\TagSuggestionRepository;
+use App\Service\AutoTag\AutoTagConfigProvider;
+use App\Service\AutoTag\TaggingDispatcher;
 use App\Service\PostVectorService;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -20,6 +23,13 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PostController extends AbstractController
 {
+    /**
+     * Suggestions scoring at or above this bar are confident enough to pre-fill the
+     * tag field; lower-confidence ones stay as clickable pending chips. Matches the
+     * WD character threshold; a single bar for now (per-category/configurable later).
+     */
+    private const float HIGH_CONFIDENCE_THRESHOLD = 0.85;
+
     #[Route(path: '/upload', name: 'app_post_upload', methods: ['GET', 'POST'])]
     #[Route(path: '/boards/{slug}/add', name: 'app_post_add', methods: ['GET', 'POST'])]
     public function add(
@@ -28,6 +38,7 @@ class PostController extends AbstractController
         ManagerRegistry $managerRegistry,
         TagRepository $tagRepository,
         PostVectorService $postVectorService,
+        TaggingDispatcher $taggingDispatcher,
         #[MapEntity(mapping: ['slug' => 'slug'])] ?Board $board
     ): Response {
         $post = new Post();
@@ -48,6 +59,8 @@ class PostController extends AbstractController
             $managerRegistry->getManager()->persist($post);
             $managerRegistry->getManager()->flush();
 
+            $taggingDispatcher->dispatch($post);
+
             $this->addFlash('notice', $translator->trans('message.post_added'));
 
             return $this->redirectToRoute('app_post_show', ['slug' => $post->getBoard()->getSlug(), 'id' => $post->getId()]);
@@ -57,7 +70,9 @@ class PostController extends AbstractController
             'board' => $board,
             'post' => $post,
             'form' => $form,
-            'suggestedTags' => $tagRepository->findBy(['suggested' => true])
+            'suggestedTags' => $tagRepository->findBy(['suggested' => true]),
+            // No post id before upload — automatic tagging suggestions surface on the edit form.
+            'autoTagSuggestionsUrl' => null,
         ]);
     }
 
@@ -99,6 +114,7 @@ class PostController extends AbstractController
         TagRepository $tagRepository,
         ManagerRegistry $managerRegistry,
         PostVectorService $postVectorService,
+        AutoTagConfigProvider $autoTagConfigProvider,
         #[MapEntity(mapping: ['slug' => 'slug'])] Board $board,
         Post $post
     ): Response {
@@ -126,7 +142,69 @@ class PostController extends AbstractController
             'board' => $board,
             'post' => $post,
             'form' => $form,
-            'suggestedTags' => $tagRepository->findBy(['suggested' => true])
+            'suggestedTags' => $tagRepository->findBy(['suggested' => true]),
+            // Only surface the automatic tagging suggestions endpoint when the feature is on; null keeps
+            // the form byte-identical to the non-automatic tagging experience.
+            'autoTagSuggestionsUrl' => $autoTagConfigProvider->isEnabled()
+                ? $this->generateUrl('app_post_autotag_suggestions', ['slug' => $board->getSlug(), 'id' => $post->getId()])
+                : null,
+        ]);
+    }
+
+    #[Route(path: '/boards/{slug}/{id}/autotag-suggestions', name: 'app_post_autotag_suggestions', methods: ['GET'])]
+    public function autoTagSuggestions(
+        AutoTagConfigProvider $autoTagConfigProvider,
+        TagSuggestionRepository $tagSuggestionRepository,
+        #[MapEntity(mapping: ['slug' => 'slug'])] Board $board,
+        Post $post
+    ): JsonResponse {
+        if (!$autoTagConfigProvider->isEnabled()) {
+            return $this->json(['enabled' => false]);
+        }
+
+        $pending = array_filter(
+            $tagSuggestionRepository->findForTarget('post', $post->getId()),
+            static fn ($suggestion): bool => $suggestion->getStatus() === \App\Entity\TagSuggestion::STATUS_PENDING
+        );
+
+        $entry = static fn ($suggestion): array => [
+            'name' => $suggestion->getTagName(),
+            'category' => $suggestion->getCategory()?->value ?? 'general',
+            'score' => $suggestion->getScore(),
+            'source' => $suggestion->getSource(),
+        ];
+
+        // The same tag can have rows from several sources (wd / clip / knn). Dedup by name
+        // so a tag never appears twice. Pass 1: confident base-model (wd) tags pre-fill the
+        // field. Pass 2: everything else becomes a click-to-add chip — learned (knn/clip)
+        // guesses are never auto-applied. A name already pre-filled is not repeated as a chip.
+        $highConfidence = [];
+        $lowConfidence = [];
+        $seen = [];
+        foreach ($pending as $suggestion) {
+            $name = $suggestion->getTagName();
+            if ($suggestion->getSource() === \App\Entity\TagSuggestion::SOURCE_WD
+                && $suggestion->getScore() >= self::HIGH_CONFIDENCE_THRESHOLD
+                && !isset($seen[$name])) {
+                $highConfidence[] = $entry($suggestion);
+                $seen[$name] = true;
+            }
+        }
+        foreach ($pending as $suggestion) {
+            $name = $suggestion->getTagName();
+            if (!isset($seen[$name])) {
+                $lowConfidence[] = $entry($suggestion);
+                $seen[$name] = true;
+            }
+        }
+
+        return $this->json([
+            'enabled' => true,
+            // No server-side "analysis complete" marker yet: infer "still analyzing"
+            // from the absence of any suggestion (the client polls with a bounded cap).
+            'status' => $pending === [] ? 'analyzing' : 'ready',
+            'highConfidence' => $highConfidence,
+            'pending' => $lowConfidence,
         ]);
     }
 

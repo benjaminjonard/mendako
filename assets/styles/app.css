@@ -129,6 +129,76 @@ figure .tag {
   color: #00ab2c;
 }
 
+.is-category-rating {
+  color: #e64980;
+}
+
+.suggestion-list {
+  list-style: none;
+  margin: 0;
+  max-width: 32rem;
+}
+
+.suggestion-row {
+  align-items: center;
+  border-bottom: 1px solid #ededed;
+  display: flex;
+  gap: 0.6rem;
+  padding: 0.3rem 0;
+}
+
+.suggestion-row:last-child {
+  border-bottom: none;
+}
+
+.suggestion-name {
+  flex: 1 1 auto;
+}
+
+.suggestion-score {
+  color: #7a7a7a;
+  flex: 0 0 auto;
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+  min-width: 2.6rem;
+  text-align: right;
+}
+
+.suggestion-source {
+  flex: 0 0 auto;
+  text-transform: uppercase;
+}
+
+.suggestion-remove {
+  background: none;
+  border: none;
+  color: #b5b5b5;
+  cursor: pointer;
+  flex: 0 0 auto;
+  font-size: 1.1rem;
+  line-height: 1;
+  padding: 0 0.2rem;
+}
+
+.suggestion-remove:hover {
+  color: #f14668;
+}
+
+.suggestion-source-wd {
+  background-color: #e7f1ff;
+  color: #0075f8;
+}
+
+.suggestion-source-clip {
+  background-color: #f3e8ff;
+  color: #a800aa;
+}
+
+.suggestion-source-knn {
+  background-color: #e6f7ea;
+  color: #00ab2c;
+}
+
 .block-search .control {
   width: 100%;
 }

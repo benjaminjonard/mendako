@@ -49,6 +49,14 @@ class StagedUpload implements UploadableInterface
     #[ORM\Column(type: 'vector', nullable: true, options: ['dimensions' => 271])]
     private ?string $vector = null;
 
+    // Semantic CLIP embedding (separate from the 271-dim duplicate-detection vector),
+    // bound to the model that produced it. Nullable + additive: the automatic tagging feature is optional.
+    #[ORM\Column(type: 'vector', nullable: true, options: ['dimensions' => 1152])]
+    private ?string $clipVector = null;
+
+    #[ORM\Column(type: Types::STRING, nullable: true)]
+    private ?string $clipModelId = null;
+
     #[ORM\Column(type: Types::BOOLEAN, nullable: false, options: ['default' => false])]
     private bool $isDuplicate = false;
 
@@ -178,6 +186,30 @@ class StagedUpload implements UploadableInterface
     public function setVector(?string $vector): StagedUpload
     {
         $this->vector = $vector;
+
+        return $this;
+    }
+
+    public function getClipVector(): ?string
+    {
+        return $this->clipVector;
+    }
+
+    public function setClipVector(?string $clipVector): StagedUpload
+    {
+        $this->clipVector = $clipVector;
+
+        return $this;
+    }
+
+    public function getClipModelId(): ?string
+    {
+        return $this->clipModelId;
+    }
+
+    public function setClipModelId(?string $clipModelId): StagedUpload
+    {
+        $this->clipModelId = $clipModelId;
 
         return $this;
     }

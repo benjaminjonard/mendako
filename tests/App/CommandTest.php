@@ -51,4 +51,38 @@ class CommandTest extends KernelTestCase
         // Assert
         $commandTester->assertCommandIsSuccessful();
     }
+
+    public function test_command_reindex_clip_embeddings_purges_and_preserves_tags(): void
+    {
+        // Arrange
+        $kernel = self::bootKernel();
+        $container = self::getContainer();
+        // Enable the automatic tagging feature so the command re-dispatches the pipeline.
+        $autoTagConfig = $this->createStub(\App\Service\AutoTag\AutoTagConfigProvider::class);
+        $autoTagConfig->method('isEnabled')->willReturn(true);
+        $container->set(\App\Service\AutoTag\AutoTagConfigProvider::class, $autoTagConfig);
+
+        $user = UserFactory::createOne();
+        $board = BoardFactory::createOne();
+        $tag = \App\Tests\Factory\TagFactory::createOne();
+        $post = PostFactory::createOne(['board' => $board, 'uploadedBy' => $user, 'tags' => [$tag]]);
+        $post->setClipModelId('old-clip-model');
+        \Zenstruck\Foundry\Persistence\save($post);
+        $postId = $post->getId();
+
+        $application = new Application($kernel);
+        $commandTester = new CommandTester($application->find('app:autotag:reindex-clip-embeddings'));
+
+        // Act
+        $commandTester->execute(['dimension' => '1152']);
+
+        // Assert
+        $commandTester->assertCommandIsSuccessful();
+        $connection = $container->get('doctrine')->getConnection();
+        // Embedding binding purged...
+        $this->assertNull($connection->fetchOne('SELECT clip_model_id FROM men_post WHERE id = ?', [$postId]));
+        // ...but the confirmed tag survives (additive / no data loss).
+        $this->assertSame(1, (int) $connection->fetchOne('SELECT COUNT(*) FROM men_post_tag WHERE post_id = ?', [$postId]));
+        $this->assertStringContainsString('Re-dispatched', $commandTester->getDisplay());
+    }
 }

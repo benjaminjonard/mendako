@@ -1,0 +1,45 @@
+framework:
+    messenger:
+        failure_transport: failed
+
+        transports:
+            # automatic tagging tag-suggestion queue (interactive uploads). Doctrine transport → reuses
+            # PostgreSQL, no Redis. auto_setup creates the messenger_messages table on first use.
+            autotag_interactive:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                options:
+                    queue_name: autotag_interactive
+                    auto_setup: true
+                retry_strategy:
+                    max_retries: 3
+                    delay: 1000
+                    multiplier: 2
+            # Retroactive / backlog tagging (deprioritized). Same Doctrine transport,
+            # separate queue; the worker consumes autotag_interactive before autotag_batch so
+            # uploads always take priority and a batch run can't degrade responsiveness.
+            autotag_batch:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                options:
+                    queue_name: autotag_batch
+                    auto_setup: true
+                retry_strategy:
+                    max_retries: 3
+                    delay: 1000
+                    multiplier: 2
+            failed:
+                dsn: 'doctrine://default'
+                options:
+                    queue_name: failed
+                    auto_setup: true
+
+        routing:
+            'App\Message\GenerateSuggestionsMessage': autotag_interactive
+            'App\Message\EnqueueBacklogMessage': autotag_batch
+
+when@test:
+    framework:
+        messenger:
+            transports:
+                autotag_interactive: 'in-memory://'
+                autotag_batch: 'in-memory://'
+                failed: 'in-memory://'

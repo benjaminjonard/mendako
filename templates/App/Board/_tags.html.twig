@@ -1,4 +1,4 @@
-{% for category in ['artist', 'copyright', 'character', 'general', 'meta'] %}
+{% for category in ['artist', 'copyright', 'character', 'general', 'meta', 'rating'] %}
     <div class="block" data-category="{{ category }}">
         {% for tag in tags|naturalSorting|filter(t => t.category == category) %}
             {% if loop.first %}<h3 class="has-text-weight-medium">{{ ('app.enum.tag.category.' ~ category)|trans }}</h3>{% endif %}
