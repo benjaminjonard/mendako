@@ -4,18 +4,16 @@ declare(strict_types=1);
 
 namespace App\MessageHandler;
 
-use App\Entity\TagSuggestion;
 use App\Message\GenerateSuggestionsMessage;
+use App\Repository\EmbeddingRepository;
 use App\Repository\PostRepository;
 use App\Repository\StagedUploadRepository;
-use App\Repository\TagRepository;
 use App\Service\AutoTag\AutoTagConfigProvider;
 use App\Service\AutoTag\AutoTagInferenceClient;
 use App\Service\AutoTag\FrameResultAggregator;
 use App\Service\AutoTag\KnnSuggestionService;
 use App\Service\AutoTag\SuggestionService;
 use App\Service\ThumbnailGenerator;
-use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -39,10 +37,9 @@ final class GenerateSuggestionsHandler
         private readonly AutoTagInferenceClient $autoTagInferenceClient,
         private readonly SuggestionService $suggestionService,
         private readonly KnnSuggestionService $knnSuggestionService,
-        private readonly TagRepository $tagRepository,
         private readonly ThumbnailGenerator $thumbnailGenerator,
         private readonly FrameResultAggregator $frameResultAggregator,
-        private readonly EntityManagerInterface $entityManager,
+        private readonly EmbeddingRepository $embeddingRepository,
         #[Autowire('%kernel.project_dir%/public')] private readonly string $publicPath,
         #[Autowire(service: 'monolog.logger.autotag')] private readonly LoggerInterface $logger,
     ) {
@@ -69,36 +66,26 @@ final class GenerateSuggestionsHandler
             return;
         }
 
-        // CLIP embedding + zero-shot are folded into the same /analyze call (one thumbnail,
-        // one request). Zero-shot scores the image against the user's full tag vocabulary;
-        // the service encodes each name once and persists it, so passing them all is cheap.
-        $clipModelId = $this->autoTagConfigProvider->getActiveModel('clip');
-        $tagNames = $clipModelId !== null ? $this->tagRepository->findAllNames() : [];
-
         $sourcePath = $this->publicPath.'/'.$item->getPath();
         $isVideo = in_array($item->getMimetype(), ThumbnailGenerator::VIDEO_MIMETYPES, true);
         $tempDir = null;
         $thumbnail = null;
+        $vectors = []; // one embedding per frame (image → one)
         try {
             $result = null;
             if ($isVideo) {
-                // Sample N frames and aggregate their per-frame results into one set.
+                // Sample N frames: their tags are aggregated into one set, and every frame's
+                // embedding is kept (so kNN can match on any frame).
                 $tempDir = sys_get_temp_dir().'/mendako-autotag-'.bin2hex(random_bytes(8));
                 $frames = $this->thumbnailGenerator->extractVideoFrames($sourcePath, $tempDir, self::VIDEO_FRAME_COUNT, 600);
                 if ($frames !== []) {
-                    // The middle frame is representative: it alone carries the CLIP embedding + zero-shot.
-                    $representative = intdiv(count($frames) - 1, 2);
                     $frameResults = [];
-                    foreach ($frames as $index => $framePath) {
-                        $isRepresentative = $index === $representative;
-                        $frameResults[] = $this->autoTagInferenceClient->analyze(
-                            $framePath,
-                            $modelId,
-                            $isRepresentative ? $clipModelId : null,
-                            $isRepresentative ? $tagNames : [],
-                        );
+                    foreach ($frames as $framePath) {
+                        $frameResult = $this->autoTagInferenceClient->analyze($framePath, $modelId);
+                        $frameResults[] = $frameResult;
+                        $this->collectVector($vectors, $frameResult);
                     }
-                    $result = $this->frameResultAggregator->aggregate($frameResults, $representative);
+                    $result = $this->frameResultAggregator->aggregate($frameResults);
                 } else {
                     // A video the sampler couldn't read still gets the single-frame treatment.
                     $this->logger->warning('No video frames extracted; falling back to a single frame', ['target' => $message->targetType, 'id' => $message->id]);
@@ -109,7 +96,8 @@ final class GenerateSuggestionsHandler
                 // Image, or the video fallback: one representative thumbnail (generate() reads videos too).
                 $thumbnail = sys_get_temp_dir().'/mendako-autotag-'.bin2hex(random_bytes(8)).'.jpeg';
                 $this->thumbnailGenerator->generate($sourcePath, $thumbnail, 600, 'jpeg');
-                $result = $this->autoTagInferenceClient->analyze($thumbnail, $modelId, $clipModelId, $tagNames);
+                $result = $this->autoTagInferenceClient->analyze($thumbnail, $modelId);
+                $this->collectVector($vectors, $result);
             }
         } catch (\Throwable $exception) {
             // Soft-fail: a bad/missing source image must not poison the worker.
@@ -143,47 +131,40 @@ final class GenerateSuggestionsHandler
             ]);
         }
 
-        // Zero-shot suggestions (image scored against the user's own tag names) — a
-        // `clip`-source guess, additive + best-effort. Never auto-prefilled (the UI only
-        // promotes confident `wd` tags), so these surface as click-to-add chips.
-        // Gate on the key's presence (the service sets `zeroshot` only when it ran), and
-        // store even an empty set so a re-run with no matches clears stale `clip` pending.
-        $zeroshot = $result['zeroshot'] ?? null;
-        if (is_array($zeroshot)) {
-            try {
-                $tags = array_map(
-                    static fn (array $match): array => ['name' => $match['name'], 'score' => (float) ($match['score'] ?? 0.0), 'category' => null],
-                    $zeroshot,
-                );
-                $this->suggestionService->store($message->targetType, $message->id, ['tags' => $tags, 'rating' => ['label' => null]], TagSuggestion::SOURCE_CLIP);
-            } catch (\Throwable $exception) {
-                $this->logger->warning('automatic tagging zero-shot storage failed', ['target' => $message->targetType, 'id' => $message->id, 'error' => $exception->getMessage()]);
-            }
+        // Semantic embeddings (one per frame) are additive + best-effort: isolate them so a
+        // dimension mismatch or DB error logs to the autotag channel and never poisons the worker
+        // (nor blocks the tag suggestions stored above).
+        if ($vectors === []) {
+            return;
         }
 
-        // Semantic embedding is additive + best-effort: isolate it so a dimension
-        // mismatch or DB error logs to the autotag channel and never poisons the worker
-        // (nor blocks the tag suggestions stored above).
+        // WD is the embedding encoder now (fc_norm feature), returned alongside the tags.
+        $embeddingModelId = (string) ($result['embedding_model_id'] ?? $modelId);
+        try {
+            $this->embeddingRepository->replaceForTarget($message->targetType, $message->id, $embeddingModelId, $vectors);
+        } catch (\Throwable $exception) {
+            $this->logger->warning('automatic tagging embedding storage failed', ['target' => $message->targetType, 'id' => $message->id, 'error' => $exception->getMessage()]);
+
+            return; // embeddings not stored — don't run kNN on unstored vectors
+        }
+
+        // Learned suggestions from the nearest already-tagged items. Best-effort:
+        // a failure here must not block the WD suggestions already stored above.
+        try {
+            $this->knnSuggestionService->propagate($message->targetType, $message->id, $vectors, $embeddingModelId);
+        } catch (\Throwable $exception) {
+            $this->logger->warning('automatic tagging kNN propagation failed', ['target' => $message->targetType, 'id' => $message->id, 'error' => $exception->getMessage()]);
+        }
+    }
+
+    /**
+     * @param string[] $vectors mutated in place: appends the result's embedding as a pgvector literal
+     */
+    private function collectVector(array &$vectors, array $result): void
+    {
         $embedding = $result['embedding'] ?? null;
         if (is_array($embedding) && $embedding !== []) {
-            $clipVector = '['.implode(',', array_map('floatval', $embedding)).']';
-            $embeddingModelId = $result['clip_model_id'] ?? $clipModelId;
-            try {
-                $item->setClipVector($clipVector)->setClipModelId($embeddingModelId);
-                $this->entityManager->flush();
-            } catch (\Throwable $exception) {
-                $this->logger->warning('automatic tagging embedding storage failed', ['target' => $message->targetType, 'id' => $message->id, 'error' => $exception->getMessage()]);
-
-                return; // embedding not stored — don't run kNN on an unstored vector
-            }
-
-            // Learned suggestions from the nearest already-tagged items. Best-effort:
-            // a failure here must not block the WD suggestions already stored above.
-            try {
-                $this->knnSuggestionService->propagate($message->targetType, $message->id, $clipVector, (string) $embeddingModelId);
-            } catch (\Throwable $exception) {
-                $this->logger->warning('automatic tagging kNN propagation failed', ['target' => $message->targetType, 'id' => $message->id, 'error' => $exception->getMessage()]);
-            }
+            $vectors[] = '['.implode(',', array_map('floatval', $embedding)).']';
         }
     }
 }

@@ -36,10 +36,11 @@ class AutoTagConfigProvider
     }
 
     /**
-     * The active model id for a category ('wd' | 'clip'), or null for an unknown category.
+     * The active model id for a category ('wd'), or null for an unknown category.
      *
      * Each category has exactly one model, baked into the service image, so there is no
-     * selection: the model is taken straight from the static catalog.
+     * selection: the model is taken straight from the static catalog. WD is both the tagger
+     * and the embedding encoder, so 'wd' is currently the only category.
      */
     public function getActiveModel(string $category): ?string
     {

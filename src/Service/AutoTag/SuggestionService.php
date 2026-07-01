@@ -6,6 +6,7 @@ namespace App\Service\AutoTag;
 
 use App\Entity\TagSuggestion;
 use App\Enum\TagCategory;
+use App\Repository\BlacklistedTagRepository;
 use App\Repository\TagSuggestionRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\String\UnicodeString;
@@ -23,6 +24,7 @@ class SuggestionService
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly TagSuggestionRepository $tagSuggestionRepository,
+        private readonly BlacklistedTagRepository $blacklistedTagRepository,
     ) {
     }
 
@@ -31,12 +33,16 @@ class SuggestionService
      */
     public function store(string $targetType, string $targetId, array $analyzeResult, string $source = TagSuggestion::SOURCE_WD): void
     {
+        // Names the user has blacklisted for the AI: these must never surface as a suggestion,
+        // whatever the source or score, so drop them before they ever become candidates.
+        $blacklist = array_flip($this->blacklistedTagRepository->allNames());
+
         // name => [score, category]; collapse duplicates to the highest score.
         $candidates = [];
 
         foreach ($analyzeResult['tags'] ?? [] as $tag) {
             $name = $this->normalizeName($tag['name'] ?? null);
-            if ($name === null) {
+            if ($name === null || isset($blacklist[$name])) {
                 continue;
             }
             $score = (float) ($tag['score'] ?? 0.0);
@@ -49,7 +55,7 @@ class SuggestionService
         $ratingLabel = $analyzeResult['rating']['label'] ?? null;
         if ($ratingLabel !== null) {
             $name = $this->normalizeName($ratingLabel);
-            if ($name !== null) {
+            if ($name !== null && !isset($blacklist[$name])) {
                 $score = (float) ($analyzeResult['rating']['score'] ?? 0.0);
                 // A rating is always categorized as RATING and wins over a same-named general tag.
                 if (!isset($candidates[$name]) || $score > $candidates[$name]['score']) {
@@ -61,12 +67,12 @@ class SuggestionService
         // Persist ranked by score (highest first).
         uasort($candidates, static fn (array $a, array $b): int => $b['score'] <=> $a['score']);
 
-        // Upsert atomically: drop this source's stale pending rows, then re-insert,
-        // skipping names the user already acted on (accepted/dismissed) so a re-run
-        // never re-surfaces a dismissed tag or duplicates an accepted one.
+        // Upsert atomically: drop this source's stale pending rows, then re-insert, skipping names
+        // the user already decided on (accepted/dismissed) — across ALL sources, so a decision made
+        // on a wd suggestion also silences the same name coming from knn, and vice versa.
         $this->entityManager->wrapInTransaction(function () use ($targetType, $targetId, $source, $candidates): void {
             $this->tagSuggestionRepository->deletePendingForTarget($targetType, $targetId, $source);
-            $known = array_flip($this->tagSuggestionRepository->existingTagNamesForTarget($targetType, $targetId, $source));
+            $known = array_flip($this->tagSuggestionRepository->decidedTagNamesForTarget($targetType, $targetId));
 
             foreach ($candidates as $name => $candidate) {
                 if (isset($known[$name])) {

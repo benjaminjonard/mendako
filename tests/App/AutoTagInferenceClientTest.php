@@ -40,33 +40,36 @@ class AutoTagInferenceClientTest extends TestCase
         $this->assertSame('general', $result['rating']['label']);
     }
 
-    public function test_analyze_sends_clip_model_and_tag_names(): void
+    public function test_embed_posts_model_and_image_and_parses_result(): void
     {
         $tmp = tempnam(sys_get_temp_dir(), 'img');
         file_put_contents($tmp, 'imagedata');
-        $captured = '';
+        $captured = ['url' => '', 'body' => ''];
         $httpClient = new MockHttpClient(function (string $method, string $url, array $options) use (&$captured): MockResponse {
-            $body = $options['body'];
-            if (is_callable($body)) {
-                while ('' !== ($chunk = $body(8192))) {
-                    $captured .= $chunk;
+            $body = '';
+            $raw = $options['body'];
+            if (is_callable($raw)) {
+                while ('' !== ($chunk = $raw(8192))) {
+                    $body .= $chunk;
                 }
-            } elseif (is_iterable($body)) {
-                foreach ($body as $chunk) {
-                    $captured .= $chunk;
+            } elseif (is_iterable($raw)) {
+                foreach ($raw as $chunk) {
+                    $body .= $chunk;
                 }
             }
+            $captured = ['url' => $url, 'body' => $body];
 
-            return new MockResponse(json_encode(['tags' => [], 'rating' => ['label' => null]]), ['http_code' => 200]);
+            return new MockResponse(json_encode(['embedding' => [0.6, 0.8], 'dim' => 2, 'model_id' => 'wd-eva02-large-tagger-v3']), ['http_code' => 200]);
         });
 
-        (new AutoTagInferenceClient($httpClient, $this->provider(), new NullLogger()))
-            ->analyze($tmp, 'wd-eva02-large-tagger-v3', 'siglip2-so400m', ['cat', 'dog']);
+        $result = (new AutoTagInferenceClient($httpClient, $this->provider(), new NullLogger()))
+            ->embed($tmp, 'wd-eva02-large-tagger-v3');
         unlink($tmp);
 
-        $this->assertStringContainsString('clip_model', $captured);
-        $this->assertStringContainsString('tag_names', $captured);
-        $this->assertStringContainsString('cat', $captured);
+        $this->assertStringEndsWith('/embed', $captured['url']);
+        $this->assertStringContainsString('wd-eva02-large-tagger-v3', $captured['body']);
+        $this->assertSame([0.6, 0.8], $result['embedding']);
+        $this->assertSame(2, $result['dim']);
     }
 
     public function test_analyze_returns_empty_on_error(): void
@@ -108,61 +111,4 @@ class AutoTagInferenceClientTest extends TestCase
         $this->assertSame(0, $httpClient->getRequestsCount());
     }
 
-    public function test_warm_vocabulary_posts_model_and_tags(): void
-    {
-        $captured = ['url' => '', 'body' => ''];
-        $httpClient = new MockHttpClient(function (string $method, string $url, array $options) use (&$captured): MockResponse {
-            $captured = ['url' => $url, 'body' => $options['body'] ?? ''];
-
-            return new MockResponse('{"running":true,"done":0,"total":2}', ['http_code' => 200]);
-        });
-
-        (new AutoTagInferenceClient($httpClient, $this->provider(), new NullLogger()))
-            ->warmVocabulary('siglip2-so400m', ['cat', 'dog']);
-
-        $this->assertSame(1, $httpClient->getRequestsCount());
-        $this->assertStringEndsWith('/vocabulary', $captured['url']);
-        $this->assertStringContainsString('siglip2-so400m', $captured['body']);
-        $this->assertStringContainsString('cat', $captured['body']);
-    }
-
-    public function test_warm_vocabulary_no_call_when_empty_or_disabled(): void
-    {
-        $httpClient = new MockHttpClient([new MockResponse('{}')]);
-        (new AutoTagInferenceClient($httpClient, $this->provider(), new NullLogger()))->warmVocabulary('siglip2-so400m', []);
-        $this->assertSame(0, $httpClient->getRequestsCount());
-    }
-
-    public function test_vocabulary_missing_returns_parsed(): void
-    {
-        $httpClient = new MockHttpClient([new MockResponse('{"cached":940,"missing":14,"total":954}', ['http_code' => 200])]);
-
-        $coverage = (new AutoTagInferenceClient($httpClient, $this->provider(), new NullLogger()))->vocabularyMissing('siglip2-so400m', ['cat', 'dog']);
-
-        $this->assertSame(940, $coverage['cached']);
-        $this->assertSame(14, $coverage['missing']);
-        $this->assertSame(954, $coverage['total']);
-    }
-
-    public function test_vocabulary_status_returns_parsed(): void
-    {
-        $httpClient = new MockHttpClient([new MockResponse('{"running":true,"done":15,"total":950}', ['http_code' => 200])]);
-
-        $status = (new AutoTagInferenceClient($httpClient, $this->provider(), new NullLogger()))->vocabularyStatus();
-
-        $this->assertTrue($status['running']);
-        $this->assertSame(15, $status['done']);
-        $this->assertSame(950, $status['total']);
-    }
-
-    public function test_vocabulary_status_empty_on_error(): void
-    {
-        $httpClient = new MockHttpClient(static function (): MockResponse {
-            throw new TransportException('service unreachable');
-        });
-
-        $status = (new AutoTagInferenceClient($httpClient, $this->provider(), new NullLogger()))->vocabularyStatus();
-
-        $this->assertSame([], $status);
-    }
 }

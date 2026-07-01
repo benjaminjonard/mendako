@@ -55,11 +55,6 @@ html, .navbar, .autocomplete-dropdown-textarea, .navbar-menu {
     color: #6db3ff;
 }
 
-.suggestion-source-clip {
-    background-color: #3a1f4a;
-    color: #d78bff;
-}
-
 .suggestion-source-knn {
     background-color: #163a22;
     color: #5fd97a;
@@ -79,6 +74,10 @@ html, .navbar, .autocomplete-dropdown-textarea, .navbar-menu {
     border-color: #dbdbdb;
     border-radius: 4px;
     color: #363636;
+}
+
+.input::placeholder, .textarea::placeholder {
+    color: #767676;
 }
 
 label.checkbox, .config {

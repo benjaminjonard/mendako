@@ -5,16 +5,20 @@ declare(strict_types=1);
 namespace App\Service\AutoTag;
 
 use App\Entity\TagSuggestion;
-use App\Repository\PostRepository;
+use App\Repository\EmbeddingRepository;
 
 /**
- * Learned suggestions: propagate the confirmed tags of the nearest already-tagged
- * Posts (by CLIP embedding similarity) onto a freshly-processed item as
- * `knn`-source TagSuggestions. Reads confirmed tags live, so a tag confirmed on one
- * item is immediately eligible on future similar items — no retraining step.
+ * Learned suggestions: propagate the confirmed tags of the nearest already-tagged Posts
+ * (by embedding similarity) onto a freshly-processed item as `knn`-source TagSuggestions.
+ * Reads confirmed tags live, so a tag confirmed on one item is immediately eligible on future
+ * similar items — no retraining step.
  *
- * Best-effort + additive: writes only via SuggestionService (men_tag_suggestion);
- * an empty neighbourhood (cold start) simply produces no learned suggestions.
+ * An item can carry several embeddings (one per video frame); every frame searches for
+ * neighbours and the results are merged, so a video matches a neighbour if ANY of its frames
+ * resembles ANY of the neighbour's frames.
+ *
+ * Best-effort + additive: writes only via SuggestionService (men_tag_suggestion); an empty
+ * neighbourhood (cold start) simply produces no learned suggestions.
  */
 class KnnSuggestionService
 {
@@ -22,31 +26,28 @@ class KnnSuggestionService
     private const float MIN_SIMILARITY = 0.5;
 
     public function __construct(
-        private readonly PostRepository $postRepository,
+        private readonly EmbeddingRepository $embeddingRepository,
         private readonly SuggestionService $suggestionService,
     ) {
     }
 
-    public function propagate(string $targetType, string $targetId, string $clipVector, string $clipModelId): void
+    /**
+     * @param string[] $vectors the item's embedding vectors (one per frame; one for an image)
+     */
+    public function propagate(string $targetType, string $targetId, array $vectors, string $modelId): void
     {
         // A Post target must not be its own neighbour (don't echo its own tags).
-        $excludePostId = $targetType === 'post' ? $targetId : null;
+        $excludeId = $targetType === 'post' ? $targetId : null;
 
-        $rows = $this->postRepository->findNearestConfirmedTagsByClipVector(
-            $clipVector,
-            $clipModelId,
-            $excludePostId,
-            self::K,
-            self::MIN_SIMILARITY,
-        );
-
-        // Aggregate by tag name, keeping the highest neighbour similarity as the score.
+        // Aggregate by tag name across every frame, keeping the highest neighbour similarity.
         $byName = [];
-        foreach ($rows as $row) {
-            $name = $row['name'];
-            $score = (float) $row['similarity'];
-            if (!isset($byName[$name]) || $score > $byName[$name]['score']) {
-                $byName[$name] = ['score' => $score, 'category' => $row['category']];
+        foreach ($vectors as $vector) {
+            foreach ($this->embeddingRepository->findNearestConfirmedTags($vector, $modelId, $excludeId, self::K, self::MIN_SIMILARITY) as $row) {
+                $name = $row['name'];
+                $score = (float) $row['similarity'];
+                if (!isset($byName[$name]) || $score > $byName[$name]['score']) {
+                    $byName[$name] = ['score' => $score, 'category' => $row['category']];
+                }
             }
         }
 

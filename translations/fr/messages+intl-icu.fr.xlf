@@ -667,6 +667,54 @@
         <target>Post</target>
       </segment>
     </unit>
+    <unit id="blk001" name="label.ai_blacklist">
+      <segment state="translated">
+        <source>AI blacklist</source>
+        <target>Liste noire IA</target>
+      </segment>
+    </unit>
+    <unit id="blk002" name="label.ai_blacklist_help">
+      <segment state="translated">
+        <source>These tags will never be suggested by the automatic tagging.</source>
+        <target>Ces tags ne seront jamais proposés par le tagging automatique.</target>
+      </segment>
+    </unit>
+    <unit id="blk003" name="btn.add">
+      <segment state="translated">
+        <source>Add</source>
+        <target>Ajouter</target>
+      </segment>
+    </unit>
+    <unit id="blk004" name="message.tag_blacklisted">
+      <segment state="translated">
+        <source>Tag {tag} blacklisted</source>
+        <target>Tag {tag} ajouté à la liste noire</target>
+      </segment>
+    </unit>
+    <unit id="blk005" name="message.tag_unblacklisted">
+      <segment state="translated">
+        <source>Tag {tag} removed from blacklist</source>
+        <target>Tag {tag} retiré de la liste noire</target>
+      </segment>
+    </unit>
+    <unit id="tgVal001" name="menu.tag_validation">
+      <segment state="translated">
+        <source>Tag validation</source>
+        <target>Validation</target>
+      </segment>
+    </unit>
+    <unit id="tgVal002" name="label.no_posts_to_validate">
+      <segment state="translated">
+        <source>No posts left to validate.</source>
+        <target>Aucun post à valider.</target>
+      </segment>
+    </unit>
+    <unit id="tgVal003" name="message.tags_validated">
+      <segment state="translated">
+        <source>Tags validated.</source>
+        <target>Tags validés.</target>
+      </segment>
+    </unit>
     <unit id="stg00m1" name="menu.staging">
       <segment state="translated">
         <source>Staging</source>
@@ -781,42 +829,6 @@
         <target>en attente</target>
       </segment>
     </unit>
-    <unit id="rN7uQ2d" name="label.vocab_warming">
-      <segment state="translated">
-        <source>Encoding and caching existing tags</source>
-        <target>Encodage et mise en cache des tags existants</target>
-      </segment>
-    </unit>
-    <unit id="tagCch1" name="label.tag_cache">
-      <segment state="translated">
-        <source>Tag cache</source>
-        <target>Cache des tags</target>
-      </segment>
-    </unit>
-    <unit id="tagCch2" name="label.tags_cached">
-      <segment state="translated">
-        <source>cached</source>
-        <target>en cache</target>
-      </segment>
-    </unit>
-    <unit id="tagCch3" name="label.tags_to_encode">
-      <segment state="translated">
-        <source>to encode</source>
-        <target>à encoder</target>
-      </segment>
-    </unit>
-    <unit id="tagCch4" name="label.cache_up_to_date">
-      <segment state="translated">
-        <source>up to date</source>
-        <target>à jour</target>
-      </segment>
-    </unit>
-    <unit id="tagCch6" name="message.vocab_encoding_started">
-      <segment state="translated">
-        <source>Tag encoding started</source>
-        <target>Encodage des tags démarré</target>
-      </segment>
-    </unit>
     <unit id="UQ6FVNw" name="label.processed">
       <segment state="translated">
         <source>Processed</source>
@@ -859,12 +871,6 @@
         <target>WD</target>
       </segment>
     </unit>
-    <unit id="sugSrcClip" name="label.source_clip">
-      <segment state="translated">
-        <source>CLIP</source>
-        <target>CLIP</target>
-      </segment>
-    </unit>
     <unit id="sugSrcCust" name="label.source_custom">
       <segment state="translated">
         <source>Custom</source>
@@ -875,6 +881,108 @@
       <segment state="translated">
         <source>Rating</source>
         <target>Classification</target>
+      </segment>
+    </unit>
+    <unit id="embPool" name="label.embedding_pool">
+      <segment state="translated">
+        <source>Embedding pool</source>
+        <target>Pool d'embeddings</target>
+      </segment>
+    </unit>
+    <unit id="embRun" name="label.embedding_running">
+      <segment state="translated">
+        <source>Embedding</source>
+        <target>Embedding en cours</target>
+      </segment>
+    </unit>
+    <unit id="embDone" name="label.embedded">
+      <segment state="translated">
+        <source>embedded</source>
+        <target>avec embedding</target>
+      </segment>
+    </unit>
+    <unit id="embTodo" name="label.to_embed">
+      <segment state="translated">
+        <source>to embed</source>
+        <target>à traiter</target>
+      </segment>
+    </unit>
+    <unit id="embMsg" name="message.embeddings_started">
+      <segment state="translated">
+        <source>Embedding run started.</source>
+        <target>Génération des embeddings lancée.</target>
+      </segment>
+    </unit>
+    <unit id="dupVec" name="label.duplicate_vectors">
+      <segment state="translated">
+        <source>Duplicate vectors</source>
+        <target>Vecteurs de doublons</target>
+      </segment>
+    </unit>
+    <unit id="vecMsg" name="message.vectors_started">
+      <segment state="translated">
+        <source>Vector recompute started.</source>
+        <target>Recalcul des vecteurs lancé.</target>
+      </segment>
+    </unit>
+    <unit id="mrgTag01" name="title.merge_tags">
+      <segment state="translated">
+        <source>Merge tags</source>
+        <target>Fusionner des tags</target>
+      </segment>
+    </unit>
+    <unit id="mrgTag02" name="label.merge_tags">
+      <segment state="translated">
+        <source>Tags to merge into this one</source>
+        <target>Tags à fusionner dans celui-ci</target>
+      </segment>
+    </unit>
+    <unit id="mrgTag03" name="label.merge_tags_help">
+      <segment state="translated">
+        <source>The selected tags will be deleted and all their images reassigned to this tag. This cannot be undone.</source>
+        <target>Les tags sélectionnés seront supprimés et toutes leurs images réassignées à ce tag. Cette action est irréversible.</target>
+      </segment>
+    </unit>
+    <unit id="mrgTag04" name="btn.merge">
+      <segment state="translated">
+        <source>Merge</source>
+        <target>Fusionner</target>
+      </segment>
+    </unit>
+    <unit id="mrgTag05" name="message.tags_merged">
+      <segment state="translated">
+        <source>{count, plural, one {# tag merged into} other {# tags merged into}} {tag}</source>
+        <target>{count, plural, one {# tag fusionné dans} other {# tags fusionnés dans}} {tag}</target>
+      </segment>
+    </unit>
+    <unit id="tagIdx01" name="label.count">
+      <segment state="translated">
+        <source>Count</source>
+        <target>Nombre</target>
+      </segment>
+    </unit>
+    <unit id="tagIdx02" name="label.search">
+      <segment state="translated">
+        <source>Search</source>
+        <target>Rechercher</target>
+      </segment>
+    </unit>
+    <unit id="tagIdx03" name="label.all">
+      <segment state="translated">
+        <source>All</source>
+        <target>Tous</target>
+      </segment>
+    </unit>
+    <unit id="tagIdx04" name="btn.reset">
+      <segment state="translated">
+        <source>Reset</source>
+        <target>Réinitialiser</target>
+      </segment>
+    </unit>
+    <unit id="tagIdx05" name="label.created_at">
+      <segment state="translated">
+        <source>Created at</source>
+        <target>Créé le</target>
       </segment>
     </unit>
   </file>

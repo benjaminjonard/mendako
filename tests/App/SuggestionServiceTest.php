@@ -158,6 +158,51 @@ class SuggestionServiceTest extends KernelTestCase
         $this->assertSame(TagSuggestion::STATUS_PENDING, $byName['fresh_tag']->getStatus());
     }
 
+    public function test_decision_on_one_source_blocks_reproposal_from_another_source(): void
+    {
+        // wd proposes a tag; the user dismisses it.
+        $this->service->store('post', $this->targetId, [
+            'tags' => [['name' => 'dismissed_tag', 'category' => 'general', 'score' => 0.6]],
+        ], TagSuggestion::SOURCE_WD);
+        $dismissed = $this->repository->findOneBy(['targetId' => $this->targetId, 'tagName' => 'dismissed_tag']);
+        $dismissed->setStatus(TagSuggestion::STATUS_DISMISSED);
+        $this->entityManager->flush();
+
+        // Later, a kNN run proposes the very same name with high confidence...
+        $this->service->store('post', $this->targetId, [
+            'tags' => [['name' => 'dismissed_tag', 'category' => 'general', 'score' => 0.95]],
+        ], TagSuggestion::SOURCE_KNN);
+
+        // ...it is not re-surfaced: a dismiss on the wd suggestion holds for every source, so no
+        // knn twin is created — still one dismissed wd row.
+        $suggestions = $this->repository->findForTarget('post', $this->targetId);
+        $this->assertCount(1, $suggestions);
+        $this->assertSame(TagSuggestion::SOURCE_WD, $suggestions[0]->getSource());
+        $this->assertSame(TagSuggestion::STATUS_DISMISSED, $suggestions[0]->getStatus());
+    }
+
+    public function test_blacklisted_name_is_never_stored(): void
+    {
+        // 'Bad Tag' normalizes to 'bad_tag', matching the model's normalized output.
+        $this->entityManager->persist((new \App\Entity\BlacklistedTag())->setName('Bad Tag'));
+        $this->entityManager->flush();
+
+        $this->service->store('post', $this->targetId, [
+            'tags' => [
+                ['name' => 'bad_tag', 'category' => 'general', 'score' => 0.99],
+                ['name' => 'good_tag', 'category' => 'general', 'score' => 0.5],
+            ],
+            // Even as a rating, a blacklisted name must be dropped.
+            'rating' => ['label' => 'bad_tag', 'score' => 0.9],
+        ]);
+
+        $names = array_map(
+            static fn (TagSuggestion $s): string => $s->getTagName(),
+            $this->repository->findForTarget('post', $this->targetId),
+        );
+        $this->assertSame(['good_tag'], $names);
+    }
+
     public function test_skips_tag_name_exceeding_column_length(): void
     {
         $longName = str_repeat('a', 300);

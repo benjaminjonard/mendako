@@ -96,11 +96,9 @@ class PostAutoTagSuggestionTest extends WebTestCase
     {
         [$board, $post] = $this->createPost();
         $this->enableAutoTag(true);
-        // High-scoring knn / clip (zero-shot) suggestions must NOT be pre-filled — they are
-        // learned guesses, not confident tags.
+        // A high-scoring knn suggestion must NOT be pre-filled — it is a learned guess, not a
+        // confident tag. Only wd tags are pre-filled.
         $this->persistSuggestion($post->getId(), 'knn_character', 0.95, TagCategory::CHARACTER, source: TagSuggestion::SOURCE_KNN);
-        $this->persistSuggestion($post->getId(), 'zeroshot_fox', 0.95, TagCategory::GENERAL, source: TagSuggestion::SOURCE_CLIP);
-        // A high-scoring wd suggestion is pre-filled as before.
         $this->persistSuggestion($post->getId(), 'wd_tag', 0.95, TagCategory::GENERAL);
 
         $this->client->request(Request::METHOD_GET, '/boards/'.$board->getSlug().'/'.$post->getId().'/autotag-suggestions');
@@ -108,9 +106,7 @@ class PostAutoTagSuggestionTest extends WebTestCase
         $this->assertResponseIsSuccessful();
         $data = json_decode($this->client->getResponse()->getContent(), true);
         $this->assertSame(['wd_tag'], array_column($data['highConfidence'], 'name'));
-        $pendingNames = array_column($data['pending'], 'name');
-        $this->assertContains('knn_character', $pendingNames);
-        $this->assertContains('zeroshot_fox', $pendingNames);
+        $this->assertContains('knn_character', array_column($data['pending'], 'name'));
     }
 
     public function test_endpoint_returns_disabled_when_feature_off(): void

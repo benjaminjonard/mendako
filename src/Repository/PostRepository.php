@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Board;
+use App\Entity\Embedding;
 use App\Entity\Post;
 use App\Entity\TagSuggestion;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Criteria;
-use Doctrine\DBAL\ParameterType;
 use Doctrine\Persistence\ManagerRegistry;
 
 class PostRepository extends ServiceEntityRepository
@@ -76,39 +76,73 @@ class PostRepository extends ServiceEntityRepository
         return $result === [] ? 0 : $result[0]['count'];
     }
 
-    public function findSimilarByVector(string $vector, float $maxDistance = 0.3, int $limit = 3): array {
+    /**
+     * Nearest posts by perceptual pHash — near-duplicate / "similar posts" detection.
+     *
+     * The `vector` column holds a 64-bit binary pHash (see PostVectorService), so the pgvector L2
+     * operator `<->` equals sqrt(Hamming distance). We therefore threshold and rank on Hamming: two
+     * images match when at most `$maxHamming` of the 64 bits differ (10 ≈ the usual pHash "same image"
+     * cut-off, tolerant to re-encode/scale/minor edits). The `<->` ORDER BY is served by the HNSW
+     * `vector_l2_ops` index. `distance` is returned as a 0-100 similarity percentage (100 = identical).
+     */
+    public function findSimilarByVector(string $vector, int $maxHamming = 10, int $limit = 3): array {
         $conn = $this->getEntityManager()->getConnection();
 
-        // Use L2 distance operator <->
-        // Lower distance = more similar
         $sql = "
-            SELECT 
+            SELECT
                 post.id,
                 post.path,
                 post.mimetype,
                 post.created_at AS created_at,
-                (1 - (post.vector <-> :vector)) * 100 as distance,
+                (1 - power(post.vector <-> :vector, 2) / 64) * 100 as distance,
                 board.id AS board_id,
                 board.slug AS board_slug
             FROM men_post post
-            LEFT JOIN men_board board ON post.board_id = board.id 
+            LEFT JOIN men_board board ON post.board_id = board.id
             WHERE post.vector IS NOT NULL
-            AND post.vector <-> :vector < :max_distance
+            AND power(post.vector <-> :vector, 2) <= :max_hamming
             ORDER BY post.vector <-> :vector
             LIMIT :limit
         ";
 
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(':vector', $vector);
-        $stmt->bindValue(':max_distance', $maxDistance);
+        $stmt->bindValue(':max_hamming', $maxHamming);
         $stmt->bindValue(':limit', $limit);
 
         return $stmt->executeQuery()->fetchAllAssociative();
     }
 
     /**
-     * kNN over the semantic CLIP embedding: the confirmed tags of the nearest
-     * already-tagged Posts (same CLIP model), for learned tag suggestions.
+     * Stream posts with no perceptual duplicate-detection vector yet — the default "recompute
+     * missing" set for the admin backfill job. `toIterable()` so a large back-catalogue isn't
+     * fully hydrated at once.
+     *
+     * @return iterable<Post>
+     */
+    public function findWithoutVectorIterable(): iterable
+    {
+        return $this->createQueryBuilder('p')
+            ->where('p.vector IS NULL')
+            ->getQuery()
+            ->toIterable();
+    }
+
+    /**
+     * Number of posts still missing a duplicate-detection vector (COUNT form of the above).
+     */
+    public function countWithoutVector(): int
+    {
+        return (int) $this->createQueryBuilder('p')
+            ->select('COUNT(p.id)')
+            ->where('p.vector IS NULL')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    /**
+     * kNN over the semantic embedding: the confirmed tags of the nearest
+     * already-tagged Posts (same embedding model), for learned tag suggestions.
      *
      * Returns rows {similarity, name, category} — one per (neighbour, tag) — for the
      * `k` nearest neighbours within the similarity floor. Read-only; never writes.
@@ -149,6 +183,35 @@ class PostRepository extends ServiceEntityRepository
             ->toIterable();
     }
 
+    /**
+     * Pick one random post that still has at least one pending automatic-tagging suggestion —
+     * the working set for the Tag validation queue. Returns null when the queue is empty.
+     * Native SQL because DQL has no portable ORDER BY RANDOM(); we only select the id and
+     * re-hydrate the managed entity through the ORM.
+     */
+    public function findRandomWithPendingSuggestions(): ?Post
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = "
+            SELECT post.id
+            FROM men_post post
+            WHERE EXISTS (
+                SELECT 1
+                FROM men_tag_suggestion s
+                WHERE s.target_type = 'post'
+                AND s.target_id = post.id
+                AND s.status = :status
+            )
+            ORDER BY RANDOM()
+            LIMIT 1
+        ";
+
+        $id = $conn->executeQuery($sql, ['status' => TagSuggestion::STATUS_PENDING])->fetchOne();
+
+        return $id === false ? null : $this->find($id);
+    }
+
     public function countAll(): int
     {
         return (int) $this->createQueryBuilder('p')->select('COUNT(p.id)')->getQuery()->getSingleScalarResult();
@@ -174,47 +237,44 @@ class PostRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
-    public function findNearestConfirmedTagsByClipVector(
-        string $clipVector,
-        string $clipModelId,
-        ?string $excludePostId,
-        int $k,
-        float $minSimilarity,
-    ): array {
-        $conn = $this->getEntityManager()->getConnection();
+    /**
+     * Stream posts that have no embedding row yet — the default "embed missing" set that fills
+     * the kNN/classifier pool. `toIterable()` so a large back-catalogue isn't fully hydrated.
+     *
+     * @return iterable<Post>
+     */
+    public function findWithoutEmbeddingIterable(): iterable
+    {
+        $sub = $this->getEntityManager()->createQueryBuilder()
+            ->select('1')
+            ->from(Embedding::class, 'e')
+            ->where("e.targetType = 'post'")
+            ->andWhere('e.targetId = p.id');
 
-        // Cosine distance operator <=> (the clip_vector hnsw index uses vector_cosine_ops);
-        // similarity = 1 - distance. Filter to the producing model so cross-model
-        // distances are never mixed, and only consider Posts that carry a confirmed tag.
-        $sql = "
-            WITH neighbours AS (
-                SELECT post.id, (1 - (post.clip_vector <=> :vector)) AS similarity
-                FROM men_post post
-                WHERE post.clip_vector IS NOT NULL
-                  AND post.clip_model_id = :model
-                  AND post.id != :self
-                  AND (post.clip_vector <=> :vector) <= :max_distance
-                  AND EXISTS (SELECT 1 FROM men_post_tag pt WHERE pt.post_id = post.id)
-                ORDER BY post.clip_vector <=> :vector
-                LIMIT :k
-            )
-            SELECT neighbours.similarity AS similarity, tag.name AS name, tag.category AS category
-            FROM neighbours
-            JOIN men_post_tag pt ON pt.post_id = neighbours.id
-            JOIN men_tag tag ON tag.id = pt.tag_id
-            -- 'meta' tags (animated/video/gif/with_sound) describe the file format,
-            -- not visual content, so they must not propagate by image similarity.
-            WHERE tag.category IS DISTINCT FROM 'meta'
-        ";
+        $qb = $this->createQueryBuilder('p');
 
-        $stmt = $conn->prepare($sql);
-        $stmt->bindValue(':vector', $clipVector);
-        $stmt->bindValue(':model', $clipModelId);
-        // null exclude → a sentinel that matches no uuid, so nothing is excluded.
-        $stmt->bindValue(':self', $excludePostId ?? '');
-        $stmt->bindValue(':max_distance', 1 - $minSimilarity);
-        $stmt->bindValue(':k', $k, ParameterType::INTEGER);
+        return $qb
+            ->where($qb->expr()->not($qb->expr()->exists($sub->getDQL())))
+            ->getQuery()
+            ->toIterable();
+    }
 
-        return $stmt->executeQuery()->fetchAllAssociative();
+    /**
+     * Number of posts still missing an embedding (COUNT form of findWithoutEmbeddingIterable()).
+     */
+    public function countWithoutEmbedding(): int
+    {
+        $sub = $this->getEntityManager()->createQueryBuilder()
+            ->select('1')
+            ->from(Embedding::class, 'e')
+            ->where("e.targetType = 'post'")
+            ->andWhere('e.targetId = p.id');
+
+        $qb = $this->createQueryBuilder('p')->select('COUNT(p.id)');
+
+        return (int) $qb
+            ->where($qb->expr()->not($qb->expr()->exists($sub->getDQL())))
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 }

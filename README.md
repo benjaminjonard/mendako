@@ -134,15 +134,15 @@ Notes:
 - Once the service is running, the admin automatic tagging page (under Administration) lists the available models and their status per category, lets you **download or remove** each model (one click, stored in the models volume), and lets you choose the active model.
 - When a **CLIP** model is active, each processed item also gets a semantic embedding (stored alongside its tags), which powers two kinds of learned suggestions: tags propagated from your most visually similar already-tagged items (kNN), and zero-shot matches of the image against your own tag names (so photos of animals/objects the illustration tagger can't read are still covered). These learned suggestions are always offered as click-to-add chips — never auto-applied. Additive and optional — without a CLIP model, only the tagger runs.
 
-#### Switching to a different-dimension CLIP model
+#### Switching to a different-dimension embedding encoder
 
-Embeddings are bound to the dimension of the model that produced them (the shipped `siglip2-so400m` is 1152). If you ever switch to a CLIP model of a **different** dimension, run the maintenance command so the embedding column is re-dimensioned and every item is re-embedded:
+Embeddings are bound to the dimension of the encoder that produced them (the shipped `siglip2-so400m` is 1152). If you ever switch to an encoder of a **different** dimension, run the maintenance command so the embedding column is re-dimensioned and every item is re-embedded:
 
 ```bash
-docker exec mendako_worker php bin/console app:autotag:reindex-clip-embeddings <dimension>
+docker exec mendako_worker php bin/console app:autotag:reindex-embeddings <dimension>
 ```
 
-It drops the index, purges the old embeddings, re-dimensions the column, recreates the index, and re-dispatches every item for re-embedding. **No tags are lost** (only embeddings are purged — they are recomputable). You must also update the `clipVector` `dimensions` mapping on `Post`/`StagedUpload` to match the new model.
+It drops the index, purges the old embeddings, re-dimensions the column, recreates the index, and re-dispatches every item for re-embedding. **No tags are lost** (only embeddings are purged — they are recomputable). You must also update the `embeddingVector` `dimensions` mapping on `Post`/`StagedUpload` to match the new model.
 
 #### Tagging your existing backlog
 

@@ -43,6 +43,56 @@ class TagTest extends WebTestCase
         $this->assertCount(7, $crawler->filter('tbody tr')); // 7 because 4 tags are included in migrations (4 + 3)
     }
 
+    public function test_tag_list_is_paginated(): void
+    {
+        // The 4 migration tags are META, so filtering on another category isolates the fixtures.
+        $this->client->loginUser(UserFactory::createOne());
+        TagFactory::createMany(25, ['category' => TagCategory::CHARACTER]);
+
+        $crawler = $this->client->request(Request::METHOD_GET, '/tags?category=character');
+        $this->assertResponseIsSuccessful();
+        $this->assertCount(20, $crawler->filter('tbody tr'));
+        $this->assertGreaterThan(0, $crawler->filter('nav.pagination a.pagination-link')->count());
+
+        $crawler = $this->client->request(Request::METHOD_GET, '/tags?category=character&page=2');
+        $this->assertCount(5, $crawler->filter('tbody tr'));
+    }
+
+    public function test_tag_list_can_be_searched_by_name(): void
+    {
+        $this->client->loginUser(UserFactory::createOne());
+        TagFactory::createOne(['name' => 'zzz_needle', 'category' => TagCategory::CHARACTER]);
+        TagFactory::createMany(3, ['category' => TagCategory::CHARACTER]);
+
+        $crawler = $this->client->request(Request::METHOD_GET, '/tags?q=zzz_needle');
+        $this->assertResponseIsSuccessful();
+        $this->assertCount(1, $crawler->filter('tbody tr'));
+    }
+
+    public function test_tag_list_can_be_filtered_by_category(): void
+    {
+        $this->client->loginUser(UserFactory::createOne());
+        TagFactory::createMany(2, ['category' => TagCategory::ARTIST]);
+        TagFactory::createMany(3, ['category' => TagCategory::GENERAL]);
+
+        $crawler = $this->client->request(Request::METHOD_GET, '/tags?category=artist');
+        $this->assertResponseIsSuccessful();
+        $this->assertCount(2, $crawler->filter('tbody tr'));
+    }
+
+    public function test_tag_list_can_be_sorted_by_name(): void
+    {
+        $this->client->loginUser(UserFactory::createOne());
+        TagFactory::createOne(['name' => 'aaa_first', 'category' => TagCategory::COPYRIGHT]);
+        TagFactory::createOne(['name' => 'zzz_last', 'category' => TagCategory::COPYRIGHT]);
+
+        $crawler = $this->client->request(Request::METHOD_GET, '/tags?category=copyright&sort=name&dir=ASC');
+        $this->assertSame('aaa_first', trim($crawler->filter('tbody tr:first-child td:first-child')->text()));
+
+        $crawler = $this->client->request(Request::METHOD_GET, '/tags?category=copyright&sort=name&dir=DESC');
+        $this->assertSame('zzz_last', trim($crawler->filter('tbody tr:first-child td:first-child')->text()));
+    }
+
     public function test_can_edit_tag(): void
     {
         // Arrange

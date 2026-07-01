@@ -7,53 +7,42 @@ namespace App\Repository;
 use App\Entity\Board;
 use App\Entity\Post;
 use App\Entity\Tag;
+use App\Enum\TagCategory;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 class TagRepository extends ServiceEntityRepository
 {
+    /**
+     * The sortable columns exposed on the tag index, mapped to their DQL ordering expression.
+     * 'count' targets the correlated post-count alias built in findPaginated().
+     */
+    private const array SORTS = [
+        'name' => 'LOWER(t.name)',
+        'count' => 'counter',
+        'category' => 't.category',
+        'suggested' => 't.suggested',
+        'created' => 't.createdAt',
+    ];
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Tag::class);
     }
 
     /**
-     * The most-used tag names (capped) — the candidate vocabulary for zero-shot scoring.
-     * Capped so a large library can't blow the per-item text-encode cost / request timeout;
-     * the common vocabulary is always covered, rare one-offs are left to kNN.
-     *
-     * @return string[]
+     * @return list<array{id: mixed, name: string, category: ?TagCategory, suggested: bool, createdAt: \DateTimeImmutable, counter: int}>
      */
-    public function findMostUsedNames(int $limit): array
-    {
-        return array_map('strval', $this->createQueryBuilder('t')
-            ->select('t.name')
-            ->leftJoin('t.posts', 'p')
-            ->groupBy('t.id')
-            ->orderBy('COUNT(p.id)', 'DESC')
-            ->setMaxResults($limit)
-            ->getQuery()
-            ->getSingleColumnResult());
-    }
-
-    /**
-     * Every tag name (for zero-shot scoring). The inference service encodes each name once
-     * and persists the embedding, so passing the whole vocabulary is cheap after warm-up.
-     *
-     * @return string[]
-     */
-    public function findAllNames(): array
-    {
-        return array_map('strval', $this->createQueryBuilder('t')
-            ->select('t.name')
-            ->orderBy('t.name', 'ASC')
-            ->getQuery()
-            ->getSingleColumnResult());
-    }
-
-    public function findWithCounters(): array
-    {
+    public function findPaginated(
+        int $page,
+        int $perPage,
+        ?string $search,
+        ?TagCategory $category,
+        string $sort,
+        string $direction,
+    ): array {
         $countQuery = $this->getEntityManager()
             ->createQueryBuilder()
             ->select('COUNT(DISTINCT i2.id)')
@@ -63,14 +52,42 @@ class TagRepository extends ServiceEntityRepository
             ->getDQL()
         ;
 
-        $qb = $this->getEntityManager()
-            ->createQueryBuilder()
-            ->select("t.id, t.name, t.category, t.suggested, ({$countQuery}) AS counter")
-            ->from(Tag::class, 't')
-            ->orderBy('t.createdAt', \Doctrine\Common\Collections\Criteria::DESC)
+        $qb = $this->createQueryBuilder('t')
+            ->select("t.id, t.name, t.category, t.suggested, t.createdAt, ({$countQuery}) AS counter")
+            ->setFirstResult(($page - 1) * $perPage)
+            ->setMaxResults($perPage)
         ;
 
+        $this->applyFilters($qb, $search, $category);
+
+        $column = self::SORTS[$sort] ?? self::SORTS['name'];
+        $direction = strtoupper($direction) === 'DESC' ? Criteria::DESC : Criteria::ASC;
+        $qb->orderBy($column, $direction);
+        if ($column !== self::SORTS['name']) {
+            $qb->addOrderBy('LOWER(t.name)', Criteria::ASC); // stable tiebreaker
+        }
+
         return $qb->getQuery()->getArrayResult();
+    }
+
+    public function countFiltered(?string $search, ?TagCategory $category): int
+    {
+        $qb = $this->createQueryBuilder('t')->select('COUNT(t.id)');
+        $this->applyFilters($qb, $search, $category);
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
+    }
+
+    private function applyFilters(QueryBuilder $qb, ?string $search, ?TagCategory $category): void
+    {
+        if ($search !== null && trim($search) !== '') {
+            $qb->andWhere('LOWER(t.name) LIKE LOWER(:search)')
+                ->setParameter('search', '%'.trim($search).'%');
+        }
+
+        if ($category !== null) {
+            $qb->andWhere('t.category = :category')->setParameter('category', $category->value);
+        }
     }
 
     public function findForPosts(Board $board, array $posts): array

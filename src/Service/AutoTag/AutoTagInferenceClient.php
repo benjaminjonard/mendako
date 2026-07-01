@@ -20,13 +20,9 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
  */
 class AutoTagInferenceClient
 {
-    // Inference (tags + embedding + zero-shot over the vocabulary) is heavy and runs
-    // on the async worker — allow a generous timeout, especially for the cold-start
-    // load of the large CLIP encoders on the first request.
+    // Inference (tags + embedding) is heavy and runs on the async worker — allow a generous
+    // timeout, especially for the cold-start load of the WD model on the first request.
     private const float ANALYZE_TIMEOUT_SECONDS = 180.0;
-    // Vocabulary calls are lightweight: the service starts the warm-up in the background and
-    // replies immediately, and the status read is trivial.
-    private const float VOCABULARY_TIMEOUT_SECONDS = 10.0;
 
     public function __construct(
         private readonly HttpClientInterface $httpClient,
@@ -36,100 +32,12 @@ class AutoTagInferenceClient
     }
 
     /**
-     * Ask the service to encode the given tag vocabulary into its persistent cache (a one-off,
-     * runs in the background there). reset=true wipes the cache first and re-encodes everything;
-     * otherwise only the missing tags are encoded. Fire-and-forget: soft-fails like every call.
-     *
-     * @param string[] $tags
-     */
-    public function warmVocabulary(string $clipModelId, array $tags, bool $reset = false): void
-    {
-        if (!$this->autoTagConfigProvider->isEnabled() || $tags === []) {
-            return;
-        }
-
-        $url = rtrim($this->autoTagConfigProvider->getServiceUrl(), '/').'/vocabulary';
-
-        try {
-            $this->httpClient->request('POST', $url, [
-                'timeout' => self::VOCABULARY_TIMEOUT_SECONDS,
-                'json' => ['model' => $clipModelId, 'tags' => array_values($tags), 'reset' => $reset],
-            ]);
-        } catch (\Throwable $exception) {
-            $this->logger->warning('Service vocabulary warm-up call failed', ['error' => $exception->getMessage()]);
-        }
-    }
-
-    /**
-     * Coverage of the given tags in the service's text cache:
-     * ['cached' => int, 'missing' => int, 'total' => int]. Cheap (no model load). [] on failure.
-     *
-     * @param string[] $tags
+     * Run WD inference on an image. Returns `{tags, rating}` plus `embedding` / `embedding_dim`
+     * / `embedding_model_id` (WD's fc_norm feature, produced in the same pass), or [] on failure.
      *
      * @return array<string, mixed>
      */
-    public function vocabularyMissing(string $clipModelId, array $tags): array
-    {
-        if (!$this->autoTagConfigProvider->isEnabled()) {
-            return [];
-        }
-
-        $url = rtrim($this->autoTagConfigProvider->getServiceUrl(), '/').'/vocabulary/missing';
-
-        try {
-            $response = $this->httpClient->request('POST', $url, [
-                'timeout' => self::VOCABULARY_TIMEOUT_SECONDS,
-                'json' => ['model' => $clipModelId, 'tags' => array_values($tags)],
-            ]);
-            if ($response->getStatusCode() !== 200) {
-                return [];
-            }
-
-            return $response->toArray();
-        } catch (\Throwable $exception) {
-            $this->logger->warning('Service vocabulary missing call failed', ['error' => $exception->getMessage()]);
-
-            return [];
-        }
-    }
-
-    /**
-     * Progress of the vocabulary warm-up: ['running' => bool, 'done' => int, 'total' => int].
-     * Returns [] on any failure.
-     *
-     * @return array<string, mixed>
-     */
-    public function vocabularyStatus(): array
-    {
-        if (!$this->autoTagConfigProvider->isEnabled()) {
-            return [];
-        }
-
-        $url = rtrim($this->autoTagConfigProvider->getServiceUrl(), '/').'/vocabulary';
-
-        try {
-            $response = $this->httpClient->request('GET', $url, ['timeout' => self::VOCABULARY_TIMEOUT_SECONDS]);
-            if ($response->getStatusCode() !== 200) {
-                return [];
-            }
-
-            return $response->toArray();
-        } catch (\Throwable $exception) {
-            $this->logger->warning('Service vocabulary status call failed', ['error' => $exception->getMessage()]);
-
-            return [];
-        }
-    }
-
-    /**
-     * Run base-model inference on an image. Returns `{tags, rating}` (plus `embedding`
-     * and `zeroshot` when a CLIP model is active) or [] on any failure.
-     *
-     * @param string[] $tagNames the user's tag vocabulary for zero-shot scoring
-     *
-     * @return array<string, mixed>
-     */
-    public function analyze(string $imagePath, string $modelId, ?string $clipModelId = null, array $tagNames = []): array
+    public function analyze(string $imagePath, string $modelId): array
     {
         if (!$this->autoTagConfigProvider->isEnabled()) {
             return [];
@@ -138,19 +46,10 @@ class AutoTagInferenceClient
         $url = rtrim($this->autoTagConfigProvider->getServiceUrl(), '/').'/analyze';
 
         try {
-            $fields = [
+            $formData = new FormDataPart([
                 'model' => $modelId,
                 'image' => DataPart::fromPath($imagePath),
-            ];
-            // Fold the CLIP embedding into the same call when a model is active.
-            if ($clipModelId !== null) {
-                $fields['clip_model'] = $clipModelId;
-                // Zero-shot against the user's own tag names (text-encoded by the service).
-                if ($tagNames !== []) {
-                    $fields['tag_names'] = json_encode(array_values($tagNames));
-                }
-            }
-            $formData = new FormDataPart($fields);
+            ]);
             $response = $this->httpClient->request('POST', $url, [
                 'timeout' => self::ANALYZE_TIMEOUT_SECONDS,
                 'headers' => $formData->getPreparedHeaders()->toArray(),
@@ -166,6 +65,43 @@ class AutoTagInferenceClient
             return $response->toArray();
         } catch (\Throwable $exception) {
             $this->logger->warning('Service /analyze call failed', ['error' => $exception->getMessage()]);
+
+            return [];
+        }
+    }
+
+    /**
+     * Image embedding only (embedding-pool prefill), no tagging. Returns
+     * ['embedding' => float[], 'dim' => int, 'model_id' => string] or [] on any failure.
+     */
+    public function embed(string $imagePath, string $modelId): array
+    {
+        if (!$this->autoTagConfigProvider->isEnabled()) {
+            return [];
+        }
+
+        $url = rtrim($this->autoTagConfigProvider->getServiceUrl(), '/').'/embed';
+
+        try {
+            $formData = new FormDataPart([
+                'model' => $modelId,
+                'image' => DataPart::fromPath($imagePath),
+            ]);
+            $response = $this->httpClient->request('POST', $url, [
+                'timeout' => self::ANALYZE_TIMEOUT_SECONDS,
+                'headers' => $formData->getPreparedHeaders()->toArray(),
+                'body' => $formData->bodyToIterable(),
+            ]);
+
+            if (!$this->isSuccessful($response->getStatusCode())) {
+                $this->logger->warning('Service /embed returned a non-2xx status', ['status' => $response->getStatusCode()]);
+
+                return [];
+            }
+
+            return $response->toArray();
+        } catch (\Throwable $exception) {
+            $this->logger->warning('Service /embed call failed', ['error' => $exception->getMessage()]);
 
             return [];
         }

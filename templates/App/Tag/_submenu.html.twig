@@ -1,0 +1,11 @@
+{% set current = app.current_route %}
+<div class="tabs">
+    <ul>
+        <li class="{{ current == 'app_tag_index' ? 'is-active' }}">
+            <a href="{{ path('app_tag_index') }}">{{ 'menu.tags'|trans }}</a>
+        </li>
+        <li class="{{ current == 'app_tag_blacklist' ? 'is-active' }}">
+            <a href="{{ path('app_tag_blacklist') }}">{{ 'label.ai_blacklist'|trans }}</a>
+        </li>
+    </ul>
+</div>

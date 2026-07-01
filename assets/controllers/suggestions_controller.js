@@ -114,7 +114,7 @@ export default class extends Controller {
         score.className = 'suggestion-score';
         score.textContent = Math.round((tag.score || 0) * 100) + '%';
 
-        // Source badge (WD / CLIP / custom).
+        // Source badge (WD / custom).
         let source = document.createElement('span');
         source.className = 'tag is-small suggestion-source suggestion-source-' + tag.source;
         source.textContent = this.sourceLabelsValue[tag.source] || tag.source;
@@ -141,8 +141,19 @@ export default class extends Controller {
         this.appendToInput(event.currentTarget.dataset.suggestion);
     }
 
+    // Add-and-remove: the "+" control adds the tag to the field, then drops its row so the
+    // list closes up. Rejecting ("−") just drops the row. Either way the suggestion leaves the list.
+    acceptSuggestion(event) {
+        const row = event.currentTarget.closest('[data-suggestion]');
+        if (row === null) {
+            return;
+        }
+        this.appendToInput(row.dataset.suggestion);
+        row.remove();
+    }
+
     rejectSuggestion(event) {
         event.stopPropagation();
-        event.target.closest('[data-suggestion]').remove();
+        event.currentTarget.closest('[data-suggestion]').remove();
     }
 }

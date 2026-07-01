@@ -6,25 +6,31 @@ from app import inference
 
 
 class _FakeInput:
-    name = "pixel_values"
-    shape = [1, 3, 384, 384]  # NCHW
+    name = "input"
+    shape = ["batch", 448, 448, 3]  # NHWC (WD)
 
 
-class _FakeVisualSession:
-    def __init__(self, vector):
-        self._vector = vector
+class _FakeWdSession:
+    """Mirrors the patched WD model: two outputs [tag logits, embedding]."""
+
+    def __init__(self, embedding, second_output=True):
+        self._embedding = embedding
+        self._second = second_output
 
     def get_inputs(self):
         return [_FakeInput()]
 
     def run(self, _outputs, _feed):
-        return [np.array([self._vector], dtype=np.float32)]
+        logits = np.zeros((1, 10), dtype=np.float32)
+        if not self._second:
+            return [logits]
+        return [logits, np.array([self._embedding], dtype=np.float32)]
 
 
-def _clip_dir(tmp_path: Path) -> Path:
-    model_dir = tmp_path / "siglip2-so400m"
+def _wd_dir(tmp_path: Path) -> Path:
+    model_dir = tmp_path / "wd-eva02-large-tagger-v3"
     model_dir.mkdir()
-    (model_dir / "visual.onnx").write_bytes(b"fake")
+    (model_dir / "model.onnx").write_bytes(b"fake")
     return model_dir
 
 
@@ -37,14 +43,11 @@ def _png(tmp_path: Path) -> str:
 
 
 def test_embed_returns_unit_normalized_vector(monkeypatch, tmp_path):
-    model_dir = _clip_dir(tmp_path)
-    raw = [3.0, 4.0] + [0.0] * 1150  # 1152-dim, norm 5 before normalization
-    monkeypatch.setattr(inference, "_session", lambda _p: _FakeVisualSession(raw))
+    monkeypatch.setattr(inference, "_session", lambda _p: _FakeWdSession([3.0, 4.0]))  # norm 5
 
-    result = inference.embed(model_dir, _png(tmp_path))
+    result = inference.embed(_wd_dir(tmp_path), _png(tmp_path))
 
-    assert result["dim"] == 1152
-    assert len(result["embedding"]) == 1152
+    assert result["dim"] == 2
     norm = float(np.linalg.norm(np.array(result["embedding"], dtype=np.float32)))
     assert abs(norm - 1.0) < 1e-5
     # direction preserved (3,4) -> (0.6, 0.8)
@@ -53,20 +56,27 @@ def test_embed_returns_unit_normalized_vector(monkeypatch, tmp_path):
 
 
 def test_embed_handles_zero_vector(monkeypatch, tmp_path):
-    model_dir = _clip_dir(tmp_path)
-    monkeypatch.setattr(inference, "_session", lambda _p: _FakeVisualSession([0.0] * 1152))
+    monkeypatch.setattr(inference, "_session", lambda _p: _FakeWdSession([0.0, 0.0]))
 
-    result = inference.embed(model_dir, _png(tmp_path))
+    result = inference.embed(_wd_dir(tmp_path), _png(tmp_path))
 
-    assert result["dim"] == 1152
+    assert result["dim"] == 2
     assert all(v == 0.0 for v in result["embedding"])  # no division by zero
+
+
+def test_embed_rejects_model_without_embedding_output(monkeypatch, tmp_path):
+    import pytest
+
+    monkeypatch.setattr(inference, "_session", lambda _p: _FakeWdSession([1.0], second_output=False))
+
+    with pytest.raises(ValueError):
+        inference.embed(_wd_dir(tmp_path), _png(tmp_path))
 
 
 def test_embed_rejects_non_finite_output(monkeypatch, tmp_path):
     import pytest
 
-    model_dir = _clip_dir(tmp_path)
-    monkeypatch.setattr(inference, "_session", lambda _p: _FakeVisualSession([float("nan")] + [0.0] * 1151))
+    monkeypatch.setattr(inference, "_session", lambda _p: _FakeWdSession([float("nan"), 0.0]))
 
     with pytest.raises(ValueError):
-        inference.embed(model_dir, _png(tmp_path))
+        inference.embed(_wd_dir(tmp_path), _png(tmp_path))

@@ -71,7 +71,7 @@ class AutoTagConfigTest extends WebTestCase
         $this->assertStringNotContainsString('/admin/autotag/tag-backlog', $content); // no actions exposed
     }
 
-    public function test_batch_status_returns_processed_total(): void
+    public function test_jobs_endpoint_returns_processed_total_per_job(): void
     {
         $this->client->loginUser(UserFactory::createOne(['roles' => ['ROLE_ADMIN']]));
         $board = \App\Tests\Factory\BoardFactory::createOne();
@@ -81,58 +81,43 @@ class AutoTagConfigTest extends WebTestCase
         $em->persist((new \App\Entity\TagSuggestion())->setTargetType('post')->setTargetId($processed->getId())->setTagName('cat')->setScore(0.9)->setSource(\App\Entity\TagSuggestion::SOURCE_WD));
         $em->flush();
 
-        $this->client->request(Request::METHOD_GET, '/admin/autotag/batch-status');
+        $this->client->request(Request::METHOD_GET, '/admin/autotag/jobs');
 
         $this->assertResponseIsSuccessful();
         $data = json_decode($this->client->getResponse()->getContent(), true);
-        $this->assertSame(2, $data['total']);
-        $this->assertSame(1, $data['processed']);
+        // A single request now carries every job card's status.
+        $this->assertSame(2, $data['tagging']['total']);
+        $this->assertSame(1, $data['tagging']['processed']);
+        $this->assertArrayHasKey('embedding', $data);
+        $this->assertSame(2, $data['embedding']['total']);
+        // Duplicate-detection vectors: both factory posts lack a vector (not built at factory time).
+        $this->assertArrayHasKey('vectors', $data);
+        $this->assertSame(2, $data['vectors']['total']);
+        $this->assertSame(0, $data['vectors']['processed']);
     }
 
-    public function test_cache_status_returns_coverage_and_progress(): void
+    public function test_vector_backlog_button_starts_a_run_even_when_autotag_disabled(): void
     {
         $this->client->loginUser(UserFactory::createOne(['roles' => ['ROLE_ADMIN']]));
-        $client = $this->createStub(AutoTagInferenceClient::class);
-        $client->method('vocabularyMissing')->willReturn(['cached' => 5, 'missing' => 2, 'total' => 7]);
-        $client->method('vocabularyStatus')->willReturn(['running' => true, 'done' => 5, 'total' => 7]);
-        static::getContainer()->set(AutoTagInferenceClient::class, $client);
-        $this->setEnabled(true);
+        $this->stubClient();
+        // Duplicate detection is a core feature: the recompute must work with auto-tagging OFF.
+        $this->setEnabled(false);
 
-        $this->client->request(Request::METHOD_GET, '/admin/autotag/cache-status');
+        $crawler = $this->client->request(Request::METHOD_GET, '/admin');
+        $this->client->submit($crawler->filter('form[action$="vectors/backlog"] button[value="1"]')->form());
 
         $this->assertResponseIsSuccessful();
-        $data = json_decode($this->client->getResponse()->getContent(), true);
-        $this->assertSame(5, $data['cached']);
-        $this->assertSame(2, $data['missing']);
-        $this->assertTrue($data['running']);
-        $this->assertSame(5, $data['done']);
+        $this->assertStringContainsString('Vector recompute started', $this->client->getResponse()->getContent());
     }
 
-    public function test_cache_encode_missing_triggers_incremental_warm_up(): void
+
+    public function test_embed_backlog_button_starts_a_run_when_enabled(): void
     {
         $this->client->loginUser(UserFactory::createOne(['roles' => ['ROLE_ADMIN']]));
-        $client = $this->createMock(AutoTagInferenceClient::class);
-        $client->expects($this->once())->method('warmVocabulary')->with($this->anything(), $this->anything(), false);
-        static::getContainer()->set(AutoTagInferenceClient::class, $client);
         $this->setEnabled(true);
 
         $crawler = $this->client->request(Request::METHOD_GET, '/admin');
-        $this->client->submit($crawler->filter('form[action$="cache-encode"] button[value="0"]')->form());
-
-        $this->assertResponseIsSuccessful();
-        $this->assertStringContainsString('Tag encoding started', $this->client->getResponse()->getContent());
-    }
-
-    public function test_cache_encode_all_re_encodes_everything(): void
-    {
-        $this->client->loginUser(UserFactory::createOne(['roles' => ['ROLE_ADMIN']]));
-        $client = $this->createMock(AutoTagInferenceClient::class);
-        $client->expects($this->once())->method('warmVocabulary')->with($this->anything(), $this->anything(), true);
-        static::getContainer()->set(AutoTagInferenceClient::class, $client);
-        $this->setEnabled(true);
-
-        $crawler = $this->client->request(Request::METHOD_GET, '/admin');
-        $this->client->submit($crawler->filter('form[action$="cache-encode"] button[value="1"]')->form());
+        $this->client->submit($crawler->filter('form[action$="embed-backlog"] button[value="1"]')->form());
 
         $this->assertResponseIsSuccessful();
     }
@@ -154,7 +139,8 @@ class AutoTagConfigTest extends WebTestCase
         // One model per category, baked into the service image — no DB selection involved.
         $provider = new AutoTagConfigProvider(true);
         $this->assertSame('wd-eva02-large-tagger-v3', $provider->getActiveModel('wd'));
-        $this->assertSame('siglip2-so400m', $provider->getActiveModel('clip'));
+        // WD is also the embedding encoder now — there is no separate 'clip' model.
+        $this->assertNull($provider->getActiveModel('clip'));
         $this->assertNull($provider->getActiveModel('unknown'));
     }
 

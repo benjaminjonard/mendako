@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Message\EnqueueBacklogMessage;
+use App\Message\EnqueueEmbeddingBacklogMessage;
+use App\Message\EnqueueVectorBacklogMessage;
 use App\Repository\PostRepository;
-use App\Repository\TagRepository;
 use App\Service\AutoTag\AutoTagConfigProvider;
-use App\Service\AutoTag\AutoTagInferenceClient;
 use Doctrine\DBAL\Connection;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -42,8 +42,6 @@ class AutoTagConfigController extends AbstractController
             return $this->redirectToRoute('app_admin_index');
         }
 
-        // The worker encodes the zero-shot vocabulary first, then fans out (see
-        // EnqueueBacklogHandler), so images are only analyzed once the tags are cached.
         $messageBus->dispatch(
             new EnqueueBacklogMessage('post', $request->request->getBoolean('all')),
             [new TransportNamesStamp('autotag_batch')],
@@ -54,63 +52,104 @@ class AutoTagConfigController extends AbstractController
     }
 
     /**
-     * Live backlog progress, polled by the status panel. processed = posts with at
-     * least one suggestion; running = whether a retroactive run is still in flight.
+     * Live progress for every admin job, polled once by the Jobs panel (one request for all cards,
+     * so adding jobs never multiplies the polling). Each job returns a uniform, display-ready shape:
+     *   processed/total — progress-bar numbers
+     *   running         — whether a run is in flight (launch buttons stay disabled while true)
+     *   state           — semantic status the JS maps to a Bulma tag colour (running/partial/done/idle)
+     *   label           — fully translated status text (i18n lives here, the controller just paints it)
+     *   showBar         — whether the progress bar is visible for this job
      */
-    #[Route(path: '/admin/autotag/batch-status', name: 'app_autotag_batch_status', methods: ['GET'])]
-    public function batchStatus(PostRepository $postRepository, AutoTagInferenceClient $autoTagInferenceClient, Connection $connection): JsonResponse
+    #[Route(path: '/admin/autotag/jobs', name: 'app_autotag_jobs', methods: ['GET'])]
+    public function jobs(PostRepository $postRepository, Connection $connection, TranslatorInterface $translator): JsonResponse
     {
+        // Shared across every job: one count instead of one per card.
         $total = $postRepository->countAll();
-        // Queued items still to process; > 0 means a run is in flight. The UI shows this
-        // count (it visibly drains) and disables the launch buttons so a second run can't
-        // be started on top of it.
-        $pending = $this->pendingBatchCount($connection);
 
-        // One-off vocabulary encoding progress, surfaced so the UI can show "Encoding tags X/Y".
-        $vocabulary = $autoTagInferenceClient->vocabularyStatus();
-
-        return $this->json([
+        // --- Retroactive tagging ------------------------------------------------------------------
+        // processed = posts with at least one suggestion. pending = queued fan-out messages; > 0
+        // means a run is in flight (the count visibly drains as work happens).
+        $tagPending = $this->pendingBatchCount($connection);
+        $tagRunning = $tagPending > 0;
+        $tagging = [
             'processed' => $total - $postRepository->countWithoutSuggestions(),
             'total' => $total,
-            'pending' => $pending,
-            'running' => $pending > 0,
-            'vocabularyWarming' => (bool) ($vocabulary['running'] ?? false),
-            'vocabularyDone' => (int) ($vocabulary['done'] ?? 0),
-            'vocabularyTotal' => (int) ($vocabulary['total'] ?? 0),
-        ]);
-    }
+            'running' => $tagRunning,
+            'state' => $tagRunning ? 'running' : 'idle',
+            'label' => $tagRunning
+                ? \sprintf('%s — %s %s', $translator->trans('label.run_active'), number_format($tagPending), $translator->trans('label.run_remaining'))
+                : $translator->trans('label.run_idle'),
+            'showBar' => true,
+        ];
 
-    /**
-     * Tag-cache job status: how many tag names are encoded vs still to encode, plus the live
-     * encoding progress. Polled by the cache-status panel.
-     */
-    #[Route(path: '/admin/autotag/cache-status', name: 'app_autotag_cache_status', methods: ['GET'])]
-    public function cacheStatus(AutoTagConfigProvider $autoTagConfigProvider, AutoTagInferenceClient $autoTagInferenceClient, TagRepository $tagRepository): JsonResponse
-    {
-        $clipModelId = $autoTagConfigProvider->getActiveModel('clip');
-        $coverage = $clipModelId !== null
-            ? $autoTagInferenceClient->vocabularyMissing($clipModelId, $tagRepository->findAllNames())
-            : [];
-        $warm = $autoTagInferenceClient->vocabularyStatus();
+        // --- Embedding pool -----------------------------------------------------------------------
+        $embedded = $total - $postRepository->countWithoutEmbedding();
+        $embedRunning = $this->pendingEmbeddingCount($connection) > 0;
+        $remaining = max($total - $embedded, 0);
+        $embedding = [
+            'processed' => $embedded,
+            'total' => $total,
+            'running' => $embedRunning,
+            'state' => $embedRunning ? 'running' : ($remaining > 0 ? 'partial' : 'done'),
+            'label' => match (true) {
+                $embedRunning => \sprintf('%s %s/%s', $translator->trans('label.embedding_running'), number_format($embedded), number_format($total)),
+                $remaining > 0 => \sprintf('%s %s · %s %s', number_format($embedded), $translator->trans('label.embedded'), number_format($remaining), $translator->trans('label.to_embed')),
+                default => \sprintf('%s %s', number_format($embedded), $translator->trans('label.embedded')),
+            },
+            'showBar' => $embedRunning,
+        ];
+
+        // --- Duplicate-detection vectors ----------------------------------------------------------
+        // Core feature, independent of auto-tagging: processed = posts carrying a perceptual pHash.
+        $vectorPending = $this->pendingVectorCount($connection);
+        $vectorRunning = $vectorPending > 0;
+        $vectors = [
+            'processed' => $total - $postRepository->countWithoutVector(),
+            'total' => $total,
+            'running' => $vectorRunning,
+            'state' => $vectorRunning ? 'running' : 'idle',
+            'label' => $vectorRunning
+                ? \sprintf('%s — %s %s', $translator->trans('label.run_active'), number_format($vectorPending), $translator->trans('label.run_remaining'))
+                : $translator->trans('label.run_idle'),
+            'showBar' => true,
+        ];
 
         return $this->json([
-            'cached' => (int) ($coverage['cached'] ?? 0),
-            'missing' => (int) ($coverage['missing'] ?? 0),
-            'total' => (int) ($coverage['total'] ?? 0),
-            'running' => (bool) ($warm['running'] ?? false),
-            'done' => (int) ($warm['done'] ?? 0),
-            'encodeTotal' => (int) ($warm['total'] ?? 0),
+            'tagging' => $tagging,
+            'embedding' => $embedding,
+            'vectors' => $vectors,
         ]);
     }
 
     /**
-     * Encode the tag vocabulary into the service's persistent cache (incremental: only the
-     * not-yet-cached tags are encoded, in the background, then textual.onnx is unloaded).
+     * Kick off a bulk recompute of the perceptual duplicate-detection vector (the fan-out happens on
+     * the worker). NOT feature-gated: duplicate detection works with or without auto-tagging, and the
+     * recompute is pure PHP/GD (no ML service call).
      */
-    #[Route(path: '/admin/autotag/cache-encode', name: 'app_autotag_cache_encode', methods: ['POST'])]
-    public function cacheEncode(Request $request, AutoTagConfigProvider $autoTagConfigProvider, AutoTagInferenceClient $autoTagInferenceClient, TagRepository $tagRepository, TranslatorInterface $translator): Response
+    #[Route(path: '/admin/vectors/backlog', name: 'app_vectors_backlog', methods: ['POST'])]
+    public function vectorBacklog(Request $request, MessageBusInterface $messageBus, TranslatorInterface $translator): Response
     {
-        if (!$this->isCsrfTokenValid('autotag_cache', $request->request->getString('_token'))) {
+        if (!$this->isCsrfTokenValid('autotag_vectors', $request->request->getString('_token'))) {
+            throw $this->createAccessDeniedException('Invalid CSRF token');
+        }
+
+        $messageBus->dispatch(
+            new EnqueueVectorBacklogMessage($request->request->getBoolean('all')),
+            [new TransportNamesStamp('autotag_batch')],
+        );
+        $this->addFlash('notice', $translator->trans('message.vectors_started'));
+
+        return $this->redirectToRoute('app_admin_index');
+    }
+
+    /**
+     * Kick off a bulk embedding run (fills the embedding pool for kNN / classifier). The
+     * fan-out happens on the worker; posts only for now.
+     */
+    #[Route(path: '/admin/autotag/embed-backlog', name: 'app_autotag_embed_backlog', methods: ['POST'])]
+    public function embedBacklog(Request $request, AutoTagConfigProvider $autoTagConfigProvider, MessageBusInterface $messageBus, TranslatorInterface $translator): Response
+    {
+        if (!$this->isCsrfTokenValid('autotag_embed', $request->request->getString('_token'))) {
             throw $this->createAccessDeniedException('Invalid CSRF token');
         }
 
@@ -120,13 +159,11 @@ class AutoTagConfigController extends AbstractController
             return $this->redirectToRoute('app_admin_index');
         }
 
-        // all=true re-encodes the whole vocabulary (wipes the cache first); otherwise only the
-        // not-yet-cached tags are encoded.
-        $clipModelId = $autoTagConfigProvider->getActiveModel('clip');
-        if ($clipModelId !== null) {
-            $autoTagInferenceClient->warmVocabulary($clipModelId, $tagRepository->findAllNames(), $request->request->getBoolean('all'));
-        }
-        $this->addFlash('notice', $translator->trans('message.vocab_encoding_started'));
+        $messageBus->dispatch(
+            new EnqueueEmbeddingBacklogMessage($request->request->getBoolean('all')),
+            [new TransportNamesStamp('autotag_batch')],
+        );
+        $this->addFlash('notice', $translator->trans('message.embeddings_started'));
 
         return $this->redirectToRoute('app_admin_index');
     }
@@ -145,8 +182,50 @@ class AutoTagConfigController extends AbstractController
                 return 0;
             }
 
+            // autotag_batch is shared with the embedding-pool job, so count only the tagging
+            // fan-out messages — otherwise an embedding run makes the tagging card look active.
             return (int) $connection->fetchOne(
-                'SELECT COUNT(*) FROM messenger_messages WHERE queue_name = ?',
+                "SELECT COUNT(*) FROM messenger_messages WHERE queue_name = ? AND body LIKE '%GenerateSuggestionsMessage%'",
+                ['autotag_batch'],
+            );
+        } catch (\Throwable) {
+            return 0;
+        }
+    }
+
+    /**
+     * Queued embedding messages specifically (the autotag_batch queue is shared with tagging, so
+     * filter by the message class in the serialized envelope). > 0 means an embed run is in flight.
+     */
+    private function pendingEmbeddingCount(Connection $connection): int
+    {
+        try {
+            if (!$connection->createSchemaManager()->tablesExist(['messenger_messages'])) {
+                return 0;
+            }
+
+            return (int) $connection->fetchOne(
+                "SELECT COUNT(*) FROM messenger_messages WHERE queue_name = ? AND body LIKE '%GenerateEmbeddingMessage%'",
+                ['autotag_batch'],
+            );
+        } catch (\Throwable) {
+            return 0;
+        }
+    }
+
+    /**
+     * Queued duplicate-detection vector recompute messages (the autotag_batch queue is shared, so
+     * filter by the message class in the serialized envelope). > 0 means a recompute is in flight.
+     */
+    private function pendingVectorCount(Connection $connection): int
+    {
+        try {
+            if (!$connection->createSchemaManager()->tablesExist(['messenger_messages'])) {
+                return 0;
+            }
+
+            return (int) $connection->fetchOne(
+                "SELECT COUNT(*) FROM messenger_messages WHERE queue_name = ? AND body LIKE '%GenerateVectorMessage%'",
                 ['autotag_batch'],
             );
         } catch (\Throwable) {

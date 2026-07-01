@@ -14,7 +14,7 @@ def test_models_returns_catalog(monkeypatch, tmp_path):
     assert resp.status_code == 200
     body = resp.json()
     categories = {e["category"] for e in body}
-    assert categories == {"wd", "clip"}
+    assert categories == {"wd"}
     for entry in body:
         assert set(entry.keys()) == {"category", "id", "repo_id", "revision", "files", "dim", "status"}
         assert entry["status"] == "absent"
@@ -32,4 +32,3 @@ def test_models_marks_ready_when_files_present(monkeypatch, tmp_path):
     by_cat = {e["category"]: e for e in body}
 
     assert by_cat["wd"]["status"] == "ready"
-    assert by_cat["clip"]["status"] == "absent"

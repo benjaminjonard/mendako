@@ -66,21 +66,26 @@ class CommandTest extends KernelTestCase
         $board = BoardFactory::createOne();
         $tag = \App\Tests\Factory\TagFactory::createOne();
         $post = PostFactory::createOne(['board' => $board, 'uploadedBy' => $user, 'tags' => [$tag]]);
-        $post->setClipModelId('old-clip-model');
-        \Zenstruck\Foundry\Persistence\save($post);
         $postId = $post->getId();
 
+        $em = $container->get(\Doctrine\ORM\EntityManagerInterface::class);
+        $em->persist((new \App\Entity\Embedding())
+            ->setTargetType('post')->setTargetId((string) $postId)->setOrdinal(0)
+            ->setEmbeddingModelId('old-model')
+            ->setEmbeddingVector('['.implode(',', array_fill(0, 1024, '0')).']'));
+        $em->flush();
+
         $application = new Application($kernel);
-        $commandTester = new CommandTester($application->find('app:autotag:reindex-clip-embeddings'));
+        $commandTester = new CommandTester($application->find('app:autotag:reindex-embeddings'));
 
         // Act
-        $commandTester->execute(['dimension' => '1152']);
+        $commandTester->execute(['dimension' => '1024']);
 
         // Assert
         $commandTester->assertCommandIsSuccessful();
         $connection = $container->get('doctrine')->getConnection();
-        // Embedding binding purged...
-        $this->assertNull($connection->fetchOne('SELECT clip_model_id FROM men_post WHERE id = ?', [$postId]));
+        // Embeddings purged...
+        $this->assertSame(0, (int) $connection->fetchOne('SELECT COUNT(*) FROM men_embedding'));
         // ...but the confirmed tag survives (additive / no data loss).
         $this->assertSame(1, (int) $connection->fetchOne('SELECT COUNT(*) FROM men_post_tag WHERE post_id = ?', [$postId]));
         $this->assertStringContainsString('Re-dispatched', $commandTester->getDisplay());

@@ -17,24 +17,22 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
- * Maintenance operation for changing the active CLIP model / embedding dimension.
+ * Maintenance operation for changing the active embedding encoder / dimension.
  *
- * Per table: drop the hnsw index → purge clip_vector + clip_model_id → ALTER the
- * column to the new dimension → recreate the index → re-dispatch the pipeline so
- * embeddings are recomputed by the worker. No tag loss (tags and the 271-dim
- * duplicate-detection vector are untouched); embeddings are recomputable.
+ * Drop the hnsw index → truncate men_embedding → ALTER the column to the new dimension →
+ * recreate the index → re-dispatch the pipeline so embeddings are recomputed by the worker.
+ * No tag loss (tags and the 271-dim duplicate-detection vector are untouched); embeddings are
+ * recomputable.
  *
- * NOTE: if the new dimension differs from the entity mapping (1152), update the
- * `clipVector` column's `dimensions` option on Post/StagedUpload to match.
+ * NOTE: if the new dimension differs from the entity mapping (1024), update the
+ * `embeddingVector` column's `dimensions` option on the Embedding entity to match.
  */
 #[AsCommand(
-    name: 'app:autotag:reindex-clip-embeddings',
-    description: 'Purge + re-dimension + re-embed CLIP embeddings (run after switching to a different-dimension CLIP model)',
+    name: 'app:autotag:reindex-embeddings',
+    description: 'Purge + re-dimension + re-embed the embedding pool (run after switching to a different-dimension encoder)',
 )]
-class ReindexClipEmbeddingsCommand extends Command
+class ReindexEmbeddingsCommand extends Command
 {
-    private const array TABLES = ['men_post', 'men_staged_upload'];
-
     public function __construct(
         private readonly ManagerRegistry $managerRegistry,
         private readonly TaggingDispatcher $taggingDispatcher,
@@ -63,22 +61,19 @@ class ReindexClipEmbeddingsCommand extends Command
 
         $connection = $this->managerRegistry->getConnection();
 
-        foreach (self::TABLES as $table) {
-            $index = sprintf('idx_%s_clip_vector_hnsw', $table);
-            // One transaction per table so a mid-way failure can't leave the table
-            // with a dropped index + purged embeddings (DDL is transactional in Postgres).
-            $connection->transactional(function ($connection) use ($table, $index, $dimension): void {
-                $connection->executeStatement(sprintf('DROP INDEX IF EXISTS %s', $index));
-                // Purge: embeddings are recomputable; tags + the 271-dim vector are left intact.
-                $connection->executeStatement(sprintf('UPDATE %s SET clip_vector = NULL, clip_model_id = NULL', $table));
-                $connection->executeStatement(sprintf('ALTER TABLE %s ALTER COLUMN clip_vector TYPE vector(%d)', $table, $dimension));
-                $connection->executeStatement(sprintf('CREATE INDEX %s ON %s USING hnsw (clip_vector vector_cosine_ops)', $index, $table));
-            });
-            $io->writeln(sprintf('  <info>%s</info>: purged, re-dimensioned to vector(%d), index rebuilt', $table, $dimension));
-        }
+        // One transaction so a mid-way failure can't leave a dropped index + purged embeddings
+        // (DDL is transactional in Postgres).
+        $connection->transactional(function ($connection) use ($dimension): void {
+            $connection->executeStatement('DROP INDEX IF EXISTS idx_men_embedding_vector_hnsw');
+            // Purge: embeddings are recomputable; tags + the 271-dim vector are left intact.
+            $connection->executeStatement('TRUNCATE TABLE men_embedding');
+            $connection->executeStatement(sprintf('ALTER TABLE men_embedding ALTER COLUMN embedding_vector TYPE vector(%d)', $dimension));
+            $connection->executeStatement('CREATE INDEX idx_men_embedding_vector_hnsw ON men_embedding USING hnsw (embedding_vector vector_cosine_ops)');
+        });
+        $io->writeln(sprintf('  <info>men_embedding</info>: purged, re-dimensioned to vector(%d), index rebuilt', $dimension));
 
-        if ($dimension !== 1152) {
-            $io->warning(sprintf('Update the clipVector `dimensions` mapping option to %d on Post and StagedUpload so the ORM matches the new column.', $dimension));
+        if ($dimension !== 1024) {
+            $io->warning(sprintf('Update the embeddingVector `dimensions` mapping option to %d on the Embedding entity so the ORM matches the new column.', $dimension));
         }
 
         if (!$this->autoTagConfigProvider->isEnabled()) {

@@ -4,8 +4,7 @@ FROM python:3.12-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    MENDAKO_MODELS_DIR=/models \
-    MENDAKO_TEXT_CACHE_DIR=/text-cache
+    MENDAKO_MODELS_DIR=/models
 
 # Runtime libs:
 #  - ffmpeg: video-frame extraction (used from Story 4.1; installed now for a stable image)
@@ -20,15 +19,11 @@ RUN set -eux; \
     apt-get clean; \
     rm -rf /var/lib/apt/lists/*
 
-# Non-root user (mirrors the app image's PUID/PGID convention). /text-cache holds the
-# persisted text embeddings (a named volume mounts over it at runtime; pre-creating it
-# owned by the service user lets the volume inherit that ownership, no chown needed).
+# Non-root user (mirrors the app image's PUID/PGID convention).
 ARG PUID=1000
 ARG PGID=1000
 RUN groupadd --gid "$PGID" mendako \
-    && useradd --uid "$PUID" --gid "$PGID" --no-create-home --shell /usr/sbin/nologin mendako \
-    && mkdir -p /text-cache \
-    && chown mendako:mendako /text-cache
+    && useradd --uid "$PUID" --gid "$PGID" --no-create-home --shell /usr/sbin/nologin mendako
 
 WORKDIR /app
 

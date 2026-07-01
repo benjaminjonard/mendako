@@ -2,23 +2,25 @@
 
 Models are referenced by `repo_id` + a pinned `revision` and are baked into the
 image at build time (see ``download_models.py``); there is no runtime download.
-We pull the original upstream ONNX exports directly:
+We pull the original upstream ONNX export directly:
 
   - WD tagger : SmilingWolf/wd-eva02-large-tagger-v3 (flat ``model.onnx`` + ``selected_tags.csv``)
-  - SigLIP2   : immich-app/ViT-SO400M-16-SigLIP2-384__webli, whose ``visual``/``textual``
-                encoders live in subfolders. ``textual/model.onnx`` is a graph that
-                references ONNX external-data tensor files stored as siblings, so the
-                whole ``textual`` folder is flattened into the model dir (the external
-                refs are by basename and resolve next to ``textual.onnx``).
 
-`files` lists the final, flattened names inside the model dir (used for readiness +
-by the inference pipeline). `download` describes how to materialise them from the repo.
+WD is both the tagger AND the embedding encoder: its penultimate feature (the input to
+the classification head, ``fc_norm`` output, 1024-d) is a Danbooru-native image embedding.
+``embed_output`` names that internal tensor; ``download_models.py`` exposes it as a second
+graph output at build time so one forward pass yields both tags and the embedding. This is
+why there is no separate CLIP encoder — the embedding is free.
+
+`files` lists the final names inside the model dir (used for readiness + by the inference
+pipeline). `download` describes how to materialise them from the repo.
 
 Adding a new model = appending an entry here.
 """
 
 # Each entry: category, id, repo_id, revision, files (final names in the model dir),
-# download (build-time fetch spec), optional embedding dim (clip), task.
+# download (build-time fetch spec), optional embedding dim, optional embed_output
+# (internal ONNX tensor to expose as the embedding), task.
 CATALOG: list[dict] = [
     {
         "category": "wd",
@@ -30,24 +32,9 @@ CATALOG: list[dict] = [
             {"src": "model.onnx", "dst": "model.onnx"},
             {"src": "selected_tags.csv", "dst": "selected_tags.csv"},
         ],
-        "dim": None,
+        "dim": 1024,
+        "embed_output": "/core_model/fc_norm/LayerNormalization_output_0",
         "task": "tagger",
-    },
-    {
-        "category": "clip",
-        "id": "siglip2-so400m",
-        "repo_id": "immich-app/ViT-SO400M-16-SigLIP2-384__webli",
-        "revision": "19baa26af70bd3639ca0ca17d1560cb8056dd983",
-        "files": ["visual.onnx", "textual.onnx", "tokenizer.json"],
-        "download": [
-            # Self-contained vision encoder.
-            {"src": "visual/model.onnx", "dst": "visual.onnx"},
-            # Whole text encoder: graph + its external-data tensor files + tokenizer,
-            # flattened so the relative external refs resolve next to textual.onnx.
-            {"folder": "textual", "rename": {"model.onnx": "textual.onnx"}},
-        ],
-        "dim": 1152,
-        "task": "embed",
     },
 ]
 

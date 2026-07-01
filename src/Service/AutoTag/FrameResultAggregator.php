@@ -6,9 +6,9 @@ namespace App\Service\AutoTag;
 
 /**
  * Merges per-frame `/analyze` results for a multi-frame video into one suggestion set:
- * each WD tag keeps its highest score across frames (a concept present in any frame is a
- * good suggestion), the rating is the highest-scoring across frames, and the CLIP
- * embedding / zero-shot come from a single representative frame (one vector per item).
+ * each WD tag keeps its highest score across frames (a concept present in any frame is a good
+ * suggestion) and the rating is the highest-scoring across frames. Embeddings are handled
+ * separately (one row per frame), so they are not aggregated here.
  */
 class FrameResultAggregator
 {
@@ -17,7 +17,7 @@ class FrameResultAggregator
      *
      * @return array<string, mixed>
      */
-    public function aggregate(array $frameResults, int $representativeIndex): array
+    public function aggregate(array $frameResults): array
     {
         $tagsByName = [];
         $rating = ['label' => null, 'score' => 0.0];
@@ -48,16 +48,6 @@ class FrameResultAggregator
         }
         usort($tags, static fn (array $a, array $b): int => $b['score'] <=> $a['score']);
 
-        $result = ['tags' => $tags, 'rating' => $rating];
-
-        // Embedding / zero-shot come from the representative frame only (one vector per item).
-        $representative = $frameResults[$representativeIndex] ?? [];
-        foreach (['embedding', 'embedding_dim', 'clip_model_id', 'zeroshot'] as $key) {
-            if (array_key_exists($key, $representative)) {
-                $result[$key] = $representative[$key];
-            }
-        }
-
-        return $result;
+        return ['tags' => $tags, 'rating' => $rating];
     }
 }

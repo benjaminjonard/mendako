@@ -18,6 +18,28 @@
             <h1 class="title">{{ 'title.edit_tag'|trans({name: tag.name}) }}</h1>
             {{ include('App/Tag/_form.html.twig') }}
         </div>
+
+        <div class="box">
+            <h2 class="title is-5">{{ 'title.merge_tags'|trans }}</h2>
+            <form action="{{ path('app_tag_merge', {id: tag.id}) }}" method="post">
+                <input type="hidden" name="_token" value="{{ csrf_token('tag_merge') }}">
+
+                <div class="field">
+                    <label class="label">{{ 'label.merge_tags'|trans }}</label>
+                    <div class="control" data-controller="autocomplete">
+                        <textarea name="tags" class="textarea has-fixed-size" autocomplete="off"
+                                  data-autocomplete-target="input"
+                                  data-action="keyup->autocomplete#autocomplete"></textarea>
+                        <ul class="autocomplete-dropdown autocomplete-dropdown-textarea is-hidden" data-autocomplete-target="list"></ul>
+                    </div>
+                    <p class="help">{{ 'label.merge_tags_help'|trans }}</p>
+                </div>
+
+                <div class="footer-button">
+                    <button class="button is-warning" type="submit">{{ 'btn.merge'|trans }}</button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <div class="column"></div>

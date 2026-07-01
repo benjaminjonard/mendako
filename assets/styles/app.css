@@ -133,6 +133,10 @@ figure .tag {
   color: #e64980;
 }
 
+.tag-table thead th a {
+  color: #fff;
+}
+
 .suggestion-list {
   list-style: none;
   margin: 0;
@@ -184,14 +188,45 @@ figure .tag {
   color: #f14668;
 }
 
+.suggestion-accept {
+  background: none;
+  border: none;
+  color: #b5b5b5;
+  cursor: pointer;
+  flex: 0 0 auto;
+  font-size: 1.1rem;
+  line-height: 1;
+  padding: 0 0.2rem;
+}
+
+.suggestion-accept:hover {
+  color: #00ab2c;
+}
+
+/* The delete button is wrapped in a <form> (CSRF); display:contents lets the button sit
+   directly in the has-addons flex row so it lines up with the tag name. */
+.blacklist-chip form {
+  display: contents;
+}
+
+/* The figure is capped at 800px by .image-display, so on a wide box it must center itself. */
+.image-display.tag-validation-media {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.image-display.tag-validation-media img,
+.image-display.tag-validation-media video {
+  display: block;
+  height: auto;
+  margin: 0 auto;
+  max-height: 650px;
+  max-width: 100%;
+}
+
 .suggestion-source-wd {
   background-color: #e7f1ff;
   color: #0075f8;
-}
-
-.suggestion-source-clip {
-  background-color: #f3e8ff;
-  color: #a800aa;
 }
 
 .suggestion-source-knn {

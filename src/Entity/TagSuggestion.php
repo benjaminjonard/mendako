@@ -28,7 +28,6 @@ class TagSuggestion
     public const STATUS_DISMISSED = 'dismissed';
 
     public const SOURCE_WD = 'wd';
-    public const SOURCE_CLIP = 'clip';
     public const SOURCE_KNN = 'knn';
 
     #[ORM\Id]

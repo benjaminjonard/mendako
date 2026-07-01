@@ -679,6 +679,54 @@
         <target>Versão Symfony</target>
       </segment>
     </unit>
+    <unit id="blk001" name="label.ai_blacklist">
+      <segment state="translated">
+        <source>AI blacklist</source>
+        <target>Lista negra da IA</target>
+      </segment>
+    </unit>
+    <unit id="blk002" name="label.ai_blacklist_help">
+      <segment state="translated">
+        <source>These tags will never be suggested by the automatic tagging.</source>
+        <target>Estas tags nunca serão sugeridas pela marcação automática.</target>
+      </segment>
+    </unit>
+    <unit id="blk003" name="btn.add">
+      <segment state="translated">
+        <source>Add</source>
+        <target>Adicionar</target>
+      </segment>
+    </unit>
+    <unit id="blk004" name="message.tag_blacklisted">
+      <segment state="translated">
+        <source>Tag {tag} blacklisted</source>
+        <target>Tag {tag} adicionada à lista negra</target>
+      </segment>
+    </unit>
+    <unit id="blk005" name="message.tag_unblacklisted">
+      <segment state="translated">
+        <source>Tag {tag} removed from blacklist</source>
+        <target>Tag {tag} removida da lista negra</target>
+      </segment>
+    </unit>
+    <unit id="tgVal001" name="menu.tag_validation">
+      <segment state="translated">
+        <source>Tag validation</source>
+        <target>Validação de tags</target>
+      </segment>
+    </unit>
+    <unit id="tgVal002" name="label.no_posts_to_validate">
+      <segment state="translated">
+        <source>No posts left to validate.</source>
+        <target>Nenhuma publicação para validar.</target>
+      </segment>
+    </unit>
+    <unit id="tgVal003" name="message.tags_validated">
+      <segment state="translated">
+        <source>Tags validated.</source>
+        <target>Validação de tags concluída.</target>
+      </segment>
+    </unit>
     <unit id="stg00m1" name="menu.staging">
       <segment state="translated">
         <source>Staging</source>
@@ -745,12 +793,6 @@
         <target>WD</target>
       </segment>
     </unit>
-    <unit id="sugSrcClip" name="label.source_clip">
-      <segment state="translated">
-        <source>CLIP</source>
-        <target>CLIP</target>
-      </segment>
-    </unit>
     <unit id="sugSrcCust" name="label.source_custom">
       <segment state="translated">
         <source>Custom</source>
@@ -761,6 +803,108 @@
       <segment state="translated">
         <source>Rating</source>
         <target>Classificação</target>
+      </segment>
+    </unit>
+    <unit id="embPool" name="label.embedding_pool">
+      <segment state="translated">
+        <source>Embedding pool</source>
+        <target>Pool de embeddings</target>
+      </segment>
+    </unit>
+    <unit id="embRun" name="label.embedding_running">
+      <segment state="translated">
+        <source>Embedding</source>
+        <target>Gerando embeddings</target>
+      </segment>
+    </unit>
+    <unit id="embDone" name="label.embedded">
+      <segment state="translated">
+        <source>embedded</source>
+        <target>com embedding</target>
+      </segment>
+    </unit>
+    <unit id="embTodo" name="label.to_embed">
+      <segment state="translated">
+        <source>to embed</source>
+        <target>a processar</target>
+      </segment>
+    </unit>
+    <unit id="embMsg" name="message.embeddings_started">
+      <segment state="translated">
+        <source>Embedding run started.</source>
+        <target>Geração de embeddings iniciada.</target>
+      </segment>
+    </unit>
+    <unit id="dupVec" name="label.duplicate_vectors">
+      <segment state="translated">
+        <source>Duplicate vectors</source>
+        <target>Vetores de duplicados</target>
+      </segment>
+    </unit>
+    <unit id="vecMsg" name="message.vectors_started">
+      <segment state="translated">
+        <source>Vector recompute started.</source>
+        <target>Recálculo de vetores iniciado.</target>
+      </segment>
+    </unit>
+    <unit id="mrgTag01" name="title.merge_tags">
+      <segment state="translated">
+        <source>Merge tags</source>
+        <target>Fundir etiquetas</target>
+      </segment>
+    </unit>
+    <unit id="mrgTag02" name="label.merge_tags">
+      <segment state="translated">
+        <source>Tags to merge into this one</source>
+        <target>Etiquetas a fundir nesta</target>
+      </segment>
+    </unit>
+    <unit id="mrgTag03" name="label.merge_tags_help">
+      <segment state="translated">
+        <source>The selected tags will be deleted and all their images reassigned to this tag. This cannot be undone.</source>
+        <target>As etiquetas selecionadas serão eliminadas e todas as suas imagens reatribuídas a esta etiqueta. Esta ação é irreversível.</target>
+      </segment>
+    </unit>
+    <unit id="mrgTag04" name="btn.merge">
+      <segment state="translated">
+        <source>Merge</source>
+        <target>Fundir</target>
+      </segment>
+    </unit>
+    <unit id="mrgTag05" name="message.tags_merged">
+      <segment state="translated">
+        <source>{count, plural, one {# tag merged into} other {# tags merged into}} {tag}</source>
+        <target>{count, plural, one {# etiqueta fundida em} other {# etiquetas fundidas em}} {tag}</target>
+      </segment>
+    </unit>
+    <unit id="tagIdx01" name="label.count">
+      <segment state="translated">
+        <source>Count</source>
+        <target>Quantidade</target>
+      </segment>
+    </unit>
+    <unit id="tagIdx02" name="label.search">
+      <segment state="translated">
+        <source>Search</source>
+        <target>Pesquisar</target>
+      </segment>
+    </unit>
+    <unit id="tagIdx03" name="label.all">
+      <segment state="translated">
+        <source>All</source>
+        <target>Todos</target>
+      </segment>
+    </unit>
+    <unit id="tagIdx04" name="btn.reset">
+      <segment state="translated">
+        <source>Reset</source>
+        <target>Redefinir</target>
+      </segment>
+    </unit>
+    <unit id="tagIdx05" name="label.created_at">
+      <segment state="translated">
+        <source>Created at</source>
+        <target>Criado em</target>
       </segment>
     </unit>
   </file>

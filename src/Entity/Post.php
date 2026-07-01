@@ -55,16 +55,8 @@ class Post implements UploadableInterface
     #[ORM\Column(type: Types::INTEGER)]
     private int $seenCounter = 0;
 
-    #[ORM\Column(type: 'vector', nullable: true, options: ['dimensions' => 271])]
+    #[ORM\Column(type: 'vector', nullable: true, options: ['dimensions' => 64])]
     private ?string $vector = null;
-
-    // Semantic CLIP embedding (separate from the 271-dim duplicate-detection vector),
-    // bound to the model that produced it. Nullable + additive: the automatic tagging feature is optional.
-    #[ORM\Column(type: 'vector', nullable: true, options: ['dimensions' => 1152])]
-    private ?string $clipVector = null;
-
-    #[ORM\Column(type: Types::STRING, nullable: true)]
-    private ?string $clipModelId = null;
 
     #[ORM\ManyToOne(targetEntity: Board::class, inversedBy: 'posts')]
     #[Assert\NotBlank]
@@ -287,30 +279,6 @@ class Post implements UploadableInterface
     public function setVector(?string $vector): Post
     {
         $this->vector = $vector;
-
-        return $this;
-    }
-
-    public function getClipVector(): ?string
-    {
-        return $this->clipVector;
-    }
-
-    public function setClipVector(?string $clipVector): Post
-    {
-        $this->clipVector = $clipVector;
-
-        return $this;
-    }
-
-    public function getClipModelId(): ?string
-    {
-        return $this->clipModelId;
-    }
-
-    public function setClipModelId(?string $clipModelId): Post
-    {
-        $this->clipModelId = $clipModelId;
 
         return $this;
     }

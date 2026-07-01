@@ -6,19 +6,17 @@ namespace App\Tests\App;
 
 use App\Entity\Post;
 use App\Entity\StagedUpload;
-use App\Entity\TagSuggestion;
 use App\Message\GenerateSuggestionsMessage;
 use App\MessageHandler\GenerateSuggestionsHandler;
+use App\Repository\EmbeddingRepository;
 use App\Repository\PostRepository;
 use App\Repository\StagedUploadRepository;
-use App\Repository\TagRepository;
 use App\Service\AutoTag\AutoTagConfigProvider;
 use App\Service\AutoTag\AutoTagInferenceClient;
 use App\Service\AutoTag\FrameResultAggregator;
 use App\Service\AutoTag\KnnSuggestionService;
 use App\Service\AutoTag\SuggestionService;
 use App\Service\ThumbnailGenerator;
-use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 
@@ -36,14 +34,8 @@ class GenerateSuggestionsHandlerTest extends TestCase
         return $provider;
     }
 
-    private function handler(AutoTagConfigProvider $provider, PostRepository $postRepository, StagedUploadRepository $stagedRepository, AutoTagInferenceClient $client, ?SuggestionService $suggestionService = null, ?EntityManagerInterface $entityManager = null, ?KnnSuggestionService $knnSuggestionService = null, ?TagRepository $tagRepository = null, ?ThumbnailGenerator $thumbnailGenerator = null): GenerateSuggestionsHandler
+    private function handler(AutoTagConfigProvider $provider, PostRepository $postRepository, StagedUploadRepository $stagedRepository, AutoTagInferenceClient $client, ?SuggestionService $suggestionService = null, ?EmbeddingRepository $embeddingRepository = null, ?KnnSuggestionService $knnSuggestionService = null, ?ThumbnailGenerator $thumbnailGenerator = null): GenerateSuggestionsHandler
     {
-        $tagStub = $tagRepository;
-        if ($tagStub === null) {
-            $tagStub = $this->createStub(TagRepository::class);
-            $tagStub->method('findAllNames')->willReturn([]);
-        }
-
         return new GenerateSuggestionsHandler(
             $postRepository,
             $stagedRepository,
@@ -51,10 +43,9 @@ class GenerateSuggestionsHandlerTest extends TestCase
             $client,
             $suggestionService ?? $this->createStub(SuggestionService::class),
             $knnSuggestionService ?? $this->createStub(KnnSuggestionService::class),
-            $tagStub,
             $thumbnailGenerator ?? $this->createStub(ThumbnailGenerator::class),
             new FrameResultAggregator(),
-            $entityManager ?? $this->createStub(EntityManagerInterface::class),
+            $embeddingRepository ?? $this->createStub(EmbeddingRepository::class),
             '/tmp',
             new NullLogger(),
         );
@@ -139,44 +130,44 @@ class GenerateSuggestionsHandlerTest extends TestCase
         $handler(new GenerateSuggestionsMessage('post', 'id', 'hash'));
     }
 
-    public function test_stores_clip_embedding_when_clip_model_active(): void
+    public function test_stores_embedding_from_wd_result(): void
     {
         $post = $this->postWithPath();
         $postRepository = $this->createStub(PostRepository::class);
         $postRepository->method('find')->willReturn($post);
         $client = $this->createMock(AutoTagInferenceClient::class);
         $client->expects($this->once())->method('analyze')
-            ->with($this->anything(), 'wd-eva02-large-tagger-v3', 'siglip2-so400m', $this->anything())
+            ->with($this->anything(), 'wd-eva02-large-tagger-v3')
             ->willReturn([
                 'tags' => [],
                 'rating' => ['label' => null, 'score' => 0.0],
                 'embedding' => [0.6, 0.8],
-                'clip_model_id' => 'siglip2-so400m',
+                'embedding_dim' => 2,
+                'embedding_model_id' => 'wd-eva02-large-tagger-v3',
             ]);
+        $embeddings = $this->createMock(EmbeddingRepository::class);
+        $embeddings->expects($this->once())->method('replaceForTarget')
+            ->with('post', 'some-id', 'wd-eva02-large-tagger-v3', ['[0.6,0.8]']);
 
-        $handler = $this->handler($this->provider(true, clipModel: 'siglip2-so400m'), $postRepository, $this->createStub(StagedUploadRepository::class), $client);
+        $handler = $this->handler($this->provider(true), $postRepository, $this->createStub(StagedUploadRepository::class), $client, embeddingRepository: $embeddings);
         $handler(new GenerateSuggestionsMessage('post', 'some-id', 'hash'));
-
-        $this->assertSame('[0.6,0.8]', $post->getClipVector());
-        $this->assertSame('siglip2-so400m', $post->getClipModelId());
     }
 
-    public function test_does_not_store_embedding_when_no_clip_model(): void
+    public function test_does_not_store_embedding_when_result_has_none(): void
     {
         $post = $this->postWithPath();
         $postRepository = $this->createStub(PostRepository::class);
         $postRepository->method('find')->willReturn($post);
         $client = $this->createMock(AutoTagInferenceClient::class);
-        // No clip model active → analyze called with null, result carries no embedding.
+        // Unpatched model → analyze returns no embedding key.
         $client->expects($this->once())->method('analyze')
-            ->with($this->anything(), 'wd-eva02-large-tagger-v3', null, [])
+            ->with($this->anything(), 'wd-eva02-large-tagger-v3')
             ->willReturn(['tags' => [], 'rating' => ['label' => null, 'score' => 0.0]]);
+        $embeddings = $this->createMock(EmbeddingRepository::class);
+        $embeddings->expects($this->never())->method('replaceForTarget');
 
-        $handler = $this->handler($this->provider(true), $postRepository, $this->createStub(StagedUploadRepository::class), $client);
+        $handler = $this->handler($this->provider(true), $postRepository, $this->createStub(StagedUploadRepository::class), $client, embeddingRepository: $embeddings);
         $handler(new GenerateSuggestionsMessage('post', 'some-id', 'hash'));
-
-        $this->assertNull($post->getClipVector());
-        $this->assertNull($post->getClipModelId());
     }
 
     public function test_video_samples_frames_and_stores_aggregated_suggestions(): void
@@ -293,59 +284,17 @@ class GenerateSuggestionsHandlerTest extends TestCase
         $handler(new GenerateSuggestionsMessage('post', 'image-id', 'hash'));
     }
 
-    public function test_stores_zeroshot_suggestions_as_clip_source(): void
-    {
-        $postRepository = $this->createStub(PostRepository::class);
-        $postRepository->method('find')->willReturn($this->postWithPath());
-        $client = $this->createStub(AutoTagInferenceClient::class);
-        $client->method('analyze')->willReturn([
-            'tags' => [],
-            'rating' => ['label' => null, 'score' => 0.0],
-            'zeroshot' => [['name' => 'red_fox', 'score' => 0.4], ['name' => 'snow', 'score' => 0.3]],
-        ]);
-        $suggestionService = $this->createMock(SuggestionService::class);
-        $suggestionService->expects($this->once())->method('store')->with(
-            'post',
-            'some-id',
-            [
-                'tags' => [
-                    ['name' => 'red_fox', 'score' => 0.4, 'category' => null],
-                    ['name' => 'snow', 'score' => 0.3, 'category' => null],
-                ],
-                'rating' => ['label' => null],
-            ],
-            TagSuggestion::SOURCE_CLIP,
-        );
-
-        $handler = $this->handler($this->provider(true, clipModel: 'siglip2-so400m'), $postRepository, $this->createStub(StagedUploadRepository::class), $client, $suggestionService);
-        $handler(new GenerateSuggestionsMessage('post', 'some-id', 'hash'));
-    }
-
-    public function test_zeroshot_storage_failure_does_not_throw(): void
-    {
-        $postRepository = $this->createStub(PostRepository::class);
-        $postRepository->method('find')->willReturn($this->postWithPath());
-        $client = $this->createStub(AutoTagInferenceClient::class);
-        $client->method('analyze')->willReturn(['tags' => [], 'rating' => ['label' => null, 'score' => 0.0], 'zeroshot' => [['name' => 'red_fox', 'score' => 0.4]]]);
-        $suggestionService = $this->createStub(SuggestionService::class);
-        $suggestionService->method('store')->willThrowException(new \RuntimeException('store failed'));
-
-        $handler = $this->handler($this->provider(true, clipModel: 'siglip2-so400m'), $postRepository, $this->createStub(StagedUploadRepository::class), $client, $suggestionService);
-
-        $this->expectNotToPerformAssertions();
-        $handler(new GenerateSuggestionsMessage('post', 'some-id', 'hash'));
-    }
 
     public function test_propagates_knn_when_embedding_stored(): void
     {
         $postRepository = $this->createStub(PostRepository::class);
         $postRepository->method('find')->willReturn($this->postWithPath());
         $client = $this->createStub(AutoTagInferenceClient::class);
-        $client->method('analyze')->willReturn(['tags' => [], 'rating' => ['label' => null, 'score' => 0.0], 'embedding' => [0.6, 0.8], 'clip_model_id' => 'siglip2-so400m']);
+        $client->method('analyze')->willReturn(['tags' => [], 'rating' => ['label' => null, 'score' => 0.0], 'embedding' => [0.6, 0.8]]);
         $knn = $this->createMock(KnnSuggestionService::class);
-        $knn->expects($this->once())->method('propagate')->with('post', 'some-id', '[0.6,0.8]', 'siglip2-so400m');
+        $knn->expects($this->once())->method('propagate')->with('post', 'some-id', ['[0.6,0.8]'], 'wd-eva02-large-tagger-v3');
 
-        $handler = $this->handler($this->provider(true, clipModel: 'siglip2-so400m'), $postRepository, $this->createStub(StagedUploadRepository::class), $client, knnSuggestionService: $knn);
+        $handler = $this->handler($this->provider(true), $postRepository, $this->createStub(StagedUploadRepository::class), $client, knnSuggestionService: $knn);
         $handler(new GenerateSuggestionsMessage('post', 'some-id', 'hash'));
     }
 
@@ -378,20 +327,20 @@ class GenerateSuggestionsHandlerTest extends TestCase
         $handler(new GenerateSuggestionsMessage('post', 'some-id', 'hash'));
     }
 
-    public function test_embedding_flush_failure_does_not_block_suggestions(): void
+    public function test_embedding_storage_failure_does_not_block_suggestions(): void
     {
         $postRepository = $this->createStub(PostRepository::class);
         $postRepository->method('find')->willReturn($this->postWithPath());
-        $result = ['tags' => [['name' => '1girl', 'category' => 'general', 'score' => 0.9]], 'rating' => ['label' => null, 'score' => 0.0], 'embedding' => [0.6, 0.8], 'clip_model_id' => 'siglip2-so400m'];
+        $result = ['tags' => [['name' => '1girl', 'category' => 'general', 'score' => 0.9]], 'rating' => ['label' => null, 'score' => 0.0], 'embedding' => [0.6, 0.8]];
         $client = $this->createStub(AutoTagInferenceClient::class);
         $client->method('analyze')->willReturn($result);
-        // Suggestions must be stored even though the embedding flush blows up.
+        // Suggestions must be stored even though the embedding write blows up.
         $suggestionService = $this->createMock(SuggestionService::class);
         $suggestionService->expects($this->once())->method('store')->with('post', 'some-id', $result);
-        $em = $this->createStub(EntityManagerInterface::class);
-        $em->method('flush')->willThrowException(new \RuntimeException('vector dimension mismatch'));
+        $embeddings = $this->createStub(EmbeddingRepository::class);
+        $embeddings->method('replaceForTarget')->willThrowException(new \RuntimeException('vector dimension mismatch'));
 
-        $handler = $this->handler($this->provider(true, clipModel: 'siglip2-so400m'), $postRepository, $this->createStub(StagedUploadRepository::class), $client, $suggestionService, $em);
+        $handler = $this->handler($this->provider(true), $postRepository, $this->createStub(StagedUploadRepository::class), $client, $suggestionService, embeddingRepository: $embeddings);
 
         // Must not throw — the embedding failure is swallowed.
         $handler(new GenerateSuggestionsMessage('post', 'some-id', 'hash'));
@@ -404,11 +353,11 @@ class GenerateSuggestionsHandlerTest extends TestCase
         $postRepository->method('find')->willReturn($post);
         $client = $this->createStub(AutoTagInferenceClient::class);
         $client->method('analyze')->willReturn(['tags' => [], 'rating' => ['label' => null, 'score' => 0.0], 'embedding' => []]);
+        $embeddings = $this->createMock(EmbeddingRepository::class);
+        $embeddings->expects($this->never())->method('replaceForTarget');
 
-        $handler = $this->handler($this->provider(true, clipModel: 'siglip2-so400m'), $postRepository, $this->createStub(StagedUploadRepository::class), $client);
+        $handler = $this->handler($this->provider(true), $postRepository, $this->createStub(StagedUploadRepository::class), $client, embeddingRepository: $embeddings);
         $handler(new GenerateSuggestionsMessage('post', 'some-id', 'hash'));
-
-        $this->assertNull($post->getClipVector());
     }
 
     public function test_resolves_staged_item_via_staged_repository(): void

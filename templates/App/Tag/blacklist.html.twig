@@ -1,0 +1,49 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}
+    {{ 'label.ai_blacklist'|trans }}
+{% endblock %}
+
+{% block breadcrumb %}
+    <li><a href="{{ path('app_tag_index') }}">{{ 'menu.tags'|trans }}</a></li>
+    <li class="is-active"><a href="{{ path('app_tag_blacklist') }}" aria-current="page">{{ 'label.ai_blacklist'|trans }}</a></li>
+{% endblock %}
+
+{% block content %}
+    <div class="column is-10 is-offset-1">
+        {{ include('App/Tag/_submenu.html.twig') }}
+
+        <div class="box" style="max-width: 30rem; margin: 0 auto;">
+            <h2 class="subtitle">{{ 'label.ai_blacklist'|trans }}</h2>
+            <p class="help mb-3">{{ 'label.ai_blacklist_help'|trans }}</p>
+
+            <form method="post" action="{{ path('app_tag_blacklist_add') }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('tag_blacklist') }}">
+                <div class="field has-addons">
+                    <div class="control is-expanded">
+                        <input class="input" type="text" name="name" placeholder="{{ 'label.name'|trans }}" required>
+                    </div>
+                    <div class="control">
+                        <button class="button is-primary" type="submit">{{ 'btn.add'|trans }}</button>
+                    </div>
+                </div>
+            </form>
+
+            {% if blacklistedTags is not empty %}
+                <div class="field is-grouped is-grouped-multiline mt-3">
+                    {% for blacklistedTag in blacklistedTags %}
+                        <div class="control">
+                            <div class="tags has-addons blacklist-chip">
+                                <span class="tag is-medium">{{ blacklistedTag.name }}</span>
+                                <form method="post" action="{{ path('app_tag_blacklist_delete', {id: blacklistedTag.id}) }}">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('tag_blacklist') }}">
+                                    <button type="submit" class="tag is-medium is-delete"></button>
+                                </form>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

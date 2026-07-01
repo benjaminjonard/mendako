@@ -174,9 +174,9 @@ class PostController extends AbstractController
             'source' => $suggestion->getSource(),
         ];
 
-        // The same tag can have rows from several sources (wd / clip / knn). Dedup by name
+        // The same tag can have rows from several sources (wd / knn). Dedup by name
         // so a tag never appears twice. Pass 1: confident base-model (wd) tags pre-fill the
-        // field. Pass 2: everything else becomes a click-to-add chip — learned (knn/clip)
+        // field. Pass 2: everything else becomes a click-to-add chip — learned (knn)
         // guesses are never auto-applied. A name already pre-filled is not repeated as a chip.
         $highConfidence = [];
         $lowConfidence = [];

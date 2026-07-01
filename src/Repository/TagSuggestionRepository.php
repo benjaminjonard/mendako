@@ -48,22 +48,82 @@ class TagSuggestionRepository extends ServiceEntityRepository
     }
 
     /**
-     * Names a target already has a suggestion for (any status) from a given source.
-     * Used to keep re-runs additive: a name the user already accepted or dismissed
-     * must not be re-surfaced as a new pending suggestion.
+     * Resolve a target's still-pending suggestions after human validation: names the reviewer
+     * kept become ACCEPTED, everything else DISMISSED. Both are terminal — the post drops out of
+     * the pending validation queue, and auto-tag re-runs keep these rows (deletePendingForTarget
+     * only touches pending) and never re-surface their names, whatever the source
+     * (decidedTagNamesForTarget matches terminal statuses across all sources). Bulk UPDATEs, so
+     * run it when no matching suggestions are held in the UoW.
+     *
+     * @param string[] $acceptedNames tag names present on the item after validation
+     */
+    public function resolvePendingForTarget(string $targetType, string $targetId, array $acceptedNames): void
+    {
+        // Pass 1: accept the pending suggestions whose name the reviewer kept.
+        if ($acceptedNames !== []) {
+            $this->createQueryBuilder('s')
+                ->update()
+                ->set('s.status', ':accepted')
+                ->where('s.targetType = :targetType')
+                ->andWhere('s.targetId = :targetId')
+                ->andWhere('s.status = :pending')
+                ->andWhere('s.tagName IN (:names)')
+                ->setParameter('accepted', TagSuggestion::STATUS_ACCEPTED)
+                ->setParameter('targetType', $targetType)
+                ->setParameter('targetId', $targetId)
+                ->setParameter('pending', TagSuggestion::STATUS_PENDING)
+                ->setParameter('names', $acceptedNames)
+                ->getQuery()
+                ->execute();
+        }
+
+        // Pass 2: whatever is still pending was offered but not kept → dismissed.
+        $this->createQueryBuilder('s')
+            ->update()
+            ->set('s.status', ':dismissed')
+            ->where('s.targetType = :targetType')
+            ->andWhere('s.targetId = :targetId')
+            ->andWhere('s.status = :pending')
+            ->setParameter('dismissed', TagSuggestion::STATUS_DISMISSED)
+            ->setParameter('targetType', $targetType)
+            ->setParameter('targetId', $targetId)
+            ->setParameter('pending', TagSuggestion::STATUS_PENDING)
+            ->getQuery()
+            ->execute();
+    }
+
+    /**
+     * Remove every suggestion (any target, any status, any source) carrying a given tag name.
+     * Called when a name is blacklisted for the AI, so an already-surfaced suggestion disappears
+     * from the validation queue and edit forms immediately — it must never remonter.
+     */
+    public function deleteByTagName(string $tagName): void
+    {
+        $this->createQueryBuilder('s')
+            ->delete()
+            ->where('s.tagName = :tagName')
+            ->setParameter('tagName', $tagName)
+            ->getQuery()
+            ->execute();
+    }
+
+    /**
+     * Names a human has already decided on for this target — accepted or dismissed — across ALL
+     * sources. A re-run skips these so a tag the user kept or rejected is never re-proposed,
+     * whatever source (wd/knn) surfaces it next: one decision holds for every source.
      *
      * @return string[]
      */
-    public function existingTagNamesForTarget(string $targetType, string $targetId, string $source): array
+    public function decidedTagNamesForTarget(string $targetType, string $targetId): array
     {
         $rows = $this->createQueryBuilder('s')
             ->select('s.tagName')
             ->where('s.targetType = :targetType')
             ->andWhere('s.targetId = :targetId')
-            ->andWhere('s.source = :source')
+            ->andWhere('s.status IN (:decided)')
             ->setParameter('targetType', $targetType)
             ->setParameter('targetId', $targetId)
-            ->setParameter('source', $source)
+            ->setParameter('decided', [TagSuggestion::STATUS_ACCEPTED, TagSuggestion::STATUS_DISMISSED])
             ->getQuery()
             ->getSingleColumnResult();
 

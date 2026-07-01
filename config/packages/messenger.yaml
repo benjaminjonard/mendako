@@ -35,6 +35,10 @@ framework:
         routing:
             'App\Message\GenerateSuggestionsMessage': autotag_interactive
             'App\Message\EnqueueBacklogMessage': autotag_batch
+            'App\Message\GenerateEmbeddingMessage': autotag_batch
+            'App\Message\EnqueueEmbeddingBacklogMessage': autotag_batch
+            'App\Message\GenerateVectorMessage': autotag_batch
+            'App\Message\EnqueueVectorBacklogMessage': autotag_batch
 
 when@test:
     framework:
