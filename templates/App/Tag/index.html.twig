@@ -23,7 +23,7 @@
     {% if search %}{% set filters = filters|merge({q: search}) %}{% endif %}
     {% if category %}{% set filters = filters|merge({category: category.value}) %}{% endif %}
 
-    <div class="column is-10 is-offset-1">
+    <div class="column is-6 is-offset-3">
         {{ include('App/Tag/_submenu.html.twig') }}
 
         <form method="get" action="{{ path('app_tag_index') }}" class="field is-grouped is-grouped-multiline mb-4">

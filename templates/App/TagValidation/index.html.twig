@@ -9,7 +9,12 @@
 {% endblock %}
 
 {% block content %}
-    <div class="column is-half is-offset-one-quarter">
+    {# Same is-6 wrapper as the other Tag tabs so the submenu keeps one width across tabs. #}
+    <div class="column is-6 is-offset-3">
+        {{ include('App/Tag/_submenu.html.twig') }}
+
+        {# Submenu spans the full is-6 column; the card keeps its own narrower width. #}
+        <div class="tag-validation-card">
         {% if post is null %}
             <div class="box has-text-centered">
                 <h1 class="title">{{ 'menu.tag_validation'|trans }}</h1>
@@ -33,7 +38,7 @@
                 </figure>
 
                 {% if not (post.mimeType == 'video/mp4' or post.mimeType == 'video/webm' or post.mimeType == 'video/x-m4v') %}
-                    <div id="media-viewer" class="modal staged-viewer">
+                    <div id="media-viewer" class="modal bulk-upload-viewer">
                         <div class="modal-background"></div>
                         <div class="modal-content">
                             <img src="{{ asset(post.path) }}">
@@ -86,5 +91,6 @@
                 'action': path('app_tag_validation_delete', {id: post.id})
             }) }}
         {% endif %}
+        </div>
     </div>
 {% endblock %}

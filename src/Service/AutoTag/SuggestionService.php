@@ -81,7 +81,7 @@ class SuggestionService
                 $suggestion = (new TagSuggestion())
                     ->setTargetType($targetType)
                     ->setTargetId($targetId)
-                    ->setTagName($name)
+                    ->setTagName((string) $name)
                     ->setCategory($candidate['category'])
                     ->setScore($candidate['score'])
                     ->setSource($source);
@@ -90,11 +90,16 @@ class SuggestionService
         });
     }
 
-    private function normalizeName(?string $name): ?string
+    private function normalizeName(int|string|null $name): ?string
     {
         if ($name === null) {
             return null;
         }
+
+        // A purely numeric tag name (e.g. "2023") is decoded from the service JSON as an int
+        // — and PHP also silently casts numeric array keys to int downstream — so coerce to
+        // string before normalizing.
+        $name = (string) $name;
 
         // Match Tag::setName so suggestions line up with real tags.
         $normalized = (new UnicodeString($name))->lower()->replace(' ', '_')->toString();

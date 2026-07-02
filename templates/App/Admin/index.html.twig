@@ -12,8 +12,9 @@
     <div class="column"></div>
 
     <div class="column">
+        {{ include('App/Admin/_submenu.html.twig') }}
+
         <div class="box">
-            <h1 class="title">{{ 'title.admin'|trans }}</h1>
             <h2 class="subtitle">{{ 'title.configuration'|trans }}</h2>
             <div class="config">
                 <b>{{ 'label.release'|trans }}</b>: {{ release }}
@@ -56,62 +57,6 @@
                 <span class="tag {{ autoTagEnabled ? 'is-success' : 'is-light' }}">
                     {{ (autoTagEnabled ? 'label.enabled' : 'label.disabled')|trans }}
                 </span>
-            </div>
-        </div>
-
-        <div class="box" data-controller="job-status" data-job-status-url-value="{{ path('app_autotag_jobs') }}">
-            <h2 class="subtitle">{{ 'title.jobs'|trans }}</h2>
-
-            {% if autoTagEnabled %}
-            <div data-job-status-key="tagging">
-                <div class="is-flex is-justify-content-space-between is-align-items-center mb-3">
-                    <span class="has-text-weight-semibold">{{ 'label.tag_existing_posts'|trans }}</span>
-                    <span class="tag is-light has-text-black" data-job-role="status">…</span>
-                </div>
-                <progress class="progress is-primary is-small mb-3" data-job-role="bar" value="0" max="100">0%</progress>
-                <form method="post" action="{{ path('app_autotag_tag_backlog') }}">
-                    <input type="hidden" name="_token" value="{{ csrf_token('autotag_batch') }}">
-                    <div class="buttons are-small has-addons">
-                        <button class="button" type="submit" name="all" value="0" data-job-role="launch">{{ 'btn.tag_missing'|trans }}</button>
-                        <button class="button" type="submit" name="all" value="1" data-job-role="launch">{{ 'btn.tag_all'|trans }}</button>
-                    </div>
-                </form>
-            </div>
-
-            <hr>
-
-            <div data-job-status-key="embedding">
-                <div class="is-flex is-justify-content-space-between is-align-items-center mb-3">
-                    <span class="has-text-weight-semibold">{{ 'label.embedding_pool'|trans }}</span>
-                    <span class="tag is-light has-text-black" data-job-role="status">…</span>
-                </div>
-                <progress class="progress is-primary is-small mb-3 is-hidden" data-job-role="bar" value="0" max="100">0%</progress>
-                <form method="post" action="{{ path('app_autotag_embed_backlog') }}">
-                    <input type="hidden" name="_token" value="{{ csrf_token('autotag_embed') }}">
-                    <div class="buttons are-small has-addons">
-                        <button class="button" type="submit" name="all" value="0" data-job-role="launch">{{ 'btn.tag_missing'|trans }}</button>
-                        <button class="button" type="submit" name="all" value="1" data-job-role="launch">{{ 'btn.tag_all'|trans }}</button>
-                    </div>
-                </form>
-            </div>
-
-            <hr>
-            {% endif %}
-
-            {# Duplicate-detection vectors — core feature, shown even when auto-tagging is disabled. #}
-            <div data-job-status-key="vectors">
-                <div class="is-flex is-justify-content-space-between is-align-items-center mb-3">
-                    <span class="has-text-weight-semibold">{{ 'label.duplicate_vectors'|trans }}</span>
-                    <span class="tag is-light has-text-black" data-job-role="status">…</span>
-                </div>
-                <progress class="progress is-primary is-small mb-3" data-job-role="bar" value="0" max="100">0%</progress>
-                <form method="post" action="{{ path('app_vectors_backlog') }}">
-                    <input type="hidden" name="_token" value="{{ csrf_token('autotag_vectors') }}">
-                    <div class="buttons are-small has-addons">
-                        <button class="button" type="submit" name="all" value="0" data-job-role="launch">{{ 'btn.tag_missing'|trans }}</button>
-                        <button class="button" type="submit" name="all" value="1" data-job-role="launch">{{ 'btn.tag_all'|trans }}</button>
-                    </div>
-                </form>
             </div>
         </div>
     </div>

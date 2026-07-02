@@ -4,24 +4,24 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Entity\StagedUpload;
+use App\Entity\BulkUpload;
 use App\Entity\TagSuggestion;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-class StagedUploadRepository extends ServiceEntityRepository
+class BulkUploadRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, StagedUpload::class);
+        parent::__construct($registry, BulkUpload::class);
     }
 
     /**
-     * Stream every staged upload (for `--all` retroactive tagging). `toIterable()` so a
-     * large staging backlog isn't fully hydrated at once.
+     * Stream every bulk upload (for `--all` retroactive tagging). `toIterable()` so a
+     * large bulk upload backlog isn't fully hydrated at once.
      *
-     * @return iterable<StagedUpload>
+     * @return iterable<BulkUpload>
      */
     public function findAllIterable(): iterable
     {
@@ -29,10 +29,10 @@ class StagedUploadRepository extends ServiceEntityRepository
     }
 
     /**
-     * Stream staged uploads with no automatic tagging suggestion yet (never processed) — the default
-     * retroactive set. Correlated NOT EXISTS on (target_type='staged', target_id = id).
+     * Stream bulk uploads with no automatic tagging suggestion yet (never processed) — the default
+     * retroactive set. Correlated NOT EXISTS on (target_type='bulk', target_id = id).
      *
-     * @return iterable<StagedUpload>
+     * @return iterable<BulkUpload>
      */
     public function findWithoutSuggestionsIterable(): iterable
     {
@@ -45,7 +45,7 @@ class StagedUploadRepository extends ServiceEntityRepository
 
         return $qb
             ->where($qb->expr()->not($qb->expr()->exists($sub->getDQL())))
-            ->setParameter('targetType', 'staged')
+            ->setParameter('targetType', 'bulk')
             ->getQuery()
             ->toIterable();
     }
@@ -56,7 +56,7 @@ class StagedUploadRepository extends ServiceEntityRepository
     }
 
     /**
-     * Number of staged uploads with no automatic tagging suggestion yet (the un-processed backlog).
+     * Number of bulk uploads with no automatic tagging suggestion yet (the un-processed backlog).
      */
     public function countWithoutSuggestions(): int
     {
@@ -69,21 +69,21 @@ class StagedUploadRepository extends ServiceEntityRepository
 
         return (int) $qb
             ->where($qb->expr()->not($qb->expr()->exists($sub->getDQL())))
-            ->setParameter('targetType', 'staged')
+            ->setParameter('targetType', 'bulk')
             ->getQuery()
             ->getSingleScalarResult();
     }
 
     /**
-     * @return StagedUpload[]
+     * @return BulkUpload[]
      */
     public function findAllForUser(User $user): array
     {
         return $this
-            ->createQueryBuilder('staged')
-            ->where('staged.uploadedBy = :user')
+            ->createQueryBuilder('bulk')
+            ->where('bulk.uploadedBy = :user')
             ->setParameter('user', $user)
-            ->orderBy('staged.createdAt', \Doctrine\Common\Collections\Criteria::DESC)
+            ->orderBy('bulk.createdAt', \Doctrine\Common\Collections\Criteria::DESC)
             ->getQuery()
             ->getResult();
     }

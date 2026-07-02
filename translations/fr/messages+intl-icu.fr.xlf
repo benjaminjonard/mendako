@@ -715,55 +715,55 @@
         <target>Tags validés.</target>
       </segment>
     </unit>
-    <unit id="stg00m1" name="menu.staging">
+    <unit id="stg00m1" name="menu.bulk_upload">
       <segment state="translated">
-        <source>Staging</source>
-        <target>À trier</target>
+        <source>Bulk upload</source>
+        <target>Envoi groupé</target>
       </segment>
     </unit>
-    <unit id="stg00d1" name="staging.dropzone">
+    <unit id="stg00d1" name="bulk_upload.dropzone">
       <segment state="translated">
         <source>Drag and drop files here, or click to select</source>
         <target>Glissez-déposez des fichiers ici, ou cliquez pour sélectionner</target>
       </segment>
     </unit>
-    <unit id="stg00d2" name="staging.duplicate">
+    <unit id="stg00d2" name="bulk_upload.duplicate">
       <segment state="translated">
         <source>Potential duplicate</source>
         <target>Doublon potentiel</target>
       </segment>
     </unit>
-    <unit id="stg00a1" name="staging.assign">
+    <unit id="stg00a1" name="bulk_upload.assign">
       <segment state="translated">
         <source>Assign</source>
         <target>Assigner</target>
       </segment>
     </unit>
-    <unit id="stg00a2" name="staging.assign_selected">
+    <unit id="stg00a2" name="bulk_upload.assign_selected">
       <segment state="translated">
         <source>Assign to board</source>
         <target>Assigner à un board</target>
       </segment>
     </unit>
-    <unit id="stg00a3" name="staging.delete_selected">
+    <unit id="stg00a3" name="bulk_upload.delete_selected">
       <segment state="translated">
         <source>Delete selected</source>
         <target>Supprimer la sélection</target>
       </segment>
     </unit>
-    <unit id="stg00m2" name="message.staged_assigned">
+    <unit id="stg00m2" name="message.bulk_upload_assigned">
       <segment state="translated">
         <source>Files assigned to board</source>
         <target>Fichiers assignés au board</target>
       </segment>
     </unit>
-    <unit id="stg00m3" name="message.staged_deleted">
+    <unit id="stg00m3" name="message.bulk_upload_deleted">
       <segment state="translated">
         <source>Files deleted</source>
         <target>Fichiers supprimés</target>
       </segment>
     </unit>
-    <unit id="stg00a4" name="staging.select_all">
+    <unit id="stg00a4" name="bulk_upload.select_all">
       <segment state="translated">
         <source>Select all</source>
         <target>Tout sélectionner</target>
@@ -811,16 +811,22 @@
         <target>Taguer les posts existants</target>
       </segment>
     </unit>
+    <unit id="tagPostsHelp" name="label.tag_existing_posts_help">
+      <segment state="translated">
+        <source>Suggests tags for your images by analyzing what they show. You review and confirm every suggestion — nothing is tagged without you. New uploads are handled automatically.</source>
+        <target>Propose des tags pour vos images en analysant ce qu'elles montrent. Vous validez chaque suggestion — rien n'est tagué sans vous. Les nouveaux imports sont traités automatiquement.</target>
+      </segment>
+    </unit>
     <unit id="rN7uQ2a" name="label.run_active">
       <segment state="translated">
         <source>In progress</source>
         <target>En cours</target>
       </segment>
     </unit>
-    <unit id="rN7uQ2b" name="label.run_idle">
+    <unit id="rN7uQ2d" name="label.run_waiting">
       <segment state="translated">
-        <source>Idle</source>
-        <target>Inactif</target>
+        <source>Waiting for worker</source>
+        <target>En attente d'un worker</target>
       </segment>
     </unit>
     <unit id="rN7uQ2c" name="label.run_remaining">
@@ -885,26 +891,50 @@
     </unit>
     <unit id="embPool" name="label.embedding_pool">
       <segment state="translated">
-        <source>Embedding pool</source>
-        <target>Pool d'embeddings</target>
+        <source>Analyze image content</source>
+        <target>Analyse du contenu des images</target>
       </segment>
     </unit>
-    <unit id="embRun" name="label.embedding_running">
+    <unit id="embPoolHelp" name="label.embedding_pool_help">
       <segment state="translated">
-        <source>Embedding</source>
-        <target>Embedding en cours</target>
+        <source>Looks at what each image shows so the app can suggest tags and find visually similar posts. New uploads are analyzed automatically.</source>
+        <target>Examine ce que montre chaque image pour proposer des tags et retrouver des posts visuellement similaires. Les nouveaux imports sont analysés automatiquement.</target>
       </segment>
     </unit>
-    <unit id="embDone" name="label.embedded">
+    <unit id="embDone" name="label.embedding_done">
       <segment state="translated">
         <source>embedded</source>
         <target>avec embedding</target>
       </segment>
     </unit>
-    <unit id="embTodo" name="label.to_embed">
+    <unit id="embTodo" name="label.embedding_todo">
       <segment state="translated">
         <source>to embed</source>
         <target>à traiter</target>
+      </segment>
+    </unit>
+    <unit id="tagDone" name="label.tagging_done">
+      <segment state="translated">
+        <source>tagged</source>
+        <target>taggés</target>
+      </segment>
+    </unit>
+    <unit id="tagTodo" name="label.tagging_todo">
+      <segment state="translated">
+        <source>to tag</source>
+        <target>à traiter</target>
+      </segment>
+    </unit>
+    <unit id="vecDone" name="label.vectors_done">
+      <segment state="translated">
+        <source>with vector</source>
+        <target>avec vecteur</target>
+      </segment>
+    </unit>
+    <unit id="vecTodo" name="label.vectors_todo">
+      <segment state="translated">
+        <source>to compute</source>
+        <target>à calculer</target>
       </segment>
     </unit>
     <unit id="embMsg" name="message.embeddings_started">
@@ -915,14 +945,32 @@
     </unit>
     <unit id="dupVec" name="label.duplicate_vectors">
       <segment state="translated">
-        <source>Duplicate vectors</source>
-        <target>Vecteurs de doublons</target>
+        <source>Detect duplicates</source>
+        <target>Détection de doublons</target>
+      </segment>
+    </unit>
+    <unit id="dupVecHelp" name="label.duplicate_vectors_help">
+      <segment state="translated">
+        <source>Builds a visual fingerprint of each image so the app can flag duplicates and near-identical posts when you upload. New uploads are fingerprinted automatically.</source>
+        <target>Crée une empreinte visuelle de chaque image pour signaler les doublons et quasi-doublons lors des imports. Les nouveaux imports sont traités automatiquement.</target>
       </segment>
     </unit>
     <unit id="vecMsg" name="message.vectors_started">
       <segment state="translated">
         <source>Vector recompute started.</source>
         <target>Recalcul des vecteurs lancé.</target>
+      </segment>
+    </unit>
+    <unit id="jobRun01" name="message.job_already_running">
+      <segment state="translated">
+        <source>That job is already running.</source>
+        <target>Cette tâche est déjà en cours.</target>
+      </segment>
+    </unit>
+    <unit id="jobCan01" name="message.job_cancelled">
+      <segment state="translated">
+        <source>Job cancelled.</source>
+        <target>Tâche annulée.</target>
       </segment>
     </unit>
     <unit id="mrgTag01" name="title.merge_tags">

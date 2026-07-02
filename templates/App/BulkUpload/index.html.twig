@@ -1,41 +1,41 @@
 {% extends 'layout.html.twig' %}
 
 {% block title %}
-    {{ 'menu.staging'|trans }}
+    {{ 'menu.bulk_upload'|trans }}
 {% endblock %}
 
 {% block breadcrumb %}
-    <li class="is-active"><a href="#" aria-current="page">{{ 'menu.staging'|trans }}</a></li>
+    <li class="is-active"><a href="#" aria-current="page">{{ 'menu.bulk_upload'|trans }}</a></li>
 {% endblock %}
 
 {% block content %}
     <div class="column"
          data-controller="bulk-upload"
-         data-bulk-upload-add-url-value="{{ path('app_staged_add') }}"
-         data-bulk-upload-assign-url-value="{{ path('app_staged_assign') }}"
-         data-bulk-upload-delete-url-value="{{ path('app_staged_delete') }}"
-         data-bulk-upload-csrf-value="{{ csrf_token('staged_action') }}"
+         data-bulk-upload-add-url-value="{{ path('app_bulk_upload_add') }}"
+         data-bulk-upload-assign-url-value="{{ path('app_bulk_upload_assign') }}"
+         data-bulk-upload-delete-url-value="{{ path('app_bulk_upload_delete') }}"
+         data-bulk-upload-csrf-value="{{ csrf_token('bulk_upload_action') }}"
          data-action="keydown@window->bulk-upload#viewerKeydown"
     >
-        <div class="staging-dropzone"
+        <div class="bulk-upload-dropzone"
              data-bulk-upload-target="dropzone"
              data-action="dragover->bulk-upload#dragover dragleave->bulk-upload#dragleave drop->bulk-upload#drop click->bulk-upload#openFileDialog"
         >
-            <p>{{ 'staging.dropzone'|trans }}</p>
+            <p>{{ 'bulk_upload.dropzone'|trans }}</p>
             <input type="file" multiple class="is-hidden"
                    data-bulk-upload-target="input"
                    data-action="change->bulk-upload#filesSelected"
             >
         </div>
 
-        <div class="staging-progress-counter is-hidden" data-bulk-upload-target="progressCounter"></div>
-        <ul class="staging-progress" data-bulk-upload-target="progress"></ul>
+        <div class="bulk-upload-progress-counter is-hidden" data-bulk-upload-target="progressCounter"></div>
+        <ul class="bulk-upload-progress" data-bulk-upload-target="progress"></ul>
 
-        <div class="staging-bulk-bar" data-bulk-upload-target="bulkBar">
+        <div class="bulk-upload-bulk-bar" data-bulk-upload-target="bulkBar">
             <div class="field is-grouped">
                 <div class="control">
                     <button type="button" class="button" data-action="bulk-upload#selectAll">
-                        {{ 'staging.select_all'|trans }}
+                        {{ 'bulk_upload.select_all'|trans }}
                     </button>
                 </div>
                 <div class="control">
@@ -49,24 +49,24 @@
                 </div>
                 <div class="control">
                     <button type="button" class="button is-primary" data-action="bulk-upload#assignSelected">
-                        {{ 'staging.assign_selected'|trans }}
+                        {{ 'bulk_upload.assign_selected'|trans }}
                     </button>
                 </div>
                 <div class="control">
                     <button type="button" class="button is-danger" data-action="bulk-upload#deleteSelected">
-                        {{ 'staging.delete_selected'|trans }}
+                        {{ 'bulk_upload.delete_selected'|trans }}
                     </button>
                 </div>
             </div>
         </div>
 
         <span class="grid grid-posts" data-bulk-upload-target="grid">
-            {% for stagedUpload in stagedUploads %}
-                {{ include('App/StagedUpload/_card.html.twig', { stagedUpload: stagedUpload }) }}
+            {% for bulkUpload in bulkUploads %}
+                {{ include('App/BulkUpload/_card.html.twig', { bulkUpload: bulkUpload }) }}
             {% endfor %}
         </span>
 
-        <div class="modal staged-viewer" data-bulk-upload-target="viewer">
+        <div class="modal bulk-upload-viewer" data-bulk-upload-target="viewer">
             <div class="modal-background" data-action="click->bulk-upload#closeViewer"></div>
             <div class="modal-content" data-bulk-upload-target="viewerContent"></div>
             <button type="button" class="modal-close is-large" aria-label="close" data-action="click->bulk-upload#closeViewer"></button>

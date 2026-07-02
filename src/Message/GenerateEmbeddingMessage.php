@@ -13,7 +13,7 @@ namespace App\Message;
 final readonly class GenerateEmbeddingMessage
 {
     public function __construct(
-        public string $targetType, // 'post' | 'staged'
+        public string $targetType, // 'post' | 'bulk'
         public string $id,
     ) {
     }

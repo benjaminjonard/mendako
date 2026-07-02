@@ -15,7 +15,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
  * Retroactively enqueue automatic tagging tag-suggestion generation for existing posts (or, with
- * --staged, staged uploads) on the deprioritized `autotag_batch` queue. By default only
+ * --bulk, bulk uploads) on the deprioritized `autotag_batch` queue. By default only
  * items that have no suggestion yet are enqueued; `--all` re-enqueues everything.
  *
  * Feature-gated, additive, idempotent: the same `GenerateSuggestionsHandler` runs,
@@ -23,7 +23,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  */
 #[AsCommand(
     name: 'app:autotag:tag-backlog',
-    description: 'Enqueue retroactive automatic tagging for existing posts (or staged uploads) on the autotag_batch queue',
+    description: 'Enqueue retroactive automatic tagging for existing posts (or bulk uploads) on the autotag_batch queue',
 )]
 class TagBacklogCommand extends Command
 {
@@ -38,13 +38,13 @@ class TagBacklogCommand extends Command
     protected function configure(): void
     {
         $this->addOption('all', null, InputOption::VALUE_NONE, 'Re-enqueue every item, not just those without suggestions');
-        $this->addOption('staged', null, InputOption::VALUE_NONE, 'Tag the staging area instead of posts');
+        $this->addOption('bulk', null, InputOption::VALUE_NONE, 'Tag the bulk upload area instead of posts');
         $this->setHelp(<<<'HELP'
             Enqueues retroactive automatic tagging on the deprioritized <info>autotag_batch</info> queue.
 
             By default only <comment>posts</comment> that have <comment>never been automatic tagging-processed</comment> (no suggestion of
             any status) are enqueued — an item whose suggestions were all accepted or
-            dismissed is left alone. Pass <info>--staged</info> to tag the staging area instead.
+            dismissed is left alone. Pass <info>--bulk</info> to tag the bulk upload area instead.
             Use <info>--all</info> to re-process every item (e.g. after switching models); this
             re-runs inference on the whole set, so it is costly.
 
@@ -65,11 +65,11 @@ class TagBacklogCommand extends Command
         }
 
         $all = (bool) $input->getOption('all');
-        $staged = (bool) $input->getOption('staged');
+        $bulk = (bool) $input->getOption('bulk');
 
-        $count = $this->backlogEnqueuer->enqueue($staged ? 'staged' : 'post', $all);
+        $count = $this->backlogEnqueuer->enqueue($bulk ? 'bulk' : 'post', $all);
 
-        $io->success(sprintf('Enqueued %d %s for retroactive tagging on autotag_batch.', $count, $staged ? 'staged upload(s)' : 'post(s)'));
+        $io->success(sprintf('Enqueued %d %s for retroactive tagging on autotag_batch.', $count, $bulk ? 'bulk upload(s)' : 'post(s)'));
 
         return Command::SUCCESS;
     }

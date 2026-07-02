@@ -189,6 +189,52 @@ class TagValidationTest extends WebTestCase
         $this->assertNull(static::getContainer()->get(PostRepository::class)->findRandomWithPendingSuggestions());
     }
 
+    public function test_validation_tab_and_pending_badge_appear_in_tags_submenu(): void
+    {
+        $this->loginAdmin();
+        $post = $this->createPost();
+        $this->persistSuggestion($post->getId(), '1girl', 0.50, TagCategory::GENERAL);
+
+        $crawler = $this->client->request(Request::METHOD_GET, '/tags');
+
+        $this->assertResponseIsSuccessful();
+        // Validation now lives as a tab in the Tags submenu (no longer in the top navbar).
+        $tab = $crawler->filter('.tabs a[href="/tag-validation"]');
+        $this->assertCount(1, $tab);
+        // ...with an is-info badge counting the one post waiting to be validated.
+        $this->assertSame('1', $tab->filter('.tag.is-info')->text());
+    }
+
+    public function test_no_badge_when_validation_queue_is_empty(): void
+    {
+        $this->loginAdmin();
+
+        $crawler = $this->client->request(Request::METHOD_GET, '/tags');
+
+        $this->assertResponseIsSuccessful();
+        $tab = $crawler->filter('.tabs a[href="/tag-validation"]');
+        $this->assertCount(1, $tab);
+        // Empty queue → the tab is there, but no count badge.
+        $this->assertCount(0, $tab->filter('.tag'));
+    }
+
+    public function test_count_posts_with_pending_suggestions_is_per_post(): void
+    {
+        $repo = static::getContainer()->get(PostRepository::class);
+        $this->assertSame(0, $repo->countPostsWithPendingSuggestions());
+
+        $post = $this->createPost();
+        // Two pending suggestions on the same post count as one post in the queue.
+        $this->persistSuggestion($post->getId(), '1girl', 0.50, TagCategory::GENERAL);
+        $this->persistSuggestion($post->getId(), 'solo', 0.50, TagCategory::GENERAL);
+        $this->assertSame(1, $repo->countPostsWithPendingSuggestions());
+
+        // A resolved suggestion doesn't keep a post in the queue.
+        $resolved = $this->createPost();
+        $this->persistSuggestion($resolved->getId(), 'cat', 0.90, TagCategory::GENERAL, TagSuggestion::STATUS_ACCEPTED);
+        $this->assertSame(1, $repo->countPostsWithPendingSuggestions());
+    }
+
     /**
      * @return array<string, string> tagName => status for the target's suggestions
      */

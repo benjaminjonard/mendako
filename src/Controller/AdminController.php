@@ -44,4 +44,12 @@ class AdminController extends AbstractController
             'autoTagEnabled' => $autoTagConfigProvider->isEnabled(),
         ]);
     }
+
+    #[Route(path: '/admin/jobs', name: 'app_admin_jobs', methods: ['GET'])]
+    public function jobs(AutoTagConfigProvider $autoTagConfigProvider): Response
+    {
+        return $this->render('App/Admin/jobs.html.twig', [
+            'autoTagEnabled' => $autoTagConfigProvider->isEnabled(),
+        ]);
+    }
 }

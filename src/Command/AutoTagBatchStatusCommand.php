@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Command;
 
 use App\Repository\PostRepository;
-use App\Repository\StagedUploadRepository;
+use App\Repository\BulkUploadRepository;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -13,19 +13,19 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
- * Read-only backlog progress: how many posts / staged uploads have been automatic tagging-processed
+ * Read-only backlog progress: how many posts / bulk uploads have been automatic tagging-processed
  * (have at least one TagSuggestion) vs the total, with a completion state. Derived from
  * per-item tagging status — not from queue internals.
  */
 #[AsCommand(
     name: 'app:autotag:batch-status',
-    description: 'Show retroactive automatic tagging progress (processed/total) for posts and staged uploads',
+    description: 'Show retroactive automatic tagging progress (processed/total) for posts and bulk uploads',
 )]
 class AutoTagBatchStatusCommand extends Command
 {
     public function __construct(
         private readonly PostRepository $postRepository,
-        private readonly StagedUploadRepository $stagedUploadRepository,
+        private readonly BulkUploadRepository $bulkUploadRepository,
     ) {
         parent::__construct();
     }
@@ -37,7 +37,7 @@ class AutoTagBatchStatusCommand extends Command
 
         $rows = [];
         $allComplete = true;
-        foreach (['Posts' => $this->postRepository, 'Staged uploads' => $this->stagedUploadRepository] as $label => $repository) {
+        foreach (['Posts' => $this->postRepository, 'Bulk uploads' => $this->bulkUploadRepository] as $label => $repository) {
             $total = $repository->countAll();
             $remaining = $repository->countWithoutSuggestions();
             $processed = $total - $remaining;

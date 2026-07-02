@@ -7,6 +7,7 @@ namespace App\Service;
 use FFMpeg\Coordinate\Dimension;
 use FFMpeg\Coordinate\TimeCode;
 use FFMpeg\FFMpeg;
+use Symfony\Component\Process\Process;
 
 class ThumbnailGenerator
 {
@@ -49,7 +50,15 @@ class ThumbnailGenerator
         for ($i = 0; $i < $count; ++$i) {
             $second = $count === 1 ? 0.0 : $duration * (($i + 1) / ($count + 1));
             $framePath = $destDir.'/frame-'.$i.'.jpeg';
-            $video->frame(TimeCode::fromSeconds($second))->save($framePath);
+            try {
+                // ffmpeg can't always encode a frame at a given timecode (e.g. the last
+                // sampled position of a very short clip, or a frame the MJPEG encoder
+                // rejects). A single unreadable frame must not lose the whole sample:
+                // skip it and keep the frames that did decode.
+                $video->frame(TimeCode::fromSeconds($second))->save($framePath);
+            } catch (\Throwable) {
+                continue;
+            }
             if (is_file($framePath) && filesize($framePath) > 0) {
                 $paths[] = $framePath;
             }
@@ -67,6 +76,13 @@ class ThumbnailGenerator
         $mime = mime_content_type($path);
 
         if ($mime === 'image/svg+xml') {
+            // SVG is vector — GD can't read it at all. Rasterize with ffmpeg (out-of-process,
+            // via librsvg) so the automatic-tagging pipeline gets a raster to embed. Display
+            // templates render SVG from the original file, so this only ever runs for the
+            // on-demand thumbnailer and the tagging pipeline, which need a raster form.
+            $this->ensureDirectory($thumbnailPath);
+            $this->rasterizeWithFfmpeg($path, $thumbnailPath, $thumbnailWidth);
+
             return true;
         }
 
@@ -86,14 +102,7 @@ class ThumbnailGenerator
 
         $thumbnailHeight = (int) floor($height * ($thumbnailWidth / $width));
 
-        // Create user directory in uploads
-        $dir = explode('/', $thumbnailPath);
-        array_pop($dir);
-        $dir = implode('/', $dir);
-
-        if (!is_dir($dir) && !mkdir($dir, 0777, true) && !is_dir($dir)) {
-            throw new \Exception('There was a problem while creating the thumbnail. Please try again!');
-        }
+        $this->ensureDirectory($thumbnailPath);
 
         if ($mime === 'video/mp4' || $mime === 'video/webm' || $mime === 'image/gif' || $mime === 'video/x-m4v') {
             $second = $video->getFormat()->get('duration') * 0.1;
@@ -129,6 +138,35 @@ class ThumbnailGenerator
         }
 
         return true;
+    }
+
+    private function ensureDirectory(string $thumbnailPath): void
+    {
+        $dir = \dirname($thumbnailPath);
+
+        if (!is_dir($dir) && !mkdir($dir, 0777, true) && !is_dir($dir)) {
+            throw new \Exception('There was a problem while creating the thumbnail. Please try again!');
+        }
+    }
+
+    /**
+     * Rasterize/downscale an image with ffmpeg (out-of-process, bounded memory, librsvg for
+     * SVG). The output format follows the thumbnail path's extension; never upscales.
+     */
+    private function rasterizeWithFfmpeg(string $sourcePath, string $thumbnailPath, int $width): void
+    {
+        $process = new Process([
+            'ffmpeg', '-y', '-v', 'error',
+            '-i', $sourcePath,
+            '-vf', sprintf("scale='min(iw,%d)':-2", $width),
+            '-frames:v', '1', '-update', '1',
+            $thumbnailPath,
+        ]);
+        $process->run();
+
+        if (!$process->isSuccessful() || !is_file($thumbnailPath)) {
+            throw new \Exception('ffmpeg could not generate the thumbnail: '.$process->getErrorOutput());
+        }
     }
 
     public function guessRotation(string $path): int

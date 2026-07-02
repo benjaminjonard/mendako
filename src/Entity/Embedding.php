@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
 
 /**
- * One image embedding vector for a target (a Post or a StagedUpload), linked polymorphically
+ * One image embedding vector for a target (a Post or a BulkUpload), linked polymorphically
  * by (targetType, targetId) — no FK, like TagSuggestion. An image has a single embedding
  * (ordinal 0); a video has one per sampled frame (ordinal 0..N-1), so kNN can match on any
  * frame. Bound to the encoder that produced it. Recomputable (nothing authoritative lives here).

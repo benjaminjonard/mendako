@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\App;
 
 use App\Entity\Post;
-use App\Entity\StagedUpload;
+use App\Entity\BulkUpload;
 use App\Message\GenerateSuggestionsMessage;
 use App\Service\AutoTag\AutoTagConfigProvider;
 use App\Service\AutoTag\TaggingDispatcher;
@@ -38,18 +38,18 @@ class TaggingDispatcherTest extends TestCase
         (new TaggingDispatcher($bus, $this->provider(true)))->dispatch($post);
     }
 
-    public function test_dispatches_staged_message_when_enabled(): void
+    public function test_dispatches_bulk_upload_message_when_enabled(): void
     {
         $bus = $this->createMock(MessageBusInterface::class);
         $bus->expects($this->once())
             ->method('dispatch')
-            ->with($this->callback(static fn (object $m): bool => $m instanceof GenerateSuggestionsMessage && $m->targetType === 'staged'))
+            ->with($this->callback(static fn (object $m): bool => $m instanceof GenerateSuggestionsMessage && $m->targetType === 'bulk'))
             ->willReturn(new Envelope(new \stdClass()));
 
-        $staged = new StagedUpload();
-        $staged->setPath('uploads/staging/y.png');
+        $bulkUpload = new BulkUpload();
+        $bulkUpload->setPath('uploads/bulk-upload/y.png');
 
-        (new TaggingDispatcher($bus, $this->provider(true)))->dispatch($staged);
+        (new TaggingDispatcher($bus, $this->provider(true)))->dispatch($bulkUpload);
     }
 
     public function test_does_not_dispatch_when_disabled(): void

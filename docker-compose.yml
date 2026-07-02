@@ -75,7 +75,7 @@ services:
         # (curl localhost:80) always fails and marks it 'unhealthy'. Disable it.
         healthcheck:
             disable: true
-        entrypoint: ["php", "-d", "memory_limit=1G", "bin/console", "messenger:consume", "autotag_interactive", "--time-limit=3600", "--memory-limit=512M"]
+        entrypoint: ["php", "-d", "memory_limit=2G", "bin/console", "messenger:consume", "autotag_interactive", "--time-limit=3600", "--memory-limit=512M"]
 
     # Optional tagging worker — BATCH queue only (deprioritized backlog: bulk embedding pool +
     # retroactive tagging). Separate process so it never starves interactive uploads. A single
@@ -107,7 +107,7 @@ services:
             disable: true
         # Higher memory ceiling: a backlog run fans out one message per item and, in the dev
         # profiler, every dispatched message is collected in-memory — 128M OOMs on a large library.
-        entrypoint: ["php", "-d", "memory_limit=1G", "bin/console", "messenger:consume", "autotag_batch", "--time-limit=3600", "--memory-limit=512M"]
+        entrypoint: ["php", "-d", "memory_limit=2G", "bin/console", "messenger:consume", "autotag_batch", "--time-limit=3600", "--memory-limit=512M"]
 
     postgresql:
         image: pgvector/pgvector:pg16

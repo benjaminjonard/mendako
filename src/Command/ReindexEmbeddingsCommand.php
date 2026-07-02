@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Command;
 
 use App\Entity\Post;
-use App\Entity\StagedUpload;
+use App\Entity\BulkUpload;
 use App\Service\AutoTag\AutoTagConfigProvider;
 use App\Service\AutoTag\TaggingDispatcher;
 use Doctrine\Persistence\ManagerRegistry;
@@ -85,7 +85,7 @@ class ReindexEmbeddingsCommand extends Command
         // Bulk re-embed is backlog work: route it to the deprioritized autotag_batch queue
         // so it never competes with interactive uploads.
         $dispatched = 0;
-        foreach ([Post::class, StagedUpload::class] as $entityClass) {
+        foreach ([Post::class, BulkUpload::class] as $entityClass) {
             foreach ($this->managerRegistry->getRepository($entityClass)->findAll() as $item) {
                 $this->taggingDispatcher->dispatchBatch($item);
                 ++$dispatched;

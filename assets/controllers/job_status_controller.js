@@ -3,9 +3,9 @@ import { Controller } from '@hotwired/stimulus';
 // Semantic job state → Bulma tag colour. The backend decides the state; the controller just paints.
 const STATE_CLASS = {
     running: 'is-info',
-    partial: 'is-warning',
-    done: 'is-success',
-    idle: 'is-light has-text-black' // keep the light background, but force black text so "Idle" isn't faint gray
+    waiting: 'is-warning', // queued but not yet picked up by a worker
+    partial: 'is-warning', // idle but some posts still uncovered
+    done: 'is-success'
 };
 
 // One controller for the whole Jobs panel: it polls a single endpoint and repaints every job card,
@@ -65,6 +65,11 @@ export default class extends Controller {
         // Disable the launch buttons while a run is in flight so a second can't stack on top.
         card.querySelectorAll('[data-job-role="launch"]').forEach((button) => {
             button.disabled = !!job.running;
+        });
+
+        // Cancel is the inverse: only actionable while there's a run to cancel.
+        card.querySelectorAll('[data-job-role="cancel"]').forEach((button) => {
+            button.disabled = !job.running;
         });
     }
 }

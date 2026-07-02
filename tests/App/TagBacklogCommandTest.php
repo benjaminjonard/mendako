@@ -57,9 +57,9 @@ class TagBacklogCommandTest extends KernelTestCase
         $em->flush();
     }
 
-    private function createStaged(): \App\Entity\StagedUpload
+    private function createBulkUpload(): \App\Entity\BulkUpload
     {
-        return \App\Tests\Factory\StagedUploadFactory::createOne();
+        return \App\Tests\Factory\BulkUploadFactory::createOne();
     }
 
     public function test_enqueues_only_posts_without_suggestions(): void
@@ -104,37 +104,37 @@ class TagBacklogCommandTest extends KernelTestCase
         $this->assertCount(1, $this->batchTransport()->getSent()); // only the fresh post
     }
 
-    public function test_staged_flag_enqueues_only_staged_without_suggestions(): void
+    public function test_bulk_upload_flag_enqueues_only_bulk_upload_without_suggestions(): void
     {
         $tester = $this->commandTester(true);
-        $this->createStaged();
-        $withSuggestion = $this->createStaged();
-        $this->addSuggestion($withSuggestion->getId(), targetType: 'staged');
-        $this->createPost(); // a post must NOT be enqueued by a --staged run
+        $this->createBulkUpload();
+        $withSuggestion = $this->createBulkUpload();
+        $this->addSuggestion($withSuggestion->getId(), targetType: 'bulk');
+        $this->createPost(); // a post must NOT be enqueued by a --bulk run
 
-        $tester->execute(['--staged' => true]);
+        $tester->execute(['--bulk' => true]);
 
         $tester->assertCommandIsSuccessful();
-        $this->assertCount(1, $this->batchTransport()->getSent()); // only the fresh staged item
+        $this->assertCount(1, $this->batchTransport()->getSent()); // only the fresh bulk upload item
     }
 
-    public function test_staged_all_enqueues_every_staged_item(): void
+    public function test_bulk_upload_all_enqueues_every_bulk_upload_item(): void
     {
         $tester = $this->commandTester(true);
-        $this->createStaged();
-        $withSuggestion = $this->createStaged();
-        $this->addSuggestion($withSuggestion->getId(), targetType: 'staged');
+        $this->createBulkUpload();
+        $withSuggestion = $this->createBulkUpload();
+        $this->addSuggestion($withSuggestion->getId(), targetType: 'bulk');
 
-        $tester->execute(['--staged' => true, '--all' => true]);
+        $tester->execute(['--bulk' => true, '--all' => true]);
 
         $tester->assertCommandIsSuccessful();
         $this->assertCount(2, $this->batchTransport()->getSent());
     }
 
-    public function test_post_run_does_not_enqueue_staged_items(): void
+    public function test_post_run_does_not_enqueue_bulk_upload_items(): void
     {
         $tester = $this->commandTester(true);
-        $this->createStaged(); // staging present but not targeted
+        $this->createBulkUpload(); // bulk upload present but not targeted
 
         $tester->execute([]); // default = posts
 

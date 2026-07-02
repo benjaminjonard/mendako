@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Service\AutoTag;
 
 use App\Entity\Post;
-use App\Entity\StagedUpload;
+use App\Entity\BulkUpload;
 use App\Message\GenerateSuggestionsMessage;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\TransportNamesStamp;
@@ -25,7 +25,7 @@ class TaggingDispatcher
     ) {
     }
 
-    public function dispatch(Post|StagedUpload $item): void
+    public function dispatch(Post|BulkUpload $item): void
     {
         $message = $this->buildMessage($item);
         if ($message === null) {
@@ -39,7 +39,7 @@ class TaggingDispatcher
      * Queue retroactive/backlog tagging on the deprioritized autotag_batch transport so it
      * never competes with interactive uploads.
      */
-    public function dispatchBatch(Post|StagedUpload $item): void
+    public function dispatchBatch(Post|BulkUpload $item): void
     {
         $message = $this->buildMessage($item);
         if ($message === null) {
@@ -49,13 +49,13 @@ class TaggingDispatcher
         $this->messageBus->dispatch($message, [new TransportNamesStamp('autotag_batch')]);
     }
 
-    private function buildMessage(Post|StagedUpload $item): ?GenerateSuggestionsMessage
+    private function buildMessage(Post|BulkUpload $item): ?GenerateSuggestionsMessage
     {
         if (!$this->autoTagConfigProvider->isEnabled()) {
             return null;
         }
 
-        $targetType = $item instanceof StagedUpload ? 'staged' : 'post';
+        $targetType = $item instanceof BulkUpload ? 'bulk' : 'post';
         $contentHash = sha1((string) $item->getPath());
 
         return new GenerateSuggestionsMessage($targetType, (string) $item->getId(), $contentHash);

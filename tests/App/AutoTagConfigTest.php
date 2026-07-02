@@ -110,6 +110,22 @@ class AutoTagConfigTest extends WebTestCase
         $this->assertStringContainsString('Vector recompute started', $this->client->getResponse()->getContent());
     }
 
+    public function test_cancel_button_cancels_a_run(): void
+    {
+        $this->client->loginUser(UserFactory::createOne(['roles' => ['ROLE_ADMIN']]));
+        $this->stubClient();
+        // Vectors card (and its cancel form) is always rendered, auto-tagging on or off.
+        $this->setEnabled(false);
+
+        $crawler = $this->client->request(Request::METHOD_GET, '/admin');
+        // Submit the form node itself: the cancel button ships disabled (JS enables it live), so
+        // clicking it in the crawler wouldn't post — the form still carries the CSRF token.
+        $this->client->submit($crawler->filter('form[action$="jobs/vectors/cancel"]')->form());
+
+        $this->assertResponseIsSuccessful();
+        $this->assertStringContainsString('Job cancelled', $this->client->getResponse()->getContent());
+    }
+
 
     public function test_embed_backlog_button_starts_a_run_when_enabled(): void
     {

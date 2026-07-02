@@ -159,14 +159,14 @@ class KnnSuggestionTest extends KernelTestCase
         $this->assertNotContains('meta_only', $names); // meta tags don't propagate by visual similarity
     }
 
-    public function test_staged_target_gets_post_neighbour_tags(): void
+    public function test_bulk_upload_target_gets_post_neighbour_tags(): void
     {
         $this->taggedPost('cat', $this->oneHot(0), 'm1');
 
-        $stagedId = Uuid::v7()->toRfc4122();
-        $this->service->propagate('staged', $stagedId, [$this->oneHot(0)], 'm1');
+        $bulkUploadId = Uuid::v7()->toRfc4122();
+        $this->service->propagate('bulk', $bulkUploadId, [$this->oneHot(0)], 'm1');
 
-        $suggestions = $this->repository->findForTarget('staged', $stagedId);
+        $suggestions = $this->repository->findForTarget('bulk', $bulkUploadId);
         $names = array_map(static fn (TagSuggestion $s) => $s->getTagName(), $suggestions);
         $this->assertContains('cat', $names);
         $this->assertSame(TagSuggestion::SOURCE_KNN, $suggestions[0]->getSource());

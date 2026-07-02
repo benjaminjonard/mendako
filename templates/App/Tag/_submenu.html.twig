@@ -7,5 +7,16 @@
         <li class="{{ current == 'app_tag_blacklist' ? 'is-active' }}">
             <a href="{{ path('app_tag_blacklist') }}">{{ 'label.ai_blacklist'|trans }}</a>
         </li>
+        {% if is_granted('ROLE_ADMIN') %}
+            {% set pendingValidation = pending_validation_count() %}
+            <li class="{{ current == 'app_tag_validation' ? 'is-active' }}">
+                <a href="{{ path('app_tag_validation') }}">
+                    <span>{{ 'menu.tag_validation'|trans }}</span>
+                    {% if pendingValidation > 0 %}
+                        <span class="tag is-info ml-2">{{ pendingValidation }}</span>
+                    {% endif %}
+                </a>
+            </li>
+        {% endif %}
     </ul>
 </div>

@@ -727,55 +727,55 @@
         <target>Etiquetas validadas.</target>
       </segment>
     </unit>
-    <unit id="stg00m1" name="menu.staging">
+    <unit id="stg00m1" name="menu.bulk_upload">
       <segment state="translated">
-        <source>Staging</source>
-        <target>Staging</target>
+        <source>Bulk upload</source>
+        <target>Subida masiva</target>
       </segment>
     </unit>
-    <unit id="stg00d1" name="staging.dropzone">
+    <unit id="stg00d1" name="bulk_upload.dropzone">
       <segment state="translated">
         <source>Drag and drop files here, or click to select</source>
         <target>Drag and drop files here, or click to select</target>
       </segment>
     </unit>
-    <unit id="stg00d2" name="staging.duplicate">
+    <unit id="stg00d2" name="bulk_upload.duplicate">
       <segment state="translated">
         <source>Potential duplicate</source>
         <target>Potential duplicate</target>
       </segment>
     </unit>
-    <unit id="stg00a1" name="staging.assign">
+    <unit id="stg00a1" name="bulk_upload.assign">
       <segment state="translated">
         <source>Assign</source>
         <target>Assign</target>
       </segment>
     </unit>
-    <unit id="stg00a2" name="staging.assign_selected">
+    <unit id="stg00a2" name="bulk_upload.assign_selected">
       <segment state="translated">
         <source>Assign to board</source>
         <target>Assign to board</target>
       </segment>
     </unit>
-    <unit id="stg00a3" name="staging.delete_selected">
+    <unit id="stg00a3" name="bulk_upload.delete_selected">
       <segment state="translated">
         <source>Delete selected</source>
         <target>Delete selected</target>
       </segment>
     </unit>
-    <unit id="stg00m2" name="message.staged_assigned">
+    <unit id="stg00m2" name="message.bulk_upload_assigned">
       <segment state="translated">
         <source>Files assigned to board</source>
         <target>Files assigned to board</target>
       </segment>
     </unit>
-    <unit id="stg00m3" name="message.staged_deleted">
+    <unit id="stg00m3" name="message.bulk_upload_deleted">
       <segment state="translated">
         <source>Files deleted</source>
         <target>Files deleted</target>
       </segment>
     </unit>
-    <unit id="stg00a4" name="staging.select_all">
+    <unit id="stg00a4" name="bulk_upload.select_all">
       <segment state="translated">
         <source>Select all</source>
         <target>Select all</target>
@@ -811,19 +811,13 @@
         <target>Pool de embeddings</target>
       </segment>
     </unit>
-    <unit id="embRun" name="label.embedding_running">
-      <segment state="translated">
-        <source>Embedding</source>
-        <target>Generando embeddings</target>
-      </segment>
-    </unit>
-    <unit id="embDone" name="label.embedded">
+    <unit id="embDone" name="label.embedding_done">
       <segment state="translated">
         <source>embedded</source>
         <target>con embedding</target>
       </segment>
     </unit>
-    <unit id="embTodo" name="label.to_embed">
+    <unit id="embTodo" name="label.embedding_todo">
       <segment state="translated">
         <source>to embed</source>
         <target>por procesar</target>

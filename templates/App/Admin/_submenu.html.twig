@@ -1,0 +1,11 @@
+{% set current = app.current_route %}
+<div class="tabs">
+    <ul>
+        <li class="{{ current == 'app_admin_index' ? 'is-active' }}">
+            <a href="{{ path('app_admin_index') }}">{{ 'title.configuration'|trans }}</a>
+        </li>
+        <li class="{{ current == 'app_admin_jobs' ? 'is-active' }}">
+            <a href="{{ path('app_admin_jobs') }}">{{ 'title.jobs'|trans }}</a>
+        </li>
+    </ul>
+</div>

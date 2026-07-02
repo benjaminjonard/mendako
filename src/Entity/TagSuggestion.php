@@ -14,7 +14,7 @@ use Symfony\Component\Uid\Uuid;
 /**
  * A non-authoritative Automatic tags. It is NOT a confirmed tag: nothing here
  * is ever written to men_post_tag. Suggestions are linked to their target
- * (a Post or a StagedUpload) polymorphically by (targetType, targetId) — no FK —
+ * (a Post or a BulkUpload) polymorphically by (targetType, targetId) — no FK —
  * and are promoted to real tags only through an explicit human action.
  */
 #[ORM\Entity(repositoryClass: TagSuggestionRepository::class)]

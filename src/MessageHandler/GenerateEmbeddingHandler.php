@@ -7,7 +7,7 @@ namespace App\MessageHandler;
 use App\Message\GenerateEmbeddingMessage;
 use App\Repository\EmbeddingRepository;
 use App\Repository\PostRepository;
-use App\Repository\StagedUploadRepository;
+use App\Repository\BulkUploadRepository;
 use App\Service\AutoTag\AutoTagConfigProvider;
 use App\Service\AutoTag\AutoTagInferenceClient;
 use App\Service\ThumbnailGenerator;
@@ -31,7 +31,7 @@ final class GenerateEmbeddingHandler
 
     public function __construct(
         private readonly PostRepository $postRepository,
-        private readonly StagedUploadRepository $stagedUploadRepository,
+        private readonly BulkUploadRepository $bulkUploadRepository,
         private readonly AutoTagConfigProvider $autoTagConfigProvider,
         private readonly AutoTagInferenceClient $autoTagInferenceClient,
         private readonly ThumbnailGenerator $thumbnailGenerator,
@@ -52,8 +52,8 @@ final class GenerateEmbeddingHandler
             return; // no embedding encoder configured
         }
 
-        $item = $message->targetType === 'staged'
-            ? $this->stagedUploadRepository->find($message->id)
+        $item = $message->targetType === 'bulk'
+            ? $this->bulkUploadRepository->find($message->id)
             : $this->postRepository->find($message->id);
 
         if ($item === null || $item->getPath() === null) {

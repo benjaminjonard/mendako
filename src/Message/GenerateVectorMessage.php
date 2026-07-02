@@ -12,7 +12,7 @@ namespace App\Message;
 final readonly class GenerateVectorMessage
 {
     public function __construct(
-        public string $targetType, // 'post' (staged uploads recompute at stage time)
+        public string $targetType, // 'post' (bulk uploads recompute at stage time)
         public string $id,
     ) {
     }

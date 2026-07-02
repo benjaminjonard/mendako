@@ -17,7 +17,7 @@ use Symfony\Component\Messenger\Stamp\TransportNamesStamp;
  * Fans out a bulk embedding run on the worker: queues one GenerateEmbeddingMessage per post
  * (missing an embedding, or all) on the deprioritized autotag_batch transport. Feature-gated.
  *
- * Posts only for now (staged uploads come later). The trigger returns immediately even for a
+ * Posts only for now (bulk uploads come later). The trigger returns immediately even for a
  * large library because the per-item fan-out happens here, on the worker.
  */
 #[AsMessageHandler]

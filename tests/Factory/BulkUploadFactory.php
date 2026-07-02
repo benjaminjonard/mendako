@@ -2,13 +2,13 @@
 
 namespace App\Tests\Factory;
 
-use App\Entity\StagedUpload;
+use App\Entity\BulkUpload;
 use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
 
 /**
- * @extends PersistentObjectFactory<StagedUpload>
+ * @extends PersistentObjectFactory<BulkUpload>
  */
-final class StagedUploadFactory extends PersistentObjectFactory
+final class BulkUploadFactory extends PersistentObjectFactory
 {
     #[\Override]
     protected function defaults(): array
@@ -31,6 +31,6 @@ final class StagedUploadFactory extends PersistentObjectFactory
     #[\Override]
     public static function class(): string
     {
-        return StagedUpload::class;
+        return BulkUpload::class;
     }
 }

@@ -212,6 +212,28 @@ class PostRepository extends ServiceEntityRepository
         return $id === false ? null : $this->find($id);
     }
 
+    /**
+     * How many distinct posts still have at least one pending suggestion — the size of the Tag
+     * validation queue (COUNT form of findRandomWithPendingSuggestions()), used for the menu badge.
+     */
+    public function countPostsWithPendingSuggestions(): int
+    {
+        $qb = $this->createQueryBuilder('p')->select('COUNT(p.id)');
+        $sub = $this->getEntityManager()->createQueryBuilder()
+            ->select('1')
+            ->from(TagSuggestion::class, 's')
+            ->where('s.targetType = :targetType')
+            ->andWhere('s.targetId = p.id')
+            ->andWhere('s.status = :status');
+
+        return (int) $qb
+            ->where($qb->expr()->exists($sub->getDQL()))
+            ->setParameter('targetType', 'post')
+            ->setParameter('status', TagSuggestion::STATUS_PENDING)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
     public function countAll(): int
     {
         return (int) $this->createQueryBuilder('p')->select('COUNT(p.id)')->getQuery()->getSingleScalarResult();
