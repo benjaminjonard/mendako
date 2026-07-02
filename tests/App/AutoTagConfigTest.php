@@ -50,7 +50,7 @@ class AutoTagConfigTest extends WebTestCase
         $this->stubClient();
         $this->setEnabled(true);
 
-        $crawler = $this->client->request(Request::METHOD_GET, '/admin');
+        $crawler = $this->client->request(Request::METHOD_GET, '/admin/jobs');
         $this->client->submit($crawler->filter('form[action$="tag-backlog"] button[value="1"]')->form());
 
         $this->assertResponseIsSuccessful();
@@ -103,7 +103,7 @@ class AutoTagConfigTest extends WebTestCase
         // Duplicate detection is a core feature: the recompute must work with auto-tagging OFF.
         $this->setEnabled(false);
 
-        $crawler = $this->client->request(Request::METHOD_GET, '/admin');
+        $crawler = $this->client->request(Request::METHOD_GET, '/admin/jobs');
         $this->client->submit($crawler->filter('form[action$="vectors/backlog"] button[value="1"]')->form());
 
         $this->assertResponseIsSuccessful();
@@ -117,7 +117,7 @@ class AutoTagConfigTest extends WebTestCase
         // Vectors card (and its cancel form) is always rendered, auto-tagging on or off.
         $this->setEnabled(false);
 
-        $crawler = $this->client->request(Request::METHOD_GET, '/admin');
+        $crawler = $this->client->request(Request::METHOD_GET, '/admin/jobs');
         // Submit the form node itself: the cancel button ships disabled (JS enables it live), so
         // clicking it in the crawler wouldn't post — the form still carries the CSRF token.
         $this->client->submit($crawler->filter('form[action$="jobs/vectors/cancel"]')->form());
@@ -132,7 +132,7 @@ class AutoTagConfigTest extends WebTestCase
         $this->client->loginUser(UserFactory::createOne(['roles' => ['ROLE_ADMIN']]));
         $this->setEnabled(true);
 
-        $crawler = $this->client->request(Request::METHOD_GET, '/admin');
+        $crawler = $this->client->request(Request::METHOD_GET, '/admin/jobs');
         $this->client->submit($crawler->filter('form[action$="embed-backlog"] button[value="1"]')->form());
 
         $this->assertResponseIsSuccessful();
@@ -166,10 +166,10 @@ class AutoTagConfigTest extends WebTestCase
         $this->stubClient();
         $this->setEnabled(true);
 
-        $this->client->request(Request::METHOD_GET, '/admin');
+        $this->client->request(Request::METHOD_GET, '/admin/jobs');
 
         $this->assertResponseIsSuccessful();
-        $this->assertRouteSame('app_admin_index');
+        $this->assertRouteSame('app_admin_jobs');
         $this->assertStringContainsString('/admin/autotag/tag-backlog', $this->client->getResponse()->getContent());
     }
 }
