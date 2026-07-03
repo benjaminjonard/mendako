@@ -1,41 +1,41 @@
-<figure class="image bulk-upload-card" data-bulk-upload-target="card" data-bulk-upload-id="{{ bulkUpload.id }}">
+<figure class="image bulk-upload-card" data-bulk-upload-target="card" data-bulk-upload-id="{{ stagedPost.id }}">
     <label class="checkbox bulk-upload-card-select">
         <input type="checkbox" data-action="change->bulk-upload#toggleSelection">
     </label>
 
-    {% if bulkUpload.isDuplicate %}
+    {% if stagedPost.isDuplicate %}
         <button type="button" class="bulk-upload-card-duplicate"
                 title="{{ 'bulk_upload.duplicate'|trans }}" aria-label="{{ 'bulk_upload.duplicate'|trans }}"
                 data-action="bulk-upload#showDuplicates"
-                data-similar-url="{{ path('app_bulk_upload_similar', {id: bulkUpload.id}) }}">⚠</button>
+                data-similar-url="{{ path('app_bulk_upload_similar', {id: stagedPost.id}) }}">⚠</button>
     {% endif %}
 
     <div class="bulk-upload-card-media"
          data-action="click->bulk-upload#openViewer"
-         data-media-src="{{ asset(bulkUpload.path) }}"
-         data-media-mimetype="{{ bulkUpload.mimetype }}"
+         data-media-src="{{ asset(stagedPost.path) }}"
+         data-media-mimetype="{{ stagedPost.mimetype }}"
     >
-        {% if bulkUpload.duration is not null %}
+        {% if stagedPost.duration is not null %}
             <span class="tag is-dark has-text-weight-medium">
-                {{ bulkUpload.duration|minutes }}
-                {% if bulkUpload.hasSound %}
+                {{ stagedPost.duration|minutes }}
+                {% if stagedPost.hasSound %}
                     &nbsp;🕩
                 {% endif %}
             </span>
         {% endif %}
 
-        {% if bulkUpload.mimetype == 'image/svg+xml' %}
-            <img src="{{ asset(bulkUpload.path) }}">
+        {% if stagedPost.mimetype == 'image/svg+xml' %}
+            <img src="{{ asset(stagedPost.path) }}">
         {% else %}
-            <img src="{{ asset(bulkUpload.path|thumbnail(360)) }}">
+            <img src="{{ asset(stagedPost.path|thumbnail(360)) }}">
         {% endif %}
     </div>
 
     <div class="bulk-upload-card-actions buttons">
-        <button type="button" class="button is-small is-primary" data-action="bulk-upload#assignOne" data-bulk-upload-id="{{ bulkUpload.id }}">
+        <button type="button" class="button is-small is-primary" data-action="bulk-upload#assignOne" data-bulk-upload-id="{{ stagedPost.id }}">
             {{ 'bulk_upload.assign'|trans }}
         </button>
-        <button type="button" class="button is-small is-danger" data-action="bulk-upload#deleteOne" data-bulk-upload-id="{{ bulkUpload.id }}">
+        <button type="button" class="button is-small is-danger" data-action="bulk-upload#deleteOne" data-bulk-upload-id="{{ stagedPost.id }}">
             {{ 'btn.delete'|trans }}
         </button>
     </div>

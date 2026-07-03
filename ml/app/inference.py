@@ -23,8 +23,6 @@ MAX_PIXELS = 50_000_000  # decompression-bomb guard (~50 MP)
 
 @functools.lru_cache(maxsize=8)
 def _session(model_path: str):
-    # Resident, used on every image. Default intra-op threads (each forward is matmul-heavy
-    # and benefits from all cores).
     import onnxruntime as ort  # lazy: keeps the module importable without onnxruntime
 
     return ort.InferenceSession(model_path, providers=["CPUExecutionProvider"])
@@ -41,11 +39,14 @@ def _load_tags(csv_path: str) -> tuple[tuple[str, str], ...]:
 
 
 def _preprocess(image_path: str, size: int) -> np.ndarray:
-    from PIL import Image
+    from PIL import Image, ImageOps
 
     image = Image.open(image_path)
     if image.width * image.height > MAX_PIXELS:
         raise ValueError("image exceeds the maximum allowed size")
+    # Honour EXIF orientation (phone photos) before inference, else tags/embedding are
+    # computed on a rotated/mirrored image.
+    image = ImageOps.exif_transpose(image)
     image = image.convert("RGB")
     width, height = image.size
     side = max(width, height)
@@ -60,14 +61,16 @@ def _preprocess(image_path: str, size: int) -> np.ndarray:
 
 def _embedding_from_outputs(outputs: list) -> np.ndarray | None:
     """Unit-normalized embedding from the WD model's second output (the exposed fc_norm feature),
-    or None if the model wasn't patched to expose it (pre-rebuild image → degrade gracefully)."""
+    or None if the model wasn't patched to expose it."""
     if len(outputs) < 2:
         return None
     vec = np.asarray(outputs[1]).reshape(-1).astype(np.float32)
     if not np.all(np.isfinite(vec)):
         return None
     norm = float(np.linalg.norm(vec))
-    return vec / norm if norm > 0.0 else vec
+    if norm == 0.0:
+        return None  # degenerate all-zero feature: no valid unit embedding (cosine kNN would be NaN)
+    return vec / norm
 
 
 def analyze(
@@ -94,6 +97,8 @@ def analyze(
     rating = {"label": None, "score": 0.0}
     for (name, category), raw_score in zip(tags, predictions):
         score = float(raw_score)
+        if not np.isfinite(score):
+            continue  # guard against inf/NaN logits → invalid JSON the PHP client would reject
         if category == "rating":
             if score > rating["score"]:
                 rating = {"label": name, "score": score}

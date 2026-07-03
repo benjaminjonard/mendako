@@ -9,12 +9,6 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
 
-/**
- * One image embedding vector for a target (a Post or a BulkUpload), linked polymorphically
- * by (targetType, targetId) — no FK, like TagSuggestion. An image has a single embedding
- * (ordinal 0); a video has one per sampled frame (ordinal 0..N-1), so kNN can match on any
- * frame. Bound to the encoder that produced it. Recomputable (nothing authoritative lives here).
- */
 #[ORM\Entity(repositoryClass: EmbeddingRepository::class)]
 #[ORM\Table(name: 'men_embedding')]
 #[ORM\Index(name: 'idx_embedding_target', columns: ['target_type', 'target_id'])]
@@ -31,7 +25,6 @@ class Embedding
     #[ORM\Column(type: Types::STRING, length: 36, options: ['fixed' => true])]
     private string $targetId;
 
-    // 0 for an image; 0..N-1 for the sampled frames of a video.
     #[ORM\Column(type: Types::SMALLINT, options: ['default' => 0])]
     private int $ordinal = 0;
 

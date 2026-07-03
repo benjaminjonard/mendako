@@ -30,6 +30,7 @@ RUN apt-get update && \
     git \
     ffmpeg \
     unzip \
+    supervisor \
     openssl && \
 # Install PHP extensions
     install-php-extensions opcache pdo_pgsql intl gd zip curl ; \

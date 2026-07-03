@@ -24,9 +24,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class PostController extends AbstractController
 {
     /**
-     * Suggestions scoring at or above this bar are confident enough to pre-fill the
-     * tag field; lower-confidence ones stay as clickable pending chips. Matches the
-     * WD character threshold; a single bar for now (per-category/configurable later).
+     * Suggestions scoring at or above this bar pre-fill the tag field; lower-confidence ones
+     * stay as clickable pending chips. Matches the WD character threshold.
      */
     private const float HIGH_CONFIDENCE_THRESHOLD = 0.85;
 
@@ -83,6 +82,10 @@ class PostController extends AbstractController
         $post->setFile($request->files->get('file'));
 
         $vector = $postVectorService->generateVector($post->getFile());
+        if ($vector === null) {
+            return $this->json([]); // no file, or an undecodable/non-image upload
+        }
+
         $similarPosts = [];
 
         foreach ($postRepository->findSimilarByVector($vector) as $similarPost) {
@@ -143,8 +146,8 @@ class PostController extends AbstractController
             'post' => $post,
             'form' => $form,
             'suggestedTags' => $tagRepository->findBy(['suggested' => true]),
-            // Only surface the automatic tagging suggestions endpoint when the feature is on; null keeps
-            // the form byte-identical to the non-automatic tagging experience.
+            // Only surface the suggestions endpoint when the feature is on; null leaves the form
+            // identical to the non-auto-tagging experience.
             'autoTagSuggestionsUrl' => $autoTagConfigProvider->isEnabled()
                 ? $this->generateUrl('app_post_autotag_suggestions', ['slug' => $board->getSlug(), 'id' => $post->getId()])
                 : null,
@@ -174,10 +177,8 @@ class PostController extends AbstractController
             'source' => $suggestion->getSource(),
         ];
 
-        // The same tag can have rows from several sources (wd / knn). Dedup by name
-        // so a tag never appears twice. Pass 1: confident base-model (wd) tags pre-fill the
-        // field. Pass 2: everything else becomes a click-to-add chip — learned (knn)
-        // guesses are never auto-applied. A name already pre-filled is not repeated as a chip.
+        // Dedup by name across sources (wd / knn). Pass 1: confident wd tags pre-fill the field.
+        // Pass 2: everything else becomes a click-to-add chip (knn guesses are never auto-applied).
         $highConfidence = [];
         $lowConfidence = [];
         $seen = [];

@@ -9,12 +9,12 @@
 {% endblock %}
 
 {% block content %}
-    <div class="column"></div>
-
-    <div class="column">
+    {# Same is-6 wrapper as the other tabs so the submenu keeps one width; the panel below sets its own width. #}
+    <div class="column is-6 is-offset-3">
         {{ include('App/Admin/_submenu.html.twig') }}
 
-        <div class="box">
+        {# Configuration panel matches the validation card width (see .admin-panel). #}
+        <div class="box admin-panel">
             <h2 class="subtitle">{{ 'title.configuration'|trans }}</h2>
             <div class="config">
                 <b>{{ 'label.release'|trans }}</b>: {{ release }}
@@ -60,6 +60,4 @@
             </div>
         </div>
     </div>
-
-    <div class="column"></div>
 {% endblock %}

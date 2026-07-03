@@ -6,7 +6,7 @@ namespace App\Tests\App;
 
 use App\Tests\Factory\BoardFactory;
 use App\Tests\Factory\PostFactory;
-use App\Tests\Factory\BulkUploadFactory;
+use App\Tests\Factory\StagedPostFactory;
 use App\Tests\Factory\UserFactory;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -103,10 +103,10 @@ class BulkUploadTest extends WebTestCase
         $result = $this->stageOne();
 
         $this->assertResponseIsSuccessful();
-        BulkUploadFactory::assert()->count(1);
-        $bulkUpload = BulkUploadFactory::repository()->find($result['id']);
-        $this->assertStringStartsWith('uploads/bulk-upload/', $bulkUpload->getPath());
-        $this->assertFileExists($this->publicPath().'/'.$bulkUpload->getPath());
+        StagedPostFactory::assert()->count(1);
+        $stagedPost = StagedPostFactory::repository()->find($result['id']);
+        $this->assertStringStartsWith('uploads/bulk-upload/', $stagedPost->getPath());
+        $this->assertFileExists($this->publicPath().'/'.$stagedPost->getPath());
     }
 
     public function test_add_rejects_missing_csrf(): void
@@ -116,7 +116,7 @@ class BulkUploadTest extends WebTestCase
         $this->client->request(Request::METHOD_POST, '/bulk-upload/add', [], ['file' => $this->uploadFixture()]);
 
         $this->assertResponseStatusCodeSame(403);
-        BulkUploadFactory::assert()->count(0);
+        StagedPostFactory::assert()->count(0);
     }
 
     public function test_add_rejects_missing_file(): void
@@ -126,7 +126,7 @@ class BulkUploadTest extends WebTestCase
         $this->client->request(Request::METHOD_POST, '/bulk-upload/add', ['_token' => $this->csrfToken()]);
 
         $this->assertResponseStatusCodeSame(400);
-        BulkUploadFactory::assert()->count(0);
+        StagedPostFactory::assert()->count(0);
     }
 
     public function test_add_rejects_unsupported_mimetype(): void
@@ -136,7 +136,7 @@ class BulkUploadTest extends WebTestCase
         $this->client->request(Request::METHOD_POST, '/bulk-upload/add', ['_token' => $this->csrfToken()], ['file' => $this->textFile()]);
 
         $this->assertResponseStatusCodeSame(422);
-        BulkUploadFactory::assert()->count(0);
+        StagedPostFactory::assert()->count(0);
     }
 
     public function test_duplicate_flag_is_persisted(): void
@@ -160,8 +160,8 @@ class BulkUploadTest extends WebTestCase
 
         $this->assertResponseIsSuccessful();
         $this->assertStringContainsString('bulk-upload-card-duplicate', $result['card']);
-        $bulkUpload = BulkUploadFactory::repository()->find($result['id']);
-        $this->assertTrue($bulkUpload->isDuplicate());
+        $stagedPost = StagedPostFactory::repository()->find($result['id']);
+        $this->assertTrue($stagedPost->isDuplicate());
     }
 
     public function test_similar_endpoint_returns_matching_posts(): void
@@ -209,8 +209,8 @@ class BulkUploadTest extends WebTestCase
 
         $result = $this->stageOne();
 
-        $bulkUpload = BulkUploadFactory::repository()->find($result['id']);
-        $this->assertFalse($bulkUpload->isDuplicate());
+        $stagedPost = StagedPostFactory::repository()->find($result['id']);
+        $this->assertFalse($stagedPost->isDuplicate());
     }
 
     public function test_can_assign_bulk_upload_to_board(): void
@@ -219,8 +219,8 @@ class BulkUploadTest extends WebTestCase
         $board = BoardFactory::createOne();
 
         $result = $this->stageOne();
-        $bulkUpload = BulkUploadFactory::repository()->find($result['id']);
-        $bulkUploadFile = $this->publicPath().'/'.$bulkUpload->getPath();
+        $stagedPost = StagedPostFactory::repository()->find($result['id']);
+        $stagedPostFile = $this->publicPath().'/'.$stagedPost->getPath();
 
         $this->client->request(Request::METHOD_POST, '/bulk-upload/assign', [
             '_token' => $this->csrfToken(),
@@ -229,14 +229,14 @@ class BulkUploadTest extends WebTestCase
         ]);
 
         $this->assertResponseIsSuccessful();
-        BulkUploadFactory::assert()->count(0);
+        StagedPostFactory::assert()->count(0);
         PostFactory::assert()->count(1);
 
         $post = PostFactory::repository()->findOneBy(['board' => $board->getId()]);
         $this->assertNotNull($post);
         $this->assertStringStartsWith("uploads/boards/{$board->getId()}/", $post->getPath());
         $this->assertFileExists($this->publicPath().'/'.$post->getPath());
-        $this->assertFileDoesNotExist($bulkUploadFile);
+        $this->assertFileDoesNotExist($stagedPostFile);
     }
 
     public function test_can_delete_bulk_upload(): void
@@ -244,8 +244,8 @@ class BulkUploadTest extends WebTestCase
         $this->client->loginUser(UserFactory::createOne());
 
         $result = $this->stageOne();
-        $bulkUpload = BulkUploadFactory::repository()->find($result['id']);
-        $bulkUploadFile = $this->publicPath().'/'.$bulkUpload->getPath();
+        $stagedPost = StagedPostFactory::repository()->find($result['id']);
+        $stagedPostFile = $this->publicPath().'/'.$stagedPost->getPath();
 
         $this->client->request(Request::METHOD_POST, '/bulk-upload/delete', [
             '_token' => $this->csrfToken(),
@@ -253,8 +253,8 @@ class BulkUploadTest extends WebTestCase
         ]);
 
         $this->assertResponseIsSuccessful();
-        BulkUploadFactory::assert()->count(0);
-        $this->assertFileDoesNotExist($bulkUploadFile);
+        StagedPostFactory::assert()->count(0);
+        $this->assertFileDoesNotExist($stagedPostFile);
     }
 
     public function test_bulk_assign_multiple(): void
@@ -264,7 +264,7 @@ class BulkUploadTest extends WebTestCase
 
         $first = $this->stageOne();
         $second = $this->stageOne();
-        BulkUploadFactory::assert()->count(2);
+        StagedPostFactory::assert()->count(2);
 
         $this->client->request(Request::METHOD_POST, '/bulk-upload/assign', [
             '_token' => $this->csrfToken(),
@@ -273,7 +273,7 @@ class BulkUploadTest extends WebTestCase
         ]);
 
         $this->assertResponseIsSuccessful();
-        BulkUploadFactory::assert()->count(0);
+        StagedPostFactory::assert()->count(0);
         PostFactory::assert()->count(2);
     }
 
@@ -283,7 +283,7 @@ class BulkUploadTest extends WebTestCase
 
         $first = $this->stageOne();
         $second = $this->stageOne();
-        BulkUploadFactory::assert()->count(2);
+        StagedPostFactory::assert()->count(2);
 
         $this->client->request(Request::METHOD_POST, '/bulk-upload/delete', [
             '_token' => $this->csrfToken(),
@@ -291,7 +291,7 @@ class BulkUploadTest extends WebTestCase
         ]);
 
         $this->assertResponseIsSuccessful();
-        BulkUploadFactory::assert()->count(0);
+        StagedPostFactory::assert()->count(0);
     }
 
     public function test_assign_rejects_invalid_csrf(): void
@@ -307,7 +307,7 @@ class BulkUploadTest extends WebTestCase
         ]);
 
         $this->assertResponseStatusCodeSame(403);
-        BulkUploadFactory::assert()->count(1);
+        StagedPostFactory::assert()->count(1);
     }
 
     public function test_cannot_delete_another_users_bulk_upload_upload(): void
@@ -316,7 +316,7 @@ class BulkUploadTest extends WebTestCase
         $userA = UserFactory::createOne();
         $this->client->loginUser($userA);
         $result = $this->stageOne();
-        BulkUploadFactory::assert()->count(1);
+        StagedPostFactory::assert()->count(1);
 
         // User B tries to delete it
         $userB = UserFactory::createOne();
@@ -329,7 +329,7 @@ class BulkUploadTest extends WebTestCase
         $this->assertResponseIsSuccessful();
         $data = json_decode($this->client->getResponse()->getContent(), true);
         $this->assertSame([], $data['removedIds']);
-        BulkUploadFactory::assert()->count(1); // still there
+        StagedPostFactory::assert()->count(1); // still there
     }
 
     public function test_index_is_scoped_to_current_user(): void

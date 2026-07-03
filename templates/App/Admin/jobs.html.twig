@@ -10,12 +10,12 @@
 {% endblock %}
 
 {% block content %}
-    <div class="column is-2"></div>
-
-    <div class="column">
+    {# Same is-6 wrapper as the other tabs so the submenu keeps one width; the panel below sets its own width. #}
+    <div class="column is-6 is-offset-3">
         {{ include('App/Admin/_submenu.html.twig') }}
 
-        <div class="box" data-controller="job-status" data-job-status-url-value="{{ path('app_autotag_jobs') }}">
+        {# Jobs panel is a bit wider than the validation card (see .admin-panel-wide). #}
+        <div class="box admin-panel admin-panel-wide" data-controller="job-status" data-job-status-url-value="{{ path('app_autotag_jobs') }}">
             <h2 class="subtitle">{{ 'title.jobs'|trans }}</h2>
 
             {% if autoTagEnabled %}
@@ -104,6 +104,4 @@
             </div>
         </div>
     </div>
-
-    <div class="column is-2"></div>
 {% endblock %}

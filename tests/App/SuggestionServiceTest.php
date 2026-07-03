@@ -219,11 +219,6 @@ class SuggestionServiceTest extends KernelTestCase
         $this->assertSame('1girl', $suggestions[0]->getTagName());
     }
 
-    /**
-     * @param TagSuggestion[] $suggestions
-     *
-     * @return array<string, TagSuggestion>
-     */
     private function indexByName(array $suggestions): array
     {
         $indexed = [];

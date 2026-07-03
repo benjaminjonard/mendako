@@ -310,6 +310,11 @@ export default class extends Controller {
             return;
         }
 
+        if (!this.hasBoardTarget) {
+            this.notifyError('Select a board first');
+            return;
+        }
+
         const board = this.boardTarget.value;
         if (!board) {
             this.notifyError('Select a board first');

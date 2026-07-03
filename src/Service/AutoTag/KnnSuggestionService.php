@@ -8,17 +8,10 @@ use App\Entity\TagSuggestion;
 use App\Repository\EmbeddingRepository;
 
 /**
- * Learned suggestions: propagate the confirmed tags of the nearest already-tagged Posts
- * (by embedding similarity) onto a freshly-processed item as `knn`-source TagSuggestions.
- * Reads confirmed tags live, so a tag confirmed on one item is immediately eligible on future
- * similar items — no retraining step.
- *
- * An item can carry several embeddings (one per video frame); every frame searches for
- * neighbours and the results are merged, so a video matches a neighbour if ANY of its frames
- * resembles ANY of the neighbour's frames.
- *
- * Best-effort + additive: writes only via SuggestionService (men_tag_suggestion); an empty
- * neighbourhood (cold start) simply produces no learned suggestions.
+ * Propagates the confirmed tags of the nearest already-tagged Posts (by embedding similarity) onto
+ * a freshly-processed item as `knn`-source suggestions. Reads confirmed tags live — no retraining.
+ * An item may carry several embeddings (one per video frame); every frame's neighbours are merged.
+ * Best-effort + additive: an empty neighbourhood simply produces no learned suggestions.
  */
 class KnnSuggestionService
 {
@@ -31,9 +24,6 @@ class KnnSuggestionService
     ) {
     }
 
-    /**
-     * @param string[] $vectors the item's embedding vectors (one per frame; one for an image)
-     */
     public function propagate(string $targetType, string $targetId, array $vectors, string $modelId): void
     {
         // A Post target must not be its own neighbour (don't echo its own tags).

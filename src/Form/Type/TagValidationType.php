@@ -12,9 +12,8 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Trimmed-down PostType for the Tag validation queue: nothing but the tags field, so the
- * reviewer confirms the suggested tags and moves on. Reuses the same StringToTagTransformer
- * as PostType, so accepted suggestions keep their category and new tags are created on the fly.
+ * Trimmed-down PostType for the Tag validation queue: only the tags field. Reuses PostType's
+ * StringToTagTransformer, so accepted suggestions keep their category and new tags are created on the fly.
  */
 class TagValidationType extends AbstractType
 {

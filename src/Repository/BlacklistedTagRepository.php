@@ -17,8 +17,6 @@ class BlacklistedTagRepository extends ServiceEntityRepository
 
     /**
      * Every blacklisted name, for the O(1) skip lookup in the suggestion pipeline.
-     *
-     * @return string[]
      */
     public function allNames(): array
     {
@@ -28,9 +26,6 @@ class BlacklistedTagRepository extends ServiceEntityRepository
             ->getSingleColumnResult());
     }
 
-    /**
-     * @return BlacklistedTag[]
-     */
     public function findAllOrdered(): array
     {
         return $this->findBy([], ['name' => 'ASC']);

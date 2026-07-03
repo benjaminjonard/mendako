@@ -37,7 +37,6 @@ class TagMergeTest extends KernelTestCase
         $this->entityManager = static::getContainer()->get(EntityManagerInterface::class);
     }
 
-    /** @return string[] tag names carried by the reloaded post */
     private function reloadedPostTagNames(string $postId): array
     {
         $this->entityManager->clear();

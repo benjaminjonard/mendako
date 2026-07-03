@@ -1,7 +1,6 @@
 """Mendako ML inference service — application entrypoint.
 
-Minimal FastAPI app. Wires the health endpoint and the read-only model catalog;
-model download and inference endpoints arrive in later stories.
+Minimal FastAPI app wiring the health and model (catalog + inference) routers.
 """
 
 from fastapi import FastAPI

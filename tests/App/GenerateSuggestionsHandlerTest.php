@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace App\Tests\App;
 
 use App\Entity\Post;
-use App\Entity\BulkUpload;
+use App\Entity\StagedPost;
 use App\Message\GenerateSuggestionsMessage;
 use App\MessageHandler\GenerateSuggestionsHandler;
 use App\Repository\EmbeddingRepository;
 use App\Repository\PostRepository;
-use App\Repository\BulkUploadRepository;
+use App\Repository\StagedPostRepository;
 use App\Service\AutoTag\AutoTagConfigProvider;
 use App\Service\AutoTag\AutoTagInferenceClient;
 use App\Service\AutoTag\FrameResultAggregator;
@@ -22,23 +22,22 @@ use Psr\Log\NullLogger;
 
 class GenerateSuggestionsHandlerTest extends TestCase
 {
-    private function provider(bool $enabled, ?string $wdModel = 'wd-eva02-large-tagger-v3', ?string $clipModel = null): AutoTagConfigProvider
+    private function provider(bool $enabled, ?string $wdModel = 'wd-eva02-large-tagger-v3'): AutoTagConfigProvider
     {
         $provider = $this->createStub(AutoTagConfigProvider::class);
         $provider->method('isEnabled')->willReturn($enabled);
         $provider->method('getActiveModel')->willReturnMap([
             ['wd', $wdModel],
-            ['clip', $clipModel],
         ]);
 
         return $provider;
     }
 
-    private function handler(AutoTagConfigProvider $provider, PostRepository $postRepository, BulkUploadRepository $bulkUploadRepository, AutoTagInferenceClient $client, ?SuggestionService $suggestionService = null, ?EmbeddingRepository $embeddingRepository = null, ?KnnSuggestionService $knnSuggestionService = null, ?ThumbnailGenerator $thumbnailGenerator = null): GenerateSuggestionsHandler
+    private function handler(AutoTagConfigProvider $provider, PostRepository $postRepository, StagedPostRepository $stagedPostRepository, AutoTagInferenceClient $client, ?SuggestionService $suggestionService = null, ?EmbeddingRepository $embeddingRepository = null, ?KnnSuggestionService $knnSuggestionService = null, ?ThumbnailGenerator $thumbnailGenerator = null): GenerateSuggestionsHandler
     {
         return new GenerateSuggestionsHandler(
             $postRepository,
-            $bulkUploadRepository,
+            $stagedPostRepository,
             $provider,
             $client,
             $suggestionService ?? $this->createStub(SuggestionService::class),
@@ -66,8 +65,8 @@ class GenerateSuggestionsHandlerTest extends TestCase
         $client = $this->createMock(AutoTagInferenceClient::class);
         $client->expects($this->once())->method('analyze')->willReturn(['tags' => [], 'rating' => ['label' => null, 'score' => 0.0]]);
 
-        $handler = $this->handler($this->provider(true), $postRepository, $this->createStub(BulkUploadRepository::class), $client);
-        $handler(new GenerateSuggestionsMessage('post', 'some-id', 'hash'));
+        $handler = $this->handler($this->provider(true), $postRepository, $this->createStub(StagedPostRepository::class), $client);
+        $handler(new GenerateSuggestionsMessage('post', 'some-id'));
     }
 
     public function test_stores_suggestions_when_analysis_produces_results(): void
@@ -80,8 +79,8 @@ class GenerateSuggestionsHandlerTest extends TestCase
         $suggestionService = $this->createMock(SuggestionService::class);
         $suggestionService->expects($this->once())->method('store')->with('post', 'some-id', $result);
 
-        $handler = $this->handler($this->provider(true), $postRepository, $this->createStub(BulkUploadRepository::class), $client, $suggestionService);
-        $handler(new GenerateSuggestionsMessage('post', 'some-id', 'hash'));
+        $handler = $this->handler($this->provider(true), $postRepository, $this->createStub(StagedPostRepository::class), $client, $suggestionService);
+        $handler(new GenerateSuggestionsMessage('post', 'some-id'));
     }
 
     public function test_does_not_store_when_result_is_empty(): void
@@ -93,8 +92,8 @@ class GenerateSuggestionsHandlerTest extends TestCase
         $suggestionService = $this->createMock(SuggestionService::class);
         $suggestionService->expects($this->never())->method('store');
 
-        $handler = $this->handler($this->provider(true), $postRepository, $this->createStub(BulkUploadRepository::class), $client, $suggestionService);
-        $handler(new GenerateSuggestionsMessage('post', 'some-id', 'hash'));
+        $handler = $this->handler($this->provider(true), $postRepository, $this->createStub(StagedPostRepository::class), $client, $suggestionService);
+        $handler(new GenerateSuggestionsMessage('post', 'some-id'));
     }
 
     public function test_skips_when_disabled(): void
@@ -104,8 +103,8 @@ class GenerateSuggestionsHandlerTest extends TestCase
         $client = $this->createMock(AutoTagInferenceClient::class);
         $client->expects($this->never())->method('analyze');
 
-        $handler = $this->handler($this->provider(false), $postRepository, $this->createStub(BulkUploadRepository::class), $client);
-        $handler(new GenerateSuggestionsMessage('post', 'id', 'hash'));
+        $handler = $this->handler($this->provider(false), $postRepository, $this->createStub(StagedPostRepository::class), $client);
+        $handler(new GenerateSuggestionsMessage('post', 'id'));
     }
 
     public function test_skips_when_item_missing(): void
@@ -115,8 +114,8 @@ class GenerateSuggestionsHandlerTest extends TestCase
         $client = $this->createMock(AutoTagInferenceClient::class);
         $client->expects($this->never())->method('analyze');
 
-        $handler = $this->handler($this->provider(true), $postRepository, $this->createStub(BulkUploadRepository::class), $client);
-        $handler(new GenerateSuggestionsMessage('post', 'missing', 'hash'));
+        $handler = $this->handler($this->provider(true), $postRepository, $this->createStub(StagedPostRepository::class), $client);
+        $handler(new GenerateSuggestionsMessage('post', 'missing'));
     }
 
     public function test_skips_when_no_active_wd_model(): void
@@ -126,8 +125,8 @@ class GenerateSuggestionsHandlerTest extends TestCase
         $client = $this->createMock(AutoTagInferenceClient::class);
         $client->expects($this->never())->method('analyze');
 
-        $handler = $this->handler($this->provider(true, null), $postRepository, $this->createStub(BulkUploadRepository::class), $client);
-        $handler(new GenerateSuggestionsMessage('post', 'id', 'hash'));
+        $handler = $this->handler($this->provider(true, null), $postRepository, $this->createStub(StagedPostRepository::class), $client);
+        $handler(new GenerateSuggestionsMessage('post', 'id'));
     }
 
     public function test_stores_embedding_from_wd_result(): void
@@ -149,8 +148,8 @@ class GenerateSuggestionsHandlerTest extends TestCase
         $embeddings->expects($this->once())->method('replaceForTarget')
             ->with('post', 'some-id', 'wd-eva02-large-tagger-v3', ['[0.6,0.8]']);
 
-        $handler = $this->handler($this->provider(true), $postRepository, $this->createStub(BulkUploadRepository::class), $client, embeddingRepository: $embeddings);
-        $handler(new GenerateSuggestionsMessage('post', 'some-id', 'hash'));
+        $handler = $this->handler($this->provider(true), $postRepository, $this->createStub(StagedPostRepository::class), $client, embeddingRepository: $embeddings);
+        $handler(new GenerateSuggestionsMessage('post', 'some-id'));
     }
 
     public function test_does_not_store_embedding_when_result_has_none(): void
@@ -166,8 +165,8 @@ class GenerateSuggestionsHandlerTest extends TestCase
         $embeddings = $this->createMock(EmbeddingRepository::class);
         $embeddings->expects($this->never())->method('replaceForTarget');
 
-        $handler = $this->handler($this->provider(true), $postRepository, $this->createStub(BulkUploadRepository::class), $client, embeddingRepository: $embeddings);
-        $handler(new GenerateSuggestionsMessage('post', 'some-id', 'hash'));
+        $handler = $this->handler($this->provider(true), $postRepository, $this->createStub(StagedPostRepository::class), $client, embeddingRepository: $embeddings);
+        $handler(new GenerateSuggestionsMessage('post', 'some-id'));
     }
 
     public function test_video_samples_frames_and_stores_aggregated_suggestions(): void
@@ -195,8 +194,8 @@ class GenerateSuggestionsHandlerTest extends TestCase
             $this->callback(static fn (array $result): bool => $result['tags'] === [['name' => 'cat', 'category' => 'general', 'score' => 0.9]]),
         );
 
-        $handler = $this->handler($this->provider(true), $postRepository, $this->createStub(BulkUploadRepository::class), $client, $suggestionService, thumbnailGenerator: $thumbnailGenerator);
-        $handler(new GenerateSuggestionsMessage('post', 'video-id', 'hash'));
+        $handler = $this->handler($this->provider(true), $postRepository, $this->createStub(StagedPostRepository::class), $client, $suggestionService, thumbnailGenerator: $thumbnailGenerator);
+        $handler(new GenerateSuggestionsMessage('post', 'video-id'));
     }
 
     public function test_video_falls_back_to_single_frame_when_no_frames_extracted(): void
@@ -213,8 +212,8 @@ class GenerateSuggestionsHandlerTest extends TestCase
         $client = $this->createMock(AutoTagInferenceClient::class);
         $client->expects($this->once())->method('analyze')->willReturn(['tags' => [], 'rating' => ['label' => null, 'score' => 0.0]]);
 
-        $handler = $this->handler($this->provider(true), $postRepository, $this->createStub(BulkUploadRepository::class), $client, thumbnailGenerator: $thumbnailGenerator);
-        $handler(new GenerateSuggestionsMessage('post', 'video-id', 'hash'));
+        $handler = $this->handler($this->provider(true), $postRepository, $this->createStub(StagedPostRepository::class), $client, thumbnailGenerator: $thumbnailGenerator);
+        $handler(new GenerateSuggestionsMessage('post', 'video-id'));
     }
 
     public function test_video_extraction_failure_is_swallowed(): void
@@ -229,10 +228,10 @@ class GenerateSuggestionsHandlerTest extends TestCase
         $client = $this->createMock(AutoTagInferenceClient::class);
         $client->expects($this->never())->method('analyze');
 
-        $handler = $this->handler($this->provider(true), $postRepository, $this->createStub(BulkUploadRepository::class), $client, thumbnailGenerator: $thumbnailGenerator);
+        $handler = $this->handler($this->provider(true), $postRepository, $this->createStub(StagedPostRepository::class), $client, thumbnailGenerator: $thumbnailGenerator);
 
         // Must not throw — extraction failure soft-fails (analyze never reached, asserted above).
-        $handler(new GenerateSuggestionsMessage('post', 'video-id', 'hash'));
+        $handler(new GenerateSuggestionsMessage('post', 'video-id'));
     }
 
     public function test_representative_frame_empty_keeps_other_frames_tags(): void
@@ -262,8 +261,8 @@ class GenerateSuggestionsHandlerTest extends TestCase
             ] && !array_key_exists('embedding', $result)),
         );
 
-        $handler = $this->handler($this->provider(true, clipModel: 'siglip2-so400m'), $postRepository, $this->createStub(BulkUploadRepository::class), $client, $suggestionService, thumbnailGenerator: $thumbnailGenerator);
-        $handler(new GenerateSuggestionsMessage('post', 'video-id', 'hash'));
+        $handler = $this->handler($this->provider(true), $postRepository, $this->createStub(StagedPostRepository::class), $client, $suggestionService, thumbnailGenerator: $thumbnailGenerator);
+        $handler(new GenerateSuggestionsMessage('post', 'video-id'));
     }
 
     public function test_image_item_uses_single_thumbnail_not_frame_extraction(): void
@@ -280,8 +279,8 @@ class GenerateSuggestionsHandlerTest extends TestCase
         $client = $this->createStub(AutoTagInferenceClient::class);
         $client->method('analyze')->willReturn(['tags' => [], 'rating' => ['label' => null, 'score' => 0.0]]);
 
-        $handler = $this->handler($this->provider(true), $postRepository, $this->createStub(BulkUploadRepository::class), $client, thumbnailGenerator: $thumbnailGenerator);
-        $handler(new GenerateSuggestionsMessage('post', 'image-id', 'hash'));
+        $handler = $this->handler($this->provider(true), $postRepository, $this->createStub(StagedPostRepository::class), $client, thumbnailGenerator: $thumbnailGenerator);
+        $handler(new GenerateSuggestionsMessage('post', 'image-id'));
     }
 
 
@@ -294,8 +293,8 @@ class GenerateSuggestionsHandlerTest extends TestCase
         $knn = $this->createMock(KnnSuggestionService::class);
         $knn->expects($this->once())->method('propagate')->with('post', 'some-id', ['[0.6,0.8]'], 'wd-eva02-large-tagger-v3');
 
-        $handler = $this->handler($this->provider(true), $postRepository, $this->createStub(BulkUploadRepository::class), $client, knnSuggestionService: $knn);
-        $handler(new GenerateSuggestionsMessage('post', 'some-id', 'hash'));
+        $handler = $this->handler($this->provider(true), $postRepository, $this->createStub(StagedPostRepository::class), $client, knnSuggestionService: $knn);
+        $handler(new GenerateSuggestionsMessage('post', 'some-id'));
     }
 
     public function test_does_not_propagate_knn_without_embedding(): void
@@ -307,8 +306,8 @@ class GenerateSuggestionsHandlerTest extends TestCase
         $knn = $this->createMock(KnnSuggestionService::class);
         $knn->expects($this->never())->method('propagate');
 
-        $handler = $this->handler($this->provider(true), $postRepository, $this->createStub(BulkUploadRepository::class), $client, knnSuggestionService: $knn);
-        $handler(new GenerateSuggestionsMessage('post', 'some-id', 'hash'));
+        $handler = $this->handler($this->provider(true), $postRepository, $this->createStub(StagedPostRepository::class), $client, knnSuggestionService: $knn);
+        $handler(new GenerateSuggestionsMessage('post', 'some-id'));
     }
 
     public function test_knn_failure_does_not_throw(): void
@@ -316,15 +315,15 @@ class GenerateSuggestionsHandlerTest extends TestCase
         $postRepository = $this->createStub(PostRepository::class);
         $postRepository->method('find')->willReturn($this->postWithPath());
         $client = $this->createStub(AutoTagInferenceClient::class);
-        $client->method('analyze')->willReturn(['tags' => [], 'rating' => ['label' => null, 'score' => 0.0], 'embedding' => [0.6, 0.8], 'clip_model_id' => 'siglip2-so400m']);
+        $client->method('analyze')->willReturn(['tags' => [], 'rating' => ['label' => null, 'score' => 0.0], 'embedding' => [0.6, 0.8]]);
         $knn = $this->createStub(KnnSuggestionService::class);
         $knn->method('propagate')->willThrowException(new \RuntimeException('knn query failed'));
 
-        $handler = $this->handler($this->provider(true, clipModel: 'siglip2-so400m'), $postRepository, $this->createStub(BulkUploadRepository::class), $client, knnSuggestionService: $knn);
+        $handler = $this->handler($this->provider(true), $postRepository, $this->createStub(StagedPostRepository::class), $client, knnSuggestionService: $knn);
 
         // Must not throw — kNN is best-effort.
         $this->expectNotToPerformAssertions();
-        $handler(new GenerateSuggestionsMessage('post', 'some-id', 'hash'));
+        $handler(new GenerateSuggestionsMessage('post', 'some-id'));
     }
 
     public function test_embedding_storage_failure_does_not_block_suggestions(): void
@@ -340,10 +339,10 @@ class GenerateSuggestionsHandlerTest extends TestCase
         $embeddings = $this->createStub(EmbeddingRepository::class);
         $embeddings->method('replaceForTarget')->willThrowException(new \RuntimeException('vector dimension mismatch'));
 
-        $handler = $this->handler($this->provider(true), $postRepository, $this->createStub(BulkUploadRepository::class), $client, $suggestionService, embeddingRepository: $embeddings);
+        $handler = $this->handler($this->provider(true), $postRepository, $this->createStub(StagedPostRepository::class), $client, $suggestionService, embeddingRepository: $embeddings);
 
         // Must not throw — the embedding failure is swallowed.
-        $handler(new GenerateSuggestionsMessage('post', 'some-id', 'hash'));
+        $handler(new GenerateSuggestionsMessage('post', 'some-id'));
     }
 
     public function test_ignores_malformed_embedding(): void
@@ -356,20 +355,20 @@ class GenerateSuggestionsHandlerTest extends TestCase
         $embeddings = $this->createMock(EmbeddingRepository::class);
         $embeddings->expects($this->never())->method('replaceForTarget');
 
-        $handler = $this->handler($this->provider(true), $postRepository, $this->createStub(BulkUploadRepository::class), $client, embeddingRepository: $embeddings);
-        $handler(new GenerateSuggestionsMessage('post', 'some-id', 'hash'));
+        $handler = $this->handler($this->provider(true), $postRepository, $this->createStub(StagedPostRepository::class), $client, embeddingRepository: $embeddings);
+        $handler(new GenerateSuggestionsMessage('post', 'some-id'));
     }
 
     public function test_resolves_bulk_upload_item_via_bulk_upload_repository(): void
     {
-        $bulkUpload = new BulkUpload();
-        $bulkUpload->setPath('uploads/bulk-upload/y.png');
-        $bulkUploadRepository = $this->createMock(BulkUploadRepository::class);
-        $bulkUploadRepository->expects($this->once())->method('find')->with('bulk-upload-id')->willReturn($bulkUpload);
+        $stagedPost = new StagedPost();
+        $stagedPost->setPath('uploads/bulk-upload/y.png');
+        $stagedPostRepository = $this->createMock(StagedPostRepository::class);
+        $stagedPostRepository->expects($this->once())->method('find')->with('bulk-upload-id')->willReturn($stagedPost);
         $client = $this->createStub(AutoTagInferenceClient::class);
         $client->method('analyze')->willReturn(['tags' => [], 'rating' => ['label' => null, 'score' => 0.0]]);
 
-        $handler = $this->handler($this->provider(true), $this->createStub(PostRepository::class), $bulkUploadRepository, $client);
-        $handler(new GenerateSuggestionsMessage('bulk', 'bulk-upload-id', 'hash'));
+        $handler = $this->handler($this->provider(true), $this->createStub(PostRepository::class), $stagedPostRepository, $client);
+        $handler(new GenerateSuggestionsMessage('bulk', 'bulk-upload-id'));
     }
 }

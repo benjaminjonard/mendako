@@ -18,12 +18,14 @@ export default class extends Controller {
     pollInterval = 4000;
 
     connect() {
+        this.stopped = false;
         if (this.hasUrlValue && this.urlValue) {
             this.refresh();
         }
     }
 
     disconnect() {
+        this.stopped = true;
         if (this.timer) {
             clearTimeout(this.timer);
         }
@@ -34,6 +36,11 @@ export default class extends Controller {
         fetch(this.urlValue, { method: 'GET' })
             .then(response => response.json())
             .then(function (jobs) {
+                // A fetch in flight during disconnect (Turbo nav) must not repaint a detached
+                // element nor re-arm the timer, else polling leaks forever.
+                if (self.stopped) {
+                    return;
+                }
                 self.element.querySelectorAll('[data-job-status-key]').forEach((card) => {
                     let job = jobs[card.dataset.jobStatusKey];
                     if (job) {

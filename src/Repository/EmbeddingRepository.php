@@ -17,10 +17,8 @@ class EmbeddingRepository extends ServiceEntityRepository
     }
 
     /**
-     * Replace all of a target's embeddings with the given vectors (one row per frame). Atomic:
-     * a re-run drops the stale rows and re-inserts, so an item never accumulates old frames.
-     *
-     * @param string[] $vectors pgvector literals ('[...]'), in frame order
+     * Replace all of a target's embeddings (one row per frame). Atomic drop-and-reinsert, so a
+     * re-run never accumulates stale frames.
      */
     public function replaceForTarget(string $targetType, string $targetId, string $modelId, array $vectors): void
     {
@@ -52,11 +50,8 @@ class EmbeddingRepository extends ServiceEntityRepository
     }
 
     /**
-     * Confirmed tags of the Posts whose nearest frame (any frame) is closest to the query vector.
-     * Neighbours are already-tagged Posts (same encoder); the query target's own frames are
-     * excluded. Returns rows {similarity, name, category} — one per (neighbour frame, tag).
-     *
-     * @return array<array{similarity: float, name: string, category: string|null}>
+     * Confirmed tags of the already-tagged Posts nearest (by any frame) to the query vector, same
+     * encoder, excluding the query target's own frames.
      */
     public function findNearestConfirmedTags(
         string $vector,

@@ -5,18 +5,12 @@ declare(strict_types=1);
 namespace App\Service\AutoTag;
 
 /**
- * Merges per-frame `/analyze` results for a multi-frame video into one suggestion set:
- * each WD tag keeps its highest score across frames (a concept present in any frame is a good
- * suggestion) and the rating is the highest-scoring across frames. Embeddings are handled
- * separately (one row per frame), so they are not aggregated here.
+ * Merges per-frame `/analyze` results for a video into one suggestion set: each tag keeps its
+ * highest score across frames and the rating is the highest-scoring frame's. Embeddings are kept
+ * per frame elsewhere, so they are not aggregated here.
  */
 class FrameResultAggregator
 {
-    /**
-     * @param array<int, array<string, mixed>> $frameResults
-     *
-     * @return array<string, mixed>
-     */
     public function aggregate(array $frameResults): array
     {
         $tagsByName = [];

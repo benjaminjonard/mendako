@@ -16,9 +16,6 @@ use Symfony\Component\Messenger\Stamp\TransportNamesStamp;
  * Fans out a bulk recompute of the perceptual duplicate-detection vector: queues one
  * GenerateVectorMessage per post (missing a vector, or all) on the deprioritized autotag_batch
  * transport. NOT feature-gated — duplicate detection is a core feature, independent of auto-tagging.
- *
- * The trigger returns immediately even for a large library because the per-item fan-out happens
- * here, on the worker.
  */
 #[AsMessageHandler]
 final class EnqueueVectorBacklogHandler

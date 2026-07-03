@@ -40,7 +40,7 @@ class AutoTagConfigTest extends WebTestCase
     {
         $provider = $this->createStub(AutoTagConfigProvider::class);
         $provider->method('isEnabled')->willReturn($enabled);
-        $provider->method('getActiveModel')->willReturnMap([['wd', 'wd-eva02-large-tagger-v3'], ['clip', 'siglip2-so400m']]);
+        $provider->method('getActiveModel')->willReturnMap([['wd', 'wd-eva02-large-tagger-v3']]);
         static::getContainer()->set(AutoTagConfigProvider::class, $provider);
     }
 
@@ -55,6 +55,57 @@ class AutoTagConfigTest extends WebTestCase
 
         $this->assertResponseIsSuccessful();
         $this->assertStringContainsString('Retroactive tagging started', $this->client->getResponse()->getContent());
+    }
+
+    /**
+     * A provider whose isEnabled() can be flipped after it is wired into the container (the container
+     * refuses to replace an already-initialized service). Lets one test render the form while enabled,
+     * then disable the feature before submitting — the guard we want to hit is checked after CSRF.
+     */
+    private function installTogglingProvider(): object
+    {
+        $provider = new class(true) extends AutoTagConfigProvider {
+            public bool $flag = true;
+
+            #[\Override]
+            public function isEnabled(): bool
+            {
+                return $this->flag;
+            }
+        };
+        static::getContainer()->set(AutoTagConfigProvider::class, $provider);
+
+        return $provider;
+    }
+
+    public function test_tag_backlog_404_when_disabled(): void
+    {
+        $this->client->loginUser(UserFactory::createOne(['roles' => ['ROLE_ADMIN']]));
+        $this->stubClient();
+        $provider = $this->installTogglingProvider();
+
+        $crawler = $this->client->request(Request::METHOD_GET, '/admin/jobs');
+        $form = $crawler->filter('form[action$="tag-backlog"] button[value="1"]')->form();
+
+        $provider->flag = false;
+        $this->client->submit($form);
+
+        $this->assertResponseStatusCodeSame(404);
+    }
+
+    public function test_embed_backlog_404_when_disabled(): void
+    {
+        $this->client->loginUser(UserFactory::createOne(['roles' => ['ROLE_ADMIN']]));
+        $this->stubClient();
+        $provider = $this->installTogglingProvider();
+
+        $crawler = $this->client->request(Request::METHOD_GET, '/admin/jobs');
+        $form = $crawler->filter('form[action$="embed-backlog"] button[value="1"]')->form();
+
+        $provider->flag = false;
+        $this->client->submit($form);
+
+        $this->assertResponseStatusCodeSame(404);
     }
 
     public function test_jobs_block_is_hidden_when_disabled(): void

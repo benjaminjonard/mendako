@@ -7,7 +7,7 @@ namespace App\MessageHandler;
 use App\Message\GenerateSuggestionsMessage;
 use App\Repository\EmbeddingRepository;
 use App\Repository\PostRepository;
-use App\Repository\BulkUploadRepository;
+use App\Repository\StagedPostRepository;
 use App\Service\AutoTag\AutoTagConfigProvider;
 use App\Service\AutoTag\AutoTagInferenceClient;
 use App\Service\AutoTag\FrameResultAggregator;
@@ -19,10 +19,9 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
- * Async tagging handler (Story 2.2/2.3/3.1): produces base-model tag suggestions
- * via the service (persisted as non-authoritative TagSuggestions, never tags) and,
- * when a CLIP model is active, stores a semantic embedding on the item.
- * Idempotent and feature-gated.
+ * Async tagging handler: produces base-model tag suggestions via the inference service
+ * (persisted as non-authoritative TagSuggestions, never tags) and stores the semantic
+ * embedding WD returns in the same pass. Idempotent and feature-gated.
  */
 #[AsMessageHandler]
 final class GenerateSuggestionsHandler
@@ -32,7 +31,7 @@ final class GenerateSuggestionsHandler
 
     public function __construct(
         private readonly PostRepository $postRepository,
-        private readonly BulkUploadRepository $bulkUploadRepository,
+        private readonly StagedPostRepository $stagedPostRepository,
         private readonly AutoTagConfigProvider $autoTagConfigProvider,
         private readonly AutoTagInferenceClient $autoTagInferenceClient,
         private readonly SuggestionService $suggestionService,
@@ -52,7 +51,7 @@ final class GenerateSuggestionsHandler
         }
 
         $item = $message->targetType === 'bulk'
-            ? $this->bulkUploadRepository->find($message->id)
+            ? $this->stagedPostRepository->find($message->id)
             : $this->postRepository->find($message->id);
 
         if ($item === null || $item->getPath() === null) {
@@ -138,7 +137,6 @@ final class GenerateSuggestionsHandler
             return;
         }
 
-        // WD is the embedding encoder now (fc_norm feature), returned alongside the tags.
         $embeddingModelId = (string) ($result['embedding_model_id'] ?? $modelId);
         try {
             $this->embeddingRepository->replaceForTarget($message->targetType, $message->id, $embeddingModelId, $vectors);
@@ -157,9 +155,6 @@ final class GenerateSuggestionsHandler
         }
     }
 
-    /**
-     * @param string[] $vectors mutated in place: appends the result's embedding as a pgvector literal
-     */
     private function collectVector(array &$vectors, array $result): void
     {
         $embedding = $result['embedding'] ?? null;

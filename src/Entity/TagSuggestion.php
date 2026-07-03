@@ -11,12 +11,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Uid\Uuid;
 
-/**
- * A non-authoritative Automatic tags. It is NOT a confirmed tag: nothing here
- * is ever written to men_post_tag. Suggestions are linked to their target
- * (a Post or a BulkUpload) polymorphically by (targetType, targetId) — no FK —
- * and are promoted to real tags only through an explicit human action.
- */
 #[ORM\Entity(repositoryClass: TagSuggestionRepository::class)]
 #[ORM\Table(name: 'men_tag_suggestion')]
 #[ORM\Index(name: 'idx_tag_suggestion_target', columns: ['target_type', 'target_id'])]

@@ -12,12 +12,10 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\String\UnicodeString;
 
 /**
- * Persists the service /analyze result as non-authoritative TagSuggestions.
- *
- * Write separation (FR17/FR18): this service writes ONLY men_tag_suggestion. It
- * never touches men_post_tag — confirmed tags are written solely by the human
- * tag-save flow. Re-running for a target upserts that source's pending rows and
- * never removes accepted/dismissed ones, so nothing the user touched is lost.
+ * Persists the service /analyze result as non-authoritative TagSuggestions. Writes ONLY
+ * men_tag_suggestion, never men_post_tag — confirmed tags are written solely by the human
+ * tag-save flow. Re-running for a target upserts that source's pending rows and never
+ * removes accepted/dismissed ones, so nothing the user touched is lost.
  */
 class SuggestionService
 {
@@ -28,9 +26,6 @@ class SuggestionService
     ) {
     }
 
-    /**
-     * @param array{tags?: list<array{name?: string, category?: string, score?: float|int}>, rating?: array{label?: string|null, score?: float|int}} $analyzeResult
-     */
     public function store(string $targetType, string $targetId, array $analyzeResult, string $source = TagSuggestion::SOURCE_WD): void
     {
         // Names the user has blacklisted for the AI: these must never surface as a suggestion,

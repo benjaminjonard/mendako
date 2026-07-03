@@ -11,8 +11,10 @@ use App\Form\Type\TagType;
 use App\Repository\BlacklistedTagRepository;
 use App\Repository\TagRepository;
 use App\Repository\TagSuggestionRepository;
+use App\Service\AutoTag\AutoTagConfigProvider;
 use App\Service\PaginatorFactory;
 use App\Service\TagMerger;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -47,16 +49,20 @@ class TagController extends AbstractController
 
     #[Route(path: '/tags/blacklist', name: 'app_tag_blacklist', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN')]
-    public function blacklist(BlacklistedTagRepository $blacklistedTagRepository): Response
+    public function blacklist(BlacklistedTagRepository $blacklistedTagRepository, AutoTagConfigProvider $autoTagConfigProvider): Response
     {
+        if (!$autoTagConfigProvider->isEnabled()) {
+            throw $this->createNotFoundException();
+        }
+
         return $this->render('App/Tag/blacklist.html.twig', [
             'blacklistedTags' => $blacklistedTagRepository->findAllOrdered(),
         ]);
     }
 
     /**
-     * Blacklist a tag name for the automatic tagging: it must never be suggested again, and any
-     * suggestion already carrying that name is purged so it disappears from the queues at once.
+     * Blacklist a tag name for auto-tagging: it must never be suggested again, and any suggestion
+     * already carrying that name is purged so it disappears from the queues at once.
      */
     #[Route(path: '/tags/blacklist/add', name: 'app_tag_blacklist_add', methods: ['POST'])]
     #[IsGranted('ROLE_ADMIN')]
@@ -66,7 +72,12 @@ class TagController extends AbstractController
         ManagerRegistry $managerRegistry,
         BlacklistedTagRepository $blacklistedTagRepository,
         TagSuggestionRepository $tagSuggestionRepository,
+        AutoTagConfigProvider $autoTagConfigProvider,
     ): Response {
+        if (!$autoTagConfigProvider->isEnabled()) {
+            throw $this->createNotFoundException();
+        }
+
         if (!$this->isCsrfTokenValid('tag_blacklist', $request->request->getString('_token'))) {
             throw $this->createAccessDeniedException('Invalid CSRF token');
         }
@@ -77,8 +88,13 @@ class TagController extends AbstractController
         // Ignore blanks and names already blacklisted (keep the unique index happy, idempotent).
         if ($name !== '' && $blacklistedTagRepository->findOneBy(['name' => $name]) === null) {
             $manager = $managerRegistry->getManager();
-            $manager->persist($blacklistedTag);
-            $manager->flush();
+            try {
+                $manager->persist($blacklistedTag);
+                $manager->flush();
+            } catch (UniqueConstraintViolationException) {
+                // A concurrent request already blacklisted this name — idempotent no-op.
+                return $this->redirectToRoute('app_tag_blacklist');
+            }
 
             $tagSuggestionRepository->deleteByTagName($name);
 
@@ -95,7 +111,12 @@ class TagController extends AbstractController
         TranslatorInterface $translator,
         ManagerRegistry $managerRegistry,
         BlacklistedTag $blacklistedTag,
+        AutoTagConfigProvider $autoTagConfigProvider,
     ): Response {
+        if (!$autoTagConfigProvider->isEnabled()) {
+            throw $this->createNotFoundException();
+        }
+
         if (!$this->isCsrfTokenValid('tag_blacklist', $request->request->getString('_token'))) {
             throw $this->createAccessDeniedException('Invalid CSRF token');
         }

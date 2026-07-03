@@ -1,19 +1,12 @@
 """Allowlisted model catalog — one model per category.
 
-Models are referenced by `repo_id` + a pinned `revision` and are baked into the
-image at build time (see ``download_models.py``); there is no runtime download.
-We pull the original upstream ONNX export directly:
+Models are referenced by `repo_id` + a pinned `revision` and baked into the image at
+build time (see ``download_models.py``); there is no runtime download.
 
-  - WD tagger : SmilingWolf/wd-eva02-large-tagger-v3 (flat ``model.onnx`` + ``selected_tags.csv``)
-
-WD is both the tagger AND the embedding encoder: its penultimate feature (the input to
-the classification head, ``fc_norm`` output, 1024-d) is a Danbooru-native image embedding.
-``embed_output`` names that internal tensor; ``download_models.py`` exposes it as a second
-graph output at build time so one forward pass yields both tags and the embedding. This is
-why there is no separate CLIP encoder — the embedding is free.
-
-`files` lists the final names inside the model dir (used for readiness + by the inference
-pipeline). `download` describes how to materialise them from the repo.
+WD is both the tagger AND the embedding encoder: its penultimate ``fc_norm`` feature
+(1024-d) is a Danbooru-native image embedding. ``embed_output`` names that internal
+tensor, which ``download_models.py`` exposes as a second graph output so one forward
+pass yields both tags and the embedding.
 
 Adding a new model = appending an entry here.
 """

@@ -198,7 +198,7 @@ class TagValidationTest extends WebTestCase
         $crawler = $this->client->request(Request::METHOD_GET, '/tags');
 
         $this->assertResponseIsSuccessful();
-        // Validation now lives as a tab in the Tags submenu (no longer in the top navbar).
+        // Validation lives as a tab in the Tags submenu.
         $tab = $crawler->filter('.tabs a[href="/tag-validation"]');
         $this->assertCount(1, $tab);
         // ...with an is-info badge counting the one post waiting to be validated.
@@ -235,9 +235,6 @@ class TagValidationTest extends WebTestCase
         $this->assertSame(1, $repo->countPostsWithPendingSuggestions());
     }
 
-    /**
-     * @return array<string, string> tagName => status for the target's suggestions
-     */
     private function statusByName(string $targetId): array
     {
         $statuses = [];

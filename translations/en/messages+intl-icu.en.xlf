@@ -831,8 +831,8 @@
     </unit>
     <unit id="tagPostsHelp" name="label.tag_existing_posts_help">
       <segment state="translated">
-        <source>Suggests tags for your images by analyzing what they show. You review and confirm every suggestion — nothing is tagged without you. New uploads are handled automatically.</source>
-        <target>Suggests tags for your images by analyzing what they show. You review and confirm every suggestion — nothing is tagged without you. New uploads are handled automatically.</target>
+        <source>Suggests tags for your images by analyzing what they show. You review and confirm every suggestion — nothing is tagged without you. New uploads are handled automatically. For best results, run "Analyze image content" first.</source>
+        <target>Suggests tags for your images by analyzing what they show. You review and confirm every suggestion — nothing is tagged without you. New uploads are handled automatically. For best results, run "Analyze image content" first.</target>
       </segment>
     </unit>
     <unit id="rN7uQ2a" name="label.run_active">

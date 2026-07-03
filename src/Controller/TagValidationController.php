@@ -10,6 +10,7 @@ use App\Form\DataTransformer\StringToTagTransformer;
 use App\Form\Type\TagValidationType;
 use App\Repository\PostRepository;
 use App\Repository\TagSuggestionRepository;
+use App\Service\AutoTag\AutoTagConfigProvider;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,12 +27,18 @@ class TagValidationController extends AbstractController
      */
     private const float HIGH_CONFIDENCE_THRESHOLD = 0.85;
 
+    public function __construct(private readonly AutoTagConfigProvider $autoTagConfigProvider)
+    {
+    }
+
     #[Route(path: '/tag-validation', name: 'app_tag_validation', methods: ['GET'])]
     public function index(
         PostRepository $postRepository,
         TagSuggestionRepository $tagSuggestionRepository,
         StringToTagTransformer $stringToTagTransformer,
     ): Response {
+        $this->assertAutoTagEnabled();
+
         $post = $postRepository->findRandomWithPendingSuggestions();
         if ($post === null) {
             // Queue drained — nothing left to validate.
@@ -42,8 +49,8 @@ class TagValidationController extends AbstractController
             $tagSuggestionRepository->findForTarget('post', $post->getId())
         );
 
-        // Pre-fill the field by seeding the in-memory post with the confident tags. This is never
-        // flushed on GET, so nothing is persisted until the reviewer submits.
+        // Seed the in-memory post with the confident tags to pre-fill the field; never flushed on
+        // GET, so nothing persists until the reviewer submits.
         foreach ($stringToTagTransformer->reverseTransform(implode(' ', $highConfidenceNames)) as $tag) {
             $post->addTag($tag);
         }
@@ -67,6 +74,8 @@ class TagValidationController extends AbstractController
         TagSuggestionRepository $tagSuggestionRepository,
         Post $post,
     ): Response {
+        $this->assertAutoTagEnabled();
+
         $form = $this->createForm(TagValidationType::class, $post);
         $form->handleRequest($request);
 
@@ -86,7 +95,6 @@ class TagValidationController extends AbstractController
             $this->addFlash('notice', $translator->trans('message.tags_validated'));
         }
 
-        // Straight on to the next random post to validate (or the empty state).
         return $this->redirectToRoute('app_tag_validation');
     }
 
@@ -97,6 +105,8 @@ class TagValidationController extends AbstractController
         ManagerRegistry $managerRegistry,
         Post $post,
     ): Response {
+        $this->assertAutoTagEnabled();
+
         $form = $this->createDeleteForm('app_tag_validation_delete', $post);
         $form->handleRequest($request);
 
@@ -108,18 +118,20 @@ class TagValidationController extends AbstractController
             $this->addFlash('notice', $translator->trans('message.post_deleted'));
         }
 
-        // Post is gone: straight on to the next random post to validate (or the empty state).
         return $this->redirectToRoute('app_tag_validation');
+    }
+
+    private function assertAutoTagEnabled(): void
+    {
+        if (!$this->autoTagConfigProvider->isEnabled()) {
+            throw $this->createNotFoundException();
+        }
     }
 
     /**
      * Split a target's suggestions into confident-prefill names and click-to-add chips, deduping
      * by name. Only still-pending suggestions are considered; a confident wd tag is never repeated
      * as a chip. Same two-pass logic as PostController::autoTagSuggestions().
-     *
-     * @param TagSuggestion[] $suggestions
-     *
-     * @return array{0: string[], 1: array<array{name: string, category: string, score: float, source: string}>}
      */
     private function splitSuggestions(array $suggestions): array
     {

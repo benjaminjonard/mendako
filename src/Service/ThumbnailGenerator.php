@@ -17,8 +17,6 @@ class ThumbnailGenerator
      * Extract up to `$count` resized JPEG frames at evenly-spaced timecodes — used to
      * sample a video's content for automatic tagging. Returns the written frame paths (fewer
      * than `$count` if the clip is too short to yield distinct frames). Non-video → [].
-     *
-     * @return string[]
      */
     public function extractVideoFrames(string $path, string $destDir, int $count, int $width): array
     {
@@ -32,8 +30,14 @@ class ThumbnailGenerator
 
         $video = FFMpeg::create()->open($path);
         $stream = $video->getStreams()->videos()->first();
+        if ($stream === null) {
+            return []; // no video stream (e.g. audio-only container, or a corrupt clip)
+        }
         $originalWidth = $stream->getDimensions()->getWidth();
         $originalHeight = $stream->getDimensions()->getHeight();
+        if ($originalWidth <= 0 || $originalHeight <= 0) {
+            return [];
+        }
 
         $targetWidth = min($width, $originalWidth);
         $targetHeight = max(1, (int) floor($originalHeight * ($targetWidth / $originalWidth)));
@@ -76,10 +80,9 @@ class ThumbnailGenerator
         $mime = mime_content_type($path);
 
         if ($mime === 'image/svg+xml') {
-            // SVG is vector — GD can't read it at all. Rasterize with ffmpeg (out-of-process,
-            // via librsvg) so the automatic-tagging pipeline gets a raster to embed. Display
-            // templates render SVG from the original file, so this only ever runs for the
-            // on-demand thumbnailer and the tagging pipeline, which need a raster form.
+            // GD can't read SVG, so rasterize with ffmpeg (via librsvg) to feed the tagging
+            // pipeline a raster. Display templates render the original SVG, so this only runs
+            // for the on-demand thumbnailer and the tagging pipeline.
             $this->ensureDirectory($thumbnailPath);
             $this->rasterizeWithFfmpeg($path, $thumbnailPath, $thumbnailWidth);
 
@@ -90,10 +93,17 @@ class ThumbnailGenerator
             $ffmpeg = FFMpeg::create();
             $video = $ffmpeg->open($path);
             $stream = $video->getStreams()->videos()->first();
+            if ($stream === null) {
+                return false; // no video stream to thumbnail
+            }
             $width = $stream->getDimensions()->getWidth();
             $height = $stream->getDimensions()->getHeight();
         } else {
             [$width, $height] = getimagesize($path);
+        }
+
+        if ($width <= 0 || $height <= 0) {
+            return false;
         }
 
         if ($width <= $thumbnailWidth) {

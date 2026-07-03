@@ -11,12 +11,9 @@ use Symfony\Component\Mime\Part\Multipart\FormDataPart;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 /**
- * The single HTTP boundary between the app and the inference service.
- *
- * Every call soft-fails: on a disabled feature, unreachable service, timeout, or
- * non-2xx response it returns a neutral/empty value and logs — it NEVER throws
- * into a web request. Models are baked into the service image, so there is no
- * download step: a model is always ready.
+ * The single HTTP boundary between the app and the inference service. Every call soft-fails: on a
+ * disabled feature, unreachable service, timeout, or non-2xx response it returns an empty value and
+ * logs — it NEVER throws into a web request.
  */
 class AutoTagInferenceClient
 {
@@ -34,8 +31,6 @@ class AutoTagInferenceClient
     /**
      * Run WD inference on an image. Returns `{tags, rating}` plus `embedding` / `embedding_dim`
      * / `embedding_model_id` (WD's fc_norm feature, produced in the same pass), or [] on failure.
-     *
-     * @return array<string, mixed>
      */
     public function analyze(string $imagePath, string $modelId): array
     {

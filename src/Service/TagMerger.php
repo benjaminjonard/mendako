@@ -17,8 +17,6 @@ class TagMerger
      * Absorb $sources into $target: every post carrying a source tag is moved onto the target
      * tag, then the source tag is deleted. The target tag itself and duplicate entries are
      * ignored. Returns the number of tags actually merged.
-     *
-     * @param Tag[] $sources
      */
     public function merge(Tag $target, array $sources): int
     {

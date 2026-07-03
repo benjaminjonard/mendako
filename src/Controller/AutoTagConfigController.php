@@ -27,24 +27,22 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class AutoTagConfigController extends AbstractController
 {
     // Per-job message classes on the shared autotag_batch queue: the coordinator that kicks a run
-    // off plus the per-item fan-out it expands into. Used both to report status and to guard against
-    // launching a job that already has work queued — one source of truth so the two can't drift.
+    // off plus the per-item fan-out it expands into. One source of truth for status and launch guards.
     private const TAGGING_CLASSES = ['EnqueueBacklogMessage', 'GenerateSuggestionsMessage'];
     private const EMBEDDING_CLASSES = ['EnqueueEmbeddingBacklogMessage', 'GenerateEmbeddingMessage'];
     private const VECTOR_CLASSES = ['EnqueueVectorBacklogMessage', 'GenerateVectorMessage'];
 
-    // job key (matches data-job-status-key in the template) → its message classes. Drives the cancel
-    // endpoint so a single route can clear any job's queue without a per-job action.
+    // job key (matches data-job-status-key in the template) → its message classes, so one cancel
+    // route can clear any job's queue.
     private const JOB_CLASSES = [
         'tagging' => self::TAGGING_CLASSES,
         'embedding' => self::EMBEDDING_CLASSES,
         'vectors' => self::VECTOR_CLASSES,
     ];
 
-    // A reserved message (delivered_at set) whose worker died before acking it stays "reserved" until
-    // the transport's redeliver_timeout (default 1h). Per-item handlers run in well under a second, so
-    // a message reserved longer than this is treated as abandoned — otherwise a single orphaned row
-    // wedges the card on "In progress" and blocks relaunch long after the job is actually done.
+    // A message reserved (delivered_at set) longer than this is treated as abandoned: its worker died
+    // before acking, and per-item handlers run in well under a second. Otherwise one orphaned row would
+    // wedge the card on "In progress" and block relaunch until the transport's redeliver_timeout (1h).
     private const int STALE_RESERVED_SECONDS = 300;
 
     /**
@@ -58,13 +56,11 @@ class AutoTagConfigController extends AbstractController
         }
 
         if (!$autoTagConfigProvider->isEnabled()) {
-            $this->addFlash('notice', $translator->trans('message.automatic_tags_disabled'));
-
-            return $this->redirectToRoute('app_admin_jobs');
+            throw $this->createNotFoundException();
         }
 
-        // Don't stack a second run on top of one already queued/in flight — that's what produced the
-        // duplicate coordinators. The Jobs panel also disables the buttons, but this is the real guard.
+        // Don't stack a second run on top of one already queued/in flight (would duplicate coordinators).
+        // The Jobs panel disables the buttons too, but this is the real guard.
         if ($this->pendingCounts($connection, self::TAGGING_CLASSES)['pending'] > 0) {
             $this->addFlash('notice', $translator->trans('message.job_already_running'));
 
@@ -72,7 +68,7 @@ class AutoTagConfigController extends AbstractController
         }
 
         $messageBus->dispatch(
-            new EnqueueBacklogMessage('post', $request->request->getBoolean('all')),
+            new EnqueueBacklogMessage($request->request->getBoolean('all')),
             [new TransportNamesStamp('autotag_batch')],
         );
         $this->addFlash('notice', $translator->trans('message.automatic_tags_started'));
@@ -81,13 +77,8 @@ class AutoTagConfigController extends AbstractController
     }
 
     /**
-     * Live progress for every admin job, polled once by the Jobs panel (one request for all cards,
-     * so adding jobs never multiplies the polling). Each job returns a uniform, display-ready shape:
-     *   processed/total — progress-bar numbers
-     *   running         — whether a run is in flight (launch buttons stay disabled while true)
-     *   state           — semantic status the JS maps to a Bulma tag colour (running/waiting/partial/done)
-     *   label           — fully translated status text (i18n lives here, the controller just paints it)
-     *   showBar         — whether the progress bar is visible for this job
+     * Live progress for every admin job, polled once by the Jobs panel (one request for all cards).
+     * Each job returns a uniform, display-ready shape built by buildJobStatus().
      */
     #[Route(path: '/admin/autotag/jobs', name: 'app_autotag_jobs', methods: ['GET'])]
     public function jobs(PostRepository $postRepository, Connection $connection, TranslatorInterface $translator): JsonResponse
@@ -95,9 +86,6 @@ class AutoTagConfigController extends AbstractController
         // Shared across every job: one count instead of one per card.
         $total = $postRepository->countAll();
 
-        // Every job reports through the same builder, so the three cards behave identically:
-        // coverage count, green when complete, amber while incomplete, and a progress bar only
-        // while a run is queued or in flight. Each job supplies only its own count and wording.
         $tagging = $this->buildJobStatus(
             $translator,
             $this->pendingCounts($connection, self::TAGGING_CLASSES),
@@ -134,20 +122,12 @@ class AutoTagConfigController extends AbstractController
     }
 
     /**
-     * Uniform, display-ready status for one job — every job goes through this so the three cards
-     * behave identically. There is no "idle": a job that isn't running always reports its coverage,
-     * green once complete and amber while some posts remain.
-     *
-     * @param array{pending: int, delivered: int} $counts queued fan-out for this job
-     * @param non-empty-string                    $doneKey translation key for the processed noun (e.g. "embedded")
-     * @param non-empty-string                    $todoKey translation key for the remaining noun (e.g. "to embed")
-     *
-     * @return array{processed: int, total: int, running: bool, state: string, label: string, showBar: bool}
+     * Uniform, display-ready status for one job. A job that isn't running always reports its coverage
+     * (green once complete, amber while some posts remain) — there is no "idle" state.
      */
     private function buildJobStatus(TranslatorInterface $translator, array $counts, int $processed, int $total, string $doneKey, string $todoKey): array
     {
-        // delivered > 0 → a worker has picked messages up (running); pending-but-none-delivered →
-        // queued and still waiting for a worker.
+        // delivered > 0 means a worker has picked messages up; pending-but-none-delivered is still queued.
         $running = $counts['delivered'] > 0;
         $waiting = $counts['pending'] > 0 && !$running;
         $remaining = max($total - $processed, 0);
@@ -173,9 +153,8 @@ class AutoTagConfigController extends AbstractController
     }
 
     /**
-     * Kick off a bulk recompute of the perceptual duplicate-detection vector (the fan-out happens on
-     * the worker). NOT feature-gated: duplicate detection works with or without auto-tagging, and the
-     * recompute is pure PHP/GD (no ML service call).
+     * Kick off a bulk recompute of the perceptual duplicate-detection vector (fan-out on the worker).
+     * NOT feature-gated: duplicate detection is pure PHP/GD and works with or without auto-tagging.
      */
     #[Route(path: '/admin/vectors/backlog', name: 'app_vectors_backlog', methods: ['POST'])]
     public function vectorBacklog(Request $request, MessageBusInterface $messageBus, TranslatorInterface $translator, Connection $connection): Response
@@ -211,9 +190,7 @@ class AutoTagConfigController extends AbstractController
         }
 
         if (!$autoTagConfigProvider->isEnabled()) {
-            $this->addFlash('notice', $translator->trans('message.automatic_tags_disabled'));
-
-            return $this->redirectToRoute('app_admin_jobs');
+            throw $this->createNotFoundException();
         }
 
         if ($this->pendingCounts($connection, self::EMBEDDING_CLASSES)['pending'] > 0) {
@@ -232,9 +209,9 @@ class AutoTagConfigController extends AbstractController
     }
 
     /**
-     * Cancel a running job by clearing its queued messages. Removes only messages still waiting in the
-     * queue (delivered_at IS NULL) — a row a worker currently holds is left to finish, since deleting
-     * it mid-process would race the worker's ack. {job} is one of the JOB_CLASSES keys.
+     * Cancel a running job by clearing its queued messages. Only removes messages still waiting
+     * (delivered_at IS NULL); a row a worker holds is left to finish to avoid racing its ack.
+     * {job} is one of the JOB_CLASSES keys.
      */
     #[Route(path: '/admin/jobs/{job}/cancel', name: 'app_jobs_cancel', methods: ['POST'])]
     public function cancelJob(string $job, Request $request, TranslatorInterface $translator, Connection $connection): Response
@@ -255,38 +232,23 @@ class AutoTagConfigController extends AbstractController
     }
 
     /**
-     * Queued message counts for one job on the shared autotag_batch queue (Doctrine transport). Each
-     * job spans two message classes — a coordinator that kicks the run off (e.g. EnqueueBacklogMessage)
-     * and the per-item fan-out the coordinator expands into (e.g. GenerateSuggestionsMessage). Pass
-     * both so a run counts from the moment it's queued, before a worker has expanded the coordinator.
-     * The queue is shared across jobs, so filter by class name in the serialized envelope — otherwise
-     * e.g. an embedding run makes the tagging card look active.
-     *
-     * Returns ['pending' => outstanding work, 'delivered' => currently being processed]. In the Doctrine
-     * transport a worker stamps delivered_at when it reserves a message, so a fresh delivered_at means a
-     * worker is actively processing; pending-but-none-delivered means the run is still waiting for a
-     * worker to pick it up. Messages reserved longer than STALE_RESERVED_SECONDS are treated as abandoned
-     * (dead worker) and excluded from both counts. Returns zeros when the transport table doesn't exist
-     * (e.g. the in-memory transport used in tests).
-     *
-     * @param list<string> $messageClasses class-name substrings to match (coordinator + fan-out)
-     *
-     * @return array{pending: int, delivered: int}
+     * Queued message counts for one job on the shared autotag_batch queue (Doctrine transport). Filters
+     * by class name in the serialized envelope so a run counts against only its own card. delivered_at
+     * marks a reserved (in-flight) message; anything reserved longer than STALE_RESERVED_SECONDS is
+     * treated as abandoned and excluded. Returns zeros when the transport table is missing (tests).
      */
     private function pendingCounts(Connection $connection, array $messageClasses): array
     {
         try {
-            // Guard the count: querying a missing table (e.g. the in-memory transport used in
-            // tests) would fail and abort the surrounding transaction. tablesExist is a safe
-            // metadata lookup that never poisons it.
+            // tablesExist is a safe metadata lookup: querying a missing table would abort the
+            // surrounding transaction.
             if (!$connection->createSchemaManager()->tablesExist(['messenger_messages'])) {
                 return ['pending' => 0, 'delivered' => 0];
             }
 
-            // "delivered" = rows a worker is *currently* processing: delivered_at within the freshness
-            // window. Rows reserved longer ago are abandoned (dead worker) and excluded from both counts,
-            // so a zombie neither shows as running nor blocks relaunch. "pending" = still-outstanding work
-            // = queued (delivered_at IS NULL) plus freshly-reserved, but never the stale ones.
+            // "delivered" = rows reserved within the freshness window (currently processing); "pending" =
+            // queued plus freshly-reserved. Stale reservations are excluded from both, so a dead worker's
+            // zombie row neither shows as running nor blocks relaunch.
             [$clause, $params] = $this->bodyLikeFilter($messageClasses);
             $row = $connection->fetchAssociative(
                 \sprintf(
@@ -311,11 +273,8 @@ class AutoTagConfigController extends AbstractController
     }
 
     /**
-     * Delete a job's still-waiting messages from the queue (delivered_at IS NULL only, so an in-flight
-     * message a worker holds is left to finish). Returns the number of rows removed. No-op when the
-     * transport table is missing (e.g. the in-memory transport used in tests).
-     *
-     * @param list<string> $messageClasses coordinator + fan-out class-name substrings
+     * Delete a job's still-waiting messages (delivered_at IS NULL only, leaving in-flight rows to
+     * finish). Returns rows removed; no-op when the transport table is missing (tests).
      */
     private function cancelPending(Connection $connection, array $messageClasses): int
     {
@@ -339,10 +298,6 @@ class AutoTagConfigController extends AbstractController
      * Build the "body LIKE ? OR body LIKE ? ..." fragment and its bound params (with wrapping
      * wildcards) for a set of message-class substrings. Shared so the status count and the cancel
      * delete filter the shared queue identically.
-     *
-     * @param list<string> $messageClasses
-     *
-     * @return array{0: string, 1: list<string>}
      */
     private function bodyLikeFilter(array $messageClasses): array
     {

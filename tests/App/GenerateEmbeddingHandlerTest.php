@@ -9,7 +9,7 @@ use App\Message\GenerateEmbeddingMessage;
 use App\MessageHandler\GenerateEmbeddingHandler;
 use App\Repository\EmbeddingRepository;
 use App\Repository\PostRepository;
-use App\Repository\BulkUploadRepository;
+use App\Repository\StagedPostRepository;
 use App\Service\AutoTag\AutoTagConfigProvider;
 use App\Service\AutoTag\AutoTagInferenceClient;
 use App\Service\ThumbnailGenerator;
@@ -31,7 +31,7 @@ class GenerateEmbeddingHandlerTest extends TestCase
     {
         return new GenerateEmbeddingHandler(
             $postRepository,
-            $this->createStub(BulkUploadRepository::class),
+            $this->createStub(StagedPostRepository::class),
             $provider,
             $client,
             $thumbnailGenerator ?? $this->thumbnailGeneratorThatWrites(),

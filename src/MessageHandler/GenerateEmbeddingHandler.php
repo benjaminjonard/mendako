@@ -7,7 +7,7 @@ namespace App\MessageHandler;
 use App\Message\GenerateEmbeddingMessage;
 use App\Repository\EmbeddingRepository;
 use App\Repository\PostRepository;
-use App\Repository\BulkUploadRepository;
+use App\Repository\StagedPostRepository;
 use App\Service\AutoTag\AutoTagConfigProvider;
 use App\Service\AutoTag\AutoTagInferenceClient;
 use App\Service\ThumbnailGenerator;
@@ -16,12 +16,10 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
- * Computes + stores one item's embedding(s) (embedding pool) — no tagging, no kNN. Fills the
- * pool the kNN "learned" suggestions (and, later, a trained classifier) read from.
- *
- * An image yields one embedding; a video yields one per sampled frame (so kNN can match on any
- * frame). Idempotent (replaces the target's rows) and feature-gated; soft-fails so a bad source
- * image never poisons the worker.
+ * Computes + stores one item's embedding(s) (embedding pool) — no tagging, no kNN. An image yields
+ * one embedding; a video yields one per sampled frame (so kNN can match on any frame). Idempotent
+ * (replaces the target's rows) and feature-gated; soft-fails so a bad source image never poisons
+ * the worker.
  */
 #[AsMessageHandler]
 final class GenerateEmbeddingHandler
@@ -31,7 +29,7 @@ final class GenerateEmbeddingHandler
 
     public function __construct(
         private readonly PostRepository $postRepository,
-        private readonly BulkUploadRepository $bulkUploadRepository,
+        private readonly StagedPostRepository $stagedPostRepository,
         private readonly AutoTagConfigProvider $autoTagConfigProvider,
         private readonly AutoTagInferenceClient $autoTagInferenceClient,
         private readonly ThumbnailGenerator $thumbnailGenerator,
@@ -53,7 +51,7 @@ final class GenerateEmbeddingHandler
         }
 
         $item = $message->targetType === 'bulk'
-            ? $this->bulkUploadRepository->find($message->id)
+            ? $this->stagedPostRepository->find($message->id)
             : $this->postRepository->find($message->id);
 
         if ($item === null || $item->getPath() === null) {
@@ -110,10 +108,6 @@ final class GenerateEmbeddingHandler
         }
     }
 
-    /**
-     * @param string[] $vectors mutated in place: appends the frame's pgvector literal if the
-     *                          service returned a usable embedding
-     */
     private function collectEmbedding(array &$vectors, string $imagePath, string $modelId): void
     {
         $embedding = $this->autoTagInferenceClient->embed($imagePath, $modelId)['embedding'] ?? null;

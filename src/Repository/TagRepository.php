@@ -32,9 +32,6 @@ class TagRepository extends ServiceEntityRepository
         parent::__construct($registry, Tag::class);
     }
 
-    /**
-     * @return list<array{id: mixed, name: string, category: ?TagCategory, suggested: bool, createdAt: \DateTimeImmutable, counter: int}>
-     */
     public function findPaginated(
         int $page,
         int $perPage,

@@ -13,11 +13,6 @@ use Symfony\Component\String\UnicodeString;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * A tag name the automatic tagging must never suggest. Names are normalized exactly like
- * Tag / TagSuggestion (lowercase, spaces -> underscores) so a blacklist entry lines up with the
- * names the models emit, and a blacklisted name can therefore never surface as a suggestion.
- */
 #[ORM\Entity(repositoryClass: BlacklistedTagRepository::class)]
 #[ORM\Table(name: 'men_blacklisted_tag')]
 #[UniqueEntity(fields: ['name'], message: 'error.name.not_unique')]
@@ -52,7 +47,6 @@ class BlacklistedTag
 
     public function setName(?string $name): self
     {
-        // Match Tag::setName so a blacklist entry matches the normalized suggestion names.
         $this->name = (new UnicodeString((string) $name))->lower()->replace(' ', '_')->toString();
 
         return $this;

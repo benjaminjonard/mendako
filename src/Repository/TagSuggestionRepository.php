@@ -16,9 +16,6 @@ class TagSuggestionRepository extends ServiceEntityRepository
         parent::__construct($registry, TagSuggestion::class);
     }
 
-    /**
-     * @return TagSuggestion[]
-     */
     public function findForTarget(string $targetType, string $targetId): array
     {
         return $this->findBy(
@@ -28,8 +25,8 @@ class TagSuggestionRepository extends ServiceEntityRepository
     }
 
     /**
-     * Remove a target's still-pending suggestions for a given source, so a re-run
-     * can replace them. Accepted/dismissed suggestions are left untouched.
+     * Remove a target's still-pending suggestions for a source so a re-run can replace them;
+     * accepted/dismissed rows are left untouched.
      */
     public function deletePendingForTarget(string $targetType, string $targetId, string $source): void
     {
@@ -48,14 +45,9 @@ class TagSuggestionRepository extends ServiceEntityRepository
     }
 
     /**
-     * Resolve a target's still-pending suggestions after human validation: names the reviewer
-     * kept become ACCEPTED, everything else DISMISSED. Both are terminal — the post drops out of
-     * the pending validation queue, and auto-tag re-runs keep these rows (deletePendingForTarget
-     * only touches pending) and never re-surface their names, whatever the source
-     * (decidedTagNamesForTarget matches terminal statuses across all sources). Bulk UPDATEs, so
-     * run it when no matching suggestions are held in the UoW.
-     *
-     * @param string[] $acceptedNames tag names present on the item after validation
+     * Resolve a target's pending suggestions after human validation: kept names → ACCEPTED, the
+     * rest → DISMISSED. Both statuses are terminal, so the names never re-surface on a re-run.
+     * Bulk UPDATEs — run it when no matching suggestions are held in the UoW.
      */
     public function resolvePendingForTarget(string $targetType, string $targetId, array $acceptedNames): void
     {
@@ -93,9 +85,8 @@ class TagSuggestionRepository extends ServiceEntityRepository
     }
 
     /**
-     * Remove every suggestion (any target, any status, any source) carrying a given tag name.
-     * Called when a name is blacklisted for the AI, so an already-surfaced suggestion disappears
-     * from the validation queue and edit forms immediately — it must never remonter.
+     * Remove every suggestion carrying a given tag name (any target/status/source). Called when a
+     * name is blacklisted so an already-surfaced suggestion disappears from the UI immediately.
      */
     public function deleteByTagName(string $tagName): void
     {
@@ -108,11 +99,8 @@ class TagSuggestionRepository extends ServiceEntityRepository
     }
 
     /**
-     * Names a human has already decided on for this target — accepted or dismissed — across ALL
-     * sources. A re-run skips these so a tag the user kept or rejected is never re-proposed,
-     * whatever source (wd/knn) surfaces it next: one decision holds for every source.
-     *
-     * @return string[]
+     * Names a human has already decided on (accepted or dismissed) for this target, across all
+     * sources. A re-run skips these, so one decision holds whichever source (wd/knn) resurfaces it.
      */
     public function decidedTagNamesForTarget(string $targetType, string $targetId): array
     {
@@ -131,10 +119,9 @@ class TagSuggestionRepository extends ServiceEntityRepository
     }
 
     /**
-     * Best-known category for a suggested tag name, so accepting a suggestion keeps
-     * its type (rating/character/copyright/…) instead of defaulting to general. WD
-     * assigns a deterministic category per name, so the highest-scoring suggestion
-     * carrying a non-null category is a safe answer regardless of target.
+     * Best-known category for a suggested tag name, so accepting a suggestion keeps its type
+     * instead of defaulting to general. WD assigns a deterministic category per name, so the
+     * highest-scoring row with a non-null category is a safe answer regardless of target.
      */
     public function findCategoryForName(string $name): ?TagCategory
     {

@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\Post;
-use App\Entity\BulkUpload;
+use App\Entity\StagedPost;
 use App\Repository\BoardRepository;
 use App\Repository\PostRepository;
-use App\Repository\BulkUploadRepository;
+use App\Repository\StagedPostRepository;
 use App\Service\AutoTag\TaggingDispatcher;
 use App\Service\PostVectorService;
 use App\Service\RandomStringGenerator;
@@ -31,11 +31,11 @@ class BulkUploadController extends AbstractController
 
     #[Route(path: '/bulk-upload', name: 'app_bulk_upload_index', methods: ['GET'])]
     public function index(
-        BulkUploadRepository $bulkUploadRepository,
+        StagedPostRepository $stagedPostRepository,
         BoardRepository $boardRepository,
     ): Response {
         return $this->render('App/BulkUpload/index.html.twig', [
-            'bulkUploads' => $bulkUploadRepository->findAllForUser($this->getUser()),
+            'stagedPosts' => $stagedPostRepository->findAllForUser($this->getUser()),
             'boards' => $boardRepository->findBy([], ['name' => 'ASC']),
         ]);
     }
@@ -43,16 +43,16 @@ class BulkUploadController extends AbstractController
     #[Route(path: '/bulk-upload/{id}/similar', name: 'app_bulk_upload_similar', methods: ['GET'])]
     public function similar(
         string $id,
-        BulkUploadRepository $bulkUploadRepository,
+        StagedPostRepository $stagedPostRepository,
         PostRepository $postRepository,
     ): JsonResponse {
-        $bulkUpload = $bulkUploadRepository->findOneBy(['id' => $id, 'uploadedBy' => $this->getUser()]);
-        if ($bulkUpload === null || $bulkUpload->getVector() === null) {
+        $stagedPost = $stagedPostRepository->findOneBy(['id' => $id, 'uploadedBy' => $this->getUser()]);
+        if ($stagedPost === null || $stagedPost->getVector() === null) {
             return $this->json(['similar' => []]);
         }
 
         $similar = [];
-        foreach ($postRepository->findSimilarByVector($bulkUpload->getVector()) as $post) {
+        foreach ($postRepository->findSimilarByVector($stagedPost->getVector()) as $post) {
             $similar[] = $this->renderView('App/Post/_similar.html.twig', ['post' => $post]);
         }
 
@@ -77,30 +77,30 @@ class BulkUploadController extends AbstractController
             return $this->json(['error' => 'No file uploaded'], Response::HTTP_BAD_REQUEST);
         }
 
-        $bulkUpload = new BulkUpload();
-        $bulkUpload->setFile($file);
+        $stagedPost = new StagedPost();
+        $stagedPost->setFile($file);
 
         // Run the entity's #[Assert\File] mimetype/size constraints (no Form here).
-        $violations = $validator->validate($bulkUpload);
+        $violations = $validator->validate($stagedPost);
         if (count($violations) > 0) {
             return $this->json(['error' => (string) $violations[0]->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         $vector = $postVectorService->generateVector($file);
-        $bulkUpload
+        $stagedPost
             ->setUploadedBy($user = $this->getUser())
             ->setVector($vector)
             ->setIsDuplicate($vector !== null && $postRepository->findSimilarByVector($vector) !== [])
         ;
 
-        $managerRegistry->getManager()->persist($bulkUpload);
+        $managerRegistry->getManager()->persist($stagedPost);
         $managerRegistry->getManager()->flush();
 
-        $taggingDispatcher->dispatch($bulkUpload);
+        $taggingDispatcher->dispatch($stagedPost);
 
         return $this->json([
-            'id' => $bulkUpload->getId(),
-            'card' => $this->renderView('App/BulkUpload/_card.html.twig', ['bulkUpload' => $bulkUpload]),
+            'id' => $stagedPost->getId(),
+            'card' => $this->renderView('App/BulkUpload/_card.html.twig', ['stagedPost' => $stagedPost]),
         ]);
     }
 
@@ -109,7 +109,7 @@ class BulkUploadController extends AbstractController
         Request $request,
         TranslatorInterface $translator,
         ManagerRegistry $managerRegistry,
-        BulkUploadRepository $bulkUploadRepository,
+        StagedPostRepository $stagedPostRepository,
         BoardRepository $boardRepository,
         TaggingDispatcher $taggingDispatcher,
     ): JsonResponse {
@@ -136,18 +136,18 @@ class BulkUploadController extends AbstractController
 
         foreach ((array) $request->request->all('ids') as $id) {
             // Ownership scoping: only the uploader can assign their own bulk upload files.
-            $bulkUpload = $bulkUploadRepository->findOneBy(['id' => (string) $id, 'uploadedBy' => $user]);
-            if ($bulkUpload === null || $bulkUpload->getPath() === null) {
+            $stagedPost = $stagedPostRepository->findOneBy(['id' => (string) $id, 'uploadedBy' => $user]);
+            if ($stagedPost === null || $stagedPost->getPath() === null) {
                 $failedIds[] = (string) $id;
                 continue;
             }
 
             // Fresh random name avoids collisions with existing board files / the unique path constraint.
-            $extension = pathinfo((string) $bulkUpload->getPath(), PATHINFO_EXTENSION);
+            $extension = pathinfo((string) $stagedPost->getPath(), PATHINFO_EXTENSION);
             $filename = $this->randomStringGenerator->generate(20) . ($extension !== '' ? '.' . $extension : '');
             $newRelativePath = $relativeDir . '/' . $filename;
 
-            if (!@rename($this->publicPath . '/' . $bulkUpload->getPath(), $this->publicPath . '/' . $newRelativePath)) {
+            if (!@rename($this->publicPath . '/' . $stagedPost->getPath(), $this->publicPath . '/' . $newRelativePath)) {
                 // Move failed: leave the bulk upload untouched so nothing is lost.
                 $failedIds[] = (string) $id;
                 continue;
@@ -156,23 +156,23 @@ class BulkUploadController extends AbstractController
             $post = new Post();
             $post
                 ->setBoard($board)
-                ->setUploadedBy($bulkUpload->getUploadedBy() ?? $user)
-                ->setMimetype($bulkUpload->getMimetype())
-                ->setSize($bulkUpload->getSize())
-                ->setWidth($bulkUpload->getWidth())
-                ->setHeight($bulkUpload->getHeight())
-                ->setDuration($bulkUpload->getDuration())
-                ->setVector($bulkUpload->getVector())
+                ->setUploadedBy($stagedPost->getUploadedBy() ?? $user)
+                ->setMimetype($stagedPost->getMimetype())
+                ->setSize($stagedPost->getSize())
+                ->setWidth($stagedPost->getWidth())
+                ->setHeight($stagedPost->getHeight())
+                ->setDuration($stagedPost->getDuration())
+                ->setVector($stagedPost->getVector())
                 ->setPath($newRelativePath)
             ;
-            $post->setHasSound($bulkUpload->hasSound()); // Post::setHasSound() returns void (not fluent)
+            $post->setHasSound($stagedPost->hasSound());
             $manager->persist($post);
             $createdPosts[] = $post;
 
             // Null the bulk upload path BEFORE removal so postRemove/removeOldFile does NOT
             // unlink the file we just moved into the board directory.
-            $bulkUpload->setPath(null);
-            $manager->remove($bulkUpload);
+            $stagedPost->setPath(null);
+            $manager->remove($stagedPost);
 
             $removedIds[] = (string) $id;
         }
@@ -195,7 +195,7 @@ class BulkUploadController extends AbstractController
         Request $request,
         TranslatorInterface $translator,
         ManagerRegistry $managerRegistry,
-        BulkUploadRepository $bulkUploadRepository,
+        StagedPostRepository $stagedPostRepository,
     ): JsonResponse {
         if (!$this->isCsrfTokenValid('bulk_upload_action', (string) $request->request->get('_token'))) {
             return $this->json(['error' => 'Invalid CSRF token'], Response::HTTP_FORBIDDEN);
@@ -207,12 +207,12 @@ class BulkUploadController extends AbstractController
 
         foreach ((array) $request->request->all('ids') as $id) {
             // Ownership scoping: only the uploader can delete their own bulk upload files.
-            $bulkUpload = $bulkUploadRepository->findOneBy(['id' => (string) $id, 'uploadedBy' => $user]);
-            if ($bulkUpload === null) {
+            $stagedPost = $stagedPostRepository->findOneBy(['id' => (string) $id, 'uploadedBy' => $user]);
+            if ($stagedPost === null) {
                 continue;
             }
 
-            $manager->remove($bulkUpload);
+            $manager->remove($stagedPost);
             $removedIds[] = (string) $id;
         }
 

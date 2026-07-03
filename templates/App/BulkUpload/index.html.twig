@@ -61,8 +61,8 @@
         </div>
 
         <span class="grid grid-posts" data-bulk-upload-target="grid">
-            {% for bulkUpload in bulkUploads %}
-                {{ include('App/BulkUpload/_card.html.twig', { bulkUpload: bulkUpload }) }}
+            {% for stagedPost in stagedPosts %}
+                {{ include('App/BulkUpload/_card.html.twig', { stagedPost: stagedPost }) }}
             {% endfor %}
         </span>
 

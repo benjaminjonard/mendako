@@ -7,12 +7,11 @@ namespace App\Service\AutoTag;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
- * Single source of truth for the automatic tagging feature's effective state and configuration.
- *
- * Everything is configured by environment variables (like the rest of the app config):
- *   - MENDAKO_AUTOTAG_ENABLED — master on/off switch (off by default, so the feature ships off).
+ * Single source of truth for the auto-tagging feature's state and configuration, all driven by
+ * environment variables:
+ *   - MENDAKO_AUTOTAG_ENABLED — master on/off switch (off by default).
  *   - MENDAKO_ML_URL          — the inference service URL.
- * Every automatic tagging entry point must gate on isEnabled().
+ * Every auto-tagging entry point must gate on isEnabled().
  */
 class AutoTagConfigProvider
 {
@@ -36,11 +35,8 @@ class AutoTagConfigProvider
     }
 
     /**
-     * The active model id for a category ('wd'), or null for an unknown category.
-     *
-     * Each category has exactly one model, baked into the service image, so there is no
-     * selection: the model is taken straight from the static catalog. WD is both the tagger
-     * and the embedding encoder, so 'wd' is currently the only category.
+     * The active model id for a category ('wd'), or null for an unknown category. Each category has
+     * exactly one model baked into the service image, taken straight from the static catalog.
      */
     public function getActiveModel(string $category): ?string
     {

@@ -10,6 +10,7 @@ use App\Entity\Post;
 use App\Entity\TagSuggestion;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\DBAL\ParameterType;
 use Doctrine\Persistence\ManagerRegistry;
 
 class PostRepository extends ServiceEntityRepository
@@ -77,13 +78,10 @@ class PostRepository extends ServiceEntityRepository
     }
 
     /**
-     * Nearest posts by perceptual pHash — near-duplicate / "similar posts" detection.
-     *
-     * The `vector` column holds a 64-bit binary pHash (see PostVectorService), so the pgvector L2
-     * operator `<->` equals sqrt(Hamming distance). We therefore threshold and rank on Hamming: two
-     * images match when at most `$maxHamming` of the 64 bits differ (10 ≈ the usual pHash "same image"
-     * cut-off, tolerant to re-encode/scale/minor edits). The `<->` ORDER BY is served by the HNSW
-     * `vector_l2_ops` index. `distance` is returned as a 0-100 similarity percentage (100 = identical).
+     * Nearest posts by perceptual pHash for near-duplicate detection. The `vector` column holds a
+     * 64-bit binary pHash, so pgvector's L2 `<->` equals sqrt(Hamming distance): results are ranked on
+     * Hamming and thresholded at `$maxHamming` bits (10 ≈ the usual pHash "same image" cut-off), served
+     * by the HNSW `vector_l2_ops` index. `distance` is a 0-100 similarity percentage.
      */
     public function findSimilarByVector(string $vector, int $maxHamming = 10, int $limit = 3): array {
         $conn = $this->getEntityManager()->getConnection();
@@ -107,18 +105,14 @@ class PostRepository extends ServiceEntityRepository
 
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(':vector', $vector);
-        $stmt->bindValue(':max_hamming', $maxHamming);
-        $stmt->bindValue(':limit', $limit);
+        $stmt->bindValue(':max_hamming', $maxHamming, ParameterType::INTEGER);
+        $stmt->bindValue(':limit', $limit, ParameterType::INTEGER);
 
         return $stmt->executeQuery()->fetchAllAssociative();
     }
 
     /**
-     * Stream posts with no perceptual duplicate-detection vector yet — the default "recompute
-     * missing" set for the admin backfill job. `toIterable()` so a large back-catalogue isn't
-     * fully hydrated at once.
-     *
-     * @return iterable<Post>
+     * Stream posts with no duplicate-detection vector — the "recompute missing" backfill set.
      */
     public function findWithoutVectorIterable(): iterable
     {
@@ -128,9 +122,6 @@ class PostRepository extends ServiceEntityRepository
             ->toIterable();
     }
 
-    /**
-     * Number of posts still missing a duplicate-detection vector (COUNT form of the above).
-     */
     public function countWithoutVector(): int
     {
         return (int) $this->createQueryBuilder('p')
@@ -141,19 +132,7 @@ class PostRepository extends ServiceEntityRepository
     }
 
     /**
-     * kNN over the semantic embedding: the confirmed tags of the nearest
-     * already-tagged Posts (same embedding model), for learned tag suggestions.
-     *
-     * Returns rows {similarity, name, category} — one per (neighbour, tag) — for the
-     * `k` nearest neighbours within the similarity floor. Read-only; never writes.
-     *
-     * @return array<int, array{similarity: float, name: string, category: ?string}>
-     */
-    /**
-     * Stream every post (for `--all` retroactive tagging). `toIterable()` so a large
-     * back-catalogue isn't fully hydrated at once.
-     *
-     * @return iterable<Post>
+     * Stream every post (for `--all` retroactive tagging).
      */
     public function findAllIterable(): iterable
     {
@@ -161,11 +140,8 @@ class PostRepository extends ServiceEntityRepository
     }
 
     /**
-     * Stream posts that have no automatic tagging suggestion yet (never processed) — the default
-     * retroactive set. `men_tag_suggestion` is polymorphic (no FK), so this is a
-     * correlated NOT EXISTS on (target_type='post', target_id = post id).
-     *
-     * @return iterable<Post>
+     * Stream posts with no tag suggestion yet (never processed) — the default retroactive set.
+     * `men_tag_suggestion` is polymorphic (no FK), hence a correlated NOT EXISTS on the target.
      */
     public function findWithoutSuggestionsIterable(): iterable
     {
@@ -184,10 +160,8 @@ class PostRepository extends ServiceEntityRepository
     }
 
     /**
-     * Pick one random post that still has at least one pending automatic-tagging suggestion —
-     * the working set for the Tag validation queue. Returns null when the queue is empty.
-     * Native SQL because DQL has no portable ORDER BY RANDOM(); we only select the id and
-     * re-hydrate the managed entity through the ORM.
+     * One random post with a pending suggestion — the Tag validation queue's working set, or null
+     * when empty. Native SQL because DQL has no portable ORDER BY RANDOM(); re-hydrates via find().
      */
     public function findRandomWithPendingSuggestions(): ?Post
     {
@@ -213,8 +187,7 @@ class PostRepository extends ServiceEntityRepository
     }
 
     /**
-     * How many distinct posts still have at least one pending suggestion — the size of the Tag
-     * validation queue (COUNT form of findRandomWithPendingSuggestions()), used for the menu badge.
+     * How many distinct posts still have a pending suggestion — the Tag validation queue size (menu badge).
      */
     public function countPostsWithPendingSuggestions(): int
     {
@@ -239,10 +212,6 @@ class PostRepository extends ServiceEntityRepository
         return (int) $this->createQueryBuilder('p')->select('COUNT(p.id)')->getQuery()->getSingleScalarResult();
     }
 
-    /**
-     * Number of posts with no automatic tagging suggestion yet (the un-processed backlog) — the COUNT
-     * form of findWithoutSuggestionsIterable().
-     */
     public function countWithoutSuggestions(): int
     {
         $qb = $this->createQueryBuilder('p')->select('COUNT(p.id)');
@@ -260,10 +229,7 @@ class PostRepository extends ServiceEntityRepository
     }
 
     /**
-     * Stream posts that have no embedding row yet — the default "embed missing" set that fills
-     * the kNN/classifier pool. `toIterable()` so a large back-catalogue isn't fully hydrated.
-     *
-     * @return iterable<Post>
+     * Stream posts with no embedding row — the "embed missing" set that fills the kNN/classifier pool.
      */
     public function findWithoutEmbeddingIterable(): iterable
     {
@@ -281,9 +247,6 @@ class PostRepository extends ServiceEntityRepository
             ->toIterable();
     }
 
-    /**
-     * Number of posts still missing an embedding (COUNT form of findWithoutEmbeddingIterable()).
-     */
     public function countWithoutEmbedding(): int
     {
         $sub = $this->getEntityManager()->createQueryBuilder()

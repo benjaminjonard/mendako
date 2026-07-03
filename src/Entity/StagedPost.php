@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Attribute\Upload;
-use App\Repository\BulkUploadRepository;
+use App\Repository\StagedPostRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
@@ -13,9 +13,9 @@ use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity(repositoryClass: BulkUploadRepository::class)]
-#[ORM\Table(name: 'men_bulk_upload')]
-class BulkUpload implements UploadableInterface
+#[ORM\Entity(repositoryClass: StagedPostRepository::class)]
+#[ORM\Table(name: 'men_staged_post')]
+class StagedPost implements UploadableInterface
 {
     #[ORM\Id]
     #[ORM\Column(type: Types::STRING, length: 36, unique: true, options: ['fixed' => true])]
@@ -41,7 +41,7 @@ class BulkUpload implements UploadableInterface
     private ?int $size = null;
 
     #[ORM\Column(type: Types::INTEGER, nullable: true)]
-    private ?int $duration = null; //in seconds
+    private ?int $duration = null;
 
     #[ORM\Column(type: Types::BOOLEAN, nullable: false, options: ['default' => false])]
     private bool $hasSound = false;
@@ -79,7 +79,7 @@ class BulkUpload implements UploadableInterface
         return $this->file;
     }
 
-    public function setFile(?File $file): BulkUpload
+    public function setFile(?File $file): StagedPost
     {
         $this->file = $file;
 
@@ -91,7 +91,7 @@ class BulkUpload implements UploadableInterface
         return $this->path;
     }
 
-    public function setPath(?string $path): BulkUpload
+    public function setPath(?string $path): StagedPost
     {
         $this->path = $path;
 
@@ -103,7 +103,7 @@ class BulkUpload implements UploadableInterface
         return $this->mimetype;
     }
 
-    public function setMimetype(?string $mimetype): BulkUpload
+    public function setMimetype(?string $mimetype): StagedPost
     {
         $this->mimetype = $mimetype;
 
@@ -115,7 +115,7 @@ class BulkUpload implements UploadableInterface
         return $this->height;
     }
 
-    public function setHeight(?int $height): BulkUpload
+    public function setHeight(?int $height): StagedPost
     {
         $this->height = $height;
 
@@ -127,7 +127,7 @@ class BulkUpload implements UploadableInterface
         return $this->width;
     }
 
-    public function setWidth(?int $width): BulkUpload
+    public function setWidth(?int $width): StagedPost
     {
         $this->width = $width;
 
@@ -139,7 +139,7 @@ class BulkUpload implements UploadableInterface
         return $this->size;
     }
 
-    public function setSize(?int $size): BulkUpload
+    public function setSize(?int $size): StagedPost
     {
         $this->size = $size;
 
@@ -151,7 +151,7 @@ class BulkUpload implements UploadableInterface
         return $this->duration;
     }
 
-    public function setDuration(?int $duration): BulkUpload
+    public function setDuration(?int $duration): StagedPost
     {
         $this->duration = $duration;
 
@@ -163,7 +163,7 @@ class BulkUpload implements UploadableInterface
         return $this->hasSound;
     }
 
-    public function setHasSound(bool $hasSound): BulkUpload
+    public function setHasSound(bool $hasSound): StagedPost
     {
         $this->hasSound = $hasSound;
 
@@ -175,7 +175,7 @@ class BulkUpload implements UploadableInterface
         return $this->vector;
     }
 
-    public function setVector(?string $vector): BulkUpload
+    public function setVector(?string $vector): StagedPost
     {
         $this->vector = $vector;
 
@@ -187,7 +187,7 @@ class BulkUpload implements UploadableInterface
         return $this->isDuplicate;
     }
 
-    public function setIsDuplicate(bool $isDuplicate): BulkUpload
+    public function setIsDuplicate(bool $isDuplicate): StagedPost
     {
         $this->isDuplicate = $isDuplicate;
 
@@ -199,7 +199,7 @@ class BulkUpload implements UploadableInterface
         return $this->uploadedBy;
     }
 
-    public function setUploadedBy(?User $uploadedBy): BulkUpload
+    public function setUploadedBy(?User $uploadedBy): StagedPost
     {
         $this->uploadedBy = $uploadedBy;
 
@@ -211,7 +211,7 @@ class BulkUpload implements UploadableInterface
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeImmutable $createdAt): BulkUpload
+    public function setCreatedAt(\DateTimeImmutable $createdAt): StagedPost
     {
         $this->createdAt = $createdAt;
 

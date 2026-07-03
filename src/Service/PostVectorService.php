@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\File\File;
  * The signature is a 64-bit DCT perceptual hash (pHash), stored as a 64-dimension 0/1 pgvector.
  * Because the components are binary, the pgvector L2 operator `<->` equals sqrt(Hamming distance),
  * so ordering/thresholding on `<->` is exactly a Hamming-distance nearest-neighbour search over the
- * hash — a proper pHash comparison, not the old mixed dHash+histogram+colour L2 blend.
+ * hash.
  *
  * Mirror-invariance: the hash is canonicalised by taking the min of the image and its horizontal
  * flip, so a flipped repost (the most common imageboard variant) collapses to the same bits.
@@ -52,8 +52,6 @@ class PostVectorService
      * Hash the 32x32 luminance grid and its horizontal flip, then keep whichever bitstring is
      * smaller. Both an image and its mirror canonicalise to the same value, so a flipped repost
      * lands at Hamming distance 0.
-     *
-     * @return list<float>
      */
     private function perceptualHashBits(\GdImage $image): array
     {
@@ -70,8 +68,6 @@ class PostVectorService
 
     /**
      * Downscale to a DCT_SIZE x DCT_SIZE luminance grid once; both orientations reuse it.
-     *
-     * @return array<int, array<int, float>>
      */
     private function luminanceGrid(\GdImage $image): array
     {
@@ -98,10 +94,6 @@ class PostVectorService
      *
      * bit = low-frequency DCT coefficient > median-of-the-block. The DC term (0,0) is excluded from
      * the median so overall brightness doesn't skew the threshold — the standard pHash recipe.
-     *
-     * @param array<int, array<int, float>> $luma
-     *
-     * @return list<int>
      */
     private function hashFromLuma(array $luma, bool $flip): array
     {
@@ -133,10 +125,6 @@ class PostVectorService
     /**
      * Separable 2D DCT-II: 1D DCT over rows, then over columns. Only the low-frequency corner is
      * consumed by the caller, but the full transform is cheap at 32x32 so we compute it whole.
-     *
-     * @param array<int, array<int, float>> $matrix
-     *
-     * @return array<int, array<int, float>>
      */
     private function dct2d(array $matrix): array
     {
@@ -163,10 +151,6 @@ class PostVectorService
     /**
      * 1D DCT-II of a DCT_SIZE-length signal. Normalisation is irrelevant here: we only compare
      * coefficients to their own median, and any positive scaling preserves the ordering.
-     *
-     * @param array<int, float> $signal
-     *
-     * @return list<float>
      */
     private function dct1d(array $signal): array
     {
@@ -189,9 +173,15 @@ class PostVectorService
         }
 
         $path = $file->getRealPath();
-        $thumbnailPath = '/tmp/'.$file->getFilename().'_600.jpeg';
-        $this->thumbnailGenerator->generate($path, $thumbnailPath, 600, 'jpeg');
-        $image = @imagecreatefromjpeg($thumbnailPath);
+        // Unique temp path avoids collisions between concurrent calls that share a basename.
+        $thumbnailPath = sys_get_temp_dir().'/mendako-phash-'.bin2hex(random_bytes(8)).'.jpeg';
+        $image = false;
+        try {
+            $this->thumbnailGenerator->generate($path, $thumbnailPath, 600, 'jpeg');
+            $image = @imagecreatefromjpeg($thumbnailPath);
+        } finally {
+            @unlink($thumbnailPath);
+        }
 
         return $image instanceof \GdImage ? $image : null;
     }

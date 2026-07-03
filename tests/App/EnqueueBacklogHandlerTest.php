@@ -63,7 +63,7 @@ class EnqueueBacklogHandlerTest extends KernelTestCase
         $processed = $this->createPost();
         $this->addSuggestion($processed->getId());
 
-        $handler(new EnqueueBacklogMessage('post', false));
+        $handler(new EnqueueBacklogMessage(false));
 
         $this->assertCount(2, $this->batchTransport()->getSent()); // suggested post skipped
     }
@@ -75,7 +75,7 @@ class EnqueueBacklogHandlerTest extends KernelTestCase
         $processed = $this->createPost();
         $this->addSuggestion($processed->getId());
 
-        $handler(new EnqueueBacklogMessage('post', true));
+        $handler(new EnqueueBacklogMessage(true));
 
         $this->assertCount(2, $this->batchTransport()->getSent());
     }
@@ -85,7 +85,7 @@ class EnqueueBacklogHandlerTest extends KernelTestCase
         $handler = $this->handler(false);
         $this->createPost();
 
-        $handler(new EnqueueBacklogMessage('post', false));
+        $handler(new EnqueueBacklogMessage(false));
 
         $this->assertCount(0, $this->batchTransport()->getSent());
     }

@@ -101,84 +101,16 @@ DB_VERSION=15
 
 ### Optional: Automatic tags
 
-Mendako can suggest tags on upload using a **local** automatic tagging inference service. It is fully optional: if you do not add the service below, Mendako runs exactly as before, with no extra dependency and no added runtime cost.
+Mendako can suggest tags on upload using a **local** automatic tagging inference service. It is fully optional.
 
-To enable it, add the `mendako_ml` service **and** the `mendako_worker` (which processes the tagging queue) to your `docker-compose.yml` (both only start with the `autotag` profile):
+To enable it, add the `mendako_ml` to your `docker-compose.yml`:
 ```
     mendako_ml:
         container_name: mendako_ml
         image: benjaminjonard/mendako-ml
         restart: unless-stopped
-        profiles: ["autotag"]
-
-    mendako_worker:
-        container_name: mendako_worker
-        image: benjaminjonard/mendako
-        restart: unless-stopped
-        profiles: ["autotag"]
-        env_file:
-            - .env
-        depends_on:
-            - mendako_postgresql
-        entrypoint: ["php", "bin/console", "messenger:consume", "autotag_interactive", "autotag_batch", "--time-limit=3600", "--memory-limit=128M"]
-```
-The worker drains `autotag_interactive` (uploads) before `autotag_batch` (retroactive/backlog tagging), so interactive tagging always takes priority. For a large backlog you may run a second worker dedicated to `autotag_batch` only.
-Then start the stack with the profile:
-
-`docker-compose --profile autotag up -d`
-
-Notes:
-- The service is **internal only** (no published port); the app reaches it at `http://mendako_ml:8000`. All inference runs locally — no data leaves your server.
-- Set `MENDAKO_ML_URL` in your `.env` only if you run the service elsewhere (default `http://mendako_ml:8000`).
-- The automatic tagging feature requires a `pgvector`-enabled PostgreSQL image (e.g. `pgvector/pgvector:pg16`).
-- Once the service is running, the admin automatic tagging page (under Administration) lists the available models and their status per category, lets you **download or remove** each model (one click, stored in the models volume), and lets you choose the active model.
-- When a **CLIP** model is active, each processed item also gets a semantic embedding (stored alongside its tags), which powers two kinds of learned suggestions: tags propagated from your most visually similar already-tagged items (kNN), and zero-shot matches of the image against your own tag names (so photos of animals/objects the illustration tagger can't read are still covered). These learned suggestions are always offered as click-to-add chips — never auto-applied. Additive and optional — without a CLIP model, only the tagger runs.
-
-#### Switching to a different-dimension embedding encoder
-
-Embeddings are bound to the dimension of the encoder that produced them (the shipped `siglip2-so400m` is 1152). If you ever switch to an encoder of a **different** dimension, run the maintenance command so the embedding column is re-dimensioned and every item is re-embedded:
-
-```bash
-docker exec mendako_worker php bin/console app:autotag:reindex-embeddings <dimension>
 ```
 
-It drops the index, purges the old embeddings, re-dimensions the column, recreates the index, and re-dispatches every item for re-embedding. **No tags are lost** (only embeddings are purged — they are recomputable). You must also update the `embeddingVector` `dimensions` mapping on `Post`/`StagedUpload` to match the new model.
-
-#### Tagging your existing backlog
-
-To generate suggestions for posts that predate the feature, run:
-
-```bash
-docker exec mendako_worker php bin/console app:autotag:tag-backlog
-```
-
-This enqueues posts that have **never been automatic tagging-processed** (no suggestion yet) on the deprioritized `autotag_batch` queue, so it never competes with interactive uploads. A post whose suggestions were all accepted or dismissed is left alone. Add `--staged` to tag the staging area instead, or `--all` to re-process **every** item (e.g. after switching models) — this re-runs inference on the whole set, so it is costly. Re-running before the queue drains duplicates work (the handler is idempotent, so results stay correct). Suggestions are never auto-applied — review them in the normal tag UI.
-
-To check progress at any time:
-
-```bash
-docker exec mendako_worker php bin/console app:autotag:batch-status
-```
-
-It reports, for posts and for staged uploads, how many have been automatic tagging-processed (have suggestions) out of the total, with a completion state.
-
-### Mirroring the automatic tagging models (maintainer only)
-
-End users never need this — they download models from the admin UI with no Hugging Face account. This section is for the **maintainer**: the catalog points at **public** Hugging Face mirrors of the models so every self-hoster can download them anonymously, even if an upstream repo disappears. Both shipped models are Apache-2.0, so redistribution is allowed as long as the `LICENSE`/`NOTICE` is kept.
-
-To (re)create the mirrors:
-
-1. Create a Hugging Face account, then a **write** access token at https://huggingface.co/settings/tokens (scope: *write*). Keep it private. Install the CLI with `pip install -U "huggingface_hub[cli]"` (on distros with an externally-managed Python, e.g. Arch, use a virtualenv or `pipx install "huggingface_hub[cli]"`), then `hf auth login`.
-2. For each model, download the upstream ONNX files, create a **public** repo under your namespace, and upload them (keeping `LICENSE`, adding a `NOTICE` crediting the upstream author):
-   - **WD tagger** — upstream `SmilingWolf/wd-eva02-large-tagger-v3` (`model.onnx`, `selected_tags.csv`) → `benjaminjonard/wd-eva02-large-tagger-v3-onnx`.
-   - **SigLIP2** — the Immich SigLIP2 ONNX export `immich-app/ViT-SO400M-16-SigLIP2-384__webli` (`visual/model.onnx`, `textual/model.onnx`, `tokenizer.json`) → `benjaminjonard/siglip2-so400m-onnx`, normalized to `visual.onnx` / `textual.onnx` / `tokenizer.json`. The `tokenizer.json` is required for zero-shot tagging (the text encoder consumes token ids); make sure it is mirrored alongside the two `.onnx` files.
-   ```
-   hf download SmilingWolf/wd-eva02-large-tagger-v3 model.onnx selected_tags.csv --local-dir ./mirror-wd
-   hf repo create wd-eva02-large-tagger-v3-onnx        # public by default
-   hf upload benjaminjonard/wd-eva02-large-tagger-v3-onnx ./mirror-wd .
-   ```
-   *(`hf` replaces the deprecated `huggingface-cli`.)*
-3. Confirm each repo is **public** on huggingface.co, then pin the catalog: set `repo_id` + the head-commit `revision` (SHA) for each entry in `ml/app/catalog.py`.
 
 ### Available environment variables
 

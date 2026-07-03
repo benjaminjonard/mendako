@@ -214,6 +214,17 @@ figure .tag {
   max-width: 32rem;
 }
 
+/* Admin tab panels sit centered under the full is-6 submenu, like the validation card.
+   Configuration matches its 32rem; Jobs is a bit wider for its extra controls. */
+.admin-panel {
+  margin-inline: auto;
+  max-width: 32rem;
+}
+
+.admin-panel-wide {
+  max-width: 40rem;
+}
+
 /* The figure is capped at 800px by .image-display, so on a wide box it must center itself. */
 .image-display.tag-validation-media {
   margin-left: auto;

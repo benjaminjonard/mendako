@@ -10,15 +10,22 @@ echo "**** 1/8 - Make sure /uploads folders exist ****"
 	mkdir -p /thumbnails
 
 echo "**** 2/8 - Create the symbolic link for the /uploads folder ****"
-[ ! -L /app/public/public/uploads ] && \
-	cp -r /app/public/public/uploads/. /uploads && \
-	rm -r /app/public/public/uploads && \
+# `if` blocks (not an && chain) so every step runs under `set -e`: a mid-chain failure would
+# otherwise be exempt from `set -e` and silently skip `ln -s`, leaving the app nowhere to write.
+# `mkdir -p` guarantees the source exists even when the image ships no seed dir.
+if [ ! -L /app/public/public/uploads ]; then
+	mkdir -p /app/public/public/uploads
+	cp -r /app/public/public/uploads/. /uploads
+	rm -r /app/public/public/uploads
 	ln -s /uploads /app/public/public/uploads
+fi
 
-[ ! -L /app/public/public/thumbnails ] && \
-	cp -r /app/public/public/thumbnails/. /thumbnails && \
-	rm -r /app/public/public/thumbnails && \
+if [ ! -L /app/public/public/thumbnails ]; then
+	mkdir -p /app/public/public/thumbnails
+	cp -r /app/public/public/thumbnails/. /thumbnails
+	rm -r /app/public/public/thumbnails
 	ln -s /thumbnails /app/public/public/thumbnails
+fi
 
 echo "**** 3/8 - Setting env variables ****"
 rm -rf /app/public/.env.local
@@ -79,8 +86,6 @@ echo "**** 4/8 - Create symfony log files ****"
 chown -R "$USER":"$USER" /app/public/var/log
 chown -R "$USER":"$USER" /app/public/var/log/prod.log
 
-echo "**** 8/8 - Setup complete, starting the server. ****"
-frankenphp run --config /etc/caddy/Caddyfile
-exec "$@"
-
-echo "**** All done ****"
+echo "**** 8/8 - Setup complete, starting supervisord (web + workers). ****"
+export WORKER_PHP_MEMORY_LIMIT=${WORKER_PHP_MEMORY_LIMIT:-2G}
+exec supervisord -c /app/public/docker/supervisord.conf

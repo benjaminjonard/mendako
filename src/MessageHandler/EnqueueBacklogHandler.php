@@ -10,8 +10,8 @@ use App\Service\AutoTag\BacklogEnqueuer;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
- * Fans out a retroactive tagging run on the worker: queues one
- * GenerateSuggestionsMessage per backlog item. Feature-gated.
+ * Fans out a retroactive tagging run: queues one GenerateSuggestionsMessage per backlog item.
+ * Feature-gated.
  */
 #[AsMessageHandler]
 final class EnqueueBacklogHandler
@@ -28,6 +28,6 @@ final class EnqueueBacklogHandler
             return;
         }
 
-        $this->backlogEnqueuer->enqueue($message->targetType, $message->all);
+        $this->backlogEnqueuer->enqueue($message->all);
     }
 }

@@ -39,6 +39,26 @@ jobs:
         with:
           name: ci-container
           
+  ml_tests:
+    name: ML service tests (pytest)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        working-directory: ml
+        run: pip install -r requirements-dev.txt
+
+      - name: Run tests
+        working-directory: ml
+        run: pytest
+
   security_checker:
     name: Security checker
     runs-on: ubuntu-latest

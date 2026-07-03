@@ -1,8 +1,4 @@
-"""Health/readiness endpoint for the Mendako ML service.
-
-At this stage the service loads no models; ``models`` is always an empty list.
-Later stories (1.3/1.4) populate it from the downloaded-model catalog.
-"""
+"""Health/readiness endpoint. ``models`` is always an empty list — this endpoint loads no models."""
 
 from fastapi import APIRouter
 from pydantic import BaseModel

@@ -7,7 +7,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     MENDAKO_MODELS_DIR=/models
 
 # Runtime libs:
-#  - ffmpeg: video-frame extraction (used from Story 4.1; installed now for a stable image)
+#  - ffmpeg: video-frame extraction
 #  - libgomp1: required by onnxruntime
 #  - curl: container HEALTHCHECK
 RUN set -eux; \

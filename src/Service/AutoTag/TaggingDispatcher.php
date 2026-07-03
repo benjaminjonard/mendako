@@ -5,17 +5,15 @@ declare(strict_types=1);
 namespace App\Service\AutoTag;
 
 use App\Entity\Post;
-use App\Entity\BulkUpload;
+use App\Entity\StagedPost;
 use App\Message\GenerateSuggestionsMessage;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\TransportNamesStamp;
 
 /**
- * Feature-gated entry point for queuing Automatic tags generation.
- * No-op when the automatic tagging feature is disabled (no dispatch, no runtime cost).
- *
- * Interactive uploads use the default routing (autotag_interactive); retroactive/backlog
- * runs use dispatchBatch() which routes to the deprioritized autotag_batch transport.
+ * Feature-gated entry point for queuing auto-tag suggestion generation; a no-op when the feature is
+ * disabled. Interactive uploads use the default routing; retroactive/backlog runs use dispatchBatch()
+ * which routes to the deprioritized autotag_batch transport.
  */
 class TaggingDispatcher
 {
@@ -25,7 +23,7 @@ class TaggingDispatcher
     ) {
     }
 
-    public function dispatch(Post|BulkUpload $item): void
+    public function dispatch(Post|StagedPost $item): void
     {
         $message = $this->buildMessage($item);
         if ($message === null) {
@@ -39,7 +37,7 @@ class TaggingDispatcher
      * Queue retroactive/backlog tagging on the deprioritized autotag_batch transport so it
      * never competes with interactive uploads.
      */
-    public function dispatchBatch(Post|BulkUpload $item): void
+    public function dispatchBatch(Post|StagedPost $item): void
     {
         $message = $this->buildMessage($item);
         if ($message === null) {
@@ -49,15 +47,14 @@ class TaggingDispatcher
         $this->messageBus->dispatch($message, [new TransportNamesStamp('autotag_batch')]);
     }
 
-    private function buildMessage(Post|BulkUpload $item): ?GenerateSuggestionsMessage
+    private function buildMessage(Post|StagedPost $item): ?GenerateSuggestionsMessage
     {
         if (!$this->autoTagConfigProvider->isEnabled()) {
             return null;
         }
 
-        $targetType = $item instanceof BulkUpload ? 'bulk' : 'post';
-        $contentHash = sha1((string) $item->getPath());
+        $targetType = $item instanceof StagedPost ? 'bulk' : 'post';
 
-        return new GenerateSuggestionsMessage($targetType, (string) $item->getId(), $contentHash);
+        return new GenerateSuggestionsMessage($targetType, (string) $item->getId());
     }
 }

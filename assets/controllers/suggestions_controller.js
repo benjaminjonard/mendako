@@ -102,19 +102,16 @@ export default class extends Controller {
         row.className = 'suggestion-row';
         row.dataset.suggestion = tag.name;
 
-        // Clickable name, colored by its category, adds the tag to the field.
         let name = document.createElement('a');
         name.className = 'suggestion-name is-clickable is-category-' + tag.category;
         name.textContent = tag.name;
         name.dataset.suggestion = tag.name;
         name.dataset.action = 'click->suggestions#fillInputWithSuggestion';
 
-        // Relevance as a percentage.
         let score = document.createElement('span');
         score.className = 'suggestion-score';
         score.textContent = Math.round((tag.score || 0) * 100) + '%';
 
-        // Source badge (WD / custom).
         let source = document.createElement('span');
         source.className = 'tag is-small suggestion-source suggestion-source-' + tag.source;
         source.textContent = this.sourceLabelsValue[tag.source] || tag.source;
@@ -154,6 +151,10 @@ export default class extends Controller {
 
     rejectSuggestion(event) {
         event.stopPropagation();
-        event.currentTarget.closest('[data-suggestion]').remove();
+        const row = event.currentTarget.closest('[data-suggestion]');
+        if (row === null) {
+            return;
+        }
+        row.remove();
     }
 }
