@@ -55,13 +55,13 @@ def test_embed_returns_unit_normalized_vector(monkeypatch, tmp_path):
     assert abs(result["embedding"][1] - 0.8) < 1e-5
 
 
-def test_embed_handles_zero_vector(monkeypatch, tmp_path):
+def test_embed_rejects_zero_vector(monkeypatch, tmp_path):
+    import pytest
+
     monkeypatch.setattr(inference, "_session", lambda _p: _FakeWdSession([0.0, 0.0]))
 
-    result = inference.embed(_wd_dir(tmp_path), _png(tmp_path))
-
-    assert result["dim"] == 2
-    assert all(v == 0.0 for v in result["embedding"])  # no division by zero
+    with pytest.raises(ValueError):
+        inference.embed(_wd_dir(tmp_path), _png(tmp_path))
 
 
 def test_embed_rejects_model_without_embedding_output(monkeypatch, tmp_path):

@@ -126,7 +126,11 @@ def embed(model_dir: Path, image_path: str) -> dict:
     size = next((d for d in model_input.shape if isinstance(d, int) and d > 3), 448)
     x = _preprocess(image_path, size)
 
-    embedding = _embedding_from_outputs(session.run(None, {model_input.name: x}))
-    if embedding is None:
+    outputs = session.run(None, {model_input.name: x})
+    if len(outputs) < 2:
         raise ValueError("model does not expose an embedding output (rebuild the ML image)")
+
+    embedding = _embedding_from_outputs(outputs)
+    if embedding is None:
+        raise ValueError("model produced a degenerate embedding (all-zero or non-finite feature)")
     return {"embedding": [float(v) for v in embedding], "dim": int(embedding.shape[0])}
