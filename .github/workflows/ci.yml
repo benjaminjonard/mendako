@@ -98,7 +98,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        postgres: [ 15, 16, 17 ]
+        postgres: [ 15, 16, 17, 18 ]
     steps:
       - name: Download artifact
         uses: actions/download-artifact@v8
