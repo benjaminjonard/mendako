@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests\App;
 
+use App\Entity\Tag;
 use App\Entity\TagSuggestion;
 use App\Enum\TagCategory;
+use App\Repository\TagRepository;
 use App\Repository\TagSuggestionRepository;
 use App\Service\AutoTag\SuggestionService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -217,6 +219,39 @@ class SuggestionServiceTest extends KernelTestCase
 
         $this->assertCount(1, $suggestions);
         $this->assertSame('1girl', $suggestions[0]->getTagName());
+    }
+
+    public function test_wd_store_reclassifies_matching_custom_tag_to_wd(): void
+    {
+        $tagRepository = static::getContainer()->get(TagRepository::class);
+        $this->entityManager->persist((new Tag())->setName('known_by_wd')->setSource(Tag::SOURCE_CUSTOM));
+        $this->entityManager->persist((new Tag())->setName('truly_custom')->setSource(Tag::SOURCE_CUSTOM));
+        $this->entityManager->flush();
+
+        $this->service->store('post', $this->targetId, [
+            'tags' => [['name' => 'known_by_wd', 'category' => 'general', 'score' => 0.6]],
+        ], TagSuggestion::SOURCE_WD);
+        $this->entityManager->clear();
+
+        // The WD model emitted 'known_by_wd' → it is not custom after all.
+        $this->assertSame(Tag::SOURCE_WD, $tagRepository->findOneBy(['name' => 'known_by_wd'])->getSource());
+        // A tag the model never mentioned stays custom.
+        $this->assertSame(Tag::SOURCE_CUSTOM, $tagRepository->findOneBy(['name' => 'truly_custom'])->getSource());
+    }
+
+    public function test_knn_store_does_not_reclassify_tags(): void
+    {
+        $tagRepository = static::getContainer()->get(TagRepository::class);
+        $this->entityManager->persist((new Tag())->setName('learned_custom')->setSource(Tag::SOURCE_CUSTOM));
+        $this->entityManager->flush();
+
+        $this->service->store('post', $this->targetId, [
+            'tags' => [['name' => 'learned_custom', 'category' => 'general', 'score' => 0.9]],
+        ], TagSuggestion::SOURCE_KNN);
+        $this->entityManager->clear();
+
+        // A knn suggestion means a neighbour confirmed it, not that the model knows it → still custom.
+        $this->assertSame(Tag::SOURCE_CUSTOM, $tagRepository->findOneBy(['name' => 'learned_custom'])->getSource());
     }
 
     private function indexByName(array $suggestions): array

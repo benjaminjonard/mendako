@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Board;
-use App\Entity\Embedding;
 use App\Entity\Post;
 use App\Entity\TagSuggestion;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -75,6 +74,23 @@ class PostRepository extends ServiceEntityRepository
         $result = $qb->getQuery()->getScalarResult();
 
         return $result === [] ? 0 : $result[0]['count'];
+    }
+
+    /**
+     * Normalized names of the tags already applied to a post (via men_post_tag). Auto-tagging
+     * uses these to skip re-proposing a tag the post already carries. Returns [] for an unknown id.
+     */
+    public function appliedTagNamesForPost(string $postId): array
+    {
+        $rows = $this->createQueryBuilder('post')
+            ->select('tag.name')
+            ->join('post.tags', 'tag')
+            ->where('post.id = :id')
+            ->setParameter('id', $postId)
+            ->getQuery()
+            ->getSingleColumnResult();
+
+        return array_map('strval', $rows);
     }
 
     /**
@@ -160,10 +176,10 @@ class PostRepository extends ServiceEntityRepository
     }
 
     /**
-     * One random post with a pending suggestion — the Tag validation queue's working set, or null
-     * when empty. Native SQL because DQL has no portable ORDER BY RANDOM(); re-hydrates via find().
+     * The most recent post with a pending suggestion — the Tag validation queue's working set, or
+     * null when empty. Native SQL for symmetry with the sibling queue queries; re-hydrates via find().
      */
-    public function findRandomWithPendingSuggestions(): ?Post
+    public function findLatestWithPendingSuggestions(): ?Post
     {
         $conn = $this->getEntityManager()->getConnection();
 
@@ -177,7 +193,7 @@ class PostRepository extends ServiceEntityRepository
                 AND s.target_id = post.id
                 AND s.status = :status
             )
-            ORDER BY RANDOM()
+            ORDER BY post.created_at DESC
             LIMIT 1
         ";
 
@@ -228,38 +244,43 @@ class PostRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
-    /**
-     * Stream posts with no embedding row — the "embed missing" set that fills the kNN/classifier pool.
-     */
-    public function findWithoutEmbeddingIterable(): iterable
+    public function countOnBoards(array $slugs): int
     {
-        $sub = $this->getEntityManager()->createQueryBuilder()
-            ->select('1')
-            ->from(Embedding::class, 'e')
-            ->where("e.targetType = 'post'")
-            ->andWhere('e.targetId = p.id');
+        if ($slugs === []) {
+            return 0;
+        }
 
-        $qb = $this->createQueryBuilder('p');
-
-        return $qb
-            ->where($qb->expr()->not($qb->expr()->exists($sub->getDQL())))
+        return (int) $this->createQueryBuilder('p')
+            ->select('COUNT(p.id)')
+            ->join('p.board', 'b')
+            ->where('b.slug IN (:slugs)')
+            ->setParameter('slugs', $slugs)
             ->getQuery()
-            ->toIterable();
+            ->getSingleScalarResult();
     }
 
-    public function countWithoutEmbedding(): int
+    public function countWithoutSuggestionsOnBoards(array $slugs): int
     {
+        if ($slugs === []) {
+            return 0;
+        }
+
         $sub = $this->getEntityManager()->createQueryBuilder()
             ->select('1')
-            ->from(Embedding::class, 'e')
-            ->where("e.targetType = 'post'")
-            ->andWhere('e.targetId = p.id');
+            ->from(TagSuggestion::class, 's')
+            ->where('s.targetType = :targetType')
+            ->andWhere('s.targetId = p.id');
 
         $qb = $this->createQueryBuilder('p')->select('COUNT(p.id)');
 
         return (int) $qb
-            ->where($qb->expr()->not($qb->expr()->exists($sub->getDQL())))
+            ->join('p.board', 'b')
+            ->where('b.slug IN (:slugs)')
+            ->andWhere($qb->expr()->not($qb->expr()->exists($sub->getDQL())))
+            ->setParameter('slugs', $slugs)
+            ->setParameter('targetType', 'post')
             ->getQuery()
             ->getSingleScalarResult();
     }
+
 }

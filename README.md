@@ -129,8 +129,9 @@ To enable it, add the `mendako_ml` to your `docker-compose.yml`:
 | UPLOAD_MAX_FILESIZE | Defaults to 20M                             |                                                     |
 | PHP_MEMORY_LIMIT    | Defaults to 512M                            |                                                     |
 | PHP_TIMEZONE        | You timezone, default to Europe\Paris       | https://www.w3schools.com/php/php_ref_timezones.asp |
-| MENDAKO_AUTOTAG_ENABLED  | Hard master switch for Automatic tags    | `0` (default, off) or `1`                           |
-| MENDAKO_ML_URL      | URL of the optional automatic tagging inference service    | default `http://mendako_ml:8000`                    |
+| APP_AUTOTAG_ENABLED  | Hard master switch for Automatic tags    | `0` (default, off) or `1`                           |
+| APP_ML_URL      | URL of the optional automatic tagging inference service    | default `http://mendako_ml:8000`                    |
+| APP_AUTOTAG_AUTOVALIDATE_THRESHOLD | Min WD confidence (percent) to auto-validate a suggested tag | `0`–`100`, default `85`               |
 
 
 ## Support Mendako

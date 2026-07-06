@@ -28,8 +28,7 @@ class EnqueueBacklogHandlerTest extends KernelTestCase
         self::bootKernel();
         $provider = $this->createStub(AutoTagConfigProvider::class);
         $provider->method('isEnabled')->willReturn($enabled);
-        // Stub the container's provider too, so the TaggingDispatcher inside BacklogEnqueuer
-        // (which gates dispatchBatch) is enabled as well.
+        $provider->method('isBoardEnabled')->willReturn(true);
         self::getContainer()->set(AutoTagConfigProvider::class, $provider);
 
         return new EnqueueBacklogHandler(

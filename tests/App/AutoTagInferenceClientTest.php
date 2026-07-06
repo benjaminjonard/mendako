@@ -40,7 +40,7 @@ class AutoTagInferenceClientTest extends TestCase
         $this->assertSame('general', $result['rating']['label']);
     }
 
-    public function test_embed_posts_model_and_image_and_parses_result(): void
+    public function test_analyze_posts_model_and_image(): void
     {
         $tmp = tempnam(sys_get_temp_dir(), 'img');
         file_put_contents($tmp, 'imagedata');
@@ -59,17 +59,15 @@ class AutoTagInferenceClientTest extends TestCase
             }
             $captured = ['url' => $url, 'body' => $body];
 
-            return new MockResponse(json_encode(['embedding' => [0.6, 0.8], 'dim' => 2, 'model_id' => 'wd-eva02-large-tagger-v3']), ['http_code' => 200]);
+            return new MockResponse(json_encode(['tags' => [], 'rating' => ['label' => null, 'score' => 0.0]]), ['http_code' => 200]);
         });
 
-        $result = (new AutoTagInferenceClient($httpClient, $this->provider(), new NullLogger()))
-            ->embed($tmp, 'wd-eva02-large-tagger-v3');
+        (new AutoTagInferenceClient($httpClient, $this->provider(), new NullLogger()))
+            ->analyze($tmp, 'wd-eva02-large-tagger-v3');
         unlink($tmp);
 
-        $this->assertStringEndsWith('/embed', $captured['url']);
+        $this->assertStringEndsWith('/analyze', $captured['url']);
         $this->assertStringContainsString('wd-eva02-large-tagger-v3', $captured['body']);
-        $this->assertSame([0.6, 0.8], $result['embedding']);
-        $this->assertSame(2, $result['dim']);
     }
 
     public function test_analyze_returns_empty_on_error(): void

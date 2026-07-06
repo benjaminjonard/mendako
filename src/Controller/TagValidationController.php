@@ -21,12 +21,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[IsGranted('ROLE_ADMIN')]
 class TagValidationController extends AbstractController
 {
-    /**
-     * Mirrors PostController: confident base-model (wd) suggestions pre-fill the tags field;
-     * everything else stays a click-to-add chip.
-     */
-    private const float HIGH_CONFIDENCE_THRESHOLD = 0.85;
-
     public function __construct(private readonly AutoTagConfigProvider $autoTagConfigProvider)
     {
     }
@@ -39,7 +33,7 @@ class TagValidationController extends AbstractController
     ): Response {
         $this->assertAutoTagEnabled();
 
-        $post = $postRepository->findRandomWithPendingSuggestions();
+        $post = $postRepository->findLatestWithPendingSuggestions();
         if ($post === null) {
             // Queue drained — nothing left to validate.
             return $this->render('App/TagValidation/index.html.twig', ['post' => null]);
@@ -135,6 +129,8 @@ class TagValidationController extends AbstractController
      */
     private function splitSuggestions(array $suggestions): array
     {
+        $threshold = $this->autoTagConfigProvider->getAutoValidateThreshold();
+
         $pending = array_filter(
             $suggestions,
             static fn (TagSuggestion $suggestion): bool => $suggestion->getStatus() === TagSuggestion::STATUS_PENDING
@@ -147,7 +143,7 @@ class TagValidationController extends AbstractController
         foreach ($pending as $suggestion) {
             $name = $suggestion->getTagName();
             if ($suggestion->getSource() === TagSuggestion::SOURCE_WD
-                && $suggestion->getScore() >= self::HIGH_CONFIDENCE_THRESHOLD
+                && $suggestion->getScore() >= $threshold
                 && !isset($seen[$name])) {
                 $highConfidenceNames[] = $name;
                 $seen[$name] = true;

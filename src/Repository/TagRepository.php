@@ -147,6 +147,28 @@ class TagRepository extends ServiceEntityRepository
         return $results;
     }
 
+    /**
+     * Flip the given names from `custom` to `wd`. Only `custom` rows are touched. Returns rows
+     * reclassified. Bulk UPDATE — run it when no matching Tag is held in the UoW.
+     */
+    public function reclassifyToWd(array $names): int
+    {
+        if ($names === []) {
+            return 0;
+        }
+
+        return (int) $this->createQueryBuilder('t')
+            ->update()
+            ->set('t.source', ':wd')
+            ->where('t.name IN (:names)')
+            ->andWhere('t.source = :custom')
+            ->setParameter('wd', Tag::SOURCE_WD)
+            ->setParameter('names', $names)
+            ->setParameter('custom', Tag::SOURCE_CUSTOM)
+            ->getQuery()
+            ->execute();
+    }
+
     public function findLike(string $query)
     {
         return $this

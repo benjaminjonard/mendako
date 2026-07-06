@@ -4,18 +4,21 @@ declare(strict_types=1);
 
 namespace App\Service\AutoTag;
 
+use App\Entity\Tag;
 use App\Entity\TagSuggestion;
 use App\Enum\TagCategory;
 use App\Repository\BlacklistedTagRepository;
+use App\Repository\PostRepository;
+use App\Repository\TagRepository;
 use App\Repository\TagSuggestionRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\String\UnicodeString;
 
 /**
- * Persists the service /analyze result as non-authoritative TagSuggestions. Writes ONLY
- * men_tag_suggestion, never men_post_tag — confirmed tags are written solely by the human
- * tag-save flow. Re-running for a target upserts that source's pending rows and never
- * removes accepted/dismissed ones, so nothing the user touched is lost.
+ * Persists the service /analyze result as TagSuggestions. A suggestion on a real post whose score
+ * clears APP_AUTOTAG_AUTOVALIDATE_THRESHOLD is auto-validated: applied to the post (men_post_tag)
+ * and stored as ACCEPTED instead of pending. Re-running upserts the source's pending rows and never
+ * removes accepted/dismissed ones.
  */
 class SuggestionService
 {
@@ -23,6 +26,9 @@ class SuggestionService
         private readonly EntityManagerInterface $entityManager,
         private readonly TagSuggestionRepository $tagSuggestionRepository,
         private readonly BlacklistedTagRepository $blacklistedTagRepository,
+        private readonly PostRepository $postRepository,
+        private readonly TagRepository $tagRepository,
+        private readonly AutoTagConfigProvider $autoTagConfigProvider,
     ) {
     }
 
@@ -62,27 +68,81 @@ class SuggestionService
         // Persist ranked by score (highest first).
         uasort($candidates, static fn (array $a, array $b): int => $b['score'] <=> $a['score']);
 
+        // Names the target already carries as confirmed tags (men_post_tag). Re-proposing a tag the
+        // post already has is noise, so treat it like a decided name and skip it. Only a Post has
+        // applied tags — a bulk/StagedPost has none yet. Normalized to line up with candidate names.
+        $applied = [];
+        if ($targetType === 'post') {
+            foreach ($this->postRepository->appliedTagNamesForPost($targetId) as $appliedName) {
+                $normalized = $this->normalizeName($appliedName);
+                if ($normalized !== null) {
+                    $applied[$normalized] = true;
+                }
+            }
+        }
+
         // Upsert atomically: drop this source's stale pending rows, then re-insert, skipping names
         // the user already decided on (accepted/dismissed) — across ALL sources, so a decision made
-        // on a wd suggestion also silences the same name coming from knn, and vice versa.
-        $this->entityManager->wrapInTransaction(function () use ($targetType, $targetId, $source, $candidates): void {
+        // on a wd suggestion also silences the same name coming from knn, and vice versa — as well
+        // as names already applied to the post.
+        $autoValidate = $targetType === 'post';
+        $threshold = $this->autoTagConfigProvider->getAutoValidateThreshold();
+        $tagSource = $source === TagSuggestion::SOURCE_WD ? Tag::SOURCE_WD : Tag::SOURCE_CUSTOM;
+
+        $this->entityManager->wrapInTransaction(function () use ($targetType, $targetId, $source, $candidates, $applied, $autoValidate, $threshold, $tagSource): void {
             $this->tagSuggestionRepository->deletePendingForTarget($targetType, $targetId, $source);
-            $known = array_flip($this->tagSuggestionRepository->decidedTagNamesForTarget($targetType, $targetId));
+
+            // Names the WD model emits are known to it: flip any matching `custom` tag to `wd`.
+            // (array keys are cast to int by PHP; men_tag.name is a string column.)
+            if ($source === TagSuggestion::SOURCE_WD) {
+                $this->tagRepository->reclassifyToWd(array_map('strval', array_keys($candidates)));
+            }
+
+            $post = null;
+
+            $known = array_flip($this->tagSuggestionRepository->decidedTagNamesForTarget($targetType, $targetId)) + $applied;
 
             foreach ($candidates as $name => $candidate) {
                 if (isset($known[$name])) {
                     continue;
                 }
+
+                $accepted = false;
+                if ($autoValidate && $candidate['score'] >= $threshold) {
+                    $post ??= $this->postRepository->find($targetId);
+                    if ($post !== null) {
+                        $post->addTag($this->resolveTag((string) $name, $candidate['category'], $tagSource));
+                        $accepted = true;
+                    }
+                }
+
                 $suggestion = (new TagSuggestion())
                     ->setTargetType($targetType)
                     ->setTargetId($targetId)
                     ->setTagName((string) $name)
                     ->setCategory($candidate['category'])
                     ->setScore($candidate['score'])
-                    ->setSource($source);
+                    ->setSource($source)
+                    ->setStatus($accepted ? TagSuggestion::STATUS_ACCEPTED : TagSuggestion::STATUS_PENDING);
                 $this->entityManager->persist($suggestion);
             }
         });
+    }
+
+    private function resolveTag(string $name, ?TagCategory $category, string $source): Tag
+    {
+        $tag = $this->tagRepository->findOneBy(['name' => $name]);
+        if ($tag !== null) {
+            return $tag;
+        }
+
+        $tag = (new Tag())
+            ->setName($name)
+            ->setCategory($category ?? TagCategory::GENERAL)
+            ->setSource($source);
+        $this->entityManager->persist($tag);
+
+        return $tag;
     }
 
     private function normalizeName(int|string|null $name): ?string

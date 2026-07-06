@@ -26,8 +26,6 @@ final class Version20260125155325 extends AbstractMigration
         $this->addSql('ALTER TABLE men_post ADD vector vector(64) DEFAULT NULL');
         $this->addSql('ALTER TABLE men_post DROP signature');
 
-        // Existing posts keep a NULL vector; they are recomputed after deploy by the admin
-        // "Duplicate vectors" backfill job (pure PHP/GD, no file I/O inside the migration).
         $this->addSql('
             CREATE INDEX idx_post_vector_hnsw
             ON men_post

@@ -58,6 +58,21 @@
                     {{ (autoTagEnabled ? 'label.enabled' : 'label.disabled')|trans }}
                 </span>
             </div>
+            {% if autoTagEnabled %}
+                <div class="config">
+                    <b>{{ 'label.autotag_autovalidate_threshold'|trans }}</b>: {{ autoTagAutoValidateThreshold }}&nbsp;%
+                </div>
+                <div class="config">
+                    <b>{{ 'label.autotag_boards'|trans }}</b>:
+                    {% if '*' in autoTagBoards %}
+                        {{ 'label.autotag_boards_all'|trans }}
+                    {% elseif autoTagBoards is empty %}
+                        {{ 'label.autotag_boards_none'|trans }}
+                    {% else %}
+                        {{ autoTagBoards|join(', ') }}
+                    {% endif %}
+                </div>
+            {% endif %}
         </div>
     </div>
 {% endblock %}

@@ -51,12 +51,16 @@
 
                 {{ form_start(form) }}
                     <div data-controller="suggestions">
-                        <div data-controller="autocomplete">
-                            {{ form_row(form.tags, {'label' : 'label.tags', 'attr': {
-                                'data-suggestions-target': 'input',
-                                'data-autocomplete-target': 'input',
-                                'data-action': 'keyup->autocomplete#autocomplete'
-                            }} ) }}
+                        <div class="field" data-controller="autocomplete">
+                            {{ form_label(form.tags, 'label.tags'|trans) }}
+                            <div class="control">
+                                {{ form_widget(form.tags, {'attr': {
+                                    'data-suggestions-target': 'input',
+                                    'data-autocomplete-target': 'input',
+                                    'data-action': 'keyup->autocomplete#autocomplete'
+                                }} ) }}
+                                <ul class="autocomplete-dropdown autocomplete-dropdown-textarea is-hidden" data-autocomplete-target="list"></ul>
+                            </div>
                         </div>
 
                         {% if chips is not empty %}

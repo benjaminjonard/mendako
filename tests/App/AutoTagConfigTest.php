@@ -93,21 +93,6 @@ class AutoTagConfigTest extends WebTestCase
         $this->assertResponseStatusCodeSame(404);
     }
 
-    public function test_embed_backlog_404_when_disabled(): void
-    {
-        $this->client->loginUser(UserFactory::createOne(['roles' => ['ROLE_ADMIN']]));
-        $this->stubClient();
-        $provider = $this->installTogglingProvider();
-
-        $crawler = $this->client->request(Request::METHOD_GET, '/admin/jobs');
-        $form = $crawler->filter('form[action$="embed-backlog"] button[value="1"]')->form();
-
-        $provider->flag = false;
-        $this->client->submit($form);
-
-        $this->assertResponseStatusCodeSame(404);
-    }
-
     public function test_jobs_block_is_hidden_when_disabled(): void
     {
         $this->client->loginUser(UserFactory::createOne(['roles' => ['ROLE_ADMIN']]));
@@ -132,6 +117,10 @@ class AutoTagConfigTest extends WebTestCase
         $em->persist((new \App\Entity\TagSuggestion())->setTargetType('post')->setTargetId($processed->getId())->setTagName('cat')->setScore(0.9)->setSource(\App\Entity\TagSuggestion::SOURCE_WD));
         $em->flush();
 
+        $provider = $this->createStub(AutoTagConfigProvider::class);
+        $provider->method('getEnabledBoardSlugs')->willReturn(['*']);
+        static::getContainer()->set(AutoTagConfigProvider::class, $provider);
+
         $this->client->request(Request::METHOD_GET, '/admin/autotag/jobs');
 
         $this->assertResponseIsSuccessful();
@@ -139,12 +128,31 @@ class AutoTagConfigTest extends WebTestCase
         // A single request now carries every job card's status.
         $this->assertSame(2, $data['tagging']['total']);
         $this->assertSame(1, $data['tagging']['processed']);
-        $this->assertArrayHasKey('embedding', $data);
-        $this->assertSame(2, $data['embedding']['total']);
         // Duplicate-detection vectors: both factory posts lack a vector (not built at factory time).
         $this->assertArrayHasKey('vectors', $data);
         $this->assertSame(2, $data['vectors']['total']);
         $this->assertSame(0, $data['vectors']['processed']);
+    }
+
+    public function test_jobs_tagging_total_reflects_board_filter(): void
+    {
+        $this->client->loginUser(UserFactory::createOne(['roles' => ['ROLE_ADMIN']]));
+        $tagged = \App\Tests\Factory\BoardFactory::createOne();
+        $ignored = \App\Tests\Factory\BoardFactory::createOne();
+        \App\Tests\Factory\PostFactory::createOne(['board' => $tagged]);
+        \App\Tests\Factory\PostFactory::createOne(['board' => $tagged]);
+        \App\Tests\Factory\PostFactory::createOne(['board' => $ignored]);
+
+        $provider = $this->createStub(AutoTagConfigProvider::class);
+        $provider->method('getEnabledBoardSlugs')->willReturn([$tagged->getSlug()]);
+        static::getContainer()->set(AutoTagConfigProvider::class, $provider);
+
+        $this->client->request(Request::METHOD_GET, '/admin/autotag/jobs');
+
+        $this->assertResponseIsSuccessful();
+        $data = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertSame(2, $data['tagging']['total']);
+        $this->assertSame(3, $data['vectors']['total']);
     }
 
     public function test_vector_backlog_button_starts_a_run_even_when_autotag_disabled(): void
@@ -178,17 +186,6 @@ class AutoTagConfigTest extends WebTestCase
     }
 
 
-    public function test_embed_backlog_button_starts_a_run_when_enabled(): void
-    {
-        $this->client->loginUser(UserFactory::createOne(['roles' => ['ROLE_ADMIN']]));
-        $this->setEnabled(true);
-
-        $crawler = $this->client->request(Request::METHOD_GET, '/admin/jobs');
-        $this->client->submit($crawler->filter('form[action$="embed-backlog"] button[value="1"]')->form());
-
-        $this->assertResponseIsSuccessful();
-    }
-
     public function test_is_enabled_reflects_the_env_flag(): void
     {
         $this->assertTrue((new AutoTagConfigProvider(true))->isEnabled());
@@ -206,7 +203,6 @@ class AutoTagConfigTest extends WebTestCase
         // One model per category, baked into the service image — no DB selection involved.
         $provider = new AutoTagConfigProvider(true);
         $this->assertSame('wd-eva02-large-tagger-v3', $provider->getActiveModel('wd'));
-        // WD is also the embedding encoder now — there is no separate 'clip' model.
         $this->assertNull($provider->getActiveModel('clip'));
         $this->assertNull($provider->getActiveModel('unknown'));
     }

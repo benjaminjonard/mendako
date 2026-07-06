@@ -6,8 +6,7 @@ image build (see Dockerfile); fails the build if any declared file is missing or
 empty so a broken image is never published.
 
 Each ``download`` op is a {"src", "dst"} pair: copy a single repo file, renaming it to
-``dst``. After the files are in place, a model declaring ``embed_output`` gets that internal
-tensor exposed as a second ONNX output (so one forward pass yields tags + embedding).
+``dst``.
 """
 
 import os
@@ -41,28 +40,7 @@ def main() -> int:
             if not path.is_file() or path.stat().st_size == 0:
                 print(f"ERROR: missing or empty file after download: {path}", file=sys.stderr)
                 return 1
-
-        # Expose the model's penultimate feature as a second ONNX output, so one forward pass
-        # yields both the tags and the embedding (see catalog `embed_output`).
-        if entry.get("embed_output"):
-            _expose_embedding_output(model_dir / "model.onnx", entry["embed_output"])
     return 0
-
-
-def _expose_embedding_output(model_path: Path, tensor_name: str) -> None:
-    """Add `tensor_name` (an internal activation) to the model's graph outputs, in place.
-
-    Idempotent: skips if the output is already present. onnx is a build-time dependency only;
-    the runtime uses onnxruntime, which then returns the extra output alongside the logits.
-    """
-    import onnx
-
-    model = onnx.load(str(model_path))
-    if any(out.name == tensor_name for out in model.graph.output):
-        return
-    model.graph.output.append(onnx.helper.make_tensor_value_info(tensor_name, onnx.TensorProto.FLOAT, None))
-    onnx.save(model, str(model_path))
-    print(f"Exposed embedding output {tensor_name} on {model_path}", flush=True)
 
 
 if __name__ == "__main__":

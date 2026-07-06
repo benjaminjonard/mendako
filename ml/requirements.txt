@@ -4,9 +4,6 @@ fastapi==0.115.6
 python-multipart==0.0.20
 uvicorn[standard]==0.34.0
 onnxruntime==1.20.1
-# onnx: build-time only — exposes WD's penultimate feature as a second graph output
-# (see download_models._expose_embedding_output). The runtime uses onnxruntime.
-onnx==1.22.0
 huggingface_hub==0.27.1
 pillow==11.1.0
 tokenizers==0.21.0

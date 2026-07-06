@@ -6,6 +6,7 @@ namespace App\Command;
 
 use App\Entity\Tag;
 use App\Enum\TagCategory;
+use App\Repository\TagSuggestionRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -22,6 +23,7 @@ class RenameCharacterTagsCommand extends Command
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
+        private readonly TagSuggestionRepository $tagSuggestionRepository,
     ) {
         parent::__construct();
     }
@@ -118,14 +120,25 @@ class RenameCharacterTagsCommand extends Command
             $this->entityManager->flush();
         }
 
+        // Keep auto-tagging suggestions (men_tag_suggestion) in sync: their tag_name is a free
+        // string, so a rename would otherwise leave stale suggestions recreating the old tag.
+        $suggestionsSynced = 0;
+        foreach ($renamed as [$from, $to]) {
+            $suggestionsSynced += $dryRun
+                ? $this->tagSuggestionRepository->countByTagName($from)
+                : $this->tagSuggestionRepository->renameTagName($from, $to);
+        }
+
         if ($renamed !== []) {
             $io->table(['From', 'To'], $renamed);
         }
 
         $io->success(sprintf(
-            '%s %d character tag(s). Skipped: %d already qualified, %d no single copyright, %d tie, %d collision.',
+            '%s %d character tag(s); %s %d suggestion(s). Skipped: %d already qualified, %d no single copyright, %d tie, %d collision.',
             $dryRun ? 'Would rename' : 'Renamed',
             count($renamed),
+            $dryRun ? 'would sync' : 'synced',
+            $suggestionsSynced,
             $skippedAlreadyQualified,
             $skippedNoCopyright,
             $skippedTie,

@@ -42,6 +42,8 @@ class AdminController extends AbstractController
             'symfonyVersion' => Kernel::VERSION,
             'frankenPhpVersion' => \extension_loaded('frankenphp') ? str_replace('v', '', phpversion('frankenphp')) : null,
             'autoTagEnabled' => $autoTagConfigProvider->isEnabled(),
+            'autoTagAutoValidateThreshold' => $autoTagConfigProvider->getAutoValidateThresholdPercent(),
+            'autoTagBoards' => $autoTagConfigProvider->getEnabledBoardSlugs(),
         ]);
     }
 

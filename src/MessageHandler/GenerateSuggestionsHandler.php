@@ -5,13 +5,11 @@ declare(strict_types=1);
 namespace App\MessageHandler;
 
 use App\Message\GenerateSuggestionsMessage;
-use App\Repository\EmbeddingRepository;
 use App\Repository\PostRepository;
 use App\Repository\StagedPostRepository;
 use App\Service\AutoTag\AutoTagConfigProvider;
 use App\Service\AutoTag\AutoTagInferenceClient;
 use App\Service\AutoTag\FrameResultAggregator;
-use App\Service\AutoTag\KnnSuggestionService;
 use App\Service\AutoTag\SuggestionService;
 use App\Service\ThumbnailGenerator;
 use Psr\Log\LoggerInterface;
@@ -20,8 +18,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
  * Async tagging handler: produces base-model tag suggestions via the inference service
- * (persisted as non-authoritative TagSuggestions, never tags) and stores the semantic
- * embedding WD returns in the same pass. Idempotent and feature-gated.
+ * (persisted as non-authoritative TagSuggestions, never tags). Idempotent and feature-gated.
  */
 #[AsMessageHandler]
 final class GenerateSuggestionsHandler
@@ -35,10 +32,8 @@ final class GenerateSuggestionsHandler
         private readonly AutoTagConfigProvider $autoTagConfigProvider,
         private readonly AutoTagInferenceClient $autoTagInferenceClient,
         private readonly SuggestionService $suggestionService,
-        private readonly KnnSuggestionService $knnSuggestionService,
         private readonly ThumbnailGenerator $thumbnailGenerator,
         private readonly FrameResultAggregator $frameResultAggregator,
-        private readonly EmbeddingRepository $embeddingRepository,
         #[Autowire('%kernel.project_dir%/public')] private readonly string $publicPath,
         #[Autowire(service: 'monolog.logger.autotag')] private readonly LoggerInterface $logger,
     ) {
@@ -69,20 +64,16 @@ final class GenerateSuggestionsHandler
         $isVideo = in_array($item->getMimetype(), ThumbnailGenerator::VIDEO_MIMETYPES, true);
         $tempDir = null;
         $thumbnail = null;
-        $vectors = []; // one embedding per frame (image → one)
         try {
             $result = null;
             if ($isVideo) {
-                // Sample N frames: their tags are aggregated into one set, and every frame's
-                // embedding is kept (so kNN can match on any frame).
+                // Sample N frames: their tags are aggregated into one set.
                 $tempDir = sys_get_temp_dir().'/mendako-autotag-'.bin2hex(random_bytes(8));
                 $frames = $this->thumbnailGenerator->extractVideoFrames($sourcePath, $tempDir, self::VIDEO_FRAME_COUNT, 600);
                 if ($frames !== []) {
                     $frameResults = [];
                     foreach ($frames as $framePath) {
-                        $frameResult = $this->autoTagInferenceClient->analyze($framePath, $modelId);
-                        $frameResults[] = $frameResult;
-                        $this->collectVector($vectors, $frameResult);
+                        $frameResults[] = $this->autoTagInferenceClient->analyze($framePath, $modelId);
                     }
                     $result = $this->frameResultAggregator->aggregate($frameResults);
                 } else {
@@ -96,7 +87,6 @@ final class GenerateSuggestionsHandler
                 $thumbnail = sys_get_temp_dir().'/mendako-autotag-'.bin2hex(random_bytes(8)).'.jpeg';
                 $this->thumbnailGenerator->generate($sourcePath, $thumbnail, 600, 'jpeg');
                 $result = $this->autoTagInferenceClient->analyze($thumbnail, $modelId);
-                $this->collectVector($vectors, $result);
             }
         } catch (\Throwable $exception) {
             // Soft-fail: a bad/missing source image must not poison the worker.
@@ -117,8 +107,6 @@ final class GenerateSuggestionsHandler
             }
         }
 
-        // Tag suggestions first — the primary feature. An embedding failure (below)
-        // must never prevent these from being stored.
         if (!empty($result['tags']) || ($result['rating']['label'] ?? null) !== null) {
             $this->suggestionService->store($message->targetType, $message->id, $result);
 
@@ -128,38 +116,6 @@ final class GenerateSuggestionsHandler
                 'tag_count' => count($result['tags'] ?? []),
                 'rating' => $result['rating']['label'] ?? null,
             ]);
-        }
-
-        // Semantic embeddings (one per frame) are additive + best-effort: isolate them so a
-        // dimension mismatch or DB error logs to the autotag channel and never poisons the worker
-        // (nor blocks the tag suggestions stored above).
-        if ($vectors === []) {
-            return;
-        }
-
-        $embeddingModelId = (string) ($result['embedding_model_id'] ?? $modelId);
-        try {
-            $this->embeddingRepository->replaceForTarget($message->targetType, $message->id, $embeddingModelId, $vectors);
-        } catch (\Throwable $exception) {
-            $this->logger->warning('automatic tagging embedding storage failed', ['target' => $message->targetType, 'id' => $message->id, 'error' => $exception->getMessage()]);
-
-            return; // embeddings not stored — don't run kNN on unstored vectors
-        }
-
-        // Learned suggestions from the nearest already-tagged items. Best-effort:
-        // a failure here must not block the WD suggestions already stored above.
-        try {
-            $this->knnSuggestionService->propagate($message->targetType, $message->id, $vectors, $embeddingModelId);
-        } catch (\Throwable $exception) {
-            $this->logger->warning('automatic tagging kNN propagation failed', ['target' => $message->targetType, 'id' => $message->id, 'error' => $exception->getMessage()]);
-        }
-    }
-
-    private function collectVector(array &$vectors, array $result): void
-    {
-        $embedding = $result['embedding'] ?? null;
-        if (is_array($embedding) && $embedding !== []) {
-            $vectors[] = '['.implode(',', array_map('floatval', $embedding)).']';
         }
     }
 }

@@ -52,10 +52,13 @@ class StringToTagTransformer implements DataTransformerInterface
                 // category (rating/character/…); anything typed by hand falls back to general.
                 $category = $this->tagSuggestionRepository->findCategoryForName($name) ?? TagCategory::GENERAL;
 
+                $source = $this->tagSuggestionRepository->isKnownByWd($name) ? Tag::SOURCE_WD : Tag::SOURCE_CUSTOM;
+
                 $tag = new Tag();
                 $tag
                     ->setName($name)
                     ->setCategory($category)
+                    ->setSource($source)
                 ;
             }
 

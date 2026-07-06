@@ -146,7 +146,7 @@ class TagValidationTest extends WebTestCase
         $this->assertSame(TagSuggestion::STATUS_DISMISSED, $statusByName['1girl']);
 
         // Nothing pending remains → the post leaves the validation queue.
-        $this->assertNull(static::getContainer()->get(PostRepository::class)->findRandomWithPendingSuggestions());
+        $this->assertNull(static::getContainer()->get(PostRepository::class)->findLatestWithPendingSuggestions());
     }
 
     public function test_submit_with_empty_tags_dismisses_all_suggestions(): void
@@ -164,7 +164,7 @@ class TagValidationTest extends WebTestCase
 
         // Reviewing is the action: clearing the field still validates — every suggestion is dismissed.
         $this->assertSame(['1girl' => TagSuggestion::STATUS_DISMISSED], $this->statusByName($post->getId()));
-        $this->assertNull(static::getContainer()->get(PostRepository::class)->findRandomWithPendingSuggestions());
+        $this->assertNull(static::getContainer()->get(PostRepository::class)->findLatestWithPendingSuggestions());
     }
 
     public function test_dismissed_suggestion_is_not_resurfaced_on_autotag_rerun(): void
@@ -186,7 +186,7 @@ class TagValidationTest extends WebTestCase
 
         // ...but a dismissed name is never re-surfaced as a fresh pending suggestion.
         $this->assertSame(['1girl' => TagSuggestion::STATUS_DISMISSED], $this->statusByName($post->getId()));
-        $this->assertNull(static::getContainer()->get(PostRepository::class)->findRandomWithPendingSuggestions());
+        $this->assertNull(static::getContainer()->get(PostRepository::class)->findLatestWithPendingSuggestions());
     }
 
     public function test_validation_tab_and_pending_badge_appear_in_tags_submenu(): void

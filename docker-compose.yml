@@ -23,6 +23,10 @@ services:
             - POST_PER_PAGE=20
             - INFINITE_SCROLL_POST_PER_PAGE=50
             - UPLOAD_MAX_FILESIZE=200M
+            - APP_AUTOTAG_ENABLED=1
+            - APP_ML_URL=http://mendako_ml:8000
+            - APP_AUTOTAG_AUTOVALIDATE_THRESHOLD=30
+            - APP_AUTOTAG_BOARDS=anime,r18,cosplay
         depends_on:
             - postgresql
         volumes:

@@ -26,8 +26,6 @@ class FrameResultAggregatorTest extends TestCase
         // Highest-scoring rating across frames.
         $this->assertSame('sensitive', $result['rating']['label']);
         $this->assertSame(0.8, $result['rating']['score']);
-        // Embeddings are stored per frame elsewhere, not aggregated here.
-        $this->assertArrayNotHasKey('embedding', $result);
     }
 
     public function test_single_frame_passes_through(): void

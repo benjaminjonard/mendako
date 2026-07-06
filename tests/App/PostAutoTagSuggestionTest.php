@@ -9,6 +9,7 @@ use App\Enum\TagCategory;
 use App\Service\AutoTag\AutoTagConfigProvider;
 use App\Tests\Factory\BoardFactory;
 use App\Tests\Factory\PostFactory;
+use App\Tests\Factory\TagFactory;
 use App\Tests\Factory\UserFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -40,6 +41,8 @@ class PostAutoTagSuggestionTest extends WebTestCase
     {
         $stub = $this->createStub(AutoTagConfigProvider::class);
         $stub->method('isEnabled')->willReturn($enabled);
+        // Without this the stub returns 0.0, auto-validating every suggestion; pin it to the default.
+        $stub->method('getAutoValidateThreshold')->willReturn(0.85);
         static::getContainer()->set(AutoTagConfigProvider::class, $stub);
     }
 
@@ -107,6 +110,34 @@ class PostAutoTagSuggestionTest extends WebTestCase
         $data = json_decode($this->client->getResponse()->getContent(), true);
         $this->assertSame(['wd_tag'], array_column($data['highConfidence'], 'name'));
         $this->assertContains('knn_character', array_column($data['pending'], 'name'));
+    }
+
+    public function test_store_skips_tags_already_applied_to_the_post(): void
+    {
+        [, $post] = $this->createPost();
+        $em = static::getContainer()->get(EntityManagerInterface::class);
+
+        // A tag already confirmed on the post must not be re-proposed on a re-run.
+        $existing = TagFactory::createOne(['name' => 'existing_tag', 'category' => TagCategory::GENERAL]);
+        $managedPost = $em->getRepository(\App\Entity\Post::class)->find($post->getId());
+        // The transient upload file was already consumed on creation; clear it so re-flushing
+        // to attach the tag doesn't retrigger the upload listener on a now-missing temp file.
+        $managedPost->setFile(null);
+        $managedPost->addTag($existing);
+        $em->flush();
+
+        $store = static::getContainer()->get(\App\Service\AutoTag\SuggestionService::class);
+        $store->store('post', $post->getId(), ['tags' => [
+            ['name' => 'existing_tag', 'score' => 0.95, 'category' => 'general'],
+            ['name' => 'new_tag', 'score' => 0.90, 'category' => 'general'],
+        ]]);
+
+        $names = array_map(
+            static fn (TagSuggestion $s): string => $s->getTagName(),
+            static::getContainer()->get(\App\Repository\TagSuggestionRepository::class)->findForTarget('post', $post->getId()),
+        );
+        $this->assertContains('new_tag', $names);
+        $this->assertNotContains('existing_tag', $names);
     }
 
     public function test_endpoint_returns_disabled_when_feature_off(): void

@@ -20,6 +20,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[UniqueEntity(fields: ['name'], message: 'error.name.not_unique')]
 class Tag
 {
+    // Provenance: only `custom` tags (names the WD model cannot produce) propagate by similarity.
+    public const string SOURCE_CUSTOM = 'custom';
+    public const string SOURCE_WD = 'wd';
+
     #[ORM\Id]
     #[ORM\Column(type: Types::STRING, length: 36, unique: true, options: ['fixed' => true])]
     private string $id;
@@ -36,6 +40,9 @@ class Tag
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => 0])]
     private bool $suggested = false;
+
+    #[ORM\Column(type: Types::STRING, length: 16, options: ['default' => self::SOURCE_CUSTOM])]
+    private string $source = self::SOURCE_CUSTOM;
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     #[Gedmo\Timestampable(on: 'create')]
@@ -113,6 +120,18 @@ class Tag
     public function setSuggested(bool $suggested): Tag
     {
         $this->suggested = $suggested;
+
+        return $this;
+    }
+
+    public function getSource(): string
+    {
+        return $this->source;
+    }
+
+    public function setSource(string $source): Tag
+    {
+        $this->source = $source;
 
         return $this;
     }

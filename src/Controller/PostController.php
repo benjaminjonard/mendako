@@ -23,12 +23,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PostController extends AbstractController
 {
-    /**
-     * Suggestions scoring at or above this bar pre-fill the tag field; lower-confidence ones
-     * stay as clickable pending chips. Matches the WD character threshold.
-     */
-    private const float HIGH_CONFIDENCE_THRESHOLD = 0.85;
-
     #[Route(path: '/upload', name: 'app_post_upload', methods: ['GET', 'POST'])]
     #[Route(path: '/boards/{slug}/add', name: 'app_post_add', methods: ['GET', 'POST'])]
     public function add(
@@ -179,13 +173,14 @@ class PostController extends AbstractController
 
         // Dedup by name across sources (wd / knn). Pass 1: confident wd tags pre-fill the field.
         // Pass 2: everything else becomes a click-to-add chip (knn guesses are never auto-applied).
+        $threshold = $autoTagConfigProvider->getAutoValidateThreshold();
         $highConfidence = [];
         $lowConfidence = [];
         $seen = [];
         foreach ($pending as $suggestion) {
             $name = $suggestion->getTagName();
             if ($suggestion->getSource() === \App\Entity\TagSuggestion::SOURCE_WD
-                && $suggestion->getScore() >= self::HIGH_CONFIDENCE_THRESHOLD
+                && $suggestion->getScore() >= $threshold
                 && !isset($seen[$name])) {
                 $highConfidence[] = $entry($suggestion);
                 $seen[$name] = true;

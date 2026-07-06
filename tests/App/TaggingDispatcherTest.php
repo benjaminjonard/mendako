@@ -20,6 +20,7 @@ class TaggingDispatcherTest extends TestCase
     {
         $provider = $this->createStub(AutoTagConfigProvider::class);
         $provider->method('isEnabled')->willReturn($enabled);
+        $provider->method('isBoardEnabled')->willReturn(true);
 
         return $provider;
     }
@@ -58,6 +59,38 @@ class TaggingDispatcherTest extends TestCase
         $bus->expects($this->never())->method('dispatch');
 
         (new TaggingDispatcher($bus, $this->provider(false)))->dispatch(new Post());
+    }
+
+    public function test_does_not_dispatch_post_on_unselected_board(): void
+    {
+        $bus = $this->createMock(MessageBusInterface::class);
+        $bus->expects($this->never())->method('dispatch');
+
+        $provider = $this->createStub(AutoTagConfigProvider::class);
+        $provider->method('isEnabled')->willReturn(true);
+        $provider->method('isBoardEnabled')->willReturn(false);
+
+        $post = new Post();
+        $post->setPath('uploads/boards/1/x.png');
+
+        (new TaggingDispatcher($bus, $provider))->dispatch($post);
+    }
+
+    public function test_dispatches_bulk_upload_regardless_of_board_filter(): void
+    {
+        $bus = $this->createMock(MessageBusInterface::class);
+        $bus->expects($this->once())
+            ->method('dispatch')
+            ->willReturn(new Envelope(new \stdClass()));
+
+        $provider = $this->createStub(AutoTagConfigProvider::class);
+        $provider->method('isEnabled')->willReturn(true);
+        $provider->method('isBoardEnabled')->willReturn(false);
+
+        $stagedPost = new StagedPost();
+        $stagedPost->setPath('uploads/bulk-upload/y.png');
+
+        (new TaggingDispatcher($bus, $provider))->dispatch($stagedPost);
     }
 
     public function test_dispatch_batch_routes_to_autotag_batch_transport(): void

@@ -17,8 +17,8 @@ use Symfony\Component\HttpFoundation\File\File;
  * Mirror-invariance: the hash is canonicalised by taking the min of the image and its horizontal
  * flip, so a flipped repost (the most common imageboard variant) collapses to the same bits.
  *
- * This is SEPARATE from the auto-tag embedding (App\Entity\Embedding, semantic WD vector): those are
- * wrong for duplicate detection (they match distinct images that merely look alike).
+ * This is a perceptual hash for exact/near-duplicate detection, NOT a semantic similarity vector:
+ * it deliberately does not match distinct images that merely look alike.
  */
 class PostVectorService
 {

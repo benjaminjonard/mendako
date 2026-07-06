@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Message\EnqueueBacklogMessage;
-use App\Message\EnqueueEmbeddingBacklogMessage;
 use App\Message\EnqueueVectorBacklogMessage;
 use App\Repository\PostRepository;
 use App\Service\AutoTag\AutoTagConfigProvider;
@@ -29,14 +28,12 @@ class AutoTagConfigController extends AbstractController
     // Per-job message classes on the shared autotag_batch queue: the coordinator that kicks a run
     // off plus the per-item fan-out it expands into. One source of truth for status and launch guards.
     private const TAGGING_CLASSES = ['EnqueueBacklogMessage', 'GenerateSuggestionsMessage'];
-    private const EMBEDDING_CLASSES = ['EnqueueEmbeddingBacklogMessage', 'GenerateEmbeddingMessage'];
     private const VECTOR_CLASSES = ['EnqueueVectorBacklogMessage', 'GenerateVectorMessage'];
 
     // job key (matches data-job-status-key in the template) → its message classes, so one cancel
     // route can clear any job's queue.
     private const JOB_CLASSES = [
         'tagging' => self::TAGGING_CLASSES,
-        'embedding' => self::EMBEDDING_CLASSES,
         'vectors' => self::VECTOR_CLASSES,
     ];
 
@@ -81,33 +78,39 @@ class AutoTagConfigController extends AbstractController
      * Each job returns a uniform, display-ready shape built by buildJobStatus().
      */
     #[Route(path: '/admin/autotag/jobs', name: 'app_autotag_jobs', methods: ['GET'])]
-    public function jobs(PostRepository $postRepository, Connection $connection, TranslatorInterface $translator): JsonResponse
+    public function jobs(PostRepository $postRepository, AutoTagConfigProvider $autoTagConfigProvider, Connection $connection, TranslatorInterface $translator): JsonResponse
     {
         // Shared across every job: one count instead of one per card.
         $total = $postRepository->countAll();
 
+        // Tagging is scoped to the selected boards (APP_AUTOTAG_BOARDS).
+        $enabledSlugs = $autoTagConfigProvider->getEnabledBoardSlugs();
+        if (in_array('*', $enabledSlugs, true)) {
+            $taggingTotal = $total;
+            $taggingProcessed = $total - $postRepository->countWithoutSuggestions();
+        } elseif ($enabledSlugs === []) {
+            $taggingTotal = 0;
+            $taggingProcessed = 0;
+        } else {
+            $taggingTotal = $postRepository->countOnBoards($enabledSlugs);
+            $taggingProcessed = $taggingTotal - $postRepository->countWithoutSuggestionsOnBoards($enabledSlugs);
+        }
+
         $tagging = $this->buildJobStatus(
             $translator,
             $this->pendingCounts($connection, self::TAGGING_CLASSES),
-            $total - $postRepository->countWithoutSuggestions(),
-            $total,
+            $this->coordinatorCounts($connection, self::TAGGING_CLASSES),
+            $taggingProcessed,
+            $taggingTotal,
             'label.tagging_done',
             'label.tagging_todo',
-        );
-
-        $embedding = $this->buildJobStatus(
-            $translator,
-            $this->pendingCounts($connection, self::EMBEDDING_CLASSES),
-            $total - $postRepository->countWithoutEmbedding(),
-            $total,
-            'label.embedding_done',
-            'label.embedding_todo',
         );
 
         // Duplicate-detection vectors: core feature, independent of auto-tagging.
         $vectors = $this->buildJobStatus(
             $translator,
             $this->pendingCounts($connection, self::VECTOR_CLASSES),
+            $this->coordinatorCounts($connection, self::VECTOR_CLASSES),
             $total - $postRepository->countWithoutVector(),
             $total,
             'label.vectors_done',
@@ -116,7 +119,6 @@ class AutoTagConfigController extends AbstractController
 
         return $this->json([
             'tagging' => $tagging,
-            'embedding' => $embedding,
             'vectors' => $vectors,
         ]);
     }
@@ -125,31 +127,57 @@ class AutoTagConfigController extends AbstractController
      * Uniform, display-ready status for one job. A job that isn't running always reports its coverage
      * (green once complete, amber while some posts remain) — there is no "idle" state.
      */
-    private function buildJobStatus(TranslatorInterface $translator, array $counts, int $processed, int $total, string $doneKey, string $todoKey): array
+    private function buildJobStatus(TranslatorInterface $translator, array $counts, array $coordinatorCounts, int $processed, int $total, string $doneKey, string $todoKey): array
     {
-        // delivered > 0 means a worker has picked messages up; pending-but-none-delivered is still queued.
-        $running = $counts['delivered'] > 0;
-        $waiting = $counts['pending'] > 0 && !$running;
+        // The backlog coordinator gates the per-item queue. While it's in flight a worker is fanning out
+        // ("starting"); once it's gone (pending == 0) the queue holds the whole run and the bar can trust
+        // it. delivered > 0 means a worker has picked messages up; pending-but-undelivered is still queued.
+        $fannedOut = $coordinatorCounts['pending'] === 0; // coordinator done, or never ran
+        $starting = $coordinatorCounts['delivered'] > 0;  // worker actively fanning out the per-item queue
+        $running = $fannedOut && $counts['delivered'] > 0; // per-item messages being processed
+        $waiting = !$starting && !$running && $counts['pending'] > 0; // queued, but no worker on it yet
         $remaining = max($total - $processed, 0);
 
+        // The bar is trustworthy only once the coordinator has fanned out — then it's driven straight off
+        // the queue: a backlog run enqueues one message per post, so (all posts − messages still queued) /
+        // all posts is the true progress. It works for an "All" re-run (coverage is frozen, but the queue
+        // still drains) as well as a "Missing" run (starts at current coverage, climbs to 100%). No
+        // run-state to persist: the queue itself is the source of truth. Otherwise it falls back to
+        // coverage (and is hidden anyway).
+        $showBar = $fannedOut && $counts['pending'] > 0;
+        $barProcessed = $showBar ? max($total - $counts['pending'], 0) : $processed;
+
         return [
-            'processed' => $processed,
+            'processed' => $barProcessed,
             'total' => $total,
-            'running' => $counts['pending'] > 0, // queued OR in flight — keep launch buttons disabled
+            'running' => $counts['pending'] > 0, // queued OR in flight (coordinator or items) — keep launch buttons disabled
             'state' => match (true) {
+                $starting => 'starting',
                 $running => 'running',
                 $waiting => 'waiting',
                 $remaining > 0 => 'partial',
                 default => 'done',
             },
             'label' => match (true) {
+                $starting => $translator->trans('label.run_starting'),
                 $running => \sprintf('%s — %s %s', $translator->trans('label.run_active'), number_format($counts['pending']), $translator->trans('label.run_remaining')),
                 $waiting => $translator->trans('label.run_waiting'),
                 $remaining > 0 => \sprintf('%s %s · %s %s', number_format($processed), $translator->trans($doneKey), number_format($remaining), $translator->trans($todoKey)),
                 default => \sprintf('%s %s', number_format($processed), $translator->trans($doneKey)),
             },
-            'showBar' => $running || $waiting,
+            'showBar' => $showBar,
         ];
+    }
+
+    /**
+     * Queue counts for a job's backlog coordinator alone (the first class in its list, e.g.
+     * EnqueueBacklogMessage). While the coordinator is present the per-item queue is still
+     * incomplete: delivered > 0 means a worker is fanning out ("starting"); pending-but-undelivered means
+     * it's still queued with no worker ("waiting").
+     */
+    private function coordinatorCounts(Connection $connection, array $messageClasses): array
+    {
+        return $this->pendingCounts($connection, [$messageClasses[0]]);
     }
 
     /**
@@ -174,36 +202,6 @@ class AutoTagConfigController extends AbstractController
             [new TransportNamesStamp('autotag_batch')],
         );
         $this->addFlash('notice', $translator->trans('message.vectors_started'));
-
-        return $this->redirectToRoute('app_admin_jobs');
-    }
-
-    /**
-     * Kick off a bulk embedding run (fills the embedding pool for kNN / classifier). The
-     * fan-out happens on the worker; posts only for now.
-     */
-    #[Route(path: '/admin/autotag/embed-backlog', name: 'app_autotag_embed_backlog', methods: ['POST'])]
-    public function embedBacklog(Request $request, AutoTagConfigProvider $autoTagConfigProvider, MessageBusInterface $messageBus, TranslatorInterface $translator, Connection $connection): Response
-    {
-        if (!$this->isCsrfTokenValid('autotag_embed', $request->request->getString('_token'))) {
-            throw $this->createAccessDeniedException('Invalid CSRF token');
-        }
-
-        if (!$autoTagConfigProvider->isEnabled()) {
-            throw $this->createNotFoundException();
-        }
-
-        if ($this->pendingCounts($connection, self::EMBEDDING_CLASSES)['pending'] > 0) {
-            $this->addFlash('notice', $translator->trans('message.job_already_running'));
-
-            return $this->redirectToRoute('app_admin_jobs');
-        }
-
-        $messageBus->dispatch(
-            new EnqueueEmbeddingBacklogMessage($request->request->getBoolean('all')),
-            [new TransportNamesStamp('autotag_batch')],
-        );
-        $this->addFlash('notice', $translator->trans('message.embeddings_started'));
 
         return $this->redirectToRoute('app_admin_jobs');
     }

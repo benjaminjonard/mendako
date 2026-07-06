@@ -17,6 +17,7 @@ class TaggingDispatcherRoutingTest extends KernelTestCase
         self::bootKernel();
         $autoTagConfig = $this->createStub(AutoTagConfigProvider::class);
         $autoTagConfig->method('isEnabled')->willReturn(true);
+        $autoTagConfig->method('isBoardEnabled')->willReturn(true);
         self::getContainer()->set(AutoTagConfigProvider::class, $autoTagConfig);
 
         return self::getContainer()->get(TaggingDispatcher::class);

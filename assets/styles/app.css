@@ -32,7 +32,7 @@ html {
 
 .image-display, .image-display:not(.is-fullsize) img {
   max-width: 800px;
-  max-height: 650px;
+  max-height: 100%;
 }
 
 /* Start image grid */
@@ -131,6 +131,12 @@ figure .tag {
 
 .is-category-rating {
   color: #e64980;
+}
+
+/* Keep a board tag and its post count together on one line (e.g. "belle_(zenless_zone_zero) (11)"),
+   instead of letting the count wrap under a long name. */
+[data-infinite-scroll-target="tag"] {
+  white-space: nowrap;
 }
 
 .tag-table thead th a {
@@ -647,11 +653,12 @@ html.loading:before {
 .left-block {
   position: sticky;
   display: inline-block;
-  max-height: 85vh;
   overflow-y: auto;
-  width: 300px;
+  max-height: 85vh;
+  max-width: 300px;
   top: 100px;
   bottom: 0;
+  font-size: 0.95rem;
 }
 
 .left-block .block {

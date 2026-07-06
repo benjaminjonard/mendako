@@ -6,8 +6,7 @@ namespace App\Service\AutoTag;
 
 /**
  * Merges per-frame `/analyze` results for a video into one suggestion set: each tag keeps its
- * highest score across frames and the rating is the highest-scoring frame's. Embeddings are kept
- * per frame elsewhere, so they are not aggregated here.
+ * highest score across frames and the rating is the highest-scoring frame's.
  */
 class FrameResultAggregator
 {

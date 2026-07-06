@@ -607,6 +607,30 @@
         <target>Format des miniatures</target>
       </segment>
     </unit>
+    <unit id="Xt4Vh9k" name="label.autotag_autovalidate_threshold">
+      <segment state="translated">
+        <source>Auto-validation threshold</source>
+        <target>Seuil d'auto-validation</target>
+      </segment>
+    </unit>
+    <unit id="Bq7Wm2p" name="label.autotag_boards">
+      <segment state="translated">
+        <source>Auto-tagged boards</source>
+        <target>Boards auto-taggés</target>
+      </segment>
+    </unit>
+    <unit id="Kd3Rz8t" name="label.autotag_boards_all">
+      <segment state="translated">
+        <source>All</source>
+        <target>Tous</target>
+      </segment>
+    </unit>
+    <unit id="Vn5Lc4x" name="label.autotag_boards_none">
+      <segment state="translated">
+        <source>None</source>
+        <target>Aucun</target>
+      </segment>
+    </unit>
     <unit id="frN0Olf" name="label.disk_usage">
       <segment state="translated">
         <source>Disk usage</source>
@@ -667,49 +691,49 @@
         <target>Post</target>
       </segment>
     </unit>
-    <unit id="blk001" name="label.ai_blacklist">
+    <unit id="C0cGYZr" name="label.ai_blacklist">
       <segment state="translated">
         <source>AI blacklist</source>
         <target>Liste noire IA</target>
       </segment>
     </unit>
-    <unit id="blk002" name="label.ai_blacklist_help">
+    <unit id="LnMXKjd" name="label.ai_blacklist_help">
       <segment state="translated">
         <source>These tags will never be suggested by the automatic tagging.</source>
         <target>Ces tags ne seront jamais proposés par le tagging automatique.</target>
       </segment>
     </unit>
-    <unit id="blk003" name="btn.add">
+    <unit id="zzZCGn6" name="btn.add">
       <segment state="translated">
         <source>Add</source>
         <target>Ajouter</target>
       </segment>
     </unit>
-    <unit id="blk004" name="message.tag_blacklisted">
+    <unit id="eJtoqLR" name="message.tag_blacklisted">
       <segment state="translated">
         <source>Tag {tag} blacklisted</source>
         <target>Tag {tag} ajouté à la liste noire</target>
       </segment>
     </unit>
-    <unit id="blk005" name="message.tag_unblacklisted">
+    <unit id="qkyXQOc" name="message.tag_unblacklisted">
       <segment state="translated">
         <source>Tag {tag} removed from blacklist</source>
         <target>Tag {tag} retiré de la liste noire</target>
       </segment>
     </unit>
-    <unit id="tgVal001" name="menu.tag_validation">
+    <unit id="mqpU0eX" name="menu.tag_validation">
       <segment state="translated">
         <source>Tag validation</source>
         <target>Validation</target>
       </segment>
     </unit>
-    <unit id="tgVal002" name="label.no_posts_to_validate">
+    <unit id="qwXGJYR" name="label.no_posts_to_validate">
       <segment state="translated">
         <source>No posts left to validate.</source>
         <target>Aucun post à valider.</target>
       </segment>
     </unit>
-    <unit id="tgVal003" name="message.tags_validated">
+    <unit id="OqPSL1G" name="message.tags_validated">
       <segment state="translated">
         <source>Tags validated.</source>
         <target>Tags validés.</target>
@@ -811,7 +835,7 @@
         <target>Taguer les posts existants</target>
       </segment>
     </unit>
-    <unit id="tagPostsHelp" name="label.tag_existing_posts_help">
+    <unit id="dgZ5AnR" name="label.tag_existing_posts_help">
       <segment state="translated">
         <source>Suggests tags for your images by analyzing what they show. You review and confirm every suggestion — nothing is tagged without you. New uploads are handled automatically. For best results, run "Analyze image content" first.</source>
         <target>Propose des tags pour vos images en analysant ce qu'elles montrent. Vous validez chaque suggestion — rien n'est tagué sans vous. Les nouveaux imports sont traités automatiquement. Pour de meilleurs résultats, lancez d'abord « Analyse du contenu des images ».</target>
@@ -833,6 +857,12 @@
       <segment state="translated">
         <source>remaining</source>
         <target>en attente</target>
+      </segment>
+    </unit>
+    <unit id="rN7uQ2e" name="label.run_starting">
+      <segment state="translated">
+        <source>Starting…</source>
+        <target>Démarrage…</target>
       </segment>
     </unit>
     <unit id="UQ6FVNw" name="label.processed">
@@ -865,169 +895,139 @@
         <target>Les tags automatiques sont désactivés</target>
       </segment>
     </unit>
-    <unit id="sugTagLst" name="label.tag_suggestions">
+    <unit id="klTEu5O" name="label.tag_suggestions">
       <segment state="translated">
         <source>Tag suggestions</source>
         <target>Suggestions de tags</target>
       </segment>
     </unit>
-    <unit id="sugSrcWd" name="label.source_wd">
+    <unit id="7S7FGNF" name="label.source_wd">
       <segment state="translated">
         <source>WD</source>
         <target>WD</target>
       </segment>
     </unit>
-    <unit id="sugSrcCust" name="label.source_custom">
+    <unit id="ATuY3sA" name="label.source_custom">
       <segment state="translated">
         <source>Custom</source>
         <target>Perso</target>
       </segment>
     </unit>
-    <unit id="catRating" name="app.enum.tag.category.rating">
+    <unit id="LUZ16KF" name="app.enum.tag.category.rating">
       <segment state="translated">
         <source>Rating</source>
         <target>Classification</target>
       </segment>
     </unit>
-    <unit id="embPool" name="label.embedding_pool">
-      <segment state="translated">
-        <source>Analyze image content</source>
-        <target>Analyse du contenu des images</target>
-      </segment>
-    </unit>
-    <unit id="embPoolHelp" name="label.embedding_pool_help">
-      <segment state="translated">
-        <source>Looks at what each image shows so the app can suggest tags and find visually similar posts. New uploads are analyzed automatically.</source>
-        <target>Examine ce que montre chaque image pour proposer des tags et retrouver des posts visuellement similaires. Les nouveaux imports sont analysés automatiquement.</target>
-      </segment>
-    </unit>
-    <unit id="embDone" name="label.embedding_done">
-      <segment state="translated">
-        <source>embedded</source>
-        <target>avec embedding</target>
-      </segment>
-    </unit>
-    <unit id="embTodo" name="label.embedding_todo">
-      <segment state="translated">
-        <source>to embed</source>
-        <target>à traiter</target>
-      </segment>
-    </unit>
-    <unit id="tagDone" name="label.tagging_done">
+    <unit id="XAUgRuO" name="label.tagging_done">
       <segment state="translated">
         <source>tagged</source>
         <target>taggés</target>
       </segment>
     </unit>
-    <unit id="tagTodo" name="label.tagging_todo">
+    <unit id="fIBPbER" name="label.tagging_todo">
       <segment state="translated">
         <source>to tag</source>
         <target>à traiter</target>
       </segment>
     </unit>
-    <unit id="vecDone" name="label.vectors_done">
+    <unit id="6qNJwGn" name="label.vectors_done">
       <segment state="translated">
-        <source>with vector</source>
-        <target>avec vecteur</target>
+        <source>vectorized</source>
+        <target>vectorisés</target>
       </segment>
     </unit>
-    <unit id="vecTodo" name="label.vectors_todo">
+    <unit id="FAYWKWm" name="label.vectors_todo">
       <segment state="translated">
         <source>to compute</source>
         <target>à calculer</target>
       </segment>
     </unit>
-    <unit id="embMsg" name="message.embeddings_started">
-      <segment state="translated">
-        <source>Embedding run started.</source>
-        <target>Génération des embeddings lancée.</target>
-      </segment>
-    </unit>
-    <unit id="dupVec" name="label.duplicate_vectors">
+    <unit id="D9tmsoA" name="label.duplicate_vectors">
       <segment state="translated">
         <source>Detect duplicates</source>
         <target>Détection de doublons</target>
       </segment>
     </unit>
-    <unit id="dupVecHelp" name="label.duplicate_vectors_help">
+    <unit id="qs81Y4S" name="label.duplicate_vectors_help">
       <segment state="translated">
         <source>Builds a visual fingerprint of each image so the app can flag duplicates and near-identical posts when you upload. New uploads are fingerprinted automatically.</source>
         <target>Crée une empreinte visuelle de chaque image pour signaler les doublons et quasi-doublons lors des imports. Les nouveaux imports sont traités automatiquement.</target>
       </segment>
     </unit>
-    <unit id="vecMsg" name="message.vectors_started">
+    <unit id="WZYaXwy" name="message.vectors_started">
       <segment state="translated">
         <source>Vector recompute started.</source>
         <target>Recalcul des vecteurs lancé.</target>
       </segment>
     </unit>
-    <unit id="jobRun01" name="message.job_already_running">
+    <unit id="N7b4Cgh" name="message.job_already_running">
       <segment state="translated">
         <source>That job is already running.</source>
         <target>Cette tâche est déjà en cours.</target>
       </segment>
     </unit>
-    <unit id="jobCan01" name="message.job_cancelled">
+    <unit id="gX2YOcW" name="message.job_cancelled">
       <segment state="translated">
         <source>Job cancelled.</source>
         <target>Tâche annulée.</target>
       </segment>
     </unit>
-    <unit id="mrgTag01" name="title.merge_tags">
+    <unit id="MNaOL0B" name="title.merge_tags">
       <segment state="translated">
         <source>Merge tags</source>
         <target>Fusionner des tags</target>
       </segment>
     </unit>
-    <unit id="mrgTag02" name="label.merge_tags">
+    <unit id="WJO2QqL" name="label.merge_tags">
       <segment state="translated">
         <source>Tags to merge into this one</source>
         <target>Tags à fusionner dans celui-ci</target>
       </segment>
     </unit>
-    <unit id="mrgTag03" name="label.merge_tags_help">
+    <unit id="C9swX1y" name="label.merge_tags_help">
       <segment state="translated">
         <source>The selected tags will be deleted and all their images reassigned to this tag. This cannot be undone.</source>
         <target>Les tags sélectionnés seront supprimés et toutes leurs images réassignées à ce tag. Cette action est irréversible.</target>
       </segment>
     </unit>
-    <unit id="mrgTag04" name="btn.merge">
+    <unit id="55qqFwT" name="btn.merge">
       <segment state="translated">
         <source>Merge</source>
         <target>Fusionner</target>
       </segment>
     </unit>
-    <unit id="mrgTag05" name="message.tags_merged">
+    <unit id="GV060Lm" name="message.tags_merged">
       <segment state="translated">
         <source>{count, plural, one {# tag merged into} other {# tags merged into}} {tag}</source>
         <target>{count, plural, one {# tag fusionné dans} other {# tags fusionnés dans}} {tag}</target>
       </segment>
     </unit>
-    <unit id="tagIdx01" name="label.count">
+    <unit id="HnI23ne" name="label.count">
       <segment state="translated">
         <source>Count</source>
         <target>Nombre</target>
       </segment>
     </unit>
-    <unit id="tagIdx02" name="label.search">
+    <unit id="OveSIPt" name="label.search">
       <segment state="translated">
         <source>Search</source>
         <target>Rechercher</target>
       </segment>
     </unit>
-    <unit id="tagIdx03" name="label.all">
+    <unit id="gmw5Mif" name="label.all">
       <segment state="translated">
         <source>All</source>
         <target>Tous</target>
       </segment>
     </unit>
-    <unit id="tagIdx04" name="btn.reset">
+    <unit id="a8eBH77" name="btn.reset">
       <segment state="translated">
         <source>Reset</source>
         <target>Réinitialiser</target>
       </segment>
     </unit>
-    <unit id="tagIdx05" name="label.created_at">
+    <unit id="pB821zV" name="label.created_at">
       <segment state="translated">
         <source>Created at</source>
         <target>Créé le</target>

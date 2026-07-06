@@ -55,6 +55,10 @@ class TaggingDispatcher
 
         $targetType = $item instanceof StagedPost ? 'bulk' : 'post';
 
+        if ($item instanceof Post && !$this->autoTagConfigProvider->isBoardEnabled($item->getBoard()?->getSlug())) {
+            return null;
+        }
+
         return new GenerateSuggestionsMessage($targetType, (string) $item->getId());
     }
 }

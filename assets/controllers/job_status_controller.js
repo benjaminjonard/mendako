@@ -2,6 +2,7 @@ import { Controller } from '@hotwired/stimulus';
 
 // Semantic job state → Bulma tag colour. The backend decides the state; the controller just paints.
 const STATE_CLASS = {
+    starting: 'is-info', // coordinator queued/fanning out; per-item queue not yet complete
     running: 'is-info',
     waiting: 'is-warning', // queued but not yet picked up by a worker
     partial: 'is-warning', // idle but some posts still uncovered
