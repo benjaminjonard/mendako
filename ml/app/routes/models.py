@@ -2,7 +2,9 @@
 
 `GET /models` : the allowlisted catalog with a per-entry status (``ready`` when every
                 declared file is present; models are baked in, no runtime download).
-`POST /analyze`: WD inference — scored tags + a content rating.
+`POST /analyze`: inference — scored tags + a content rating. The requested model's
+                catalog category selects the tagger (WD illustrations / RAM++ photos);
+                both share one response shape.
 """
 
 import logging
@@ -87,7 +89,8 @@ def analyze(
             tmp_path = tmp.name
             shutil.copyfileobj(image.file, tmp)
 
-        return inference.analyze(models_dir / entry["id"], tmp_path)
+        # Every tagger returns the same {tags, rating} shape, so this never branches.
+        return inference.analyze_for(entry["category"], models_dir / entry["id"], tmp_path)
     except (ValueError, OSError) as exc:
         # Corrupt/non-image/oversized upload — clean 422 rather than a 500.
         raise HTTPException(status_code=422, detail="could not process image") from exc
