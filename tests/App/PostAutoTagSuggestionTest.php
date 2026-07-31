@@ -95,21 +95,24 @@ class PostAutoTagSuggestionTest extends WebTestCase
         $this->assertNotContains('rejected_tag', array_column($data['highConfidence'], 'name'));
     }
 
-    public function test_knn_suggestion_is_never_prefilled_even_when_confident(): void
+    public function test_confident_suggestion_from_either_model_is_prefilled(): void
     {
         [$board, $post] = $this->createPost();
         $this->enableAutoTag(true);
-        // A high-scoring knn suggestion must NOT be pre-filled — it is a learned guess, not a
-        // confident tag. Only wd tags are pre-filled.
-        $this->persistSuggestion($post->getId(), 'knn_character', 0.95, TagCategory::CHARACTER, source: TagSuggestion::SOURCE_KNN);
+        // Both taggers produce calibrated per-tag scores, so confidence — not the producing model —
+        // decides what pre-fills. A low-scoring tag stays a click-to-add chip whatever its source.
+        $this->persistSuggestion($post->getId(), 'ram_tag', 0.95, TagCategory::GENERAL, source: TagSuggestion::SOURCE_RAM);
         $this->persistSuggestion($post->getId(), 'wd_tag', 0.95, TagCategory::GENERAL);
+        $this->persistSuggestion($post->getId(), 'unsure_ram_tag', 0.20, TagCategory::GENERAL, source: TagSuggestion::SOURCE_RAM);
 
         $this->client->request(Request::METHOD_GET, '/boards/'.$board->getSlug().'/'.$post->getId().'/autotag-suggestions');
 
         $this->assertResponseIsSuccessful();
         $data = json_decode($this->client->getResponse()->getContent(), true);
-        $this->assertSame(['wd_tag'], array_column($data['highConfidence'], 'name'));
-        $this->assertContains('knn_character', array_column($data['pending'], 'name'));
+        $prefilled = array_column($data['highConfidence'], 'name');
+        sort($prefilled);
+        $this->assertSame(['ram_tag', 'wd_tag'], $prefilled);
+        $this->assertContains('unsure_ram_tag', array_column($data['pending'], 'name'));
     }
 
     public function test_store_skips_tags_already_applied_to_the_post(): void

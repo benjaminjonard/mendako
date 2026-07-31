@@ -43,7 +43,8 @@ class AdminController extends AbstractController
             'frankenPhpVersion' => \extension_loaded('frankenphp') ? str_replace('v', '', phpversion('frankenphp')) : null,
             'autoTagEnabled' => $autoTagConfigProvider->isEnabled(),
             'autoTagAutoValidateThreshold' => $autoTagConfigProvider->getAutoValidateThresholdPercent(),
-            'autoTagBoards' => $autoTagConfigProvider->getEnabledBoardSlugs(),
+            'autoTagWdBoards' => $autoTagConfigProvider->getWdBoardSlugs(),
+            'autoTagRamBoards' => $autoTagConfigProvider->getRamBoardSlugs(),
         ]);
     }
 

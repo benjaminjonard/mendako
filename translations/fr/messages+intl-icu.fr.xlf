@@ -907,6 +907,12 @@
         <target>WD</target>
       </segment>
     </unit>
+    <unit id="Kq7mXb2" name="label.source_ram">
+      <segment state="translated">
+        <source>RAM</source>
+        <target>RAM</target>
+      </segment>
+    </unit>
     <unit id="ATuY3sA" name="label.source_custom">
       <segment state="translated">
         <source>Custom</source>

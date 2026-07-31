@@ -111,6 +111,23 @@ To enable it, add the `mendako_ml` to your `docker-compose.yml`:
         restart: unless-stopped
 ```
 
+Two taggers ship with the service, and each board picks the ones that suit its content:
+
+| Model | Best for | Tags |
+|-------|----------|------|
+| WD EVA02 Large v3 | Illustrations, anime | Danbooru tags + a content rating |
+| RAM++ | Photographs | ~4.5k general-purpose tags, no rating |
+
+List a board's slug in `APP_AUTOTAG_BOARDS_WITH_WD`, in `APP_AUTOTAG_BOARDS_WITH_RAM`, or in both —
+a board named in both is analysed by both models, and the suggestions are merged into one list.
+A board named in neither is never tagged. Staged bulk uploads are not tagged: they have no board
+yet, so tagging happens once they are assigned to one.
+
+Both models are baked into the `mendako-ml` image at build time — there is no runtime download.
+Upstream publishes RAM++ as PyTorch weights only, so its ONNX is produced by
+`ml/tools/export_ram_plus.py` (a maintainer step, not part of the image build) and mirrored; the
+script refuses to write anything unless the export reproduces upstream's own tagging decision.
+
 
 ### Available environment variables
 
@@ -131,7 +148,9 @@ To enable it, add the `mendako_ml` to your `docker-compose.yml`:
 | PHP_TIMEZONE        | You timezone, default to Europe\Paris       | https://www.w3schools.com/php/php_ref_timezones.asp |
 | APP_AUTOTAG_ENABLED  | Hard master switch for Automatic tags    | `0` (default, off) or `1`                           |
 | APP_ML_URL      | URL of the optional automatic tagging inference service    | default `http://mendako_ml:8000`                    |
-| APP_AUTOTAG_AUTOVALIDATE_THRESHOLD | Min WD confidence (percent) to auto-validate a suggested tag | `0`–`100`, default `85`               |
+| APP_AUTOTAG_AUTOVALIDATE_THRESHOLD | Min confidence (percent) to auto-validate a suggested tag | `0`–`100`, default `85`               |
+| APP_AUTOTAG_BOARDS_WITH_WD | Boards tagged by the WD tagger (illustrations) | comma-separated slugs, `*` for all, empty for none |
+| APP_AUTOTAG_BOARDS_WITH_RAM | Boards tagged by RAM++ (photographs) | comma-separated slugs, `*` for all, empty for none |
 
 
 ## Support Mendako

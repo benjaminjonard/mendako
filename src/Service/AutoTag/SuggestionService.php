@@ -69,8 +69,8 @@ class SuggestionService
         uasort($candidates, static fn (array $a, array $b): int => $b['score'] <=> $a['score']);
 
         // Names the target already carries as confirmed tags (men_post_tag). Re-proposing a tag the
-        // post already has is noise, so treat it like a decided name and skip it. Only a Post has
-        // applied tags — a bulk/StagedPost has none yet. Normalized to line up with candidate names.
+        // post already has is noise, so treat it like a decided name and skip it. Normalized to line
+        // up with candidate names.
         $applied = [];
         if ($targetType === 'post') {
             foreach ($this->postRepository->appliedTagNamesForPost($targetId) as $appliedName) {
@@ -83,19 +83,23 @@ class SuggestionService
 
         // Upsert atomically: drop this source's stale pending rows, then re-insert, skipping names
         // the user already decided on (accepted/dismissed) — across ALL sources, so a decision made
-        // on a wd suggestion also silences the same name coming from knn, and vice versa — as well
+        // on a wd suggestion also silences the same name coming from ram, and vice versa — as well
         // as names already applied to the post.
         $autoValidate = $targetType === 'post';
         $threshold = $this->autoTagConfigProvider->getAutoValidateThreshold();
-        $tagSource = $source === TagSuggestion::SOURCE_WD ? Tag::SOURCE_WD : Tag::SOURCE_CUSTOM;
+        // Suggestion sources and model tag sources share their values, so the producing model
+        // carries over as-is; anything unrecognised is treated as a user-invented name.
+        $tagSource = in_array($source, [TagSuggestion::SOURCE_WD, TagSuggestion::SOURCE_RAM], true)
+            ? $source
+            : Tag::SOURCE_CUSTOM;
 
         $this->entityManager->wrapInTransaction(function () use ($targetType, $targetId, $source, $candidates, $applied, $autoValidate, $threshold, $tagSource): void {
             $this->tagSuggestionRepository->deletePendingForTarget($targetType, $targetId, $source);
 
-            // Names the WD model emits are known to it: flip any matching `custom` tag to `wd`.
+            // Names a model emits are known to it: flip any matching `custom` tag to that model.
             // (array keys are cast to int by PHP; men_tag.name is a string column.)
-            if ($source === TagSuggestion::SOURCE_WD) {
-                $this->tagRepository->reclassifyToWd(array_map('strval', array_keys($candidates)));
+            if ($tagSource !== Tag::SOURCE_CUSTOM) {
+                $this->tagRepository->reclassifyToModel(array_map('strval', array_keys($candidates)), $tagSource);
             }
 
             $post = null;

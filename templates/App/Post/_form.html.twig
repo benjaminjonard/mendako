@@ -16,7 +16,7 @@
         {{ form_row(form.board, {'label' : 'label.board'} ) }}
     {% endif %}
 
-    <div data-controller="suggestions"{% if autoTagSuggestionsUrl is defined and autoTagSuggestionsUrl %} data-suggestions-url-value="{{ autoTagSuggestionsUrl }}" data-suggestions-source-labels-value="{{ {'wd': 'label.source_wd'|trans, 'knn': 'label.source_custom'|trans}|json_encode }}"{% endif %}>
+    <div data-controller="suggestions"{% if autoTagSuggestionsUrl is defined and autoTagSuggestionsUrl %} data-suggestions-url-value="{{ autoTagSuggestionsUrl }}" data-suggestions-source-labels-value="{{ {'wd': 'label.source_wd'|trans, 'ram': 'label.source_ram'|trans}|json_encode }}"{% endif %}>
         <div data-controller="autocomplete">
             {{ form_row(form.tags, {'label' : 'label.tags', 'attr': {
                 'data-suggestions-target': 'input',

@@ -83,7 +83,8 @@ class AutoTagConfigController extends AbstractController
         // Shared across every job: one count instead of one per card.
         $total = $postRepository->countAll();
 
-        // Tagging is scoped to the selected boards (APP_AUTOTAG_BOARDS).
+        // Tagging is scoped to the boards selected for at least one model
+        // (APP_AUTOTAG_BOARDS_WITH_WD / APP_AUTOTAG_BOARDS_WITH_RAM).
         $enabledSlugs = $autoTagConfigProvider->getEnabledBoardSlugs();
         if (in_array('*', $enabledSlugs, true)) {
             $taggingTotal = $total;

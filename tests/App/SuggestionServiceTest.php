@@ -170,13 +170,13 @@ class SuggestionServiceTest extends KernelTestCase
         $dismissed->setStatus(TagSuggestion::STATUS_DISMISSED);
         $this->entityManager->flush();
 
-        // Later, a kNN run proposes the very same name with high confidence...
+        // Later, a RAM++ run proposes the very same name with high confidence...
         $this->service->store('post', $this->targetId, [
             'tags' => [['name' => 'dismissed_tag', 'category' => 'general', 'score' => 0.95]],
-        ], TagSuggestion::SOURCE_KNN);
+        ], TagSuggestion::SOURCE_RAM);
 
         // ...it is not re-surfaced: a dismiss on the wd suggestion holds for every source, so no
-        // knn twin is created — still one dismissed wd row.
+        // ram twin is created — still one dismissed wd row.
         $suggestions = $this->repository->findForTarget('post', $this->targetId);
         $this->assertCount(1, $suggestions);
         $this->assertSame(TagSuggestion::SOURCE_WD, $suggestions[0]->getSource());
@@ -239,19 +239,37 @@ class SuggestionServiceTest extends KernelTestCase
         $this->assertSame(Tag::SOURCE_CUSTOM, $tagRepository->findOneBy(['name' => 'truly_custom'])->getSource());
     }
 
-    public function test_knn_store_does_not_reclassify_tags(): void
+    public function test_ram_store_reclassifies_tags_to_ram(): void
     {
         $tagRepository = static::getContainer()->get(TagRepository::class);
-        $this->entityManager->persist((new Tag())->setName('learned_custom')->setSource(Tag::SOURCE_CUSTOM));
+        $this->entityManager->persist((new Tag())->setName('beach')->setSource(Tag::SOURCE_CUSTOM));
         $this->entityManager->flush();
 
         $this->service->store('post', $this->targetId, [
-            'tags' => [['name' => 'learned_custom', 'category' => 'general', 'score' => 0.9]],
-        ], TagSuggestion::SOURCE_KNN);
+            'tags' => [['name' => 'beach', 'category' => 'general', 'score' => 0.9]],
+        ], TagSuggestion::SOURCE_RAM);
         $this->entityManager->clear();
 
-        // A knn suggestion means a neighbour confirmed it, not that the model knows it → still custom.
-        $this->assertSame(Tag::SOURCE_CUSTOM, $tagRepository->findOneBy(['name' => 'learned_custom'])->getSource());
+        // RAM++ emits 'beach' → the name is model-known, not the user's own invention.
+        $this->assertSame(Tag::SOURCE_RAM, $tagRepository->findOneBy(['name' => 'beach'])->getSource());
+    }
+
+    public function test_first_model_to_claim_a_name_keeps_the_attribution(): void
+    {
+        $tagRepository = static::getContainer()->get(TagRepository::class);
+        $this->entityManager->persist((new Tag())->setName('sunset')->setSource(Tag::SOURCE_CUSTOM));
+        $this->entityManager->flush();
+
+        $this->service->store('post', $this->targetId, [
+            'tags' => [['name' => 'sunset', 'category' => 'general', 'score' => 0.9]],
+        ], TagSuggestion::SOURCE_RAM);
+        $this->service->store('post', $this->targetId, [
+            'tags' => [['name' => 'sunset', 'category' => 'general', 'score' => 0.9]],
+        ], TagSuggestion::SOURCE_WD);
+        $this->entityManager->clear();
+
+        // Only `custom` rows are reclassified, so the second model does not steal the attribution.
+        $this->assertSame(Tag::SOURCE_RAM, $tagRepository->findOneBy(['name' => 'sunset'])->getSource());
     }
 
     private function indexByName(array $suggestions): array

@@ -12,8 +12,10 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
  *   - APP_AUTOTAG_ENABLED               — master on/off switch (off by default).
  *   - APP_ML_URL                        — the inference service URL.
  *   - APP_AUTOTAG_AUTOVALIDATE_THRESHOLD — min WD confidence (percent) to auto-apply a tag.
- *   - APP_AUTOTAG_BOARDS                — comma-separated board slugs to tag (empty = none, * = all).
- * Every auto-tagging entry point must gate on isEnabled().
+ *   - APP_AUTOTAG_BOARDS_WITH_WD        — board slugs tagged by the WD illustration tagger.
+ *   - APP_AUTOTAG_BOARDS_WITH_RAM       — board slugs tagged by the RAM++ photo tagger.
+ * Both board lists are comma-separated (empty = none, * = all); a board named in both is tagged
+ * by both models. Every auto-tagging entry point must gate on isEnabled().
  */
 class AutoTagConfigProvider
 {
@@ -29,7 +31,10 @@ class AutoTagConfigProvider
         #[Autowire('%env(bool:default::APP_AUTOTAG_ENABLED)%')] private readonly bool $enabled = false,
         #[Autowire('%env(default::APP_ML_URL)%')] private readonly string $serviceUrl = '',
         #[Autowire('%env(default::APP_AUTOTAG_AUTOVALIDATE_THRESHOLD)%')] private readonly string $autoValidateThreshold = '',
-        #[Autowire('%env(default::APP_AUTOTAG_BOARDS)%')] private readonly string $boards = '',
+        // Nullable: an empty board list is the normal "tag nothing with this model" state, and the
+        // `default::` processor turns an empty env var into null.
+        #[Autowire('%env(default::APP_AUTOTAG_BOARDS_WITH_WD)%')] private readonly ?string $wdBoards = '',
+        #[Autowire('%env(default::APP_AUTOTAG_BOARDS_WITH_RAM)%')] private readonly ?string $ramBoards = '',
     ) {
     }
 
@@ -64,18 +69,78 @@ class AutoTagConfigProvider
         return $this->getAutoValidateThresholdPercent() / 100.0;
     }
 
+    /**
+     * Board slugs tagged by the WD illustration tagger.
+     */
+    public function getWdBoardSlugs(): array
+    {
+        return $this->parseBoardSlugs($this->wdBoards);
+    }
+
+    /**
+     * Board slugs tagged by the RAM++ photo tagger.
+     */
+    public function getRamBoardSlugs(): array
+    {
+        return $this->parseBoardSlugs($this->ramBoards);
+    }
+
+    /**
+     * Every board slug tagged by at least one model — the scope of the tagging job, and what the
+     * admin coverage counts run against. A slug listed for both models appears once.
+     */
     public function getEnabledBoardSlugs(): array
     {
-        return array_values(array_filter(
-            array_map(static fn (string $slug): string => mb_strtolower(trim($slug)), explode(',', $this->boards)),
-            static fn (string $slug): bool => $slug !== '',
-        ));
+        return array_values(array_unique([...$this->getWdBoardSlugs(), ...$this->getRamBoardSlugs()]));
     }
 
     public function isBoardEnabled(?string $slug): bool
     {
-        $allowed = $this->getEnabledBoardSlugs();
+        return $this->getModelsForBoard($slug) !== [];
+    }
 
+    /**
+     * The models to run on a board, as `category => model id` (e.g. `['wd' => 'wd-eva02-large-tagger-v3']`).
+     * The category doubles as the suggestion source, so a caller can store each result without a lookup.
+     * Empty when the board is configured for no model — the caller must then skip it entirely.
+     */
+    public function getModelsForBoard(?string $slug): array
+    {
+        $models = [];
+
+        foreach (['wd' => $this->getWdBoardSlugs(), 'ram' => $this->getRamBoardSlugs()] as $category => $allowed) {
+            if (!$this->matchesBoard($allowed, $slug)) {
+                continue;
+            }
+
+            $model = $this->getActiveModel($category);
+            if ($model !== null) {
+                $models[$category] = $model;
+            }
+        }
+
+        return $models;
+    }
+
+    /**
+     * The active model id for a category ('wd', 'ram'), or null for an unknown category. Each category
+     * has exactly one model baked into the service image, taken straight from the static catalog.
+     */
+    public function getActiveModel(string $category): ?string
+    {
+        return ModelCatalog::modelsFor($category)[0] ?? null;
+    }
+
+    private function parseBoardSlugs(?string $raw): array
+    {
+        return array_values(array_filter(
+            array_map(static fn (string $slug): string => mb_strtolower(trim($slug)), explode(',', $raw ?? '')),
+            static fn (string $slug): bool => $slug !== '',
+        ));
+    }
+
+    private function matchesBoard(array $allowed, ?string $slug): bool
+    {
         if ($allowed === []) {
             return false;
         }
@@ -85,14 +150,5 @@ class AutoTagConfigProvider
         }
 
         return $slug !== null && in_array(mb_strtolower($slug), $allowed, true);
-    }
-
-    /**
-     * The active model id for a category ('wd'), or null for an unknown category. Each category has
-     * exactly one model baked into the service image, taken straight from the static catalog.
-     */
-    public function getActiveModel(string $category): ?string
-    {
-        return ModelCatalog::modelsFor($category)[0] ?? null;
     }
 }

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\App;
 
 use App\Entity\Post;
-use App\Entity\StagedPost;
 use App\Message\GenerateSuggestionsMessage;
 use App\Service\AutoTag\AutoTagConfigProvider;
 use App\Service\AutoTag\TaggingDispatcher;
@@ -30,27 +29,13 @@ class TaggingDispatcherTest extends TestCase
         $bus = $this->createMock(MessageBusInterface::class);
         $bus->expects($this->once())
             ->method('dispatch')
-            ->with($this->callback(static fn (object $m): bool => $m instanceof GenerateSuggestionsMessage && $m->targetType === 'post'))
+            ->with($this->callback(static fn (object $m): bool => $m instanceof GenerateSuggestionsMessage))
             ->willReturn(new Envelope(new \stdClass()));
 
         $post = new Post();
         $post->setPath('uploads/boards/1/x.png');
 
         (new TaggingDispatcher($bus, $this->provider(true)))->dispatch($post);
-    }
-
-    public function test_dispatches_bulk_upload_message_when_enabled(): void
-    {
-        $bus = $this->createMock(MessageBusInterface::class);
-        $bus->expects($this->once())
-            ->method('dispatch')
-            ->with($this->callback(static fn (object $m): bool => $m instanceof GenerateSuggestionsMessage && $m->targetType === 'bulk'))
-            ->willReturn(new Envelope(new \stdClass()));
-
-        $stagedPost = new StagedPost();
-        $stagedPost->setPath('uploads/bulk-upload/y.png');
-
-        (new TaggingDispatcher($bus, $this->provider(true)))->dispatch($stagedPost);
     }
 
     public function test_does_not_dispatch_when_disabled(): void
@@ -76,28 +61,11 @@ class TaggingDispatcherTest extends TestCase
         (new TaggingDispatcher($bus, $provider))->dispatch($post);
     }
 
-    public function test_dispatches_bulk_upload_regardless_of_board_filter(): void
-    {
-        $bus = $this->createMock(MessageBusInterface::class);
-        $bus->expects($this->once())
-            ->method('dispatch')
-            ->willReturn(new Envelope(new \stdClass()));
-
-        $provider = $this->createStub(AutoTagConfigProvider::class);
-        $provider->method('isEnabled')->willReturn(true);
-        $provider->method('isBoardEnabled')->willReturn(false);
-
-        $stagedPost = new StagedPost();
-        $stagedPost->setPath('uploads/bulk-upload/y.png');
-
-        (new TaggingDispatcher($bus, $provider))->dispatch($stagedPost);
-    }
-
     public function test_dispatch_batch_routes_to_autotag_batch_transport(): void
     {
         $bus = $this->createMock(MessageBusInterface::class);
         $bus->expects($this->once())->method('dispatch')->with(
-            $this->callback(static fn (object $m): bool => $m instanceof GenerateSuggestionsMessage && $m->targetType === 'post'),
+            $this->callback(static fn (object $m): bool => $m instanceof GenerateSuggestionsMessage),
             $this->callback(static function (array $stamps): bool {
                 foreach ($stamps as $stamp) {
                     if ($stamp instanceof TransportNamesStamp && $stamp->getTransportNames() === ['autotag_batch']) {

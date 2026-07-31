@@ -148,10 +148,12 @@ class TagRepository extends ServiceEntityRepository
     }
 
     /**
-     * Flip the given names from `custom` to `wd`. Only `custom` rows are touched. Returns rows
-     * reclassified. Bulk UPDATE — run it when no matching Tag is held in the UoW.
+     * Flip the given names from `custom` to the model source that emitted them (`wd`, `ram`). Only
+     * `custom` rows are touched, so a name already attributed to another model keeps its first
+     * attribution. Returns rows reclassified. Bulk UPDATE — run it when no matching Tag is held in
+     * the UoW.
      */
-    public function reclassifyToWd(array $names): int
+    public function reclassifyToModel(array $names, string $source): int
     {
         if ($names === []) {
             return 0;
@@ -159,10 +161,10 @@ class TagRepository extends ServiceEntityRepository
 
         return (int) $this->createQueryBuilder('t')
             ->update()
-            ->set('t.source', ':wd')
+            ->set('t.source', ':source')
             ->where('t.name IN (:names)')
             ->andWhere('t.source = :custom')
-            ->setParameter('wd', Tag::SOURCE_WD)
+            ->setParameter('source', $source)
             ->setParameter('names', $names)
             ->setParameter('custom', Tag::SOURCE_CUSTOM)
             ->getQuery()

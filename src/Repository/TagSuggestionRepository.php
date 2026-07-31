@@ -157,7 +157,7 @@ class TagSuggestionRepository extends ServiceEntityRepository
 
     /**
      * Names a human has already decided on (accepted or dismissed) for this target, across all
-     * sources. A re-run skips these, so one decision holds whichever source (wd/knn) resurfaces it.
+     * sources. A re-run skips these, so one decision holds whichever source (wd/ram) resurfaces it.
      */
     public function decidedTagNamesForTarget(string $targetType, string $targetId): array
     {
@@ -176,19 +176,22 @@ class TagSuggestionRepository extends ServiceEntityRepository
     }
 
     /**
-     * Whether the WD model has ever been seen emitting this name (any target/status).
+     * The source of a model that has been seen emitting this name (any target/status), or null when
+     * no model ever has — i.e. the name is the user's own. Ordered so the answer is stable when both
+     * taggers know the name.
      */
-    public function isKnownByWd(string $name): bool
+    public function modelSourceForName(string $name): ?string
     {
-        return (bool) $this->createQueryBuilder('s')
-            ->select('1')
+        $row = $this->createQueryBuilder('s')
+            ->select('s.source')
             ->where('s.tagName = :name')
-            ->andWhere('s.source = :wd')
             ->setParameter('name', $name)
-            ->setParameter('wd', TagSuggestion::SOURCE_WD)
+            ->orderBy('s.source', 'ASC')
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();
+
+        return $row['source'] ?? null;
     }
 
     /**

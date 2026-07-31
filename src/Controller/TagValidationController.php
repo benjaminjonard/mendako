@@ -142,9 +142,7 @@ class TagValidationController extends AbstractController
 
         foreach ($pending as $suggestion) {
             $name = $suggestion->getTagName();
-            if ($suggestion->getSource() === TagSuggestion::SOURCE_WD
-                && $suggestion->getScore() >= $threshold
-                && !isset($seen[$name])) {
+            if ($suggestion->getScore() >= $threshold && !isset($seen[$name])) {
                 $highConfidenceNames[] = $name;
                 $seen[$name] = true;
             }

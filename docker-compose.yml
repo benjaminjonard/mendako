@@ -26,7 +26,8 @@ services:
             - APP_AUTOTAG_ENABLED=1
             - APP_ML_URL=http://mendako_ml:8000
             - APP_AUTOTAG_AUTOVALIDATE_THRESHOLD=30
-            - APP_AUTOTAG_BOARDS=anime,r18,cosplay
+            - APP_AUTOTAG_BOARDS_WITH_WD=anime,r18,cosplay
+            - APP_AUTOTAG_BOARDS_WITH_RAM=photos
         depends_on:
             - postgresql
         volumes:

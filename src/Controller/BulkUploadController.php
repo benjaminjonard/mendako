@@ -66,7 +66,6 @@ class BulkUploadController extends AbstractController
         PostVectorService $postVectorService,
         PostRepository $postRepository,
         ValidatorInterface $validator,
-        TaggingDispatcher $taggingDispatcher,
     ): JsonResponse {
         if (!$this->isCsrfTokenValid('bulk_upload_action', (string) $request->request->get('_token'))) {
             return $this->json(['error' => 'Invalid CSRF token'], Response::HTTP_FORBIDDEN);
@@ -96,7 +95,8 @@ class BulkUploadController extends AbstractController
         $managerRegistry->getManager()->persist($stagedPost);
         $managerRegistry->getManager()->flush();
 
-        $taggingDispatcher->dispatch($stagedPost);
+        // Not tagged here: a staged post has no board yet, so no model can be resolved for it. The
+        // post created in assign() is dispatched instead, once its board is known.
 
         return $this->json([
             'id' => $stagedPost->getId(),

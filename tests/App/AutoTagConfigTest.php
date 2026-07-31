@@ -203,8 +203,72 @@ class AutoTagConfigTest extends WebTestCase
         // One model per category, baked into the service image — no DB selection involved.
         $provider = new AutoTagConfigProvider(true);
         $this->assertSame('wd-eva02-large-tagger-v3', $provider->getActiveModel('wd'));
-        $this->assertNull($provider->getActiveModel('clip'));
+        $this->assertSame('ram-plus', $provider->getActiveModel('ram'));
         $this->assertNull($provider->getActiveModel('unknown'));
+    }
+
+    /** @return AutoTagConfigProvider a provider with the two board lists set */
+    private function boards(string $wd, string $ram): AutoTagConfigProvider
+    {
+        return new AutoTagConfigProvider(true, '', '', $wd, $ram);
+    }
+
+    public function test_each_model_reads_its_own_board_list(): void
+    {
+        $provider = $this->boards('anime, R18', 'photos');
+
+        // Slugs are trimmed and lower-cased so the env var can be written comfortably.
+        $this->assertSame(['anime', 'r18'], $provider->getWdBoardSlugs());
+        $this->assertSame(['photos'], $provider->getRamBoardSlugs());
+    }
+
+    public function test_models_for_board_selects_by_list_membership(): void
+    {
+        $provider = $this->boards('anime', 'photos');
+
+        $this->assertSame(['wd' => 'wd-eva02-large-tagger-v3'], $provider->getModelsForBoard('anime'));
+        $this->assertSame(['ram' => 'ram-plus'], $provider->getModelsForBoard('photos'));
+        $this->assertSame([], $provider->getModelsForBoard('misc'));
+        $this->assertSame([], $provider->getModelsForBoard(null));
+    }
+
+    public function test_board_listed_for_both_models_runs_both(): void
+    {
+        $provider = $this->boards('cosplay', 'cosplay');
+
+        $this->assertSame(
+            ['wd' => 'wd-eva02-large-tagger-v3', 'ram' => 'ram-plus'],
+            $provider->getModelsForBoard('cosplay'),
+        );
+    }
+
+    public function test_wildcard_selects_every_board_for_that_model_only(): void
+    {
+        $provider = $this->boards('*', 'photos');
+
+        $this->assertSame(['wd' => 'wd-eva02-large-tagger-v3'], $provider->getModelsForBoard('anything'));
+        $this->assertSame(
+            ['wd' => 'wd-eva02-large-tagger-v3', 'ram' => 'ram-plus'],
+            $provider->getModelsForBoard('photos'),
+        );
+    }
+
+    public function test_empty_or_unset_board_lists_tag_nothing(): void
+    {
+        // Unset env vars arrive as null through the `default::` processor — the feature-off state.
+        $provider = new AutoTagConfigProvider(true, '', '', null, null);
+
+        $this->assertSame([], $provider->getModelsForBoard('anime'));
+        $this->assertFalse($provider->isBoardEnabled('anime'));
+        $this->assertSame([], $provider->getEnabledBoardSlugs());
+    }
+
+    public function test_enabled_board_slugs_is_the_union_without_duplicates(): void
+    {
+        // Drives the admin coverage counts: a board tagged by both models must still be counted once.
+        $provider = $this->boards('anime,cosplay', 'cosplay,photos');
+
+        $this->assertSame(['anime', 'cosplay', 'photos'], $provider->getEnabledBoardSlugs());
     }
 
     public function test_admin_dashboard_shows_jobs_block_when_enabled(): void

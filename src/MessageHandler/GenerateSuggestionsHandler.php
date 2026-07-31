@@ -6,7 +6,6 @@ namespace App\MessageHandler;
 
 use App\Message\GenerateSuggestionsMessage;
 use App\Repository\PostRepository;
-use App\Repository\StagedPostRepository;
 use App\Service\AutoTag\AutoTagConfigProvider;
 use App\Service\AutoTag\AutoTagInferenceClient;
 use App\Service\AutoTag\FrameResultAggregator;
@@ -17,8 +16,10 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
- * Async tagging handler: produces base-model tag suggestions via the inference service
- * (persisted as non-authoritative TagSuggestions, never tags). Idempotent and feature-gated.
+ * Async tagging handler: produces tag suggestions via the inference service (persisted as
+ * non-authoritative TagSuggestions, never tags). The post's board decides which models run — WD for
+ * illustrations, RAM++ for photographs, or both — and each model's output is stored under its own
+ * source. Idempotent and feature-gated.
  */
 #[AsMessageHandler]
 final class GenerateSuggestionsHandler
@@ -28,7 +29,6 @@ final class GenerateSuggestionsHandler
 
     public function __construct(
         private readonly PostRepository $postRepository,
-        private readonly StagedPostRepository $stagedPostRepository,
         private readonly AutoTagConfigProvider $autoTagConfigProvider,
         private readonly AutoTagInferenceClient $autoTagInferenceClient,
         private readonly SuggestionService $suggestionService,
@@ -45,52 +45,49 @@ final class GenerateSuggestionsHandler
             return;
         }
 
-        $item = $message->targetType === 'bulk'
-            ? $this->stagedPostRepository->find($message->id)
-            : $this->postRepository->find($message->id);
-
-        if ($item === null || $item->getPath() === null) {
+        $post = $this->postRepository->find($message->id);
+        if ($post === null || $post->getPath() === null) {
             return; // removed before processing — idempotent no-op
         }
 
-        $modelId = $this->autoTagConfigProvider->getActiveModel('wd');
-        if ($modelId === null) {
-            $this->logger->info('No active WD model; skipping tagging', ['target' => $message->targetType, 'id' => $message->id]);
+        // Resolved here rather than at dispatch time, so a config change applies to queued messages.
+        $models = $this->autoTagConfigProvider->getModelsForBoard($post->getBoard()?->getSlug());
+        if ($models === []) {
+            $this->logger->info('No model configured for this post\'s board; skipping tagging', ['id' => $message->id]);
 
             return;
         }
 
-        $sourcePath = $this->publicPath.'/'.$item->getPath();
-        $isVideo = in_array($item->getMimetype(), ThumbnailGenerator::VIDEO_MIMETYPES, true);
+        $sourcePath = $this->publicPath.'/'.$post->getPath();
+        $isVideo = in_array($post->getMimetype(), ThumbnailGenerator::VIDEO_MIMETYPES, true);
         $tempDir = null;
         $thumbnail = null;
         try {
-            $result = null;
+            // One decode shared by every model: sample the frames (video) or build the single
+            // representative thumbnail (image) once, then run each model over the same input.
+            $frames = [];
             if ($isVideo) {
-                // Sample N frames: their tags are aggregated into one set.
                 $tempDir = sys_get_temp_dir().'/mendako-autotag-'.bin2hex(random_bytes(8));
                 $frames = $this->thumbnailGenerator->extractVideoFrames($sourcePath, $tempDir, self::VIDEO_FRAME_COUNT, 600);
-                if ($frames !== []) {
-                    $frameResults = [];
-                    foreach ($frames as $framePath) {
-                        $frameResults[] = $this->autoTagInferenceClient->analyze($framePath, $modelId);
-                    }
-                    $result = $this->frameResultAggregator->aggregate($frameResults);
-                } else {
+                if ($frames === []) {
                     // A video the sampler couldn't read still gets the single-frame treatment.
-                    $this->logger->warning('No video frames extracted; falling back to a single frame', ['target' => $message->targetType, 'id' => $message->id]);
+                    $this->logger->warning('No video frames extracted; falling back to a single frame', ['id' => $message->id]);
                 }
             }
 
-            if ($result === null) {
+            if ($frames === []) {
                 // Image, or the video fallback: one representative thumbnail (generate() reads videos too).
                 $thumbnail = sys_get_temp_dir().'/mendako-autotag-'.bin2hex(random_bytes(8)).'.jpeg';
                 $this->thumbnailGenerator->generate($sourcePath, $thumbnail, 600, 'jpeg');
-                $result = $this->autoTagInferenceClient->analyze($thumbnail, $modelId);
+            }
+
+            $results = [];
+            foreach ($models as $source => $modelId) {
+                $results[$source] = $this->analyzeWith($modelId, $frames, $thumbnail);
             }
         } catch (\Throwable $exception) {
             // Soft-fail: a bad/missing source image must not poison the worker.
-            $this->logger->warning('automatic tagging failed', ['target' => $message->targetType, 'id' => $message->id, 'error' => $exception->getMessage()]);
+            $this->logger->warning('automatic tagging failed', ['id' => $message->id, 'error' => $exception->getMessage()]);
 
             return;
         } finally {
@@ -107,15 +104,48 @@ final class GenerateSuggestionsHandler
             }
         }
 
-        if (!empty($result['tags']) || ($result['rating']['label'] ?? null) !== null) {
-            $this->suggestionService->store($message->targetType, $message->id, $result);
+        foreach ($results as $source => $result) {
+            if (empty($result['tags']) && ($result['rating']['label'] ?? null) === null) {
+                continue;
+            }
+
+            // Per-model isolation: one model's storage failure must not cost the other its results.
+            try {
+                $this->suggestionService->store('post', $message->id, $result, $source);
+            } catch (\Throwable $exception) {
+                $this->logger->warning('storing automatic tagging suggestions failed', [
+                    'id' => $message->id,
+                    'source' => $source,
+                    'error' => $exception->getMessage(),
+                ]);
+
+                continue;
+            }
 
             $this->logger->info('automatic tagging analysis stored suggestions', [
-                'target' => $message->targetType,
                 'id' => $message->id,
+                'source' => $source,
                 'tag_count' => count($result['tags'] ?? []),
                 'rating' => $result['rating']['label'] ?? null,
             ]);
         }
+    }
+
+    /**
+     * Run one model over the already-decoded input: the sampled video frames, whose tags are
+     * aggregated into a single set, or the one representative thumbnail.
+     *
+     * @param string[] $frames
+     */
+    private function analyzeWith(string $modelId, array $frames, ?string $thumbnail): array
+    {
+        if ($frames === []) {
+            return $this->autoTagInferenceClient->analyze((string) $thumbnail, $modelId);
+        }
+
+        return $this->frameResultAggregator->aggregate(array_map(
+            fn (string $framePath): array => $this->autoTagInferenceClient->analyze($framePath, $modelId),
+            $frames,
+        ));
     }
 }

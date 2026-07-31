@@ -171,17 +171,15 @@ class PostController extends AbstractController
             'source' => $suggestion->getSource(),
         ];
 
-        // Dedup by name across sources (wd / knn). Pass 1: confident wd tags pre-fill the field.
-        // Pass 2: everything else becomes a click-to-add chip (knn guesses are never auto-applied).
+        // Dedup by name across sources (wd / ram), which can both propose the same name. Pass 1:
+        // confident tags pre-fill the field. Pass 2: everything else becomes a click-to-add chip.
         $threshold = $autoTagConfigProvider->getAutoValidateThreshold();
         $highConfidence = [];
         $lowConfidence = [];
         $seen = [];
         foreach ($pending as $suggestion) {
             $name = $suggestion->getTagName();
-            if ($suggestion->getSource() === \App\Entity\TagSuggestion::SOURCE_WD
-                && $suggestion->getScore() >= $threshold
-                && !isset($seen[$name])) {
+            if ($suggestion->getScore() >= $threshold && !isset($seen[$name])) {
                 $highConfidence[] = $entry($suggestion);
                 $seen[$name] = true;
             }
