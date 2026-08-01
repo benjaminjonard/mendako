@@ -4,7 +4,7 @@ framework:
 
         transports:
             autotag_interactive:
-                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                dsn: 'doctrine://default'
                 options:
                     queue_name: autotag_interactive
                     auto_setup: false
@@ -13,7 +13,7 @@ framework:
                     delay: 1000
                     multiplier: 2
             autotag_batch:
-                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                dsn: 'doctrine://default'
                 options:
                     queue_name: autotag_batch
                     auto_setup: false
@@ -22,7 +22,7 @@ framework:
                     delay: 1000
                     multiplier: 2
             thumbnails:
-                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                dsn: 'doctrine://default'
                 options:
                     queue_name: thumbnails
                     auto_setup: false
