@@ -39,6 +39,7 @@ class TagValidationType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Post::class,
+            'validation_groups' => false,
         ]);
     }
 }

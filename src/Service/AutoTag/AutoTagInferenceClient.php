@@ -11,9 +11,7 @@ use Symfony\Component\Mime\Part\Multipart\FormDataPart;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 /**
- * The single HTTP boundary between the app and the inference service. Every call soft-fails: on a
- * disabled feature, unreachable service, timeout, or non-2xx response it returns an empty value and
- * logs — it NEVER throws into a web request.
+ * The single HTTP boundary between the app and the inference service.
  */
 class AutoTagInferenceClient
 {
@@ -29,7 +27,7 @@ class AutoTagInferenceClient
     }
 
     /**
-     * Run WD inference on an image. Returns `{tags, rating}`, or [] on failure.
+     * Run WD inference on an image. Returns `{tags, rating}`.
      */
     public function analyze(string $imagePath, string $modelId): array
     {
@@ -53,14 +51,16 @@ class AutoTagInferenceClient
             if (!$this->isSuccessful($response->getStatusCode())) {
                 $this->logger->warning('Service /analyze returned a non-2xx status', ['status' => $response->getStatusCode()]);
 
-                return [];
+                throw new AutoTagInferenceException(sprintf('Service /analyze returned status %d', $response->getStatusCode()));
             }
 
             return $response->toArray();
+        } catch (AutoTagInferenceException $exception) {
+            throw $exception;
         } catch (\Throwable $exception) {
             $this->logger->warning('Service /analyze call failed', ['error' => $exception->getMessage()]);
 
-            return [];
+            throw new AutoTagInferenceException($exception->getMessage(), 0, $exception);
         }
     }
 

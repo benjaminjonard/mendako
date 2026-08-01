@@ -12,6 +12,7 @@ use App\Repository\StagedPostRepository;
 use App\Service\AutoTag\TaggingDispatcher;
 use App\Service\PostVectorService;
 use App\Service\RandomStringGenerator;
+use App\Service\ThumbnailStorage;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -112,6 +113,7 @@ class BulkUploadController extends AbstractController
         StagedPostRepository $stagedPostRepository,
         BoardRepository $boardRepository,
         TaggingDispatcher $taggingDispatcher,
+        ThumbnailStorage $thumbnailStorage,
     ): JsonResponse {
         if (!$this->isCsrfTokenValid('bulk_upload_action', (string) $request->request->get('_token'))) {
             return $this->json(['error' => 'Invalid CSRF token'], Response::HTTP_FORBIDDEN);
@@ -153,6 +155,8 @@ class BulkUploadController extends AbstractController
                 continue;
             }
 
+            $newThumbnailPath = $this->moveThumbnail($thumbnailStorage, $stagedPost, $newRelativePath);
+
             $post = new Post();
             $post
                 ->setBoard($board)
@@ -164,6 +168,7 @@ class BulkUploadController extends AbstractController
                 ->setDuration($stagedPost->getDuration())
                 ->setVector($stagedPost->getVector())
                 ->setPath($newRelativePath)
+                ->setThumbnailPath($newThumbnailPath)
             ;
             $post->setHasSound($stagedPost->hasSound());
             $manager->persist($post);
@@ -172,6 +177,9 @@ class BulkUploadController extends AbstractController
             // Null the bulk upload path BEFORE removal so postRemove/removeOldFile does NOT
             // unlink the file we just moved into the board directory.
             $stagedPost->setPath(null);
+            if ($newThumbnailPath !== null) {
+                $stagedPost->setThumbnailPath(null);
+            }
             $manager->remove($stagedPost);
 
             $removedIds[] = (string) $id;
@@ -223,5 +231,25 @@ class BulkUploadController extends AbstractController
         }
 
         return $this->json(['removedIds' => $removedIds]);
+    }
+
+    private function moveThumbnail(ThumbnailStorage $thumbnailStorage, StagedPost $stagedPost, string $newRelativePath): ?string
+    {
+        $currentPath = $stagedPost->getThumbnailPath();
+        if ($currentPath === null) {
+            return null;
+        }
+
+        $newPath = $thumbnailStorage->relativePathFor($newRelativePath, $stagedPost->getMimetype());
+        $absoluteDir = \dirname($thumbnailStorage->absolutePath($newPath));
+        if (!is_dir($absoluteDir) && !mkdir($absoluteDir, recursive: true) && !is_dir($absoluteDir)) {
+            return null;
+        }
+
+        if (!@rename($thumbnailStorage->absolutePath($currentPath), $thumbnailStorage->absolutePath($newPath))) {
+            return null;
+        }
+
+        return $newPath;
     }
 }

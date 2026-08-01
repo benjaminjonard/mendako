@@ -8,6 +8,7 @@ use App\Message\GenerateSuggestionsMessage;
 use App\Repository\PostRepository;
 use App\Service\AutoTag\AutoTagConfigProvider;
 use App\Service\AutoTag\AutoTagInferenceClient;
+use App\Service\AutoTag\AutoTagInferenceException;
 use App\Service\AutoTag\FrameResultAggregator;
 use App\Service\AutoTag\SuggestionService;
 use App\Service\ThumbnailGenerator;
@@ -84,6 +85,8 @@ final class GenerateSuggestionsHandler
             foreach ($models as $source => $modelId) {
                 $results[$source] = $this->analyzeWith($modelId, $frames, $thumbnail);
             }
+        } catch (AutoTagInferenceException $exception) {
+            throw $exception;
         } catch (\Throwable $exception) {
             // Soft-fail: a bad/missing source image must not poison the worker.
             $this->logger->warning('automatic tagging failed', ['id' => $message->id, 'error' => $exception->getMessage()]);

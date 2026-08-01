@@ -136,6 +136,7 @@ jobs:
             sed -i "s|DB_USER=.*|DB_USER=postgres|i" ".env"
             sed -i "s|DB_PASSWORD=.*|DB_PASSWORD=root|i" ".env"
             sed -i "s|DB_VERSION=.*|DB_VERSION=${{ matrix.postgres }}|i" ".env"
+            sed -i "s|APP_AUTOTAG_ENABLED=.*|APP_AUTOTAG_ENABLED=1|i" ".env"
             bin/console doctrine:database:create --env=test
             bin/console doctrine:migration:migrate --no-interaction --allow-no-migration --env=test
             php ./vendor/bin/paratest --runner=WrapperRunner

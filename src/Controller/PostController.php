@@ -126,10 +126,7 @@ class PostController extends AbstractController
         $form = $this->createForm(PostType::class, $post);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $post
-                ->setUploadedBy($this->getUser())
-                ->setVector($postVectorService->generateVector($post->getFile()))
-            ;
+            $post->setVector($postVectorService->generateVector($post->getFile()));
 
             $setAsBoardThumbnail = $form->get('setAsBoardThumbnail')->getData() === true;
             if ($setAsBoardThumbnail) {

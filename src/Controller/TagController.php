@@ -178,6 +178,7 @@ class TagController extends AbstractController
      * names and the current tag are silently ignored.
      */
     #[Route(path: '/tags/{id}/merge', name: 'app_tag_merge', methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function merge(
         Request $request,
         TranslatorInterface $translator,

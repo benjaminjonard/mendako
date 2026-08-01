@@ -6,6 +6,7 @@ namespace App\Tests\App;
 
 use App\Service\AutoTag\AutoTagConfigProvider;
 use App\Service\AutoTag\AutoTagInferenceClient;
+use App\Service\AutoTag\AutoTagInferenceException;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 use Symfony\Component\HttpClient\Exception\TransportException;
@@ -70,7 +71,7 @@ class AutoTagInferenceClientTest extends TestCase
         $this->assertStringContainsString('wd-eva02-large-tagger-v3', $captured['body']);
     }
 
-    public function test_analyze_returns_empty_on_error(): void
+    public function test_analyze_throws_on_error(): void
     {
         $tmp = tempnam(sys_get_temp_dir(), 'img');
         file_put_contents($tmp, 'x');
@@ -78,22 +79,28 @@ class AutoTagInferenceClientTest extends TestCase
             throw new TransportException('service unreachable');
         });
 
-        $result = (new AutoTagInferenceClient($httpClient, $this->provider(), new NullLogger()))->analyze($tmp, 'wd-eva02-large-tagger-v3');
-        unlink($tmp);
+        $this->expectException(AutoTagInferenceException::class);
 
-        $this->assertSame([], $result);
+        try {
+            (new AutoTagInferenceClient($httpClient, $this->provider(), new NullLogger()))->analyze($tmp, 'wd-eva02-large-tagger-v3');
+        } finally {
+            unlink($tmp);
+        }
     }
 
-    public function test_analyze_returns_empty_on_non_2xx(): void
+    public function test_analyze_throws_on_non_2xx(): void
     {
         $tmp = tempnam(sys_get_temp_dir(), 'img');
         file_put_contents($tmp, 'x');
         $httpClient = new MockHttpClient([new MockResponse('bad image', ['http_code' => 422])]);
 
-        $result = (new AutoTagInferenceClient($httpClient, $this->provider(), new NullLogger()))->analyze($tmp, 'wd-eva02-large-tagger-v3');
-        unlink($tmp);
+        $this->expectException(AutoTagInferenceException::class);
 
-        $this->assertSame([], $result);
+        try {
+            (new AutoTagInferenceClient($httpClient, $this->provider(), new NullLogger()))->analyze($tmp, 'wd-eva02-large-tagger-v3');
+        } finally {
+            unlink($tmp);
+        }
     }
 
     public function test_analyze_makes_no_call_when_disabled(): void

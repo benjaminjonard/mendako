@@ -52,7 +52,16 @@ services:
             - POSTGRES_PASSWORD=${DB_PASSWORD}
         volumes:
             - "./volumes/postgresql:/var/lib/postgresql/data"
+
+    # Only required for ML tasks, you can remove it if you don't want autotagging
+    mendako_ml:
+        container_name: mendako_ml
+        build: ./ml
+        restart: unless-stopped
+        volumes:
+            - "./ml/app:/app/app"        
 ```
+
 ####  Step 2 -> Create a `.env` file
 ```
 ########################################################################################################
@@ -92,6 +101,13 @@ DB_USER=mendako
 DB_PASSWORD=mendako
 DB_VERSION=15
 
+########################################################################################################
+#                                                MACHINE LEARNING (AUTOTAG)
+########################################################################################################
+APP_AUTOTAG_ENABLED=0
+APP_ML_URL=http://mendako_ml:8000
+APP_AUTOTAG_AUTOVALIDATE_THRESHOLD_WD=30
+APP_AUTOTAG_BOARDS_WITH_WD=board1,board2
 ```
 
 ####  Step 3 -> Review both files and update values if required
