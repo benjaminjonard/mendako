@@ -21,6 +21,15 @@ framework:
                     max_retries: 3
                     delay: 1000
                     multiplier: 2
+            thumbnails:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                options:
+                    queue_name: thumbnails
+                    auto_setup: false
+                retry_strategy:
+                    max_retries: 3
+                    delay: 1000
+                    multiplier: 2
             failed:
                 dsn: 'doctrine://default'
                 options:
@@ -29,9 +38,11 @@ framework:
 
         routing:
             'App\Message\GenerateSuggestionsMessage': autotag_interactive
+            'App\Message\GenerateThumbnailMessage': thumbnails
             'App\Message\EnqueueBacklogMessage': autotag_batch
             'App\Message\GenerateVectorMessage': autotag_batch
             'App\Message\EnqueueVectorBacklogMessage': autotag_batch
+            'App\Message\EnqueueThumbnailBacklogMessage': autotag_batch
 
 when@test:
     framework:
@@ -39,4 +50,5 @@ when@test:
             transports:
                 autotag_interactive: 'in-memory://'
                 autotag_batch: 'in-memory://'
+                thumbnails: 'in-memory://'
                 failed: 'in-memory://'

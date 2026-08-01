@@ -106,6 +106,7 @@ class PostRepository extends ServiceEntityRepository
             SELECT
                 post.id,
                 post.path,
+                post.thumbnail_path,
                 post.mimetype,
                 post.created_at AS created_at,
                 (1 - power(post.vector <-> :vector, 2) / 64) * 100 as distance,
@@ -136,6 +137,34 @@ class PostRepository extends ServiceEntityRepository
             ->where('p.vector IS NULL')
             ->getQuery()
             ->toIterable();
+    }
+
+    public function findWithoutThumbnailIterable(): iterable
+    {
+        return $this->createQueryBuilder('p')
+            ->where('p.thumbnailPath IS NULL')
+            ->andWhere('p.path IS NOT NULL')
+            ->getQuery()
+            ->toIterable();
+    }
+
+    public function countWithoutThumbnail(): int
+    {
+        return (int) $this->createQueryBuilder('p')
+            ->select('COUNT(p.id)')
+            ->where('p.thumbnailPath IS NULL')
+            ->andWhere('p.path IS NOT NULL')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    public function thumbnailPaths(): array
+    {
+        return array_map('strval', $this->createQueryBuilder('p')
+            ->select('p.thumbnailPath')
+            ->where('p.thumbnailPath IS NOT NULL')
+            ->getQuery()
+            ->getSingleColumnResult());
     }
 
     public function countWithoutVector(): int

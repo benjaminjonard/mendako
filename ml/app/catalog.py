@@ -21,21 +21,6 @@ CATALOG: list[dict] = [
         ],
         "task": "tagger",
     },
-    {
-        # Upstream (xinyu1205/recognize-anything-plus-model, Apache-2.0) publishes PyTorch weights
-        # only; this is our own ONNX export of them — see ml/tools/export_ram_plus.py.
-        "category": "ram",
-        "id": "ram-plus",
-        "repo_id": "benjaminjonard/ram-plus-onnx",
-        "revision": "e22cfb689ba3a3e02f23925e1f581e3e07166c75",
-        "files": ["model.onnx", "tags.txt", "thresholds.txt"],
-        "download": [
-            {"src": "model.onnx", "dst": "model.onnx"},
-            {"src": "tags.txt", "dst": "tags.txt"},
-            {"src": "thresholds.txt", "dst": "thresholds.txt"},
-        ],
-        "task": "tagger",
-    },
 ]
 
 

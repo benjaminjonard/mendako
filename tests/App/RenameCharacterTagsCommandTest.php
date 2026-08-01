@@ -78,7 +78,7 @@ class RenameCharacterTagsCommandTest extends KernelTestCase
         ]);
 
         $pending = $this->persistSuggestion('nero', TagSuggestion::STATUS_PENDING);
-        $decided = $this->persistSuggestion('nero', TagSuggestion::STATUS_ACCEPTED, TagSuggestion::SOURCE_RAM);
+        $decided = $this->persistSuggestion('nero', TagSuggestion::STATUS_ACCEPTED, TagSuggestion::SOURCE_WD);
         $untouched = $this->persistSuggestion('tamamo', TagSuggestion::STATUS_PENDING);
 
         $tester = $this->tester();
@@ -141,7 +141,7 @@ class RenameCharacterTagsCommandTest extends KernelTestCase
     public function test_countByTagName_counts_every_matching_row(): void
     {
         $this->persistSuggestion('nero', TagSuggestion::STATUS_PENDING);
-        $this->persistSuggestion('nero', TagSuggestion::STATUS_DISMISSED, TagSuggestion::SOURCE_RAM);
+        $this->persistSuggestion('nero', TagSuggestion::STATUS_DISMISSED, TagSuggestion::SOURCE_WD);
         $this->persistSuggestion('tamamo', TagSuggestion::STATUS_PENDING);
 
         self::assertSame(2, $this->suggestionRepository->countByTagName('nero'));

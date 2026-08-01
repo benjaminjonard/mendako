@@ -27,7 +27,7 @@
         {% if stagedPost.mimetype == 'image/svg+xml' %}
             <img src="{{ asset(stagedPost.path) }}">
         {% else %}
-            <img src="{{ asset(stagedPost.path|thumbnail(360)) }}">
+            <img src="{{ asset(stagedPost.thumbnailPath|thumbnail) }}">
         {% endif %}
     </div>
 

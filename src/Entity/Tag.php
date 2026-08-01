@@ -22,10 +22,9 @@ class Tag
 {
     // Provenance: only `custom` tags (names the WD model cannot produce) propagate by similarity.
     public const string SOURCE_CUSTOM = 'custom';
-    // Model-known names: a tagger emits them, so they aren't the user's own invention. The values
-    // match TagSuggestion's source values so a suggestion's source carries straight over.
+    // Model-known names: a tagger emits them, so they aren't the user's own invention. The value
+    // matches TagSuggestion's source so a suggestion's source carries straight over.
     public const string SOURCE_WD = 'wd';
-    public const string SOURCE_RAM = 'ram';
 
     #[ORM\Id]
     #[ORM\Column(type: Types::STRING, length: 36, unique: true, options: ['fixed' => true])]

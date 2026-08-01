@@ -55,10 +55,6 @@ html, .navbar, .autocomplete-dropdown-textarea, .navbar-menu {
     color: #6db3ff;
 }
 
-.suggestion-source-knn {
-    background-color: #163a22;
-    color: #5fd97a;
-}
 
 .navbar i, .navbar-burger {
     color: #ccc;

@@ -95,15 +95,14 @@ class PostAutoTagSuggestionTest extends WebTestCase
         $this->assertNotContains('rejected_tag', array_column($data['highConfidence'], 'name'));
     }
 
-    public function test_confident_suggestion_from_either_model_is_prefilled(): void
+    public function test_only_confident_suggestions_are_prefilled(): void
     {
         [$board, $post] = $this->createPost();
         $this->enableAutoTag(true);
-        // Both taggers produce calibrated per-tag scores, so confidence — not the producing model —
-        // decides what pre-fills. A low-scoring tag stays a click-to-add chip whatever its source.
-        $this->persistSuggestion($post->getId(), 'ram_tag', 0.95, TagCategory::GENERAL, source: TagSuggestion::SOURCE_RAM);
+        // Confidence decides what pre-fills; a low-scoring tag stays a click-to-add chip.
+        $this->persistSuggestion($post->getId(), 'confident_tag', 0.95, TagCategory::GENERAL);
         $this->persistSuggestion($post->getId(), 'wd_tag', 0.95, TagCategory::GENERAL);
-        $this->persistSuggestion($post->getId(), 'unsure_ram_tag', 0.20, TagCategory::GENERAL, source: TagSuggestion::SOURCE_RAM);
+        $this->persistSuggestion($post->getId(), 'unsure_tag', 0.20, TagCategory::GENERAL);
 
         $this->client->request(Request::METHOD_GET, '/boards/'.$board->getSlug().'/'.$post->getId().'/autotag-suggestions');
 
@@ -111,8 +110,8 @@ class PostAutoTagSuggestionTest extends WebTestCase
         $data = json_decode($this->client->getResponse()->getContent(), true);
         $prefilled = array_column($data['highConfidence'], 'name');
         sort($prefilled);
-        $this->assertSame(['ram_tag', 'wd_tag'], $prefilled);
-        $this->assertContains('unsure_ram_tag', array_column($data['pending'], 'name'));
+        $this->assertSame(['confident_tag', 'wd_tag'], $prefilled);
+        $this->assertContains('unsure_tag', array_column($data['pending'], 'name'));
     }
 
     public function test_store_skips_tags_already_applied_to_the_post(): void

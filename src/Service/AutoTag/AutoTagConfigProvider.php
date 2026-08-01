@@ -11,17 +11,16 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
  * environment variables:
  *   - APP_AUTOTAG_ENABLED               — master on/off switch (off by default).
  *   - APP_ML_URL                        — the inference service URL.
- *   - APP_AUTOTAG_AUTOVALIDATE_THRESHOLD — min WD confidence (percent) to auto-apply a tag.
+ *   - APP_AUTOTAG_AUTOVALIDATE_THRESHOLD_WD — min WD confidence (percent) to auto-apply a tag.
  *   - APP_AUTOTAG_BOARDS_WITH_WD        — board slugs tagged by the WD illustration tagger.
- *   - APP_AUTOTAG_BOARDS_WITH_RAM       — board slugs tagged by the RAM++ photo tagger.
- * Both board lists are comma-separated (empty = none, * = all); a board named in both is tagged
- * by both models. Every auto-tagging entry point must gate on isEnabled().
+ * The board list is comma-separated (empty = none, * = all). Every auto-tagging entry point
+ * must gate on isEnabled().
  */
 class AutoTagConfigProvider
 {
     private const string DEFAULT_SERVICE_URL = 'http://mendako_ml:8000';
 
-    // WD suggestions at/above this confidence are auto-applied to the post (accepted without review);
+    // Suggestions at/above this confidence are auto-applied to the post (accepted without review);
     // below it they wait as pending suggestions. Expressed as a percent so the admin config reads
     // naturally.
     private const float DEFAULT_AUTOVALIDATE_THRESHOLD_PERCENT = 85.0;
@@ -30,11 +29,10 @@ class AutoTagConfigProvider
         // `default::` so an instance that never sets these env vars still boots (off / built-in URL).
         #[Autowire('%env(bool:default::APP_AUTOTAG_ENABLED)%')] private readonly bool $enabled = false,
         #[Autowire('%env(default::APP_ML_URL)%')] private readonly string $serviceUrl = '',
-        #[Autowire('%env(default::APP_AUTOTAG_AUTOVALIDATE_THRESHOLD)%')] private readonly string $autoValidateThreshold = '',
+        #[Autowire('%env(default::APP_AUTOTAG_AUTOVALIDATE_THRESHOLD_WD)%')] private readonly ?string $wdAutoValidateThreshold = '',
         // Nullable: an empty board list is the normal "tag nothing with this model" state, and the
         // `default::` processor turns an empty env var into null.
         #[Autowire('%env(default::APP_AUTOTAG_BOARDS_WITH_WD)%')] private readonly ?string $wdBoards = '',
-        #[Autowire('%env(default::APP_AUTOTAG_BOARDS_WITH_RAM)%')] private readonly ?string $ramBoards = '',
     ) {
     }
 
@@ -49,13 +47,14 @@ class AutoTagConfigProvider
     }
 
     /**
-     * The auto-validation confidence as a percent (0–100), for display in the admin config.
+     * A model's auto-validation confidence as a percent (0–100), for display in the admin config.
      * Clamped so a typo can't silently disable (negative) or over-trigger (>100) auto-validation.
      */
-    public function getAutoValidateThresholdPercent(): float
+    public function getAutoValidateThresholdPercent(string $source): float
     {
-        $value = $this->autoValidateThreshold !== ''
-            ? (float) $this->autoValidateThreshold
+        $raw = $this->rawThresholdFor($source);
+        $value = ($raw !== null && $raw !== '')
+            ? (float) $raw
             : self::DEFAULT_AUTOVALIDATE_THRESHOLD_PERCENT;
 
         return max(0.0, min(100.0, $value));
@@ -64,9 +63,9 @@ class AutoTagConfigProvider
     /**
      * Same threshold as a 0–1 score fraction, ready to compare against a suggestion's score.
      */
-    public function getAutoValidateThreshold(): float
+    public function getAutoValidateThreshold(string $source): float
     {
-        return $this->getAutoValidateThresholdPercent() / 100.0;
+        return $this->getAutoValidateThresholdPercent($source) / 100.0;
     }
 
     /**
@@ -78,20 +77,11 @@ class AutoTagConfigProvider
     }
 
     /**
-     * Board slugs tagged by the RAM++ photo tagger.
-     */
-    public function getRamBoardSlugs(): array
-    {
-        return $this->parseBoardSlugs($this->ramBoards);
-    }
-
-    /**
-     * Every board slug tagged by at least one model — the scope of the tagging job, and what the
-     * admin coverage counts run against. A slug listed for both models appears once.
+     * The scope of the tagging job, and what the admin coverage counts run against.
      */
     public function getEnabledBoardSlugs(): array
     {
-        return array_values(array_unique([...$this->getWdBoardSlugs(), ...$this->getRamBoardSlugs()]));
+        return $this->getWdBoardSlugs();
     }
 
     public function isBoardEnabled(?string $slug): bool
@@ -108,7 +98,7 @@ class AutoTagConfigProvider
     {
         $models = [];
 
-        foreach (['wd' => $this->getWdBoardSlugs(), 'ram' => $this->getRamBoardSlugs()] as $category => $allowed) {
+        foreach (['wd' => $this->getWdBoardSlugs()] as $category => $allowed) {
             if (!$this->matchesBoard($allowed, $slug)) {
                 continue;
             }
@@ -123,12 +113,20 @@ class AutoTagConfigProvider
     }
 
     /**
-     * The active model id for a category ('wd', 'ram'), or null for an unknown category. Each category
+     * The active model id for a category ('wd'), or null for an unknown category. Each category
      * has exactly one model baked into the service image, taken straight from the static catalog.
      */
     public function getActiveModel(string $category): ?string
     {
         return ModelCatalog::modelsFor($category)[0] ?? null;
+    }
+
+    private function rawThresholdFor(string $source): ?string
+    {
+        return match ($source) {
+            'wd' => $this->wdAutoValidateThreshold,
+            default => null,
+        };
     }
 
     private function parseBoardSlugs(?string $raw): array

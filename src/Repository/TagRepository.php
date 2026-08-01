@@ -89,66 +89,60 @@ class TagRepository extends ServiceEntityRepository
 
     public function findForPosts(Board $board, array $posts): array
     {
-        $countQuery = $this->getEntityManager()
+        $qb = $this->getEntityManager()->createQueryBuilder();
+
+        // Semi-join rather than a correlated count: the board-wide tally is aggregated once for
+        // every tag, instead of being recomputed for each (tag, post) pair the join produces.
+        $onAPagePost = $this->getEntityManager()
             ->createQueryBuilder()
-            ->select('COUNT(DISTINCT i2.id)')
-            ->from(Tag::class, 't2')
-            ->join('t2.posts', 'i2', 'WITH', 'i2.board = :board')
-            ->where('t2 = t')
+            ->select('1')
+            ->from(Post::class, 'p2')
+            ->join('p2.tags', 't2')
+            ->where('p2 IN (:posts)')
+            ->andWhere('t2 = t')
             ->getDQL()
         ;
 
-        $qb = $this->getEntityManager()
-            ->createQueryBuilder()
-            ->distinct()
-            ->select("t.id, t.name, t.category, ({$countQuery}) AS counter")
+        $qb
+            ->select('t.id, t.name, t.category, COUNT(p.id) AS counter')
             ->from(Tag::class, 't')
-            ->join('t.posts', 'i', 'WITH', 'i IN (:posts)')
+            ->join('t.posts', 'p', 'WITH', 'p.board = :board')
+            ->where($qb->expr()->exists($onAPagePost))
+            ->groupBy('t.id, t.name, t.category')
             ->setParameter('posts', $posts)
             ->setParameter('board', $board->getId())
         ;
 
-        $results = $qb->getQuery()->getArrayResult();
-
-        foreach ($results as &$result) {
-            $result['category'] = $result['category']->value;
-        }
-
-        return $results;
+        return $this->withCategoryValues($qb->getQuery()->getArrayResult());
     }
 
     public function findByIdForInfiniteScroll(Board $board, array $ids): array
     {
-        $countQuery = $this->getEntityManager()
-            ->createQueryBuilder()
-            ->select('COUNT(DISTINCT i2.id)')
-            ->from(Tag::class, 't2')
-            ->join('t2.posts', 'i2', 'WITH', 'i2.board = :board')
-            ->where('t2 = t')
-            ->getDQL()
-        ;
-
         $qb = $this->getEntityManager()
             ->createQueryBuilder()
-            ->distinct()
-            ->select("t.id, t.name, t.category, ({$countQuery}) AS counter")
+            ->select('t.id, t.name, t.category, COUNT(p.id) AS counter')
             ->from(Tag::class, 't')
+            ->join('t.posts', 'p', 'WITH', 'p.board = :board')
             ->where('t.id IN (:ids)')
+            ->groupBy('t.id, t.name, t.category')
             ->setParameter('ids', $ids)
             ->setParameter('board', $board->getId())
         ;
 
-        $results = $qb->getQuery()->getArrayResult();
+        return $this->withCategoryValues($qb->getQuery()->getArrayResult());
+    }
 
+    private function withCategoryValues(array $results): array
+    {
         foreach ($results as &$result) {
-            $result['category'] = $result['category']->value;
+            $result['category'] = $result['category']?->value;
         }
 
         return $results;
     }
 
     /**
-     * Flip the given names from `custom` to the model source that emitted them (`wd`, `ram`). Only
+     * Flip the given names from `custom` to the model source that emitted them. Only
      * `custom` rows are touched, so a name already attributed to another model keeps its first
      * attribution. Returns rows reclassified. Bulk UPDATE — run it when no matching Tag is held in
      * the UoW.

@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\Post;
-use App\Entity\TagSuggestion;
 use App\Form\DataTransformer\StringToTagTransformer;
 use App\Form\Type\TagValidationType;
 use App\Repository\PostRepository;
 use App\Repository\TagSuggestionRepository;
 use App\Service\AutoTag\AutoTagConfigProvider;
+use App\Service\AutoTag\SuggestionSplitter;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,8 +21,10 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[IsGranted('ROLE_ADMIN')]
 class TagValidationController extends AbstractController
 {
-    public function __construct(private readonly AutoTagConfigProvider $autoTagConfigProvider)
-    {
+    public function __construct(
+        private readonly AutoTagConfigProvider $autoTagConfigProvider,
+        private readonly SuggestionSplitter $suggestionSplitter,
+    ) {
     }
 
     #[Route(path: '/tag-validation', name: 'app_tag_validation', methods: ['GET'])]
@@ -123,44 +125,12 @@ class TagValidationController extends AbstractController
     }
 
     /**
-     * Split a target's suggestions into confident-prefill names and click-to-add chips, deduping
-     * by name. Only still-pending suggestions are considered; a confident wd tag is never repeated
-     * as a chip. Same two-pass logic as PostController::autoTagSuggestions().
+     * The prefill field takes bare names; the chips keep their full entry.
      */
     private function splitSuggestions(array $suggestions): array
     {
-        $threshold = $this->autoTagConfigProvider->getAutoValidateThreshold();
+        [$confident, $chips] = $this->suggestionSplitter->split($suggestions);
 
-        $pending = array_filter(
-            $suggestions,
-            static fn (TagSuggestion $suggestion): bool => $suggestion->getStatus() === TagSuggestion::STATUS_PENDING
-        );
-
-        $highConfidenceNames = [];
-        $chips = [];
-        $seen = [];
-
-        foreach ($pending as $suggestion) {
-            $name = $suggestion->getTagName();
-            if ($suggestion->getScore() >= $threshold && !isset($seen[$name])) {
-                $highConfidenceNames[] = $name;
-                $seen[$name] = true;
-            }
-        }
-
-        foreach ($pending as $suggestion) {
-            $name = $suggestion->getTagName();
-            if (!isset($seen[$name])) {
-                $chips[] = [
-                    'name' => $name,
-                    'category' => $suggestion->getCategory()?->value ?? 'general',
-                    'score' => $suggestion->getScore(),
-                    'source' => $suggestion->getSource(),
-                ];
-                $seen[$name] = true;
-            }
-        }
-
-        return [$highConfidenceNames, $chips];
+        return [array_column($confident, 'name'), $chips];
     }
 }

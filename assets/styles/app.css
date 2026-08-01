@@ -251,10 +251,6 @@ figure .tag {
   color: #0075f8;
 }
 
-.suggestion-source-knn {
-  background-color: #e6f7ea;
-  color: #00ab2c;
-}
 
 .block-search .control {
   width: 100%;
@@ -663,6 +659,14 @@ html.loading:before {
 
 .left-block .block {
   margin-bottom: 1.5rem;
+}
+
+/* Sticky and "show every tag" are mutually exclusive: once pinned, a column taller than the
+   viewport can never be scrolled to its end. */
+.left-block-full {
+  position: static;
+  max-height: none;
+  overflow-y: visible;
 }
 
 .right {

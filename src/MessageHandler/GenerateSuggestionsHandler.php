@@ -17,9 +17,8 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
  * Async tagging handler: produces tag suggestions via the inference service (persisted as
- * non-authoritative TagSuggestions, never tags). The post's board decides which models run — WD for
- * illustrations, RAM++ for photographs, or both — and each model's output is stored under its own
- * source. Idempotent and feature-gated.
+ * non-authoritative TagSuggestions, never tags). The post's board decides which models run, and
+ * each model's output is stored under its own source. Idempotent and feature-gated.
  */
 #[AsMessageHandler]
 final class GenerateSuggestionsHandler

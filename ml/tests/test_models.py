@@ -14,7 +14,7 @@ def test_models_returns_catalog(monkeypatch, tmp_path):
     assert resp.status_code == 200
     body = resp.json()
     categories = {e["category"] for e in body}
-    assert categories == {"wd", "ram"}
+    assert categories == {"wd"}
     for entry in body:
         assert set(entry.keys()) == {"category", "id", "repo_id", "revision", "files", "dim", "status"}
         assert entry["status"] == "absent"
@@ -32,19 +32,4 @@ def test_models_marks_ready_when_files_present(monkeypatch, tmp_path):
     by_cat = {e["category"]: e for e in body}
 
     assert by_cat["wd"]["status"] == "ready"
-    assert by_cat["ram"]["status"] == "absent"  # per-model, not global
 
-
-def test_ram_needs_every_declared_file_to_be_ready(monkeypatch, tmp_path):
-    monkeypatch.setenv("MENDAKO_MODELS_DIR", str(tmp_path))
-    ram_dir = tmp_path / "ram-plus"
-    ram_dir.mkdir()
-    (ram_dir / "model.onnx").write_text("x")
-    (ram_dir / "tags.txt").write_text("x")
-
-    # thresholds.txt missing → the weights alone must not read as ready
-    assert {e["category"]: e for e in client.get("/models").json()}["ram"]["status"] == "absent"
-
-    (ram_dir / "thresholds.txt").write_text("x")
-
-    assert {e["category"]: e for e in client.get("/models").json()}["ram"]["status"] == "ready"

@@ -75,6 +75,34 @@
                     </form>
                 </div>
             </div>
+
+            <hr>
+
+            <div data-job-status-key="thumbnails">
+                <div class="is-flex is-justify-content-space-between is-align-items-center mb-3">
+                    <span class="has-text-weight-semibold">
+                        {{ 'label.thumbnails'|trans }}
+                        <span class="has-text-grey has-text-weight-normal ml-1" style="cursor: help;" title="{{ 'label.thumbnails_help'|trans }}">?</span>
+                    </span>
+                    <span class="tag is-light has-text-black" data-job-role="status">…</span>
+                </div>
+                <progress class="progress is-primary is-small mb-3" data-job-role="bar" value="0" max="100">0%</progress>
+                <div class="is-flex is-align-items-center">
+                    <form method="post" action="{{ path('app_thumbnails_backlog') }}" class="mr-2">
+                        <input type="hidden" name="_token" value="{{ csrf_token('autotag_thumbnails') }}">
+                        <div class="buttons are-small has-addons mb-0">
+                            <button class="button" type="submit" name="all" value="0" data-job-role="launch">{{ 'btn.tag_missing'|trans }}</button>
+                            <button class="button" type="submit" name="all" value="1" data-job-role="launch">{{ 'btn.tag_all'|trans }}</button>
+                        </div>
+                    </form>
+                    <form method="post" action="{{ path('app_jobs_cancel', {job: 'thumbnails'}) }}">
+                        <input type="hidden" name="_token" value="{{ csrf_token('job_cancel') }}">
+                        <div class="buttons are-small mb-0">
+                            <button class="button is-danger" type="submit" data-job-role="cancel" disabled>{{ 'btn.cancel'|trans }}</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}

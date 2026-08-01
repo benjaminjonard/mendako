@@ -907,12 +907,6 @@
         <target>WD</target>
       </segment>
     </unit>
-    <unit id="Kq7mXb2" name="label.source_ram">
-      <segment state="translated">
-        <source>RAM</source>
-        <target>RAM</target>
-      </segment>
-    </unit>
     <unit id="ATuY3sA" name="label.source_custom">
       <segment state="translated">
         <source>Custom</source>
@@ -953,6 +947,36 @@
       <segment state="translated">
         <source>Detect duplicates</source>
         <target>Détection de doublons</target>
+      </segment>
+    </unit>
+    <unit id="Vn4kQ8p" name="label.thumbnails">
+      <segment state="translated">
+        <source>Regenerate thumbnails</source>
+        <target>Régénérer les vignettes</target>
+      </segment>
+    </unit>
+    <unit id="Hs2mLd7" name="label.thumbnails_help">
+      <segment state="translated">
+        <source>Rebuild missing thumbnails and delete the ones no longer referenced.</source>
+        <target>Régénère les vignettes manquantes et supprime celles qui ne sont plus référencées.</target>
+      </segment>
+    </unit>
+    <unit id="Bx9rTc4" name="label.thumbnails_done">
+      <segment state="translated">
+        <source>with a thumbnail</source>
+        <target>avec vignette</target>
+      </segment>
+    </unit>
+    <unit id="Wj5nPe1" name="label.thumbnails_todo">
+      <segment state="translated">
+        <source>remaining</source>
+        <target>restantes</target>
+      </segment>
+    </unit>
+    <unit id="Qz6vRm3" name="message.thumbnails_started">
+      <segment state="translated">
+        <source>Thumbnail rebuild started.</source>
+        <target>Régénération des vignettes lancée.</target>
       </segment>
     </unit>
     <unit id="qs81Y4S" name="label.duplicate_vectors_help">

@@ -18,18 +18,21 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: PostRepository::class)]
 #[ORM\Table(name: 'men_post')]
-class Post implements UploadableInterface
+class Post implements UploadableInterface, ThumbnailableInterface
 {
     #[ORM\Id]
     #[ORM\Column(type: Types::STRING, length: 36, unique: true, options: ['fixed' => true])]
     private string $id;
 
-    #[Upload(path: 'path')]
+    #[Upload(path: 'path', thumbnailPath: 'thumbnailPath')]
     #[Assert\File(mimeTypes: ['image/png', 'image/jpeg', 'image/webp', 'image/gif', 'image/avif', 'image/svg+xml', 'video/mp4', 'video/webm', 'video/x-m4v'])]
     private ?File $file = null;
 
     #[ORM\Column(type: Types::STRING, nullable: true, unique: true)]
     private ?string $path = null;
+
+    #[ORM\Column(type: Types::STRING, nullable: true)]
+    private ?string $thumbnailPath = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $comment = null;
@@ -115,6 +118,18 @@ class Post implements UploadableInterface
     public function setPath(?string $path): Post
     {
         $this->path = $path;
+
+        return $this;
+    }
+
+    public function getThumbnailPath(): ?string
+    {
+        return $this->thumbnailPath;
+    }
+
+    public function setThumbnailPath(?string $thumbnailPath): Post
+    {
+        $this->thumbnailPath = $thumbnailPath;
 
         return $this;
     }

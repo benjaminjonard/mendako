@@ -21,10 +21,8 @@ class TagSuggestion
     public const STATUS_ACCEPTED = 'accepted';
     public const STATUS_DISMISSED = 'dismissed';
 
-    // The producing model's catalog category (see ModelCatalog): WD tags illustrations,
-    // RAM++ tags photographs.
+    // The producing model's catalog category (see ModelCatalog).
     public const SOURCE_WD = 'wd';
-    public const SOURCE_RAM = 'ram';
 
     #[ORM\Id]
     #[ORM\Column(type: Types::STRING, length: 36, unique: true, options: ['fixed' => true])]

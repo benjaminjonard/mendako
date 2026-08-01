@@ -11,8 +11,10 @@ use App\Repository\PostRepository;
 use App\Repository\TagRepository;
 use App\Repository\TagSuggestionRepository;
 use App\Service\AutoTag\AutoTagConfigProvider;
+use App\Service\AutoTag\SuggestionSplitter;
 use App\Service\AutoTag\TaggingDispatcher;
 use App\Service\PostVectorService;
+use App\Service\ThumbnailDispatcher;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -32,6 +34,7 @@ class PostController extends AbstractController
         TagRepository $tagRepository,
         PostVectorService $postVectorService,
         TaggingDispatcher $taggingDispatcher,
+        ThumbnailDispatcher $thumbnailDispatcher,
         #[MapEntity(mapping: ['slug' => 'slug'])] ?Board $board
     ): Response {
         $post = new Post();
@@ -45,7 +48,8 @@ class PostController extends AbstractController
                 ->setVector($postVectorService->generateVector($post->getFile()))
             ;
 
-            if ($form->get('setAsBoardThumbnail')->getData() === true) {
+            $setAsBoardThumbnail = $form->get('setAsBoardThumbnail')->getData() === true;
+            if ($setAsBoardThumbnail) {
                 $post->getBoard()->setThumbnail($post);
             }
 
@@ -53,6 +57,9 @@ class PostController extends AbstractController
             $managerRegistry->getManager()->flush();
 
             $taggingDispatcher->dispatch($post);
+            if ($setAsBoardThumbnail) {
+                $thumbnailDispatcher->dispatch($post->getBoard());
+            }
 
             $this->addFlash('notice', $translator->trans('message.post_added'));
 
@@ -112,6 +119,7 @@ class PostController extends AbstractController
         ManagerRegistry $managerRegistry,
         PostVectorService $postVectorService,
         AutoTagConfigProvider $autoTagConfigProvider,
+        ThumbnailDispatcher $thumbnailDispatcher,
         #[MapEntity(mapping: ['slug' => 'slug'])] Board $board,
         Post $post
     ): Response {
@@ -123,12 +131,17 @@ class PostController extends AbstractController
                 ->setVector($postVectorService->generateVector($post->getFile()))
             ;
 
-            if ($form->get('setAsBoardThumbnail')->getData() === true) {
+            $setAsBoardThumbnail = $form->get('setAsBoardThumbnail')->getData() === true;
+            if ($setAsBoardThumbnail) {
                 $board->setThumbnail($post);
             }
 
             $managerRegistry->getManager()->persist($post);
             $managerRegistry->getManager()->flush();
+
+            if ($setAsBoardThumbnail) {
+                $thumbnailDispatcher->dispatch($board);
+            }
 
             $this->addFlash('notice', $translator->trans('message.post_edited'));
 
@@ -151,6 +164,7 @@ class PostController extends AbstractController
     #[Route(path: '/boards/{slug}/{id}/autotag-suggestions', name: 'app_post_autotag_suggestions', methods: ['GET'])]
     public function autoTagSuggestions(
         AutoTagConfigProvider $autoTagConfigProvider,
+        SuggestionSplitter $suggestionSplitter,
         TagSuggestionRepository $tagSuggestionRepository,
         #[MapEntity(mapping: ['slug' => 'slug'])] Board $board,
         Post $post
@@ -159,44 +173,15 @@ class PostController extends AbstractController
             return $this->json(['enabled' => false]);
         }
 
-        $pending = array_filter(
+        [$highConfidence, $lowConfidence] = $suggestionSplitter->split(
             $tagSuggestionRepository->findForTarget('post', $post->getId()),
-            static fn ($suggestion): bool => $suggestion->getStatus() === \App\Entity\TagSuggestion::STATUS_PENDING
         );
-
-        $entry = static fn ($suggestion): array => [
-            'name' => $suggestion->getTagName(),
-            'category' => $suggestion->getCategory()?->value ?? 'general',
-            'score' => $suggestion->getScore(),
-            'source' => $suggestion->getSource(),
-        ];
-
-        // Dedup by name across sources (wd / ram), which can both propose the same name. Pass 1:
-        // confident tags pre-fill the field. Pass 2: everything else becomes a click-to-add chip.
-        $threshold = $autoTagConfigProvider->getAutoValidateThreshold();
-        $highConfidence = [];
-        $lowConfidence = [];
-        $seen = [];
-        foreach ($pending as $suggestion) {
-            $name = $suggestion->getTagName();
-            if ($suggestion->getScore() >= $threshold && !isset($seen[$name])) {
-                $highConfidence[] = $entry($suggestion);
-                $seen[$name] = true;
-            }
-        }
-        foreach ($pending as $suggestion) {
-            $name = $suggestion->getTagName();
-            if (!isset($seen[$name])) {
-                $lowConfidence[] = $entry($suggestion);
-                $seen[$name] = true;
-            }
-        }
 
         return $this->json([
             'enabled' => true,
             // No server-side "analysis complete" marker yet: infer "still analyzing"
             // from the absence of any suggestion (the client polls with a bounded cap).
-            'status' => $pending === [] ? 'analyzing' : 'ready',
+            'status' => $highConfidence === [] && $lowConfidence === [] ? 'analyzing' : 'ready',
             'highConfidence' => $highConfidence,
             'pending' => $lowConfidence,
         ]);

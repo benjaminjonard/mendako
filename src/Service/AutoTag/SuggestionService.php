@@ -16,7 +16,7 @@ use Symfony\Component\String\UnicodeString;
 
 /**
  * Persists the service /analyze result as TagSuggestions. A suggestion on a real post whose score
- * clears APP_AUTOTAG_AUTOVALIDATE_THRESHOLD is auto-validated: applied to the post (men_post_tag)
+ * clears its model's auto-validation threshold is auto-validated: applied to the post (men_post_tag)
  * and stored as ACCEPTED instead of pending. Re-running upserts the source's pending rows and never
  * removes accepted/dismissed ones.
  */
@@ -83,15 +83,13 @@ class SuggestionService
 
         // Upsert atomically: drop this source's stale pending rows, then re-insert, skipping names
         // the user already decided on (accepted/dismissed) — across ALL sources, so a decision made
-        // on a wd suggestion also silences the same name coming from ram, and vice versa — as well
-        // as names already applied to the post.
+        // on one source's suggestion also silences the same name from another — as well as names
+        // already applied to the post.
         $autoValidate = $targetType === 'post';
-        $threshold = $this->autoTagConfigProvider->getAutoValidateThreshold();
+        $threshold = $this->autoTagConfigProvider->getAutoValidateThreshold($source);
         // Suggestion sources and model tag sources share their values, so the producing model
         // carries over as-is; anything unrecognised is treated as a user-invented name.
-        $tagSource = in_array($source, [TagSuggestion::SOURCE_WD, TagSuggestion::SOURCE_RAM], true)
-            ? $source
-            : Tag::SOURCE_CUSTOM;
+        $tagSource = $source === TagSuggestion::SOURCE_WD ? $source : Tag::SOURCE_CUSTOM;
 
         $this->entityManager->wrapInTransaction(function () use ($targetType, $targetId, $source, $candidates, $applied, $autoValidate, $threshold, $tagSource): void {
             $this->tagSuggestionRepository->deletePendingForTarget($targetType, $targetId, $source);

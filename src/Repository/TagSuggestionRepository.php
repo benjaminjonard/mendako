@@ -157,7 +157,7 @@ class TagSuggestionRepository extends ServiceEntityRepository
 
     /**
      * Names a human has already decided on (accepted or dismissed) for this target, across all
-     * sources. A re-run skips these, so one decision holds whichever source (wd/ram) resurfaces it.
+     * sources. A re-run skips these, so one decision holds whichever source resurfaces it.
      */
     public function decidedTagNamesForTarget(string $targetType, string $targetId): array
     {

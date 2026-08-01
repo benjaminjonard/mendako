@@ -170,13 +170,12 @@ class SuggestionServiceTest extends KernelTestCase
         $dismissed->setStatus(TagSuggestion::STATUS_DISMISSED);
         $this->entityManager->flush();
 
-        // Later, a RAM++ run proposes the very same name with high confidence...
+        // Later, another source proposes the very same name with high confidence...
         $this->service->store('post', $this->targetId, [
             'tags' => [['name' => 'dismissed_tag', 'category' => 'general', 'score' => 0.95]],
-        ], TagSuggestion::SOURCE_RAM);
+        ], 'other');
 
-        // ...it is not re-surfaced: a dismiss on the wd suggestion holds for every source, so no
-        // ram twin is created — still one dismissed wd row.
+        // ...it is not re-surfaced: a dismiss holds for every source, so no twin is created.
         $suggestions = $this->repository->findForTarget('post', $this->targetId);
         $this->assertCount(1, $suggestions);
         $this->assertSame(TagSuggestion::SOURCE_WD, $suggestions[0]->getSource());
@@ -237,39 +236,6 @@ class SuggestionServiceTest extends KernelTestCase
         $this->assertSame(Tag::SOURCE_WD, $tagRepository->findOneBy(['name' => 'known_by_wd'])->getSource());
         // A tag the model never mentioned stays custom.
         $this->assertSame(Tag::SOURCE_CUSTOM, $tagRepository->findOneBy(['name' => 'truly_custom'])->getSource());
-    }
-
-    public function test_ram_store_reclassifies_tags_to_ram(): void
-    {
-        $tagRepository = static::getContainer()->get(TagRepository::class);
-        $this->entityManager->persist((new Tag())->setName('beach')->setSource(Tag::SOURCE_CUSTOM));
-        $this->entityManager->flush();
-
-        $this->service->store('post', $this->targetId, [
-            'tags' => [['name' => 'beach', 'category' => 'general', 'score' => 0.9]],
-        ], TagSuggestion::SOURCE_RAM);
-        $this->entityManager->clear();
-
-        // RAM++ emits 'beach' → the name is model-known, not the user's own invention.
-        $this->assertSame(Tag::SOURCE_RAM, $tagRepository->findOneBy(['name' => 'beach'])->getSource());
-    }
-
-    public function test_first_model_to_claim_a_name_keeps_the_attribution(): void
-    {
-        $tagRepository = static::getContainer()->get(TagRepository::class);
-        $this->entityManager->persist((new Tag())->setName('sunset')->setSource(Tag::SOURCE_CUSTOM));
-        $this->entityManager->flush();
-
-        $this->service->store('post', $this->targetId, [
-            'tags' => [['name' => 'sunset', 'category' => 'general', 'score' => 0.9]],
-        ], TagSuggestion::SOURCE_RAM);
-        $this->service->store('post', $this->targetId, [
-            'tags' => [['name' => 'sunset', 'category' => 'general', 'score' => 0.9]],
-        ], TagSuggestion::SOURCE_WD);
-        $this->entityManager->clear();
-
-        // Only `custom` rows are reclassified, so the second model does not steal the attribution.
-        $this->assertSame(Tag::SOURCE_RAM, $tagRepository->findOneBy(['name' => 'sunset'])->getSource());
     }
 
     private function indexByName(array $suggestions): array

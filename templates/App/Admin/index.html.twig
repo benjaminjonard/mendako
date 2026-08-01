@@ -62,18 +62,16 @@
                 <div class="config">
                     <b>{{ 'label.autotag_autovalidate_threshold'|trans }}</b>: {{ autoTagAutoValidateThreshold }}&nbsp;%
                 </div>
-                {% for source, boards in {'wd': autoTagWdBoards, 'ram': autoTagRamBoards} %}
-                    <div class="config">
-                        <b>{{ 'label.autotag_boards'|trans }} — {{ ('label.source_' ~ source)|trans }}</b>:
-                        {% if '*' in boards %}
-                            {{ 'label.autotag_boards_all'|trans }}
-                        {% elseif boards is empty %}
-                            {{ 'label.autotag_boards_none'|trans }}
-                        {% else %}
-                            {{ boards|join(', ') }}
-                        {% endif %}
-                    </div>
-                {% endfor %}
+                <div class="config">
+                    <b>{{ 'label.autotag_boards'|trans }}</b>:
+                    {% if '*' in autoTagBoards %}
+                        {{ 'label.autotag_boards_all'|trans }}
+                    {% elseif autoTagBoards is empty %}
+                        {{ 'label.autotag_boards_none'|trans }}
+                    {% else %}
+                        {{ autoTagBoards|join(', ') }}
+                    {% endif %}
+                </div>
             {% endif %}
         </div>
     </div>

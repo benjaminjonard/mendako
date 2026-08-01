@@ -128,11 +128,11 @@ class GenerateSuggestionsHandlerTest extends TestCase
         $postRepository->method('find')->willReturn($this->postWithPath());
 
         $wdResult = ['tags' => [['name' => '1girl', 'category' => 'general', 'score' => 0.9]], 'rating' => ['label' => 'general', 'score' => 0.8]];
-        $ramResult = ['tags' => [['name' => 'beach', 'category' => 'general', 'score' => 0.7]], 'rating' => ['label' => null, 'score' => 0.0]];
+        $otherResult = ['tags' => [['name' => 'beach', 'category' => 'general', 'score' => 0.7]], 'rating' => ['label' => null, 'score' => 0.0]];
 
         // One call per model, each against the same decoded thumbnail.
         $client = $this->createMock(AutoTagInferenceClient::class);
-        $client->expects($this->exactly(2))->method('analyze')->willReturnOnConsecutiveCalls($wdResult, $ramResult);
+        $client->expects($this->exactly(2))->method('analyze')->willReturnOnConsecutiveCalls($wdResult, $otherResult);
 
         // Each model's output is stored under its own source, so the two never overwrite each other.
         $stored = [];
@@ -143,11 +143,11 @@ class GenerateSuggestionsHandlerTest extends TestCase
             },
         );
 
-        $handler = $this->handler($this->provider(true, ['wd' => 'wd-eva02-large-tagger-v3', 'ram' => 'ram-plus']), $postRepository, $client, $suggestionService);
+        $handler = $this->handler($this->provider(true, ['wd' => 'wd-eva02-large-tagger-v3', 'other' => 'other-model']), $postRepository, $client, $suggestionService);
         $handler(new GenerateSuggestionsMessage('both-id'));
 
         $this->assertSame($wdResult, $stored['wd']);
-        $this->assertSame($ramResult, $stored['ram']);
+        $this->assertSame($otherResult, $stored['other']);
     }
 
     public function test_one_model_store_failure_does_not_cost_the_other_its_results(): void
@@ -169,11 +169,11 @@ class GenerateSuggestionsHandlerTest extends TestCase
             },
         );
 
-        $handler = $this->handler($this->provider(true, ['wd' => 'wd-eva02-large-tagger-v3', 'ram' => 'ram-plus']), $postRepository, $client, $suggestionService);
+        $handler = $this->handler($this->provider(true, ['wd' => 'wd-eva02-large-tagger-v3', 'other' => 'other-model']), $postRepository, $client, $suggestionService);
         $handler(new GenerateSuggestionsMessage('both-id'));
 
-        // The wd store threw, yet ram was still attempted — and nothing escaped to the worker.
-        $this->assertSame(['wd', 'ram'], $sources);
+        // The wd store threw, yet the next model was still attempted — nothing escaped to the worker.
+        $this->assertSame(['wd', 'other'], $sources);
     }
 
     public function test_video_samples_frames_and_stores_aggregated_suggestions(): void
@@ -220,7 +220,7 @@ class GenerateSuggestionsHandlerTest extends TestCase
         $client = $this->createMock(AutoTagInferenceClient::class);
         $client->expects($this->exactly(4))->method('analyze')->willReturn(['tags' => [], 'rating' => ['label' => null, 'score' => 0.0]]);
 
-        $handler = $this->handler($this->provider(true, ['wd' => 'wd-eva02-large-tagger-v3', 'ram' => 'ram-plus']), $postRepository, $client, thumbnailGenerator: $thumbnailGenerator);
+        $handler = $this->handler($this->provider(true, ['wd' => 'wd-eva02-large-tagger-v3', 'other' => 'other-model']), $postRepository, $client, thumbnailGenerator: $thumbnailGenerator);
         $handler(new GenerateSuggestionsMessage('video-id'));
     }
 

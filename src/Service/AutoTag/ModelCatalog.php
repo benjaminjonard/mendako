@@ -14,13 +14,8 @@ final class ModelCatalog
      * category => [models (list of model ids)].
      */
     public const array CATEGORIES = [
-        // Illustrations: Danbooru tags + a content rating.
         'wd' => [
             'models' => ['wd-eva02-large-tagger-v3'],
-        ],
-        // Photographs: RAM++ general-purpose tags, no rating.
-        'ram' => [
-            'models' => ['ram-plus'],
         ],
     ];
 

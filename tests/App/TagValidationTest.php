@@ -94,7 +94,7 @@ class TagValidationTest extends WebTestCase
         $post = $this->createPost();
         // Confident wd tag pre-fills the field; the low-confidence one becomes a list row.
         $this->persistSuggestion($post->getId(), 'hatsune_miku', 0.95, TagCategory::CHARACTER);
-        $this->persistSuggestion($post->getId(), '1girl', 0.20, TagCategory::GENERAL, source: TagSuggestion::SOURCE_RAM);
+        $this->persistSuggestion($post->getId(), '1girl', 0.20, TagCategory::GENERAL);
 
         $crawler = $this->client->request(Request::METHOD_GET, '/tag-validation');
 
@@ -111,7 +111,7 @@ class TagValidationTest extends WebTestCase
         $this->assertCount(1, $row->filter('[data-action*="suggestions#acceptSuggestion"]'));
         $this->assertCount(1, $row->filter('[data-action*="suggestions#rejectSuggestion"]'));
         // Source badge and score percentage are shown.
-        $this->assertSame('RAM', $row->filter('.suggestion-source')->text());
+        $this->assertSame('WD', $row->filter('.suggestion-source')->text());
         $this->assertStringContainsString('20%', $row->filter('.suggestion-score')->text());
     }
 

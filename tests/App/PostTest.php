@@ -330,4 +330,25 @@ class PostTest extends WebTestCase
         $this->assertResponseIsSuccessful();
         $this->assertCount(1, json_decode($this->client->getResponse()->getContent()));
     }
+
+    public function test_board_choices_are_listed_alphabetically(): void
+    {
+        // Arrange
+        $this->client->loginUser(UserFactory::createOne());
+        // Created out of order: without an explicit ordering the choices come out in whatever
+        // order Postgres returns them.
+        foreach (['Zebra', 'anime', 'Minerals'] as $name) {
+            BoardFactory::createOne(['name' => $name]);
+        }
+
+        // Act
+        $crawler = $this->client->request(Request::METHOD_GET, '/boards/anime/add');
+
+        // Assert
+        $this->assertResponseIsSuccessful();
+        $names = $crawler->filter('#post_board option')->each(static fn ($option): string => $option->text());
+        $sorted = $names;
+        sort($sorted, SORT_NATURAL | SORT_FLAG_CASE);
+        $this->assertSame($sorted, $names);
+    }
 }

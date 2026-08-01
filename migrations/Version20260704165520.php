@@ -7,9 +7,6 @@ namespace DoctrineMigrations;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
-/**
- * Auto-generated Migration: Please modify to your needs!
- */
 final class Version20260704165520 extends AbstractMigration
 {
     public function getDescription(): string
@@ -24,6 +21,6 @@ final class Version20260704165520 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE men_tag DROP source');
+        $this->skipIf(true, 'Always move forward.');
     }
 }

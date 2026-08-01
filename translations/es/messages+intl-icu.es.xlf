@@ -817,12 +817,6 @@
         <target>WD</target>
       </segment>
     </unit>
-    <unit id="Kq7mXb2" name="label.source_ram">
-      <segment state="translated">
-        <source>RAM</source>
-        <target>RAM</target>
-      </segment>
-    </unit>
     <unit id="ATuY3sA" name="label.source_custom">
       <segment state="translated">
         <source>Custom</source>
@@ -839,6 +833,36 @@
       <segment state="translated">
         <source>Duplicate vectors</source>
         <target>Vectores de duplicados</target>
+      </segment>
+    </unit>
+    <unit id="Vn4kQ8p" name="label.thumbnails">
+      <segment state="translated">
+        <source>Regenerate thumbnails</source>
+        <target>Regenerar miniaturas</target>
+      </segment>
+    </unit>
+    <unit id="Hs2mLd7" name="label.thumbnails_help">
+      <segment state="translated">
+        <source>Rebuild missing thumbnails and delete the ones no longer referenced.</source>
+        <target>Regenera las miniaturas que faltan y elimina las que ya no se referencian.</target>
+      </segment>
+    </unit>
+    <unit id="Bx9rTc4" name="label.thumbnails_done">
+      <segment state="translated">
+        <source>with a thumbnail</source>
+        <target>con miniatura</target>
+      </segment>
+    </unit>
+    <unit id="Wj5nPe1" name="label.thumbnails_todo">
+      <segment state="translated">
+        <source>remaining</source>
+        <target>restantes</target>
+      </segment>
+    </unit>
+    <unit id="Qz6vRm3" name="message.thumbnails_started">
+      <segment state="translated">
+        <source>Thumbnail rebuild started.</source>
+        <target>Regeneración de miniaturas iniciada.</target>
       </segment>
     </unit>
     <unit id="WZYaXwy" name="message.vectors_started">

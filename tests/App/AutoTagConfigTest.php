@@ -203,72 +203,66 @@ class AutoTagConfigTest extends WebTestCase
         // One model per category, baked into the service image — no DB selection involved.
         $provider = new AutoTagConfigProvider(true);
         $this->assertSame('wd-eva02-large-tagger-v3', $provider->getActiveModel('wd'));
-        $this->assertSame('ram-plus', $provider->getActiveModel('ram'));
         $this->assertNull($provider->getActiveModel('unknown'));
     }
 
-    /** @return AutoTagConfigProvider a provider with the two board lists set */
-    private function boards(string $wd, string $ram): AutoTagConfigProvider
+    public function test_the_auto_validate_threshold_comes_from_its_env_var(): void
     {
-        return new AutoTagConfigProvider(true, '', '', $wd, $ram);
+        $provider = new AutoTagConfigProvider(true, '', '30');
+
+        $this->assertSame(30.0, $provider->getAutoValidateThresholdPercent('wd'));
+        $this->assertSame(0.3, $provider->getAutoValidateThreshold('wd'));
     }
 
-    public function test_each_model_reads_its_own_board_list(): void
+    public function test_an_unset_threshold_falls_back_to_the_default(): void
     {
-        $provider = $this->boards('anime, R18', 'photos');
+        // `default::` yields null for an unset env var, and empty for one set to nothing.
+        $this->assertSame(85.0, (new AutoTagConfigProvider(true, '', null))->getAutoValidateThresholdPercent('wd'));
+        $this->assertSame(85.0, (new AutoTagConfigProvider(true, '', ''))->getAutoValidateThresholdPercent('wd'));
+    }
 
-        // Slugs are trimmed and lower-cased so the env var can be written comfortably.
+    public function test_a_source_with_no_configured_threshold_falls_back_to_the_default(): void
+    {
+        $this->assertSame(85.0, (new AutoTagConfigProvider(true, '', '30'))->getAutoValidateThresholdPercent('unknown'));
+    }
+
+    public function test_thresholds_are_clamped_to_the_zero_hundred_range(): void
+    {
+        $this->assertSame(0.0, (new AutoTagConfigProvider(true, '', '-10'))->getAutoValidateThresholdPercent('wd'));
+        $this->assertSame(100.0, (new AutoTagConfigProvider(true, '', '250'))->getAutoValidateThresholdPercent('wd'));
+    }
+
+    public function test_board_slugs_are_trimmed_and_lowercased(): void
+    {
+        $provider = new AutoTagConfigProvider(true, '', '', 'anime, R18');
+
         $this->assertSame(['anime', 'r18'], $provider->getWdBoardSlugs());
-        $this->assertSame(['photos'], $provider->getRamBoardSlugs());
     }
 
     public function test_models_for_board_selects_by_list_membership(): void
     {
-        $provider = $this->boards('anime', 'photos');
+        $provider = new AutoTagConfigProvider(true, '', '', 'anime');
 
         $this->assertSame(['wd' => 'wd-eva02-large-tagger-v3'], $provider->getModelsForBoard('anime'));
-        $this->assertSame(['ram' => 'ram-plus'], $provider->getModelsForBoard('photos'));
         $this->assertSame([], $provider->getModelsForBoard('misc'));
         $this->assertSame([], $provider->getModelsForBoard(null));
     }
 
-    public function test_board_listed_for_both_models_runs_both(): void
+    public function test_wildcard_selects_every_board(): void
     {
-        $provider = $this->boards('cosplay', 'cosplay');
-
-        $this->assertSame(
-            ['wd' => 'wd-eva02-large-tagger-v3', 'ram' => 'ram-plus'],
-            $provider->getModelsForBoard('cosplay'),
-        );
-    }
-
-    public function test_wildcard_selects_every_board_for_that_model_only(): void
-    {
-        $provider = $this->boards('*', 'photos');
+        $provider = new AutoTagConfigProvider(true, '', '', '*');
 
         $this->assertSame(['wd' => 'wd-eva02-large-tagger-v3'], $provider->getModelsForBoard('anything'));
-        $this->assertSame(
-            ['wd' => 'wd-eva02-large-tagger-v3', 'ram' => 'ram-plus'],
-            $provider->getModelsForBoard('photos'),
-        );
     }
 
-    public function test_empty_or_unset_board_lists_tag_nothing(): void
+    public function test_an_empty_board_list_tags_nothing(): void
     {
         // Unset env vars arrive as null through the `default::` processor — the feature-off state.
-        $provider = new AutoTagConfigProvider(true, '', '', null, null);
+        $provider = new AutoTagConfigProvider(true, '', '', null);
 
         $this->assertSame([], $provider->getModelsForBoard('anime'));
         $this->assertFalse($provider->isBoardEnabled('anime'));
         $this->assertSame([], $provider->getEnabledBoardSlugs());
-    }
-
-    public function test_enabled_board_slugs_is_the_union_without_duplicates(): void
-    {
-        // Drives the admin coverage counts: a board tagged by both models must still be counted once.
-        $provider = $this->boards('anime,cosplay', 'cosplay,photos');
-
-        $this->assertSame(['anime', 'cosplay', 'photos'], $provider->getEnabledBoardSlugs());
     }
 
     public function test_admin_dashboard_shows_jobs_block_when_enabled(): void

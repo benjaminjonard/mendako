@@ -5,8 +5,11 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Message\EnqueueBacklogMessage;
+use App\Message\EnqueueThumbnailBacklogMessage;
 use App\Message\EnqueueVectorBacklogMessage;
+use App\Repository\BoardRepository;
 use App\Repository\PostRepository;
+use App\Repository\StagedPostRepository;
 use App\Service\AutoTag\AutoTagConfigProvider;
 use Doctrine\DBAL\Connection;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -29,12 +32,14 @@ class AutoTagConfigController extends AbstractController
     // off plus the per-item fan-out it expands into. One source of truth for status and launch guards.
     private const TAGGING_CLASSES = ['EnqueueBacklogMessage', 'GenerateSuggestionsMessage'];
     private const VECTOR_CLASSES = ['EnqueueVectorBacklogMessage', 'GenerateVectorMessage'];
+    private const THUMBNAIL_CLASSES = ['EnqueueThumbnailBacklogMessage', 'GenerateThumbnailMessage'];
 
     // job key (matches data-job-status-key in the template) → its message classes, so one cancel
     // route can clear any job's queue.
     private const JOB_CLASSES = [
         'tagging' => self::TAGGING_CLASSES,
         'vectors' => self::VECTOR_CLASSES,
+        'thumbnails' => self::THUMBNAIL_CLASSES,
     ];
 
     // A message reserved (delivered_at set) longer than this is treated as abandoned: its worker died
@@ -78,13 +83,12 @@ class AutoTagConfigController extends AbstractController
      * Each job returns a uniform, display-ready shape built by buildJobStatus().
      */
     #[Route(path: '/admin/autotag/jobs', name: 'app_autotag_jobs', methods: ['GET'])]
-    public function jobs(PostRepository $postRepository, AutoTagConfigProvider $autoTagConfigProvider, Connection $connection, TranslatorInterface $translator): JsonResponse
+    public function jobs(PostRepository $postRepository, StagedPostRepository $stagedPostRepository, BoardRepository $boardRepository, AutoTagConfigProvider $autoTagConfigProvider, Connection $connection, TranslatorInterface $translator): JsonResponse
     {
         // Shared across every job: one count instead of one per card.
         $total = $postRepository->countAll();
 
-        // Tagging is scoped to the boards selected for at least one model
-        // (APP_AUTOTAG_BOARDS_WITH_WD / APP_AUTOTAG_BOARDS_WITH_RAM).
+        // Tagging is scoped to the boards selected in APP_AUTOTAG_BOARDS_WITH_WD.
         $enabledSlugs = $autoTagConfigProvider->getEnabledBoardSlugs();
         if (in_array('*', $enabledSlugs, true)) {
             $taggingTotal = $total;
@@ -99,8 +103,8 @@ class AutoTagConfigController extends AbstractController
 
         $tagging = $this->buildJobStatus(
             $translator,
-            $this->pendingCounts($connection, self::TAGGING_CLASSES),
-            $this->coordinatorCounts($connection, self::TAGGING_CLASSES),
+            $connection,
+            self::TAGGING_CLASSES,
             $taggingProcessed,
             $taggingTotal,
             'label.tagging_done',
@@ -110,26 +114,71 @@ class AutoTagConfigController extends AbstractController
         // Duplicate-detection vectors: core feature, independent of auto-tagging.
         $vectors = $this->buildJobStatus(
             $translator,
-            $this->pendingCounts($connection, self::VECTOR_CLASSES),
-            $this->coordinatorCounts($connection, self::VECTOR_CLASSES),
+            $connection,
+            self::VECTOR_CLASSES,
             $total - $postRepository->countWithoutVector(),
             $total,
             'label.vectors_done',
             'label.vectors_todo',
         );
 
+        $thumbnailTotal = $total + $stagedPostRepository->countAll() + $boardRepository->countWithCover();
+        $thumbnailRemaining = $postRepository->countWithoutThumbnail()
+            + $stagedPostRepository->countWithoutThumbnail()
+            + $boardRepository->countWithoutThumbnail();
+
+        $thumbnails = $this->buildJobStatus(
+            $translator,
+            $connection,
+            self::THUMBNAIL_CLASSES,
+            $thumbnailTotal - $thumbnailRemaining,
+            $thumbnailTotal,
+            'label.thumbnails_done',
+            'label.thumbnails_todo',
+        );
+
         return $this->json([
             'tagging' => $tagging,
             'vectors' => $vectors,
+            'thumbnails' => $thumbnails,
         ]);
+    }
+
+    /**
+     * Rebuild every thumbnail, purging unreferenced files first (the fan-out happens on the worker).
+     * NOT feature-gated: thumbnails are a core feature, independent of auto-tagging.
+     */
+    #[Route(path: '/admin/thumbnails/backlog', name: 'app_thumbnails_backlog', methods: ['POST'])]
+    public function thumbnailBacklog(Request $request, MessageBusInterface $messageBus, TranslatorInterface $translator, Connection $connection): Response
+    {
+        if (!$this->isCsrfTokenValid('autotag_thumbnails', $request->request->getString('_token'))) {
+            throw $this->createAccessDeniedException('Invalid CSRF token');
+        }
+
+        if ($this->pendingCounts($connection, self::THUMBNAIL_CLASSES)['pending'] > 0) {
+            $this->addFlash('notice', $translator->trans('message.job_already_running'));
+
+            return $this->redirectToRoute('app_admin_jobs');
+        }
+
+        $messageBus->dispatch(
+            new EnqueueThumbnailBacklogMessage($request->request->getBoolean('all')),
+            [new TransportNamesStamp('autotag_batch')],
+        );
+        $this->addFlash('notice', $translator->trans('message.thumbnails_started'));
+
+        return $this->redirectToRoute('app_admin_jobs');
     }
 
     /**
      * Uniform, display-ready status for one job. A job that isn't running always reports its coverage
      * (green once complete, amber while some posts remain) — there is no "idle" state.
      */
-    private function buildJobStatus(TranslatorInterface $translator, array $counts, array $coordinatorCounts, int $processed, int $total, string $doneKey, string $todoKey): array
+    private function buildJobStatus(TranslatorInterface $translator, Connection $connection, array $messageClasses, int $processed, int $total, string $doneKey, string $todoKey): array
     {
+        $counts = $this->pendingCounts($connection, $messageClasses);
+        $coordinatorCounts = $this->coordinatorCounts($connection, $messageClasses);
+
         // The backlog coordinator gates the per-item queue. While it's in flight a worker is fanning out
         // ("starting"); once it's gone (pending == 0) the queue holds the whole run and the bar can trust
         // it. delivered > 0 means a worker has picked messages up; pending-but-undelivered is still queued.
