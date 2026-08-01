@@ -73,18 +73,6 @@
         <target>Tags</target>
       </segment>
     </unit>
-    <unit id="untag01" name="menu.untagged">
-      <segment state="translated">
-        <source>Untagged</source>
-        <target>Sem etiqueta</target>
-      </segment>
-    </unit>
-    <unit id="untag02" name="message.no_untagged_posts">
-      <segment state="translated">
-        <source>No untagged posts.</source>
-        <target>Nenhuma publicação sem etiqueta.</target>
-      </segment>
-    </unit>
     <unit id="5CgT51i" name="menu.boards">
       <segment state="translated">
         <source>Boards</source>
@@ -619,6 +607,30 @@
         <target>Formato de miniaturas</target>
       </segment>
     </unit>
+    <unit id="Xt4Vh9k" name="label.autotag_autovalidate_threshold">
+      <segment state="translated">
+        <source>Auto-validation threshold</source>
+        <target>Limite de validação automática</target>
+      </segment>
+    </unit>
+    <unit id="Bq7Wm2p" name="label.autotag_boards">
+      <segment state="translated">
+        <source>Auto-tagged boards</source>
+        <target>Quadros com etiquetagem automática</target>
+      </segment>
+    </unit>
+    <unit id="Kd3Rz8t" name="label.autotag_boards_all">
+      <segment state="translated">
+        <source>All</source>
+        <target>Todos</target>
+      </segment>
+    </unit>
+    <unit id="Vn5Lc4x" name="label.autotag_boards_none">
+      <segment state="translated">
+        <source>None</source>
+        <target>Nenhum</target>
+      </segment>
+    </unit>
     <unit id="frN0Olf" name="label.disk_usage">
       <segment state="translated">
         <source>Disk usage</source>
@@ -691,58 +703,232 @@
         <target>Versão Symfony</target>
       </segment>
     </unit>
-    <unit id="stg00m1" name="menu.staging">
+    <unit id="C0cGYZr" name="label.ai_blacklist">
       <segment state="translated">
-        <source>Staging</source>
-        <target>Staging</target>
+        <source>AI blacklist</source>
+        <target>Lista negra da IA</target>
       </segment>
     </unit>
-    <unit id="stg00d1" name="staging.dropzone">
+    <unit id="LnMXKjd" name="label.ai_blacklist_help">
+      <segment state="translated">
+        <source>These tags will never be suggested by the automatic tagging.</source>
+        <target>Estas tags nunca serão sugeridas pela marcação automática.</target>
+      </segment>
+    </unit>
+    <unit id="zzZCGn6" name="btn.add">
+      <segment state="translated">
+        <source>Add</source>
+        <target>Adicionar</target>
+      </segment>
+    </unit>
+    <unit id="eJtoqLR" name="message.tag_blacklisted">
+      <segment state="translated">
+        <source>Tag {tag} blacklisted</source>
+        <target>Tag {tag} adicionada à lista negra</target>
+      </segment>
+    </unit>
+    <unit id="qkyXQOc" name="message.tag_unblacklisted">
+      <segment state="translated">
+        <source>Tag {tag} removed from blacklist</source>
+        <target>Tag {tag} removida da lista negra</target>
+      </segment>
+    </unit>
+    <unit id="mqpU0eX" name="menu.tag_validation">
+      <segment state="translated">
+        <source>Tag validation</source>
+        <target>Validação de tags</target>
+      </segment>
+    </unit>
+    <unit id="qwXGJYR" name="label.no_posts_to_validate">
+      <segment state="translated">
+        <source>No posts left to validate.</source>
+        <target>Nenhuma publicação para validar.</target>
+      </segment>
+    </unit>
+    <unit id="OqPSL1G" name="message.tags_validated">
+      <segment state="translated">
+        <source>Tags validated.</source>
+        <target>Validação de tags concluída.</target>
+      </segment>
+    </unit>
+    <unit id="stg00m1" name="menu.bulk_upload">
+      <segment state="translated">
+        <source>Bulk upload</source>
+        <target>Envio em massa</target>
+      </segment>
+    </unit>
+    <unit id="stg00d1" name="bulk_upload.dropzone">
       <segment state="translated">
         <source>Drag and drop files here, or click to select</source>
         <target>Drag and drop files here, or click to select</target>
       </segment>
     </unit>
-    <unit id="stg00d2" name="staging.duplicate">
+    <unit id="stg00d2" name="bulk_upload.duplicate">
       <segment state="translated">
         <source>Potential duplicate</source>
         <target>Potential duplicate</target>
       </segment>
     </unit>
-    <unit id="stg00a1" name="staging.assign">
+    <unit id="stg00a1" name="bulk_upload.assign">
       <segment state="translated">
         <source>Assign</source>
         <target>Assign</target>
       </segment>
     </unit>
-    <unit id="stg00a2" name="staging.assign_selected">
+    <unit id="stg00a2" name="bulk_upload.assign_selected">
       <segment state="translated">
         <source>Assign to board</source>
         <target>Assign to board</target>
       </segment>
     </unit>
-    <unit id="stg00a3" name="staging.delete_selected">
+    <unit id="stg00a3" name="bulk_upload.delete_selected">
       <segment state="translated">
         <source>Delete selected</source>
         <target>Delete selected</target>
       </segment>
     </unit>
-    <unit id="stg00m2" name="message.staged_assigned">
+    <unit id="stg00m2" name="message.bulk_upload_assigned">
       <segment state="translated">
         <source>Files assigned to board</source>
         <target>Files assigned to board</target>
       </segment>
     </unit>
-    <unit id="stg00m3" name="message.staged_deleted">
+    <unit id="stg00m3" name="message.bulk_upload_deleted">
       <segment state="translated">
         <source>Files deleted</source>
         <target>Files deleted</target>
       </segment>
     </unit>
-    <unit id="stg00a4" name="staging.select_all">
+    <unit id="stg00a4" name="bulk_upload.select_all">
       <segment state="translated">
         <source>Select all</source>
         <target>Select all</target>
+      </segment>
+    </unit>
+    <unit id="klTEu5O" name="label.tag_suggestions">
+      <segment state="translated">
+        <source>Tag suggestions</source>
+        <target>Sugestões de tags</target>
+      </segment>
+    </unit>
+    <unit id="7S7FGNF" name="label.source_wd">
+      <segment state="translated">
+        <source>WD</source>
+        <target>WD</target>
+      </segment>
+    </unit>
+    <unit id="ATuY3sA" name="label.source_custom">
+      <segment state="translated">
+        <source>Custom</source>
+        <target>Próprio</target>
+      </segment>
+    </unit>
+    <unit id="LUZ16KF" name="app.enum.tag.category.rating">
+      <segment state="translated">
+        <source>Rating</source>
+        <target>Classificação</target>
+      </segment>
+    </unit>
+    <unit id="D9tmsoA" name="label.duplicate_vectors">
+      <segment state="translated">
+        <source>Duplicate vectors</source>
+        <target>Vetores de duplicados</target>
+      </segment>
+    </unit>
+    <unit id="Vn4kQ8p" name="label.thumbnails">
+      <segment state="translated">
+        <source>Regenerate thumbnails</source>
+        <target>Regenerar miniaturas</target>
+      </segment>
+    </unit>
+    <unit id="Hs2mLd7" name="label.thumbnails_help">
+      <segment state="translated">
+        <source>Rebuild missing thumbnails and delete the ones no longer referenced.</source>
+        <target>Regenera as miniaturas em falta e elimina as que já não são referenciadas.</target>
+      </segment>
+    </unit>
+    <unit id="Bx9rTc4" name="label.thumbnails_done">
+      <segment state="translated">
+        <source>with a thumbnail</source>
+        <target>com miniatura</target>
+      </segment>
+    </unit>
+    <unit id="Wj5nPe1" name="label.thumbnails_todo">
+      <segment state="translated">
+        <source>remaining</source>
+        <target>restantes</target>
+      </segment>
+    </unit>
+    <unit id="Qz6vRm3" name="message.thumbnails_started">
+      <segment state="translated">
+        <source>Thumbnail rebuild started.</source>
+        <target>Regeneração de miniaturas iniciada.</target>
+      </segment>
+    </unit>
+    <unit id="WZYaXwy" name="message.vectors_started">
+      <segment state="translated">
+        <source>Vector recompute started.</source>
+        <target>Recálculo de vetores iniciado.</target>
+      </segment>
+    </unit>
+    <unit id="MNaOL0B" name="title.merge_tags">
+      <segment state="translated">
+        <source>Merge tags</source>
+        <target>Fundir etiquetas</target>
+      </segment>
+    </unit>
+    <unit id="WJO2QqL" name="label.merge_tags">
+      <segment state="translated">
+        <source>Tags to merge into this one</source>
+        <target>Etiquetas a fundir nesta</target>
+      </segment>
+    </unit>
+    <unit id="C9swX1y" name="label.merge_tags_help">
+      <segment state="translated">
+        <source>The selected tags will be deleted and all their images reassigned to this tag. This cannot be undone.</source>
+        <target>As etiquetas selecionadas serão eliminadas e todas as suas imagens reatribuídas a esta etiqueta. Esta ação é irreversível.</target>
+      </segment>
+    </unit>
+    <unit id="55qqFwT" name="btn.merge">
+      <segment state="translated">
+        <source>Merge</source>
+        <target>Fundir</target>
+      </segment>
+    </unit>
+    <unit id="GV060Lm" name="message.tags_merged">
+      <segment state="translated">
+        <source>{count, plural, one {# tag merged into} other {# tags merged into}} {tag}</source>
+        <target>{count, plural, one {# etiqueta fundida em} other {# etiquetas fundidas em}} {tag}</target>
+      </segment>
+    </unit>
+    <unit id="HnI23ne" name="label.count">
+      <segment state="translated">
+        <source>Count</source>
+        <target>Quantidade</target>
+      </segment>
+    </unit>
+    <unit id="OveSIPt" name="label.search">
+      <segment state="translated">
+        <source>Search</source>
+        <target>Pesquisar</target>
+      </segment>
+    </unit>
+    <unit id="gmw5Mif" name="label.all">
+      <segment state="translated">
+        <source>All</source>
+        <target>Todos</target>
+      </segment>
+    </unit>
+    <unit id="a8eBH77" name="btn.reset">
+      <segment state="translated">
+        <source>Reset</source>
+        <target>Redefinir</target>
+      </segment>
+    </unit>
+    <unit id="pB821zV" name="label.created_at">
+      <segment state="translated">
+        <source>Created at</source>
+        <target>Criado em</target>
       </segment>
     </unit>
   </file>

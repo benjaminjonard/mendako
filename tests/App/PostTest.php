@@ -74,6 +74,43 @@ class PostTest extends WebTestCase
         $this->assertResponseIsSuccessful();
     }
 
+    public function test_accepting_a_suggestion_keeps_its_category(): void
+    {
+        // Arrange
+        $user = UserFactory::createOne();
+        $this->client->loginUser($user);
+        $board = BoardFactory::createOne();
+        $filesystem = new Filesystem();
+        $uniqId = uniqid();
+        $filesystem->copy(__DIR__.'/../../assets/fixtures/nyancat.png', "/tmp/{$uniqId}.png");
+        $uploadedFile = new UploadedFile("/tmp/{$uniqId}.png", "{$uniqId}.png", test: true);
+        $post = PostFactory::createOne(['board' => $board, 'file' => $uploadedFile, 'uploadedBy' => $user]);
+
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+        $suggestion = (new \App\Entity\TagSuggestion())
+            ->setTargetType('post')
+            ->setTargetId((string) $post->getId())
+            ->setTagName('explicit')
+            ->setCategory(TagCategory::RATING)
+            ->setScore(0.95)
+            ->setSource(\App\Entity\TagSuggestion::SOURCE_WD);
+        $entityManager->persist($suggestion);
+        $entityManager->flush();
+
+        // Act — accept the suggestion by saving it as a tag on the post.
+        $this->client->request(Request::METHOD_GET, '/boards/'.$board->getSlug().'/'.$post->getId().'/edit');
+        $this->client->submitForm('Submit', [
+            'post[tags]' => 'explicit',
+        ]);
+
+        // Assert — the new tag inherits the suggested RATING category, not GENERAL.
+        $this->assertResponseIsSuccessful();
+        TagFactory::assert()->exists([
+            'name' => 'explicit',
+            'category' => TagCategory::RATING->value,
+        ]);
+    }
+
     public function test_post_file_is_moved_when_board_is_changed(): void
     {
         // Arrange
@@ -292,5 +329,26 @@ class PostTest extends WebTestCase
         // Assert
         $this->assertResponseIsSuccessful();
         $this->assertCount(1, json_decode($this->client->getResponse()->getContent()));
+    }
+
+    public function test_board_choices_are_listed_alphabetically(): void
+    {
+        // Arrange
+        $this->client->loginUser(UserFactory::createOne());
+        // Created out of order: without an explicit ordering the choices come out in whatever
+        // order Postgres returns them.
+        foreach (['Zebra', 'anime', 'Minerals'] as $name) {
+            BoardFactory::createOne(['name' => $name]);
+        }
+
+        // Act
+        $crawler = $this->client->request(Request::METHOD_GET, '/boards/anime/add');
+
+        // Assert
+        $this->assertResponseIsSuccessful();
+        $names = $crawler->filter('#post_board option')->each(static fn ($option): string => $option->text());
+        $sorted = $names;
+        sort($sorted, SORT_NATURAL | SORT_FLAG_CASE);
+        $this->assertSame($sorted, $names);
     }
 }

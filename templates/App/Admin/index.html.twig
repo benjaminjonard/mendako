@@ -9,11 +9,12 @@
 {% endblock %}
 
 {% block content %}
-    <div class="column"></div>
+    {# Same is-6 wrapper as the other tabs so the submenu keeps one width; the panel below sets its own width. #}
+    <div class="column is-6 is-offset-3">
+        {{ include('App/Admin/_submenu.html.twig') }}
 
-    <div class="column">
-        <div class="box">
-            <h1 class="title">{{ 'title.admin'|trans }}</h1>
+        {# Configuration panel matches the validation card width (see .admin-panel). #}
+        <div class="box admin-panel">
             <h2 class="subtitle">{{ 'title.configuration'|trans }}</h2>
             <div class="config">
                 <b>{{ 'label.release'|trans }}</b>: {{ release }}
@@ -49,8 +50,29 @@
             <div class="config">
                 <b>{{ 'label.disk_usage'|trans }}</b>: {{ diskUsage|bytes }}
             </div>
+            <br>
+
+            <div class="config">
+                <b>{{ 'menu.automatic_tags'|trans }}</b>:
+                <span class="tag {{ autoTagEnabled ? 'is-success' : 'is-light' }}">
+                    {{ (autoTagEnabled ? 'label.enabled' : 'label.disabled')|trans }}
+                </span>
+            </div>
+            {% if autoTagEnabled %}
+                <div class="config">
+                    <b>{{ 'label.autotag_autovalidate_threshold'|trans }}</b>: {{ autoTagAutoValidateThreshold }}&nbsp;%
+                </div>
+                <div class="config">
+                    <b>{{ 'label.autotag_boards'|trans }}</b>:
+                    {% if '*' in autoTagBoards %}
+                        {{ 'label.autotag_boards_all'|trans }}
+                    {% elseif autoTagBoards is empty %}
+                        {{ 'label.autotag_boards_none'|trans }}
+                    {% else %}
+                        {{ autoTagBoards|join(', ') }}
+                    {% endif %}
+                </div>
+            {% endif %}
         </div>
     </div>
-
-    <div class="column"></div>
 {% endblock %}

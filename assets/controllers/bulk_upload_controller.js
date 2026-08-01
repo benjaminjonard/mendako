@@ -179,14 +179,14 @@ export default class extends Controller {
 
     buildRow(file) {
         const row = document.createElement('li');
-        row.className = 'staging-progress-item';
+        row.className = 'bulk-upload-progress-item';
 
         const name = document.createElement('span');
-        name.className = 'staging-progress-name';
+        name.className = 'bulk-upload-progress-name';
         name.textContent = file.name;
 
         const status = document.createElement('span');
-        status.className = 'staging-progress-status';
+        status.className = 'bulk-upload-progress-status';
 
         row.append(name, status);
 
@@ -195,7 +195,7 @@ export default class extends Controller {
 
     applyRowState(item) {
         item.row.dataset.state = item.state;
-        const status = item.row.querySelector('.staging-progress-status');
+        const status = item.row.querySelector('.bulk-upload-progress-status');
         if (status) {
             status.textContent = item.state === 'uploading'
                 ? 'Uploading…'
@@ -242,7 +242,7 @@ export default class extends Controller {
                     return;
                 }
                 const grid = document.createElement('div');
-                grid.className = 'grid grid-posts staged-duplicates';
+                grid.className = 'grid grid-posts bulk-upload-duplicates';
                 grid.innerHTML = items.join('');
                 this.viewerContentTarget.replaceChildren(grid);
                 this.viewerTarget.classList.add('is-active');
@@ -280,7 +280,7 @@ export default class extends Controller {
     selectedIds() {
         return this.cardTargets
             .filter((card) => card.querySelector('input[type=checkbox]')?.checked)
-            .map((card) => card.dataset.stagedId);
+            .map((card) => card.dataset.bulkUploadId);
     }
 
     /* ---------- Bulk actions ---------- */
@@ -296,17 +296,22 @@ export default class extends Controller {
     /* ---------- Individual actions ---------- */
 
     assignOne(event) {
-        this.assign([event.currentTarget.dataset.stagedId]);
+        this.assign([event.currentTarget.dataset.bulkUploadId]);
     }
 
     deleteOne(event) {
-        this.remove([event.currentTarget.dataset.stagedId]);
+        this.remove([event.currentTarget.dataset.bulkUploadId]);
     }
 
     /* ---------- HTTP ---------- */
 
     assign(ids) {
         if (ids.length === 0) {
+            return;
+        }
+
+        if (!this.hasBoardTarget) {
+            this.notifyError('Select a board first');
             return;
         }
 
@@ -356,7 +361,7 @@ export default class extends Controller {
     }
 
     removeCard(id) {
-        const card = this.cardTargets.find((element) => element.dataset.stagedId === id);
+        const card = this.cardTargets.find((element) => element.dataset.bulkUploadId === id);
         if (card) {
             card.remove();
         }

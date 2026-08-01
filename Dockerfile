@@ -26,6 +26,7 @@ RUN set -eux ; \
     git \
     unzip \
     ffmpeg \
+    supervisor \
     openssl ; \
     # Install PHP extensions \
     install-php-extensions opcache pdo_pgsql intl gd zip curl ; \

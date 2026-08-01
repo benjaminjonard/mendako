@@ -1,0 +1,100 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}
+    {{ 'menu.tag_validation'|trans }}
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="is-active"><a href="#" aria-current="page">{{ 'menu.tag_validation'|trans }}</a></li>
+{% endblock %}
+
+{% block content %}
+    {# Same is-6 wrapper as the other Tag tabs so the submenu keeps one width across tabs. #}
+    <div class="column is-6 is-offset-3">
+        {{ include('App/Tag/_submenu.html.twig') }}
+
+        {# Submenu spans the full is-6 column; the card keeps its own narrower width. #}
+        <div class="tag-validation-card">
+        {% if post is null %}
+            <div class="box has-text-centered">
+                <h1 class="title">{{ 'menu.tag_validation'|trans }}</h1>
+                <p>{{ 'label.no_posts_to_validate'|trans }}</p>
+            </div>
+        {% else %}
+            <div class="box">
+                <div class="is-flex is-justify-content-center is-align-items-center mb-4">
+                    <h1 class="title mb-0 mt-0">{{ 'menu.tag_validation'|trans }}</h1>
+                    <a href="#" class="js-modal-trigger button is-danger is-small ml-4" data-target="delete">{{ 'btn.delete'|trans }}</a>
+                </div>
+
+                <figure class="image-display tag-validation-media has-text-centered mb-4">
+                    {% if post.mimeType == 'video/mp4' or post.mimeType == 'video/webm' or post.mimeType == 'video/x-m4v' %}
+                        <video controls>
+                            <source src="{{ asset(post.path) }}" type="video/mp4">
+                        </video>
+                    {% else %}
+                        <img src="{{ asset(post.path) }}" class="js-modal-trigger is-clickable" data-target="media-viewer">
+                    {% endif %}
+                </figure>
+
+                {% if not (post.mimeType == 'video/mp4' or post.mimeType == 'video/webm' or post.mimeType == 'video/x-m4v') %}
+                    <div id="media-viewer" class="modal bulk-upload-viewer">
+                        <div class="modal-background"></div>
+                        <div class="modal-content">
+                            <img src="{{ asset(post.path) }}">
+                        </div>
+                        <button type="button" class="modal-close is-large" aria-label="close"></button>
+                    </div>
+                {% endif %}
+
+                {% set source_labels = {'wd': 'label.source_wd'|trans} %}
+
+                {{ form_start(form) }}
+                    <div data-controller="suggestions">
+                        <div class="field" data-controller="autocomplete">
+                            {{ form_label(form.tags, 'label.tags'|trans) }}
+                            <div class="control">
+                                {{ form_widget(form.tags, {'attr': {
+                                    'data-suggestions-target': 'input',
+                                    'data-autocomplete-target': 'input',
+                                    'data-action': 'keyup->autocomplete#autocomplete'
+                                }} ) }}
+                                <ul class="autocomplete-dropdown autocomplete-dropdown-textarea is-hidden" data-autocomplete-target="list"></ul>
+                            </div>
+                        </div>
+
+                        {% if chips is not empty %}
+                            <div class="block">
+                                <p class="label mt-4">{{ 'label.tag_suggestions'|trans }}</p>
+                                <ul class="suggestion-list">
+                                    {% for chip in chips %}
+                                        <li class="suggestion-row" data-suggestion="{{ chip.name }}">
+                                            <span class="suggestion-name is-category-{{ chip.category }}">{{ chip.name }}</span>
+                                            <span class="tag is-small suggestion-source suggestion-source-{{ chip.source }}">{{ source_labels[chip.source] ?? chip.source }}</span>
+                                            <span class="suggestion-score">{{ (chip.score * 100)|round }}%</span>
+                                            <button type="button" class="suggestion-accept"
+                                                    data-action="click->suggestions#acceptSuggestion">+</button>
+                                            <button type="button" class="suggestion-remove"
+                                                    data-action="click->suggestions#rejectSuggestion">-</button>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="footer-button">
+                        <button class="button is-primary" type="submit">{{ 'btn.submit'|trans }}</button>
+                    </div>
+                {{ form_end(form) }}
+            </div>
+
+            {{ include('App/_partials/_modal/_delete.html.twig', {
+                'header': 'message.delete_post'|trans,
+                'message': 'message.warning_delete_post'|trans,
+                'action': path('app_tag_validation_delete', {id: post.id})
+            }) }}
+        {% endif %}
+        </div>
+    </div>
+{% endblock %}

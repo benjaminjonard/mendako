@@ -9,7 +9,12 @@ use App\Entity\Post;
 use App\Form\Type\PostType;
 use App\Repository\PostRepository;
 use App\Repository\TagRepository;
+use App\Repository\TagSuggestionRepository;
+use App\Service\AutoTag\AutoTagConfigProvider;
+use App\Service\AutoTag\SuggestionSplitter;
+use App\Service\AutoTag\TaggingDispatcher;
 use App\Service\PostVectorService;
+use App\Service\ThumbnailDispatcher;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -28,6 +33,8 @@ class PostController extends AbstractController
         ManagerRegistry $managerRegistry,
         TagRepository $tagRepository,
         PostVectorService $postVectorService,
+        TaggingDispatcher $taggingDispatcher,
+        ThumbnailDispatcher $thumbnailDispatcher,
         #[MapEntity(mapping: ['slug' => 'slug'])] ?Board $board
     ): Response {
         $post = new Post();
@@ -41,12 +48,18 @@ class PostController extends AbstractController
                 ->setVector($postVectorService->generateVector($post->getFile()))
             ;
 
-            if ($form->get('setAsBoardThumbnail')->getData() === true) {
+            $setAsBoardThumbnail = $form->get('setAsBoardThumbnail')->getData() === true;
+            if ($setAsBoardThumbnail) {
                 $post->getBoard()->setThumbnail($post);
             }
 
             $managerRegistry->getManager()->persist($post);
             $managerRegistry->getManager()->flush();
+
+            $taggingDispatcher->dispatch($post);
+            if ($setAsBoardThumbnail) {
+                $thumbnailDispatcher->dispatch($post->getBoard());
+            }
 
             $this->addFlash('notice', $translator->trans('message.post_added'));
 
@@ -57,7 +70,9 @@ class PostController extends AbstractController
             'board' => $board,
             'post' => $post,
             'form' => $form,
-            'suggestedTags' => $tagRepository->findBy(['suggested' => true])
+            'suggestedTags' => $tagRepository->findBy(['suggested' => true]),
+            // No post id before upload — automatic tagging suggestions surface on the edit form.
+            'autoTagSuggestionsUrl' => null,
         ]);
     }
 
@@ -68,6 +83,10 @@ class PostController extends AbstractController
         $post->setFile($request->files->get('file'));
 
         $vector = $postVectorService->generateVector($post->getFile());
+        if ($vector === null) {
+            return $this->json([]); // no file, or an undecodable/non-image upload
+        }
+
         $similarPosts = [];
 
         foreach ($postRepository->findSimilarByVector($vector) as $similarPost) {
@@ -99,23 +118,27 @@ class PostController extends AbstractController
         TagRepository $tagRepository,
         ManagerRegistry $managerRegistry,
         PostVectorService $postVectorService,
+        AutoTagConfigProvider $autoTagConfigProvider,
+        ThumbnailDispatcher $thumbnailDispatcher,
         #[MapEntity(mapping: ['slug' => 'slug'])] Board $board,
         Post $post
     ): Response {
         $form = $this->createForm(PostType::class, $post);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $post
-                ->setUploadedBy($this->getUser())
-                ->setVector($postVectorService->generateVector($post->getFile()))
-            ;
+            $post->setVector($postVectorService->generateVector($post->getFile()));
 
-            if ($form->get('setAsBoardThumbnail')->getData() === true) {
+            $setAsBoardThumbnail = $form->get('setAsBoardThumbnail')->getData() === true;
+            if ($setAsBoardThumbnail) {
                 $board->setThumbnail($post);
             }
 
             $managerRegistry->getManager()->persist($post);
             $managerRegistry->getManager()->flush();
+
+            if ($setAsBoardThumbnail) {
+                $thumbnailDispatcher->dispatch($board);
+            }
 
             $this->addFlash('notice', $translator->trans('message.post_edited'));
 
@@ -126,7 +149,38 @@ class PostController extends AbstractController
             'board' => $board,
             'post' => $post,
             'form' => $form,
-            'suggestedTags' => $tagRepository->findBy(['suggested' => true])
+            'suggestedTags' => $tagRepository->findBy(['suggested' => true]),
+            // Only surface the suggestions endpoint when the feature is on; null leaves the form
+            // identical to the non-auto-tagging experience.
+            'autoTagSuggestionsUrl' => $autoTagConfigProvider->isEnabled()
+                ? $this->generateUrl('app_post_autotag_suggestions', ['slug' => $board->getSlug(), 'id' => $post->getId()])
+                : null,
+        ]);
+    }
+
+    #[Route(path: '/boards/{slug}/{id}/autotag-suggestions', name: 'app_post_autotag_suggestions', methods: ['GET'])]
+    public function autoTagSuggestions(
+        AutoTagConfigProvider $autoTagConfigProvider,
+        SuggestionSplitter $suggestionSplitter,
+        TagSuggestionRepository $tagSuggestionRepository,
+        #[MapEntity(mapping: ['slug' => 'slug'])] Board $board,
+        Post $post
+    ): JsonResponse {
+        if (!$autoTagConfigProvider->isEnabled()) {
+            return $this->json(['enabled' => false]);
+        }
+
+        [$highConfidence, $lowConfidence] = $suggestionSplitter->split(
+            $tagSuggestionRepository->findForTarget('post', $post->getId()),
+        );
+
+        return $this->json([
+            'enabled' => true,
+            // No server-side "analysis complete" marker yet: infer "still analyzing"
+            // from the absence of any suggestion (the client polls with a bounded cap).
+            'status' => $highConfidence === [] && $lowConfidence === [] ? 'analyzing' : 'ready',
+            'highConfidence' => $highConfidence,
+            'pending' => $lowConfidence,
         ]);
     }
 

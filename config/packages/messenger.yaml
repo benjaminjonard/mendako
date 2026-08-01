@@ -1,0 +1,54 @@
+framework:
+    messenger:
+        failure_transport: failed
+
+        transports:
+            autotag_interactive:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                options:
+                    queue_name: autotag_interactive
+                    auto_setup: false
+                retry_strategy:
+                    max_retries: 3
+                    delay: 1000
+                    multiplier: 2
+            autotag_batch:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                options:
+                    queue_name: autotag_batch
+                    auto_setup: false
+                retry_strategy:
+                    max_retries: 3
+                    delay: 1000
+                    multiplier: 2
+            thumbnails:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                options:
+                    queue_name: thumbnails
+                    auto_setup: false
+                retry_strategy:
+                    max_retries: 3
+                    delay: 1000
+                    multiplier: 2
+            failed:
+                dsn: 'doctrine://default'
+                options:
+                    queue_name: failed
+                    auto_setup: false
+
+        routing:
+            'App\Message\GenerateSuggestionsMessage': autotag_interactive
+            'App\Message\GenerateThumbnailMessage': thumbnails
+            'App\Message\EnqueueBacklogMessage': autotag_batch
+            'App\Message\GenerateVectorMessage': autotag_batch
+            'App\Message\EnqueueVectorBacklogMessage': autotag_batch
+            'App\Message\EnqueueThumbnailBacklogMessage': autotag_batch
+
+when@test:
+    framework:
+        messenger:
+            transports:
+                autotag_interactive: 'in-memory://'
+                autotag_batch: 'in-memory://'
+                thumbnails: 'in-memory://'
+                failed: 'in-memory://'

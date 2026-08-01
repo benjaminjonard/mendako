@@ -52,7 +52,16 @@ services:
             - POSTGRES_PASSWORD=${DB_PASSWORD}
         volumes:
             - "./volumes/postgresql:/var/lib/postgresql/data"
+
+    # Only required for ML tasks, you can remove it if you don't want autotagging
+    mendako_ml:
+        container_name: mendako_ml
+        build: ./ml
+        restart: unless-stopped
+        volumes:
+            - "./ml/app:/app/app"        
 ```
+
 ####  Step 2 -> Create a `.env` file
 ```
 ########################################################################################################
@@ -92,12 +101,39 @@ DB_USER=mendako
 DB_PASSWORD=mendako
 DB_VERSION=15
 
+########################################################################################################
+#                                                MACHINE LEARNING (AUTOTAG)
+########################################################################################################
+APP_AUTOTAG_ENABLED=0
+APP_ML_URL=http://mendako_ml:8000
+APP_AUTOTAG_AUTOVALIDATE_THRESHOLD_WD=30
+APP_AUTOTAG_BOARDS_WITH_WD=board1,board2
 ```
 
 ####  Step 3 -> Review both files and update values if required
 
 ####  Step 4 -> Start Mendako
 `docker-compose up -d`
+
+### Optional: Automatic tags
+
+Mendako can suggest tags on upload using a **local** automatic tagging inference service. It is fully optional.
+
+To enable it, add the `mendako_ml` to your `docker-compose.yml`:
+```
+    mendako_ml:
+        container_name: mendako_ml
+        image: benjaminjonard/mendako-ml
+        restart: unless-stopped
+```
+
+Tagging uses WD EVA02 Large v3, which produces Danbooru tags and a content rating — it targets
+illustrations rather than photographs. List a board's slug in `APP_AUTOTAG_BOARDS_WITH_WD` to have
+it tagged; a board left out is never tagged. Staged bulk uploads are not tagged either: they have
+no board yet, so tagging happens once they are assigned to one.
+
+The model is baked into the `mendako-ml` image at build time — there is no runtime download.
+
 
 ### Available environment variables
 
@@ -116,6 +152,10 @@ DB_VERSION=15
 | UPLOAD_MAX_FILESIZE | Defaults to 20M                             |                                                     |
 | PHP_MEMORY_LIMIT    | Defaults to 512M                            |                                                     |
 | PHP_TIMEZONE        | You timezone, default to Europe\Paris       | https://www.w3schools.com/php/php_ref_timezones.asp |
+| APP_AUTOTAG_ENABLED  | Hard master switch for Automatic tags    | `0` (default, off) or `1`                           |
+| APP_ML_URL      | URL of the optional automatic tagging inference service    | default `http://mendako_ml:8000`                    |
+| APP_AUTOTAG_AUTOVALIDATE_THRESHOLD_WD | Min WD confidence (percent) to auto-validate a suggested tag | `0`–`100`, default `85`               |
+| APP_AUTOTAG_BOARDS_WITH_WD | Boards tagged by the WD tagger | comma-separated slugs, `*` for all, empty for none |
 
 
 ## Support Mendako

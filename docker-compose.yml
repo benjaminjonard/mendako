@@ -6,7 +6,7 @@ services:
             dockerfile: Dockerfile.dev
         restart: unless-stopped
         ports:
-            - 84:80
+            - "84:80"
         environment:
             - APP_ENV=dev
             - APP_DEBUG=1
@@ -23,12 +23,24 @@ services:
             - POST_PER_PAGE=20
             - INFINITE_SCROLL_POST_PER_PAGE=50
             - UPLOAD_MAX_FILESIZE=200M
+            - APP_AUTOTAG_ENABLED=1
+            - APP_ML_URL=http://mendako_ml:8000
+            - APP_AUTOTAG_AUTOVALIDATE_THRESHOLD_WD=30
+            - APP_AUTOTAG_BOARDS_WITH_WD=anime
         depends_on:
             - postgresql
         volumes:
             - "./docker/volumes/mendako/public/uploads:/uploads"
             - "./docker/volumes/mendako/public/thumbnails:/thumbnails"
             - ./:/app/public
+
+    # Optional, but required for ML tasks
+    mendako_ml:
+        container_name: mendako_ml
+        build: ./ml
+        restart: unless-stopped
+        volumes:
+            - "./ml/app:/app/app"
 
     postgresql:
         image: pgvector/pgvector:pg16

@@ -1,5 +1,14 @@
 {% extends 'layout.html.twig' %}
 
+{% macro sort_header(label, column, sort, direction, filters) %}
+    {% set is_active = sort == column %}
+    {% set next_dir = (is_active and direction == 'ASC') ? 'DESC' : 'ASC' %}
+    {% set arrow = is_active ? (direction == 'ASC' ? ' ↑' : ' ↓') : '' %}
+    <th>
+        <a href="{{ path('app_tag_index', filters|merge({sort: column, dir: next_dir})) }}">{{ label|trans }}{{ arrow }}</a>
+    </th>
+{% endmacro %}
+
 {% block title %}
     {{ 'menu.tags'|trans }}
 {% endblock %}
@@ -9,32 +18,61 @@
 {% endblock %}
 
 {% block content %}
-    <div class="column"></div>
+    {% import _self as helper %}
+    {% set filters = {} %}
+    {% if search %}{% set filters = filters|merge({q: search}) %}{% endif %}
+    {% if category %}{% set filters = filters|merge({category: category.value}) %}{% endif %}
 
-    <div class="column">
-        <div class="block">
-            <a class="button is-info" href="{{ path('app_tag_untagged') }}">{{ 'menu.untagged'|trans }}</a>
-        </div>
+    <div class="column is-6 is-offset-3">
+        {{ include('App/Tag/_submenu.html.twig') }}
 
-        <table class="table is-fullwidth is-bordered">
+        <form method="get" action="{{ path('app_tag_index') }}" class="field is-grouped is-grouped-multiline mb-4">
+            <div class="control is-expanded">
+                <input class="input" type="text" name="q" value="{{ search }}" placeholder="{{ 'label.search'|trans }}">
+            </div>
+            <div class="control">
+                <div class="select">
+                    <select name="category">
+                        <option value="">{{ 'label.all'|trans }} — {{ 'label.category'|trans }}</option>
+                        {% for case in categories %}
+                            <option value="{{ case.value }}" {{ category == case ? 'selected' }}>{{ case.value }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="control">
+                <button class="button is-primary" type="submit">{{ 'label.search'|trans }}</button>
+            </div>
+            {% if filters is not empty %}
+                <div class="control">
+                    <a class="button is-light" href="{{ path('app_tag_index') }}">{{ 'btn.reset'|trans }}</a>
+                </div>
+            {% endif %}
+        </form>
+
+        <table class="table tag-table is-fullwidth is-bordered">
             <thead>
                 <tr>
-                    <th>{{ 'label.name'|trans }}</th>
-                    <th>{{ 'label.category'|trans }}</th>
-                    <th>{{ 'label.suggested'|trans }}</th>
+                    {{ helper.sort_header('label.name', 'name', sort, direction, filters) }}
+                    {{ helper.sort_header('label.count', 'count', sort, direction, filters) }}
+                    {{ helper.sort_header('label.category', 'category', sort, direction, filters) }}
+                    {{ helper.sort_header('label.suggested', 'suggested', sort, direction, filters) }}
+                    {{ helper.sort_header('label.created_at', 'created', sort, direction, filters) }}
                 </tr>
             </thead>
             <tbody>
                 {% for tag in tags %}
                     <tr>
-                        <td><a class="is-category-{{ tag.category.value }}" href="{{ path('app_tag_edit', {id: tag.id}) }}">{{ tag.name }}</a> ({{ tag.counter }})</td>
+                        <td><a class="is-category-{{ tag.category.value }}" href="{{ path('app_tag_edit', {id: tag.id}) }}">{{ tag.name }}</a></td>
+                        <td>{{ tag.counter }}</td>
                         <td>{{ tag.category.value }}</td>
                         <td>{{ (tag.suggested ? 'global.yes' : 'global.no')|trans }}</td>
+                        <td>{{ tag.createdAt|date('Y-m-d H:i') }}</td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
-    </div>
 
-    <div class="column"></div>
+        {{ include('App/_partials/_pagination.html.twig') }}
+    </div>
 {% endblock %}

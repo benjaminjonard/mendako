@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+tests/
+requirements-dev.txt
+pyproject.toml
+.gitignore
+.dockerignore
+*.md

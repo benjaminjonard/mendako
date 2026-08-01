@@ -32,7 +32,7 @@ html {
 
 .image-display, .image-display:not(.is-fullsize) img {
   max-width: 800px;
-  max-height: 650px;
+  max-height: 100%;
 }
 
 /* Start image grid */
@@ -128,6 +128,129 @@ figure .tag {
 .is-category-character {
   color: #00ab2c;
 }
+
+.is-category-rating {
+  color: #e64980;
+}
+
+/* Keep a board tag and its post count together on one line (e.g. "belle_(zenless_zone_zero) (11)"),
+   instead of letting the count wrap under a long name. */
+[data-infinite-scroll-target="tag"] {
+  white-space: nowrap;
+}
+
+.tag-table thead th a {
+  color: #fff;
+}
+
+.suggestion-list {
+  list-style: none;
+  margin: 0;
+}
+
+.suggestion-row {
+  align-items: center;
+  border-bottom: 1px solid #ededed;
+  display: flex;
+  gap: 0.6rem;
+  padding: 0.3rem 0;
+}
+
+.suggestion-row:last-child {
+  border-bottom: none;
+}
+
+.suggestion-name {
+  flex: 1 1 auto;
+}
+
+.suggestion-score {
+  color: #7a7a7a;
+  flex: 0 0 auto;
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+  min-width: 2.6rem;
+  text-align: right;
+}
+
+.suggestion-source {
+  flex: 0 0 auto;
+  text-transform: uppercase;
+}
+
+.suggestion-remove {
+  background: none;
+  border: none;
+  color: #b5b5b5;
+  cursor: pointer;
+  flex: 0 0 auto;
+  font-size: 1.1rem;
+  line-height: 1;
+  padding: 0 0.2rem;
+}
+
+.suggestion-remove:hover {
+  color: #f14668;
+}
+
+.suggestion-accept {
+  background: none;
+  border: none;
+  color: #b5b5b5;
+  cursor: pointer;
+  flex: 0 0 auto;
+  font-size: 1.1rem;
+  line-height: 1;
+  padding: 0 0.2rem;
+}
+
+.suggestion-accept:hover {
+  color: #00ab2c;
+}
+
+/* The delete button is wrapped in a <form> (CSRF); display:contents lets the button sit
+   directly in the has-addons flex row so it lines up with the tag name. */
+.blacklist-chip form {
+  display: contents;
+}
+
+/* Keep the validation card at its own width, centered, under the full is-6 Tag submenu. */
+.tag-validation-card {
+  margin-inline: auto;
+  max-width: 32rem;
+}
+
+/* Admin tab panels sit centered under the full is-6 submenu, like the validation card.
+   Configuration matches its 32rem; Jobs is a bit wider for its extra controls. */
+.admin-panel {
+  margin-inline: auto;
+  max-width: 32rem;
+}
+
+.admin-panel-wide {
+  max-width: 40rem;
+}
+
+/* The figure is capped at 800px by .image-display, so on a wide box it must center itself. */
+.image-display.tag-validation-media {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.image-display.tag-validation-media img,
+.image-display.tag-validation-media video {
+  display: block;
+  height: auto;
+  margin: 0 auto;
+  max-height: 650px;
+  max-width: 100%;
+}
+
+.suggestion-source-wd {
+  background-color: #e7f1ff;
+  color: #0075f8;
+}
+
 
 .block-search .control {
   width: 100%;
@@ -313,7 +436,7 @@ html.loading:before {
 }
 
 /* ---------- Bulk upload / staging ---------- */
-.staging-dropzone {
+.bulk-upload-dropzone {
   border: 2px dashed #b5b5b5;
   border-radius: 6px;
   padding: 40px 20px;
@@ -325,12 +448,12 @@ html.loading:before {
   transition: border-color 0.15s, background-color 0.15s;
 }
 
-.staging-dropzone.is-dragover {
+.bulk-upload-dropzone.is-dragover {
   border-color: #485fc7;
   background-color: rgba(72, 95, 199, 0.06);
 }
 
-.staging-bulk-bar {
+.bulk-upload-bulk-bar {
   position: sticky;
   top: 3.25rem; /* sits just below the fixed navbar */
   z-index: 20;
@@ -344,7 +467,7 @@ html.loading:before {
    the same spot regardless of the image. The image keeps its natural aspect ratio,
    centered inside the square (no distortion). Transparent background = the page
    background shows around the image, in any theme. */
-.grid-posts figure.staged-card {
+.grid-posts figure.bulk-upload-card {
   position: relative;
   width: 100%;
   max-width: 180px;
@@ -359,12 +482,12 @@ html.loading:before {
 }
 
 @media(max-width: 450px) {
-  .grid-posts figure.staged-card {
+  .grid-posts figure.bulk-upload-card {
     max-width: 150px;
   }
 }
 
-.staged-card-media {
+.bulk-upload-card-media {
   cursor: pointer;
   width: 100%;
   height: 100%;
@@ -374,7 +497,7 @@ html.loading:before {
   overflow: hidden;
 }
 
-.staged-card-media img {
+.bulk-upload-card-media img {
   max-width: 100%;
   max-height: 100%;
   width: auto;
@@ -383,27 +506,27 @@ html.loading:before {
 }
 
 /* Duration tag bottom-left so it never collides with the checkbox (top-left). */
-.staged-card .tag {
+.bulk-upload-card .tag {
   top: auto;
   bottom: 4px;
   left: 4px;
   z-index: 2;
 }
 
-.staged-card-select {
+.bulk-upload-card-select {
   position: absolute;
   top: 6px;
   left: 6px;
   z-index: 3;
 }
 
-.staged-card-select input[type="checkbox"] {
+.bulk-upload-card-select input[type="checkbox"] {
   width: 22px;
   height: 22px;
   cursor: pointer;
 }
 
-.staged-card-duplicate {
+.bulk-upload-card-duplicate {
   position: absolute;
   top: 6px;
   right: 6px;
@@ -424,7 +547,7 @@ html.loading:before {
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
-.staged-card-actions {
+.bulk-upload-card-actions {
   position: absolute;
   bottom: 0;
   left: 0;
@@ -439,15 +562,15 @@ html.loading:before {
   transition: opacity 0.15s;
 }
 
-.staged-card-actions .button {
+.bulk-upload-card-actions .button {
   margin: 0;
 }
 
-.staged-card:hover .staged-card-actions {
+.bulk-upload-card:hover .bulk-upload-card-actions {
   opacity: 1;
 }
 
-.staged-viewer .modal-content {
+.bulk-upload-viewer .modal-content {
   width: auto;
   max-width: 90vw;
   max-height: 90vh;
@@ -456,14 +579,14 @@ html.loading:before {
   justify-content: center;
 }
 
-.staged-viewer .modal-content > img,
-.staged-viewer .modal-content > video {
+.bulk-upload-viewer .modal-content > img,
+.bulk-upload-viewer .modal-content > video {
   max-width: 90vw;
   max-height: 90vh;
   object-fit: contain;
 }
 
-.staged-viewer .modal-content .staged-duplicates {
+.bulk-upload-viewer .modal-content .bulk-upload-duplicates {
   width: 90vw;
   max-width: 900px;
   background-color: #fff;
@@ -471,23 +594,23 @@ html.loading:before {
   border-radius: 6px;
 }
 
-.staging-progress-counter {
+.bulk-upload-progress-counter {
   font-weight: 600;
   text-align: center;
   max-width: 600px;
   margin: 0 auto 8px;
 }
 
-.staging-progress {
+.bulk-upload-progress {
   max-width: 600px;
   margin: 0 auto 20px;
 }
 
-.staging-progress:empty {
+.bulk-upload-progress:empty {
   display: none;
 }
 
-.staging-progress-item {
+.bulk-upload-progress-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -500,41 +623,50 @@ html.loading:before {
   font-size: 0.9rem;
 }
 
-.staging-progress-name {
+.bulk-upload-progress-name {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.staging-progress-status {
+.bulk-upload-progress-status {
   flex: 0 0 auto;
   color: #7a7a7a;
 }
 
-.staging-progress-item[data-state="uploading"] {
+.bulk-upload-progress-item[data-state="uploading"] {
   border-left-color: #485fc7;
 }
 
-.staging-progress-item[data-state="error"] {
+.bulk-upload-progress-item[data-state="error"] {
   border-left-color: #f14668;
 }
 
-.staging-progress-item[data-state="error"] .staging-progress-status {
+.bulk-upload-progress-item[data-state="error"] .bulk-upload-progress-status {
   color: #f14668;
 }
 
 .left-block {
   position: sticky;
   display: inline-block;
-  max-height: 85vh;
   overflow-y: auto;
-  width: 300px;
+  max-height: 85vh;
+  max-width: 300px;
   top: 100px;
   bottom: 0;
+  font-size: 0.95rem;
 }
 
 .left-block .block {
   margin-bottom: 1.5rem;
+}
+
+/* Sticky and "show every tag" are mutually exclusive: once pinned, a column taller than the
+   viewport can never be scrolled to its end. */
+.left-block-full {
+  position: static;
+  max-height: none;
+  overflow-y: visible;
 }
 
 .right {

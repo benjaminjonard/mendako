@@ -14,7 +14,7 @@
                 {% if post.mimetype == 'image/svg+xml' %}
                     <img src="{{ asset(post.path) }}">
                 {% else %}
-                    <img src="{{ asset(post.path|thumbnail(360)) }}">
+                    <img src="{{ asset(post.thumbnailPath|thumbnail) }}">
                 {% endif %}
             </div>
         </figure>

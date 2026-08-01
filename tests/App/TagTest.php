@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\App;
 
 use App\Enum\TagCategory;
-use App\Tests\Factory\BoardFactory;
-use App\Tests\Factory\PostFactory;
 use App\Tests\Factory\TagFactory;
 use App\Tests\Factory\UserFactory;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -43,6 +41,56 @@ class TagTest extends WebTestCase
         $this->assertResponseIsSuccessful();
         $this->assertRouteSame('app_tag_index');
         $this->assertCount(7, $crawler->filter('tbody tr')); // 7 because 4 tags are included in migrations (4 + 3)
+    }
+
+    public function test_tag_list_is_paginated(): void
+    {
+        // The 4 migration tags are META, so filtering on another category isolates the fixtures.
+        $this->client->loginUser(UserFactory::createOne());
+        TagFactory::createMany(25, ['category' => TagCategory::CHARACTER]);
+
+        $crawler = $this->client->request(Request::METHOD_GET, '/tags?category=character');
+        $this->assertResponseIsSuccessful();
+        $this->assertCount(20, $crawler->filter('tbody tr'));
+        $this->assertGreaterThan(0, $crawler->filter('nav.pagination a.pagination-link')->count());
+
+        $crawler = $this->client->request(Request::METHOD_GET, '/tags?category=character&page=2');
+        $this->assertCount(5, $crawler->filter('tbody tr'));
+    }
+
+    public function test_tag_list_can_be_searched_by_name(): void
+    {
+        $this->client->loginUser(UserFactory::createOne());
+        TagFactory::createOne(['name' => 'zzz_needle', 'category' => TagCategory::CHARACTER]);
+        TagFactory::createMany(3, ['category' => TagCategory::CHARACTER]);
+
+        $crawler = $this->client->request(Request::METHOD_GET, '/tags?q=zzz_needle');
+        $this->assertResponseIsSuccessful();
+        $this->assertCount(1, $crawler->filter('tbody tr'));
+    }
+
+    public function test_tag_list_can_be_filtered_by_category(): void
+    {
+        $this->client->loginUser(UserFactory::createOne());
+        TagFactory::createMany(2, ['category' => TagCategory::ARTIST]);
+        TagFactory::createMany(3, ['category' => TagCategory::GENERAL]);
+
+        $crawler = $this->client->request(Request::METHOD_GET, '/tags?category=artist');
+        $this->assertResponseIsSuccessful();
+        $this->assertCount(2, $crawler->filter('tbody tr'));
+    }
+
+    public function test_tag_list_can_be_sorted_by_name(): void
+    {
+        $this->client->loginUser(UserFactory::createOne());
+        TagFactory::createOne(['name' => 'aaa_first', 'category' => TagCategory::COPYRIGHT]);
+        TagFactory::createOne(['name' => 'zzz_last', 'category' => TagCategory::COPYRIGHT]);
+
+        $crawler = $this->client->request(Request::METHOD_GET, '/tags?category=copyright&sort=name&dir=ASC');
+        $this->assertSame('aaa_first', trim($crawler->filter('tbody tr:first-child td:first-child')->text()));
+
+        $crawler = $this->client->request(Request::METHOD_GET, '/tags?category=copyright&sort=name&dir=DESC');
+        $this->assertSame('zzz_last', trim($crawler->filter('tbody tr:first-child td:first-child')->text()));
     }
 
     public function test_can_edit_tag(): void
@@ -105,48 +153,4 @@ class TagTest extends WebTestCase
         );
     }
 
-    public function test_can_get_untagged_posts_list(): void
-    {
-        // Arrange
-        $user = UserFactory::createOne();
-        $this->client->loginUser($user);
-        $board = BoardFactory::createOne();
-        $metaTag = TagFactory::createOne(['name' => 'long_video', 'category' => TagCategory::META]);
-        $generalTag = TagFactory::createOne(['name' => 'nyancat', 'category' => TagCategory::GENERAL]);
-
-        PostFactory::createOne(['board' => $board]); // no tag at all -> untagged
-        PostFactory::createOne(['board' => $board, 'tags' => [$metaTag]]); // only meta tag -> untagged
-        PostFactory::createOne(['board' => $board, 'tags' => [$generalTag]]); // real tag -> excluded
-
-        // Act
-        $crawler = $this->client->request(Request::METHOD_GET, '/tags/untagged');
-
-        // Assert
-        $this->assertResponseIsSuccessful();
-        $this->assertRouteSame('app_tag_untagged');
-        $this->assertCount(2, $crawler->filter('.untagged-post')); // post with no tag + post with only a meta tag
-    }
-
-    public function test_can_add_tags_to_untagged_post(): void
-    {
-        // Arrange
-        $user = UserFactory::createOne();
-        $this->client->loginUser($user);
-        $board = BoardFactory::createOne();
-        $post = PostFactory::createOne(['board' => $board]);
-
-        // Act
-        $crawler = $this->client->request(Request::METHOD_GET, '/tags/untagged');
-        $this->assertCount(1, $crawler->filter('.untagged-post'));
-        $this->client->submit($crawler->filter('.untagged-post form')->form(['tags' => 'nyancat cat']));
-
-        // Assert
-        $this->assertResponseIsSuccessful();
-        $this->assertRouteSame('app_tag_untagged');
-        TagFactory::assert()->exists(['name' => 'nyancat']);
-        TagFactory::assert()->exists(['name' => 'cat']);
-        $this->assertCount(2, PostFactory::find($post->getId())->getTags());
-        // Post now has real tags, so it no longer shows up in the untagged list
-        $this->assertCount(0, $this->client->getCrawler()->filter('.untagged-post'));
-    }
 }

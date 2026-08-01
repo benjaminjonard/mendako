@@ -2,7 +2,7 @@ html, .navbar, .autocomplete-dropdown-textarea, .navbar-menu {
     background-color: #2a2a2a;
 }
 
-.navbar-item, .navbar-link, .breadcrumb li.is-active a, body, .box, .table, .title, .subtitle, .label, .table thead th {
+.navbar-item, .navbar-link, .breadcrumb li.is-active a, body, .box, .table, .title, .subtitle, .label, .table thead th, .box strong {
     color: #ccc;
 }
 
@@ -10,7 +10,7 @@ html, .navbar, .autocomplete-dropdown-textarea, .navbar-menu {
     background-color: #3f3f46;
 }
 
-.staging-bulk-bar {
+.bulk-upload-bulk-bar {
     background-color: #2a2a2a;
 }
 
@@ -38,13 +38,30 @@ html, .navbar, .autocomplete-dropdown-textarea, .navbar-menu {
     color: #35c64a;
 }
 
+.is-category-rating {
+    color: #ff8ac2;
+}
+
+.suggestion-row {
+    border-bottom-color: #3a3a3a;
+}
+
+.suggestion-score {
+    color: #999;
+}
+
+.suggestion-source-wd {
+    background-color: #12314f;
+    color: #6db3ff;
+}
+
+
 .navbar i, .navbar-burger {
     color: #ccc;
 }
 
 .box {
     box-shadow: 0 .5em 1em -.125em hsla(0,0%,4%,.1),0 0 0 1px hsla(0,0%,4%,.02);
-    color: #4a4a4a;
     display: block;
     padding: 1.25rem;
 }
@@ -53,6 +70,10 @@ html, .navbar, .autocomplete-dropdown-textarea, .navbar-menu {
     border-color: #dbdbdb;
     border-radius: 4px;
     color: #363636;
+}
+
+.input::placeholder, .textarea::placeholder {
+    color: #767676;
 }
 
 label.checkbox, .config {

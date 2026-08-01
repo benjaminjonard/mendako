@@ -81,8 +81,6 @@ echo "**** 4/8 - Create symfony log files ****"
 chown -R "$USER":"$USER" /app/public/var/log
 chown -R "$USER":"$USER" /app/public/var/log/prod.log
 
-echo "**** 8/8 - Setup complete, starting the server. ****"
-frankenphp run --config /etc/caddy/Caddyfile
-exec "$@"
-
-echo "**** All done ****"
+echo "**** 8/8 - Setup complete, starting supervisord (web + workers). ****"
+export WORKER_PHP_MEMORY_LIMIT=${WORKER_PHP_MEMORY_LIMIT:-2G}
+exec supervisord -c /app/public/docker/supervisord.conf

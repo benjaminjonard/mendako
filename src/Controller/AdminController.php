@@ -6,6 +6,7 @@ namespace App\Controller;
 
 use App\Repository\BoardRepository;
 use App\Repository\PostRepository;
+use App\Service\AutoTag\AutoTagConfigProvider;
 use App\Service\DiskUsageCalculator;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,6 +22,7 @@ class AdminController extends AbstractController
         DiskUsageCalculator $diskUsageCalculator,
         BoardRepository $boardRepository,
         PostRepository $postRepository,
+        AutoTagConfigProvider $autoTagConfigProvider,
         #[Autowire('%release%')] string $release,
         #[Autowire('%kernel.project_dir%/public/uploads')] string $uploadsPath,
         #[Autowire('%env(APP_THUMBNAILS_FORMAT)%')] string $thumbnailsFormat,
@@ -38,7 +40,18 @@ class AdminController extends AbstractController
             'boards' => $boardRepository->count([]),
             'phpVersion' => phpversion(),
             'symfonyVersion' => Kernel::VERSION,
-            'frankenPhpVersion' => \extension_loaded('frankenphp') ? str_replace('v', '', phpversion('frankenphp')) : null
+            'frankenPhpVersion' => \extension_loaded('frankenphp') ? str_replace('v', '', phpversion('frankenphp')) : null,
+            'autoTagEnabled' => $autoTagConfigProvider->isEnabled(),
+            'autoTagAutoValidateThreshold' => $autoTagConfigProvider->getAutoValidateThresholdPercent('wd'),
+            'autoTagBoards' => $autoTagConfigProvider->getWdBoardSlugs(),
+        ]);
+    }
+
+    #[Route(path: '/admin/jobs', name: 'app_admin_jobs', methods: ['GET'])]
+    public function jobs(AutoTagConfigProvider $autoTagConfigProvider): Response
+    {
+        return $this->render('App/Admin/jobs.html.twig', [
+            'autoTagEnabled' => $autoTagConfigProvider->isEnabled(),
         ]);
     }
 }

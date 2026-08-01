@@ -7,12 +7,14 @@ namespace App\Form\DataTransformer;
 use App\Entity\Tag;
 use App\Enum\TagCategory;
 use App\Repository\TagRepository;
+use App\Repository\TagSuggestionRepository;
 use Symfony\Component\Form\DataTransformerInterface;
 
 class StringToTagTransformer implements DataTransformerInterface
 {
     public function __construct(
-        private readonly TagRepository $tagRepository
+        private readonly TagRepository $tagRepository,
+        private readonly TagSuggestionRepository $tagSuggestionRepository,
     ) {
     }
 
@@ -46,10 +48,19 @@ class StringToTagTransformer implements DataTransformerInterface
             $tag = $this->tagRepository->findOneBy(['name' => $name]);
 
             if ($tag === null) {
+                // A brand-new tag born from an accepted suggestion keeps the suggested
+                // category (rating/character/…); anything typed by hand falls back to general.
+                $category = $this->tagSuggestionRepository->findCategoryForName($name) ?? TagCategory::GENERAL;
+
+                // A name some tagger already emits isn't the user's own invention; the suggestion's
+                // source doubles as the tag source.
+                $source = $this->tagSuggestionRepository->modelSourceForName($name) ?? Tag::SOURCE_CUSTOM;
+
                 $tag = new Tag();
                 $tag
                     ->setName($name)
-                    ->setCategory(TagCategory::GENERAL)
+                    ->setCategory($category)
+                    ->setSource($source)
                 ;
             }
 
