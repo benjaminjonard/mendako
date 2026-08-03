@@ -22,8 +22,8 @@
         "cssnano": "8.0.2",
         "postcss": "8.5.25",
         "regenerator-runtime": "0.14.1",
-        "webpack": "5.108.3",
-        "webpack-cli": "7.1.0"
+        "webpack": "5.109.2",
+        "webpack-cli": "7.2.2"
     },
     "dependencies": {
         "bulma": "1.0.4",
