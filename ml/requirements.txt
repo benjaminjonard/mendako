@@ -4,5 +4,5 @@ fastapi==0.141.1
 python-multipart==0.0.32
 uvicorn[standard]==0.52.0
 onnxruntime==1.28.0
-huggingface_hub==0.27.1
+huggingface_hub==1.26.0
 pillow==12.3.0
