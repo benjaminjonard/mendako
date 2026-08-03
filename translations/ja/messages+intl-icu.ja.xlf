@@ -757,64 +757,10 @@
         <target>一括アップロード</target>
       </segment>
     </unit>
-    <unit id="stg00d1" name="bulk_upload.dropzone">
-      <segment state="translated">
-        <source>Drag and drop files here, or click to select</source>
-        <target>Drag and drop files here, or click to select</target>
-      </segment>
-    </unit>
-    <unit id="stg00d2" name="bulk_upload.duplicate">
-      <segment state="translated">
-        <source>Potential duplicate</source>
-        <target>Potential duplicate</target>
-      </segment>
-    </unit>
-    <unit id="stg00a1" name="bulk_upload.assign">
-      <segment state="translated">
-        <source>Assign</source>
-        <target>Assign</target>
-      </segment>
-    </unit>
-    <unit id="stg00a2" name="bulk_upload.assign_selected">
-      <segment state="translated">
-        <source>Assign to board</source>
-        <target>Assign to board</target>
-      </segment>
-    </unit>
-    <unit id="stg00a3" name="bulk_upload.delete_selected">
-      <segment state="translated">
-        <source>Delete selected</source>
-        <target>Delete selected</target>
-      </segment>
-    </unit>
-    <unit id="stg00m2" name="message.bulk_upload_assigned">
-      <segment state="translated">
-        <source>Files assigned to board</source>
-        <target>Files assigned to board</target>
-      </segment>
-    </unit>
-    <unit id="stg00m3" name="message.bulk_upload_deleted">
-      <segment state="translated">
-        <source>Files deleted</source>
-        <target>Files deleted</target>
-      </segment>
-    </unit>
-    <unit id="stg00a4" name="bulk_upload.select_all">
-      <segment state="translated">
-        <source>Select all</source>
-        <target>Select all</target>
-      </segment>
-    </unit>
     <unit id="klTEu5O" name="label.tag_suggestions">
       <segment state="translated">
         <source>Tag suggestions</source>
         <target>タグの提案</target>
-      </segment>
-    </unit>
-    <unit id="7S7FGNF" name="label.source_wd">
-      <segment state="translated">
-        <source>WD</source>
-        <target>WD</target>
       </segment>
     </unit>
     <unit id="ATuY3sA" name="label.source_custom">
@@ -831,7 +777,7 @@
     </unit>
     <unit id="D9tmsoA" name="label.duplicate_vectors">
       <segment state="translated">
-        <source>Duplicate vectors</source>
+        <source>Detect duplicates</source>
         <target>重複検出ベクトル</target>
       </segment>
     </unit>

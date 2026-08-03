@@ -775,6 +775,12 @@
         <target>Supprimer la sélection</target>
       </segment>
     </unit>
+    <unit id="stg00a4" name="bulk_upload.select_all">
+      <segment state="translated">
+        <source>Select all</source>
+        <target>Tout sélectionner</target>
+      </segment>
+    </unit>
     <unit id="stg00m2" name="message.bulk_upload_assigned">
       <segment state="translated">
         <source>Files assigned to board</source>
@@ -785,12 +791,6 @@
       <segment state="translated">
         <source>Files deleted</source>
         <target>Fichiers supprimés</target>
-      </segment>
-    </unit>
-    <unit id="stg00a4" name="bulk_upload.select_all">
-      <segment state="translated">
-        <source>Select all</source>
-        <target>Tout sélectionner</target>
       </segment>
     </unit>
     <unit id="FWWEdRq" name="title.jobs">
@@ -899,12 +899,6 @@
       <segment state="translated">
         <source>Tag suggestions</source>
         <target>Suggestions de tags</target>
-      </segment>
-    </unit>
-    <unit id="7S7FGNF" name="label.source_wd">
-      <segment state="translated">
-        <source>WD</source>
-        <target>WD</target>
       </segment>
     </unit>
     <unit id="ATuY3sA" name="label.source_custom">
