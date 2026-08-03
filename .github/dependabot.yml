@@ -30,6 +30,16 @@ updates:
           - "minor"
           - "patch"
 
+  - package-ecosystem: "pip"
+    directory: "/ml"
+    schedule:
+      interval: "weekly"
+    groups:
+      pip-non-major:
+        update-types:
+          - "minor"
+          - "patch"
+
   - package-ecosystem: "docker"
     directory: "/"
     schedule:
