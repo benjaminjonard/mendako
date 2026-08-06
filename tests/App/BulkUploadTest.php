@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\App;
 
+use App\Service\ThumbnailStorage;
 use App\Tests\Factory\BoardFactory;
 use App\Tests\Factory\PostFactory;
 use App\Tests\Factory\StagedPostFactory;
@@ -201,6 +202,40 @@ class BulkUploadTest extends WebTestCase
         $this->assertResponseIsSuccessful();
         $data = json_decode($this->client->getResponse()->getContent(), true);
         $this->assertSame([], $data['similar']);
+    }
+
+    public function test_card_without_thumbnail_carries_the_polling_attributes(): void
+    {
+        $this->client->loginUser(UserFactory::createOne());
+
+        $result = $this->stageOne();
+
+        $stagedPost = StagedPostFactory::repository()->find($result['id']);
+        $this->assertNull($stagedPost->getThumbnailPath());
+
+        $expected = static::getContainer()->get(ThumbnailStorage::class)
+            ->relativePathFor($stagedPost->getPath(), $stagedPost->getMimetype());
+
+        $this->assertStringContainsString('data-bulk-upload-target="pendingThumbnail"', $result['card']);
+        $this->assertStringContainsString('data-thumbnail-src="/'.$expected.'"', $result['card']);
+    }
+
+    public function test_card_with_thumbnail_is_not_polled(): void
+    {
+        $user = UserFactory::createOne();
+        $this->client->loginUser($user);
+        StagedPostFactory::createOne([
+            'uploadedBy' => $user,
+            'mimetype' => 'image/png',
+            'path' => 'uploads/bulk-upload/generated.png',
+            'thumbnailPath' => 'thumbnails/bulk-upload/generated.jpeg',
+        ]);
+
+        $crawler = $this->client->request(Request::METHOD_GET, '/bulk-upload');
+
+        $this->assertResponseIsSuccessful();
+        $this->assertCount(0, $crawler->filter('[data-bulk-upload-target="pendingThumbnail"]'));
+        $this->assertCount(1, $crawler->filter('img[src="/thumbnails/bulk-upload/generated.jpeg"]'));
     }
 
     public function test_non_duplicate_is_not_flagged(): void

@@ -26,6 +26,11 @@
 
         {% if stagedPost.mimetype == 'image/svg+xml' %}
             <img src="{{ asset(stagedPost.path) }}">
+        {% elseif stagedPost.thumbnailPath is null and stagedPost.path is not null %}
+            {# Card rendered before the async worker generated the thumbnail: poll for the file. #}
+            <img src="{{ asset(null|thumbnail) }}"
+                 data-bulk-upload-target="pendingThumbnail"
+                 data-thumbnail-src="{{ asset(stagedPost.path|expected_thumbnail(stagedPost.mimetype)) }}">
         {% else %}
             <img src="{{ asset(stagedPost.thumbnailPath|thumbnail) }}">
         {% endif %}
