@@ -15,12 +15,17 @@ use Zenstruck\Foundry\RepositoryProxy;
  */
 final class UserFactory extends \Zenstruck\Foundry\Persistence\PersistentObjectFactory
 {
+    private static int $sequence = 0;
+
     #[\Override]
     protected function defaults(): array
     {
+        // Faker's unique() memory is lost when the kernel reboots between requests, so build unique values ourselves
+        $unique = ++self::$sequence.bin2hex(random_bytes(4));
+
         return [
-            'username' => self::faker()->unique()->word(),
-            'email' => self::faker()->unique()->email(),
+            'username' => 'user_'.$unique,
+            'email' => 'user_'.$unique.'@example.com',
             'plainPassword' => self::faker()->password(),
             'enabled' => true,
             'roles' => ['ROLE_USER'],

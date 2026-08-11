@@ -11,11 +11,14 @@ use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
  */
 final class TagFactory extends \Zenstruck\Foundry\Persistence\PersistentObjectFactory
 {
+    private static int $sequence = 0;
+
     #[\Override]
     protected function defaults(): array
     {
+        // Faker's unique() memory is lost when the kernel reboots between requests, so build unique values ourselves
         return [
-            'name' => self::faker()->unique()->word(),
+            'name' => 'tag_'.++self::$sequence.bin2hex(random_bytes(4)),
             'category' => TagCategory::GENERAL,
             'suggested' => false,
             'createdAt' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),

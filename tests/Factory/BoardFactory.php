@@ -10,11 +10,14 @@ use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
  */
 final class BoardFactory extends \Zenstruck\Foundry\Persistence\PersistentObjectFactory
 {
+    private static int $sequence = 0;
+
     #[\Override]
     protected function defaults(): array
     {
+        // Faker's unique() memory is lost when the kernel reboots between requests, so build unique values ourselves
         return [
-            'name' => self::faker()->unique()->word(),
+            'name' => 'board_'.++self::$sequence.bin2hex(random_bytes(4)),
             'createdAt' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
         ];
     }
