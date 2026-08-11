@@ -9,9 +9,6 @@ use App\Entity\Post;
 use App\Form\Type\PostType;
 use App\Repository\PostRepository;
 use App\Repository\TagRepository;
-use App\Repository\TagSuggestionRepository;
-use App\Service\AutoTag\AutoTagConfigProvider;
-use App\Service\AutoTag\SuggestionSplitter;
 use App\Service\AutoTag\TaggingDispatcher;
 use App\Service\PostVectorService;
 use App\Service\ThumbnailDispatcher;
@@ -71,8 +68,6 @@ class PostController extends AbstractController
             'post' => $post,
             'form' => $form,
             'suggestedTags' => $tagRepository->findBy(['suggested' => true]),
-            // No post id before upload — automatic tagging suggestions surface on the edit form.
-            'autoTagSuggestionsUrl' => null,
         ]);
     }
 
@@ -118,7 +113,6 @@ class PostController extends AbstractController
         TagRepository $tagRepository,
         ManagerRegistry $managerRegistry,
         PostVectorService $postVectorService,
-        AutoTagConfigProvider $autoTagConfigProvider,
         ThumbnailDispatcher $thumbnailDispatcher,
         #[MapEntity(mapping: ['slug' => 'slug'])] Board $board,
         Post $post
@@ -150,37 +144,6 @@ class PostController extends AbstractController
             'post' => $post,
             'form' => $form,
             'suggestedTags' => $tagRepository->findBy(['suggested' => true]),
-            // Only surface the suggestions endpoint when the feature is on; null leaves the form
-            // identical to the non-auto-tagging experience.
-            'autoTagSuggestionsUrl' => $autoTagConfigProvider->isEnabled()
-                ? $this->generateUrl('app_post_autotag_suggestions', ['slug' => $board->getSlug(), 'id' => $post->getId()])
-                : null,
-        ]);
-    }
-
-    #[Route(path: '/boards/{slug}/{id}/autotag-suggestions', name: 'app_post_autotag_suggestions', methods: ['GET'])]
-    public function autoTagSuggestions(
-        AutoTagConfigProvider $autoTagConfigProvider,
-        SuggestionSplitter $suggestionSplitter,
-        TagSuggestionRepository $tagSuggestionRepository,
-        #[MapEntity(mapping: ['slug' => 'slug'])] Board $board,
-        Post $post
-    ): JsonResponse {
-        if (!$autoTagConfigProvider->isEnabled()) {
-            return $this->json(['enabled' => false]);
-        }
-
-        [$highConfidence, $lowConfidence] = $suggestionSplitter->split(
-            $tagSuggestionRepository->findForTarget('post', $post->getId()),
-        );
-
-        return $this->json([
-            'enabled' => true,
-            // No server-side "analysis complete" marker yet: infer "still analyzing"
-            // from the absence of any suggestion (the client polls with a bounded cap).
-            'status' => $highConfidence === [] && $lowConfidence === [] ? 'analyzing' : 'ready',
-            'highConfidence' => $highConfidence,
-            'pending' => $lowConfidence,
         ]);
     }
 

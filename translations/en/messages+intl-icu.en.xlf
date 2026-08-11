@@ -835,12 +835,6 @@
         <target>Disabled</target>
       </segment>
     </unit>
-    <unit id="AYkXVdQ" name="label.analyzing_suggestions">
-      <segment state="translated">
-        <source>Analyzing image for tag suggestions…</source>
-        <target>Analyzing image for tag suggestions…</target>
-      </segment>
-    </unit>
     <unit id="4PqVsqZ" name="global.none">
       <segment state="translated">
         <source>None</source>

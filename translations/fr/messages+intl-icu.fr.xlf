@@ -817,12 +817,6 @@
         <target>Désactivé</target>
       </segment>
     </unit>
-    <unit id="AYkXVdQ" name="label.analyzing_suggestions">
-      <segment state="translated">
-        <source>Analyzing image for tag suggestions…</source>
-        <target>Analyse de l'image pour suggérer des tags…</target>
-      </segment>
-    </unit>
     <unit id="4PqVsqZ" name="global.none">
       <segment state="translated">
         <source>None</source>
