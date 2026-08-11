@@ -1,7 +1,31 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [1.4.0] / 2025-01-25
+## [2.0.0] / 2026-08-11
+
+## :warning: Breaking changes
+- A new volume for thumbnails needs to be mounted (see README)
+
+- This release introduce a new way of handling thumbnails, you need to regenerate them through `Administration -> Jobs -> Regenerate thumbnails`
+Until the job is launched and completed, all your thumbnails will be blank.
+
+- The duplicates detection was also reworked, please run the job `Administration -> Jobs -> Regenerate vectors`
+
+### Features
+- Add optional autotagging feature, see README (benjaminjonard)
+- New bulk upload page. User can now drag and drop multiple images in a staging page for quicker board attribution (benjaminjonard)
+- Add a new Jobs panel in Administration :
+  - `Tag existing posts` -> run auto tagging task on selected boards, can take a long time depending on the number of images you have
+  - `Regenerate vectors` -> used for duplicates detection
+  - `Regenerate thumbnails`
+- Upgrade PHP and JS dependencies (benjaminjonard)
+
+
+### Miscellaneous
+- Rework thumbnails handling (benjaminjonard)
+- Rework duplicated detection (benjaminjonard)
+
+## [1.4.0] / 2026-01-25
 ### Miscellaneous
 - Upgrade PHP to 8.5, Symfony to 8.0 and JS dependencies (benjaminjonard)
 
@@ -10,7 +34,7 @@ All notable changes to this project will be documented in this file.
 - Upgrade PHP (Symfony 7.4) and JS dependencies (benjaminjonard)
 
 ## [1.3.0] / 2025-06-05
-### Feature
+### Features
 - Allow video/x-m4v mime type (benjaminjonard)
 
 ### Miscellaneous
@@ -18,7 +42,7 @@ All notable changes to this project will be documented in this file.
 - Upgrade PHP (Symfony 7.3) and JS dependencies (benjaminjonard)
 
 ## [1.2.6] / 2024-10-28
-### Feature
+### Features
 - Add Portuguese (Brazilian) language (Lucasofchirstms)
 
 ### Miscellaneous
@@ -32,7 +56,7 @@ All notable changes to this project will be documented in this file.
 - Update docker image to Ubuntu 24 noble (benjaminjonard)
 
 ## [1.2.4] / 2024-07-16
-### Feature
+### Features
 - Add metrics endpoint using OpenTelemetry format, used for statistics (benjaminjonard)
 - Allow changing board when editing a Post (benjaminjonard)
 - Add ability to add a comment on a Post (benjaminjonard)
@@ -42,7 +66,7 @@ All notable changes to this project will be documented in this file.
 - Update to Bulma v1 (benjaminjonard)**
 
 ## [1.2.3] / 2024-02-09
-### Feature
+### Features
 - Add Hungarian language (forms55)
 - Add language selector on login page (benjaminjonard)
 

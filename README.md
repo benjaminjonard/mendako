@@ -38,7 +38,7 @@ services:
             - mendako_postgresql
         volumes:
             - "./volumes/mendako/public/uploads:/uploads"
-            - "./volumes/mendako/public/thumbnails:/thumbnails" #Not mandatory
+            - "./volumes/mendako/public/thumbnails:/thumbnails"
 
     mendako_postgresql:
         container_name: mendako_postgresql
@@ -127,12 +127,9 @@ To enable it, add the `mendako_ml` to your `docker-compose.yml`:
         restart: unless-stopped
 ```
 
-Tagging uses WD EVA02 Large v3, which produces Danbooru tags and a content rating — it targets
-illustrations rather than photographs. List a board's slug in `APP_AUTOTAG_BOARDS_WITH_WD` to have
-it tagged; a board left out is never tagged. Staged bulk uploads are not tagged either: they have
-no board yet, so tagging happens once they are assigned to one.
+Tagging uses WD EVA02 Large v3, which produces Danbooru tags — it works well with illustrations but perform poorly on photographies. You can choose which board to autotag using `APP_AUTOTAG_BOARDS_WITH_WD`. 
 
-The model is baked into the `mendako-ml` image at build time — there is no runtime download.
+For photographies I tried a few models but results were not good enough. If a better model is released at some point I'll add it. 
 
 
 ### Available environment variables
@@ -152,8 +149,8 @@ The model is baked into the `mendako-ml` image at build time — there is no run
 | UPLOAD_MAX_FILESIZE | Defaults to 20M                             |                                                     |
 | PHP_MEMORY_LIMIT    | Defaults to 512M                            |                                                     |
 | PHP_TIMEZONE        | You timezone, default to Europe\Paris       | https://www.w3schools.com/php/php_ref_timezones.asp |
-| APP_AUTOTAG_ENABLED  | Hard master switch for Automatic tags    | `0` (default, off) or `1`                           |
-| APP_ML_URL      | URL of the optional automatic tagging inference service    | default `http://mendako_ml:8000`                    |
+| APP_AUTOTAG_ENABLED  | Enable autotag feature    | `0` (default, off) or `1`                           |
+| APP_ML_URL      | URL of automatic tagging inference service    | default `http://mendako_ml:8000`                    |
 | APP_AUTOTAG_AUTOVALIDATE_THRESHOLD_WD | Min WD confidence (percent) to auto-validate a suggested tag | `0`–`100`, default `85`               |
 | APP_AUTOTAG_BOARDS_WITH_WD | Boards tagged by the WD tagger | comma-separated slugs, `*` for all, empty for none |
 

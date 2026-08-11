@@ -957,8 +957,8 @@
     </unit>
     <unit id="D9tmsoA" name="label.duplicate_vectors">
       <segment state="translated">
-        <source>Detect duplicates</source>
-        <target>Detect duplicates</target>
+        <source>Regenerate vectors</source>
+        <target>Regenerate vectors</target>
       </segment>
     </unit>
     <unit id="Vn4kQ8p" name="label.thumbnails">

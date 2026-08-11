@@ -939,8 +939,8 @@
     </unit>
     <unit id="D9tmsoA" name="label.duplicate_vectors">
       <segment state="translated">
-        <source>Detect duplicates</source>
-        <target>Détection de doublons</target>
+        <source>Regenerate vectors</source>
+        <target>Régénérer les vecteurs</target>
       </segment>
     </unit>
     <unit id="Vn4kQ8p" name="label.thumbnails">
