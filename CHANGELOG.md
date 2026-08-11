@@ -6,6 +6,8 @@ All notable changes to this project will be documented in this file.
 ## :warning: Breaking changes
 - A new volume for thumbnails needs to be mounted (see README)
 
+- The PostgreSQL image  must be changed from `postgres:15` to `pgvector/pgvector:pg15`. Replace the 15 by your current version of PostgreSQL
+
 - This release introduce a new way of handling thumbnails, you need to regenerate them through `Administration -> Jobs -> Regenerate thumbnails`
 Until the job is launched and completed, all your thumbnails will be blank.
 
@@ -18,12 +20,14 @@ Until the job is launched and completed, all your thumbnails will be blank.
   - `Tag existing posts` -> run auto tagging task on selected boards, can take a long time depending on the number of images you have
   - `Regenerate vectors` -> used for duplicates detection
   - `Regenerate thumbnails`
-- Upgrade PHP and JS dependencies (benjaminjonard)
-
+- Rework tags page, add pagination, filtering and ordering (benjaminjonard)
+- Two tags can now be merged into one (benjaminjonard)
 
 ### Miscellaneous
 - Rework thumbnails handling (benjaminjonard)
-- Rework duplicated detection (benjaminjonard)
+- Rework duplicate detection (benjaminjonard)
+- Docker image now uses FrankenPHP as the web server (benjaminjonard)
+- Upgrade PHP and JS dependencies (benjaminjonard)
 
 ## [1.4.0] / 2026-01-25
 ### Miscellaneous

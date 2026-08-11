@@ -85,63 +85,6 @@ class TagSuggestionRepository extends ServiceEntityRepository
     }
 
     /**
-     * Point every suggestion carrying $from at $to, keeping auto-tagging in sync when a tag is
-     * renamed. `tag_name` is a free string (no FK to Tag), so a rename would otherwise leave stale
-     * suggestions that recreate the old-named tag on acceptance. All statuses are repointed so the
-     * "already decided" history (see decidedTagNamesForTarget) follows the tag too. A target/source
-     * already owning a $to row would break the unique constraint, so its stale $from row is dropped
-     * rather than renamed. Returns the number of rows renamed. Bulk DELETE/UPDATE — run it when no
-     * matching suggestions are held in the UoW.
-     */
-    public function renameTagName(string $from, string $to): int
-    {
-        if ($from === $to) {
-            return 0;
-        }
-
-        // Drop $from rows that would collide with an existing $to row for the same target+source.
-        $collision = $this->createQueryBuilder('c')
-            ->select('1')
-            ->andWhere('c.tagName = :to')
-            ->andWhere('c.targetType = s.targetType')
-            ->andWhere('c.targetId = s.targetId')
-            ->andWhere('c.source = s.source')
-            ->getDQL();
-
-        $this->createQueryBuilder('s')
-            ->delete()
-            ->where('s.tagName = :from')
-            ->andWhere(sprintf('EXISTS (%s)', $collision))
-            ->setParameter('from', $from)
-            ->setParameter('to', $to)
-            ->getQuery()
-            ->execute();
-
-        return (int) $this->createQueryBuilder('s')
-            ->update()
-            ->set('s.tagName', ':to')
-            ->where('s.tagName = :from')
-            ->setParameter('to', $to)
-            ->setParameter('from', $from)
-            ->getQuery()
-            ->execute();
-    }
-
-    /**
-     * Number of suggestions carrying a given tag name (any target/status/source). Lets --dry-run
-     * report the suggestion rows a rename would touch without writing anything.
-     */
-    public function countByTagName(string $name): int
-    {
-        return (int) $this->createQueryBuilder('s')
-            ->select('COUNT(s.id)')
-            ->where('s.tagName = :name')
-            ->setParameter('name', $name)
-            ->getQuery()
-            ->getSingleScalarResult();
-    }
-
-    /**
      * Remove every suggestion carrying a given tag name (any target/status/source). Called when a
      * name is blacklisted so an already-surfaced suggestion disappears from the UI immediately.
      */
