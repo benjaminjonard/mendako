@@ -16,6 +16,7 @@ jobs:
         with:
           config: '.github/crowdin.yml'
           upload_translations: true
+          import_eq_suggestions: true
           download_translations: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
