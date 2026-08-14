@@ -14,7 +14,7 @@ final class PostFactory extends \Zenstruck\Foundry\Persistence\PersistentObjectF
     protected function defaults(): array
     {
         return [
-            'mimetype' => self::faker()->mimeType(),
+            'mimetype' => 'image/jpeg',
             'height' => self::faker()->randomNumber(3),
             'width' => self::faker()->randomNumber(3),
             'size' => self::faker()->randomNumber(6),
