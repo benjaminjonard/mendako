@@ -703,6 +703,12 @@
         <target>Symfony バージョン</target>
       </segment>
     </unit>
+    <unit id="Fr4nkPv" name="label.frankenphp_version">
+      <segment state="translated">
+        <source>FrankenPHP version</source>
+        <target>FrankenPHP バージョン</target>
+      </segment>
+    </unit>
     <unit id="C0cGYZr" name="label.ai_blacklist">
       <segment state="translated">
         <source>AI blacklist</source>
@@ -755,132 +761,6 @@
       <segment state="translated">
         <source>Bulk upload</source>
         <target>一括アップロード</target>
-      </segment>
-    </unit>
-    <unit id="klTEu5O" name="label.tag_suggestions">
-      <segment state="translated">
-        <source>Tag suggestions</source>
-        <target>タグの提案</target>
-      </segment>
-    </unit>
-    <unit id="ATuY3sA" name="label.source_custom">
-      <segment state="translated">
-        <source>Custom</source>
-        <target>カスタム</target>
-      </segment>
-    </unit>
-    <unit id="LUZ16KF" name="app.enum.tag.category.rating">
-      <segment state="translated">
-        <source>Rating</source>
-        <target>レーティング</target>
-      </segment>
-    </unit>
-    <unit id="D9tmsoA" name="label.duplicate_vectors">
-      <segment state="translated">
-        <source>Duplicate vectors</source>
-        <target>重複検出ベクトル</target>
-      </segment>
-    </unit>
-    <unit id="Vn4kQ8p" name="label.thumbnails">
-      <segment state="translated">
-        <source>Regenerate thumbnails</source>
-        <target>サムネイルを再生成</target>
-      </segment>
-    </unit>
-    <unit id="Hs2mLd7" name="label.thumbnails_help">
-      <segment state="translated">
-        <source>Rebuild missing thumbnails and delete the ones no longer referenced.</source>
-        <target>不足しているサムネイルを再生成し、参照されなくなったものを削除します。</target>
-      </segment>
-    </unit>
-    <unit id="Bx9rTc4" name="label.thumbnails_done">
-      <segment state="translated">
-        <source>with a thumbnail</source>
-        <target>サムネイルあり</target>
-      </segment>
-    </unit>
-    <unit id="Wj5nPe1" name="label.thumbnails_todo">
-      <segment state="translated">
-        <source>remaining</source>
-        <target>残り</target>
-      </segment>
-    </unit>
-    <unit id="Qz6vRm3" name="message.thumbnails_started">
-      <segment state="translated">
-        <source>Thumbnail rebuild started.</source>
-        <target>サムネイルの再生成を開始しました。</target>
-      </segment>
-    </unit>
-    <unit id="WZYaXwy" name="message.vectors_started">
-      <segment state="translated">
-        <source>Vector recompute started.</source>
-        <target>ベクトルの再計算を開始しました。</target>
-      </segment>
-    </unit>
-    <unit id="MNaOL0B" name="title.merge_tags">
-      <segment state="translated">
-        <source>Merge tags</source>
-        <target>タグを統合</target>
-      </segment>
-    </unit>
-    <unit id="WJO2QqL" name="label.merge_tags">
-      <segment state="translated">
-        <source>Tags to merge into this one</source>
-        <target>このタグに統合するタグ</target>
-      </segment>
-    </unit>
-    <unit id="C9swX1y" name="label.merge_tags_help">
-      <segment state="translated">
-        <source>The selected tags will be deleted and all their images reassigned to this tag. This cannot be undone.</source>
-        <target>選択したタグは削除され、その画像はすべてこのタグに再割り当てされます。この操作は元に戻せません。</target>
-      </segment>
-    </unit>
-    <unit id="55qqFwT" name="btn.merge">
-      <segment state="translated">
-        <source>Merge</source>
-        <target>統合</target>
-      </segment>
-    </unit>
-    <unit id="GV060Lm" name="message.tags_merged">
-      <segment state="translated">
-        <source>{count, plural, one {# tag merged into} other {# tags merged into}} {tag}</source>
-        <target>{count, plural, other {# 個のタグを統合しました:}} {tag}</target>
-      </segment>
-    </unit>
-    <unit id="HnI23ne" name="label.count">
-      <segment state="translated">
-        <source>Count</source>
-        <target>件数</target>
-      </segment>
-    </unit>
-    <unit id="OveSIPt" name="label.search">
-      <segment state="translated">
-        <source>Search</source>
-        <target>検索</target>
-      </segment>
-    </unit>
-    <unit id="gmw5Mif" name="label.all">
-      <segment state="translated">
-        <source>All</source>
-        <target>すべて</target>
-      </segment>
-    </unit>
-    <unit id="a8eBH77" name="btn.reset">
-      <segment state="translated">
-        <source>Reset</source>
-        <target>リセット</target>
-      </segment>
-    </unit>
-    <unit id="pB821zV" name="label.created_at">
-      <segment state="translated">
-        <source>Created at</source>
-        <target>作成日時</target>
-      </segment>
-    </unit>
-    <unit id="Fr4nkPv" name="label.frankenphp_version">
-      <segment state="translated">
-        <source>FrankenPHP version</source>
-        <target>FrankenPHP バージョン</target>
       </segment>
     </unit>
     <unit id="stg00d1" name="bulk_upload.dropzone">
@@ -1027,10 +907,28 @@
         <target>自動タグ付けは無効です</target>
       </segment>
     </unit>
+    <unit id="klTEu5O" name="label.tag_suggestions">
+      <segment state="translated">
+        <source>Tag suggestions</source>
+        <target>タグの提案</target>
+      </segment>
+    </unit>
     <unit id="7S7FGNF" name="label.source_wd">
       <segment state="translated">
         <source>WD</source>
         <target>WD</target>
+      </segment>
+    </unit>
+    <unit id="ATuY3sA" name="label.source_custom">
+      <segment state="translated">
+        <source>Custom</source>
+        <target>カスタム</target>
+      </segment>
+    </unit>
+    <unit id="LUZ16KF" name="app.enum.tag.category.rating">
+      <segment state="translated">
+        <source>Rating</source>
+        <target>レーティング</target>
       </segment>
     </unit>
     <unit id="XAUgRuO" name="label.tagging_done">
@@ -1057,10 +955,52 @@
         <target>計算待ち</target>
       </segment>
     </unit>
+    <unit id="D9tmsoA" name="label.duplicate_vectors">
+      <segment state="translated">
+        <source>Regenerate vectors</source>
+        <target>重複検出ベクトル</target>
+      </segment>
+    </unit>
+    <unit id="Vn4kQ8p" name="label.thumbnails">
+      <segment state="translated">
+        <source>Regenerate thumbnails</source>
+        <target>サムネイルを再生成</target>
+      </segment>
+    </unit>
+    <unit id="Hs2mLd7" name="label.thumbnails_help">
+      <segment state="translated">
+        <source>Rebuild missing thumbnails and delete the ones no longer referenced.</source>
+        <target>不足しているサムネイルを再生成し、参照されなくなったものを削除します。</target>
+      </segment>
+    </unit>
+    <unit id="Bx9rTc4" name="label.thumbnails_done">
+      <segment state="translated">
+        <source>with a thumbnail</source>
+        <target>サムネイルあり</target>
+      </segment>
+    </unit>
+    <unit id="Wj5nPe1" name="label.thumbnails_todo">
+      <segment state="translated">
+        <source>remaining</source>
+        <target>残り</target>
+      </segment>
+    </unit>
+    <unit id="Qz6vRm3" name="message.thumbnails_started">
+      <segment state="translated">
+        <source>Thumbnail rebuild started.</source>
+        <target>サムネイルの再生成を開始しました。</target>
+      </segment>
+    </unit>
     <unit id="qs81Y4S" name="label.duplicate_vectors_help">
       <segment state="translated">
         <source>Builds a visual fingerprint of each image so the app can flag duplicates and near-identical posts when you upload. New uploads are fingerprinted automatically.</source>
         <target>各画像の視覚的な指紋を作成し、アップロード時に重複やほぼ同一の投稿を検出できるようにします。新しいアップロードは自動的に処理されます。</target>
+      </segment>
+    </unit>
+    <unit id="WZYaXwy" name="message.vectors_started">
+      <segment state="translated">
+        <source>Vector recompute started.</source>
+        <target>ベクトルの再計算を開始しました。</target>
       </segment>
     </unit>
     <unit id="N7b4Cgh" name="message.job_already_running">
@@ -1073,6 +1013,66 @@
       <segment state="translated">
         <source>Job cancelled.</source>
         <target>ジョブをキャンセルしました。</target>
+      </segment>
+    </unit>
+    <unit id="MNaOL0B" name="title.merge_tags">
+      <segment state="translated">
+        <source>Merge tags</source>
+        <target>タグを統合</target>
+      </segment>
+    </unit>
+    <unit id="WJO2QqL" name="label.merge_tags">
+      <segment state="translated">
+        <source>Tags to merge into this one</source>
+        <target>このタグに統合するタグ</target>
+      </segment>
+    </unit>
+    <unit id="C9swX1y" name="label.merge_tags_help">
+      <segment state="translated">
+        <source>The selected tags will be deleted and all their images reassigned to this tag. This cannot be undone.</source>
+        <target>選択したタグは削除され、その画像はすべてこのタグに再割り当てされます。この操作は元に戻せません。</target>
+      </segment>
+    </unit>
+    <unit id="55qqFwT" name="btn.merge">
+      <segment state="translated">
+        <source>Merge</source>
+        <target>統合</target>
+      </segment>
+    </unit>
+    <unit id="GV060Lm" name="message.tags_merged">
+      <segment state="translated">
+        <source>{count, plural, one {# tag merged into} other {# tags merged into}} {tag}</source>
+        <target>{count, plural, other {# 個のタグを統合しました:}} {tag}</target>
+      </segment>
+    </unit>
+    <unit id="HnI23ne" name="label.count">
+      <segment state="translated">
+        <source>Count</source>
+        <target>件数</target>
+      </segment>
+    </unit>
+    <unit id="OveSIPt" name="label.search">
+      <segment state="translated">
+        <source>Search</source>
+        <target>検索</target>
+      </segment>
+    </unit>
+    <unit id="gmw5Mif" name="label.all">
+      <segment state="translated">
+        <source>All</source>
+        <target>すべて</target>
+      </segment>
+    </unit>
+    <unit id="a8eBH77" name="btn.reset">
+      <segment state="translated">
+        <source>Reset</source>
+        <target>リセット</target>
+      </segment>
+    </unit>
+    <unit id="pB821zV" name="label.created_at">
+      <segment state="translated">
+        <source>Created at</source>
+        <target>作成日時</target>
       </segment>
     </unit>
   </file>

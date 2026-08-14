@@ -667,6 +667,48 @@
         <target>{count, plural, one {# bejegyzés} other {# bejegyzés}}</target>
       </segment>
     </unit>
+    <unit id="WAXhQr6" name="label.comment">
+      <segment state="translated">
+        <source>Comment</source>
+        <target>Megjegyzés</target>
+      </segment>
+    </unit>
+    <unit id="CJm9OVi" name="menu.board">
+      <segment state="translated">
+        <source>Board</source>
+        <target>Tábla</target>
+      </segment>
+    </unit>
+    <unit id="0sdRJOC" name="menu.tag">
+      <segment state="translated">
+        <source>Tag</source>
+        <target>Címke</target>
+      </segment>
+    </unit>
+    <unit id="9yxbGqQ" name="menu.post">
+      <segment state="translated">
+        <source>Post</source>
+        <target>Bejegyzés</target>
+      </segment>
+    </unit>
+    <unit id="Cs2h4Jr" name="label.php_version">
+      <segment state="translated">
+        <source>PHP version</source>
+        <target>PHP verzió</target>
+      </segment>
+    </unit>
+    <unit id="f5dsFMw" name="label.symfony_version">
+      <segment state="translated">
+        <source>Symfony version</source>
+        <target>Symfony verzió</target>
+      </segment>
+    </unit>
+    <unit id="Fr4nkPv" name="label.frankenphp_version">
+      <segment state="translated">
+        <source>FrankenPHP version</source>
+        <target>FrankenPHP verzió</target>
+      </segment>
+    </unit>
     <unit id="C0cGYZr" name="label.ai_blacklist">
       <segment state="translated">
         <source>AI blacklist</source>
@@ -719,168 +761,6 @@
       <segment state="translated">
         <source>Bulk upload</source>
         <target>Tömeges feltöltés</target>
-      </segment>
-    </unit>
-    <unit id="klTEu5O" name="label.tag_suggestions">
-      <segment state="translated">
-        <source>Tag suggestions</source>
-        <target>Címkejavaslatok</target>
-      </segment>
-    </unit>
-    <unit id="ATuY3sA" name="label.source_custom">
-      <segment state="translated">
-        <source>Custom</source>
-        <target>Egyéni</target>
-      </segment>
-    </unit>
-    <unit id="LUZ16KF" name="app.enum.tag.category.rating">
-      <segment state="translated">
-        <source>Rating</source>
-        <target>Besorolás</target>
-      </segment>
-    </unit>
-    <unit id="D9tmsoA" name="label.duplicate_vectors">
-      <segment state="translated">
-        <source>Duplicate vectors</source>
-        <target>Duplikátum-vektorok</target>
-      </segment>
-    </unit>
-    <unit id="Vn4kQ8p" name="label.thumbnails">
-      <segment state="translated">
-        <source>Regenerate thumbnails</source>
-        <target>Bélyegképek újragenerálása</target>
-      </segment>
-    </unit>
-    <unit id="Hs2mLd7" name="label.thumbnails_help">
-      <segment state="translated">
-        <source>Rebuild missing thumbnails and delete the ones no longer referenced.</source>
-        <target>Újragenerálja a hiányzó bélyegképeket, és törli a már nem hivatkozottakat.</target>
-      </segment>
-    </unit>
-    <unit id="Bx9rTc4" name="label.thumbnails_done">
-      <segment state="translated">
-        <source>with a thumbnail</source>
-        <target>bélyegképpel</target>
-      </segment>
-    </unit>
-    <unit id="Wj5nPe1" name="label.thumbnails_todo">
-      <segment state="translated">
-        <source>remaining</source>
-        <target>hátravan</target>
-      </segment>
-    </unit>
-    <unit id="Qz6vRm3" name="message.thumbnails_started">
-      <segment state="translated">
-        <source>Thumbnail rebuild started.</source>
-        <target>A bélyegképek újragenerálása elindult.</target>
-      </segment>
-    </unit>
-    <unit id="WZYaXwy" name="message.vectors_started">
-      <segment state="translated">
-        <source>Vector recompute started.</source>
-        <target>A vektorok újraszámítása elindult.</target>
-      </segment>
-    </unit>
-    <unit id="MNaOL0B" name="title.merge_tags">
-      <segment state="translated">
-        <source>Merge tags</source>
-        <target>Címkék egyesítése</target>
-      </segment>
-    </unit>
-    <unit id="WJO2QqL" name="label.merge_tags">
-      <segment state="translated">
-        <source>Tags to merge into this one</source>
-        <target>Ebbe egyesítendő címkék</target>
-      </segment>
-    </unit>
-    <unit id="C9swX1y" name="label.merge_tags_help">
-      <segment state="translated">
-        <source>The selected tags will be deleted and all their images reassigned to this tag. This cannot be undone.</source>
-        <target>A kiválasztott címkék törlődnek, és minden képük ehhez a címkéhez kerül át. Ez a művelet nem vonható vissza.</target>
-      </segment>
-    </unit>
-    <unit id="55qqFwT" name="btn.merge">
-      <segment state="translated">
-        <source>Merge</source>
-        <target>Egyesítés</target>
-      </segment>
-    </unit>
-    <unit id="GV060Lm" name="message.tags_merged">
-      <segment state="translated">
-        <source>{count, plural, one {# tag merged into} other {# tags merged into}} {tag}</source>
-        <target>{count, plural, one {# címke egyesítve ebbe:} other {# címke egyesítve ebbe:}} {tag}</target>
-      </segment>
-    </unit>
-    <unit id="HnI23ne" name="label.count">
-      <segment state="translated">
-        <source>Count</source>
-        <target>Darab</target>
-      </segment>
-    </unit>
-    <unit id="OveSIPt" name="label.search">
-      <segment state="translated">
-        <source>Search</source>
-        <target>Keresés</target>
-      </segment>
-    </unit>
-    <unit id="gmw5Mif" name="label.all">
-      <segment state="translated">
-        <source>All</source>
-        <target>Összes</target>
-      </segment>
-    </unit>
-    <unit id="a8eBH77" name="btn.reset">
-      <segment state="translated">
-        <source>Reset</source>
-        <target>Visszaállítás</target>
-      </segment>
-    </unit>
-    <unit id="pB821zV" name="label.created_at">
-      <segment state="translated">
-        <source>Created at</source>
-        <target>Létrehozva</target>
-      </segment>
-    </unit>
-    <unit id="WAXhQr6" name="label.comment">
-      <segment state="translated">
-        <source>Comment</source>
-        <target>Megjegyzés</target>
-      </segment>
-    </unit>
-    <unit id="CJm9OVi" name="menu.board">
-      <segment state="translated">
-        <source>Board</source>
-        <target>Tábla</target>
-      </segment>
-    </unit>
-    <unit id="0sdRJOC" name="menu.tag">
-      <segment state="translated">
-        <source>Tag</source>
-        <target>Címke</target>
-      </segment>
-    </unit>
-    <unit id="9yxbGqQ" name="menu.post">
-      <segment state="translated">
-        <source>Post</source>
-        <target>Bejegyzés</target>
-      </segment>
-    </unit>
-    <unit id="Cs2h4Jr" name="label.php_version">
-      <segment state="translated">
-        <source>PHP version</source>
-        <target>PHP verzió</target>
-      </segment>
-    </unit>
-    <unit id="f5dsFMw" name="label.symfony_version">
-      <segment state="translated">
-        <source>Symfony version</source>
-        <target>Symfony verzió</target>
-      </segment>
-    </unit>
-    <unit id="Fr4nkPv" name="label.frankenphp_version">
-      <segment state="translated">
-        <source>FrankenPHP version</source>
-        <target>FrankenPHP verzió</target>
       </segment>
     </unit>
     <unit id="stg00d1" name="bulk_upload.dropzone">
@@ -1027,10 +907,28 @@
         <target>Az automatikus címkézés le van tiltva</target>
       </segment>
     </unit>
+    <unit id="klTEu5O" name="label.tag_suggestions">
+      <segment state="translated">
+        <source>Tag suggestions</source>
+        <target>Címkejavaslatok</target>
+      </segment>
+    </unit>
     <unit id="7S7FGNF" name="label.source_wd">
       <segment state="translated">
         <source>WD</source>
         <target>WD</target>
+      </segment>
+    </unit>
+    <unit id="ATuY3sA" name="label.source_custom">
+      <segment state="translated">
+        <source>Custom</source>
+        <target>Egyéni</target>
+      </segment>
+    </unit>
+    <unit id="LUZ16KF" name="app.enum.tag.category.rating">
+      <segment state="translated">
+        <source>Rating</source>
+        <target>Besorolás</target>
       </segment>
     </unit>
     <unit id="XAUgRuO" name="label.tagging_done">
@@ -1057,10 +955,52 @@
         <target>számításra vár</target>
       </segment>
     </unit>
+    <unit id="D9tmsoA" name="label.duplicate_vectors">
+      <segment state="translated">
+        <source>Regenerate vectors</source>
+        <target>Duplikátum-vektorok</target>
+      </segment>
+    </unit>
+    <unit id="Vn4kQ8p" name="label.thumbnails">
+      <segment state="translated">
+        <source>Regenerate thumbnails</source>
+        <target>Bélyegképek újragenerálása</target>
+      </segment>
+    </unit>
+    <unit id="Hs2mLd7" name="label.thumbnails_help">
+      <segment state="translated">
+        <source>Rebuild missing thumbnails and delete the ones no longer referenced.</source>
+        <target>Újragenerálja a hiányzó bélyegképeket, és törli a már nem hivatkozottakat.</target>
+      </segment>
+    </unit>
+    <unit id="Bx9rTc4" name="label.thumbnails_done">
+      <segment state="translated">
+        <source>with a thumbnail</source>
+        <target>bélyegképpel</target>
+      </segment>
+    </unit>
+    <unit id="Wj5nPe1" name="label.thumbnails_todo">
+      <segment state="translated">
+        <source>remaining</source>
+        <target>hátravan</target>
+      </segment>
+    </unit>
+    <unit id="Qz6vRm3" name="message.thumbnails_started">
+      <segment state="translated">
+        <source>Thumbnail rebuild started.</source>
+        <target>A bélyegképek újragenerálása elindult.</target>
+      </segment>
+    </unit>
     <unit id="qs81Y4S" name="label.duplicate_vectors_help">
       <segment state="translated">
         <source>Builds a visual fingerprint of each image so the app can flag duplicates and near-identical posts when you upload. New uploads are fingerprinted automatically.</source>
         <target>Vizuális ujjlenyomatot készít minden képről, hogy az alkalmazás feltöltéskor jelezni tudja a duplikátumokat és a majdnem azonos bejegyzéseket. Az új feltöltések automatikusan feldolgozásra kerülnek.</target>
+      </segment>
+    </unit>
+    <unit id="WZYaXwy" name="message.vectors_started">
+      <segment state="translated">
+        <source>Vector recompute started.</source>
+        <target>A vektorok újraszámítása elindult.</target>
       </segment>
     </unit>
     <unit id="N7b4Cgh" name="message.job_already_running">
@@ -1073,6 +1013,66 @@
       <segment state="translated">
         <source>Job cancelled.</source>
         <target>A feladat megszakítva.</target>
+      </segment>
+    </unit>
+    <unit id="MNaOL0B" name="title.merge_tags">
+      <segment state="translated">
+        <source>Merge tags</source>
+        <target>Címkék egyesítése</target>
+      </segment>
+    </unit>
+    <unit id="WJO2QqL" name="label.merge_tags">
+      <segment state="translated">
+        <source>Tags to merge into this one</source>
+        <target>Ebbe egyesítendő címkék</target>
+      </segment>
+    </unit>
+    <unit id="C9swX1y" name="label.merge_tags_help">
+      <segment state="translated">
+        <source>The selected tags will be deleted and all their images reassigned to this tag. This cannot be undone.</source>
+        <target>A kiválasztott címkék törlődnek, és minden képük ehhez a címkéhez kerül át. Ez a művelet nem vonható vissza.</target>
+      </segment>
+    </unit>
+    <unit id="55qqFwT" name="btn.merge">
+      <segment state="translated">
+        <source>Merge</source>
+        <target>Egyesítés</target>
+      </segment>
+    </unit>
+    <unit id="GV060Lm" name="message.tags_merged">
+      <segment state="translated">
+        <source>{count, plural, one {# tag merged into} other {# tags merged into}} {tag}</source>
+        <target>{count, plural, one {# címke egyesítve ebbe:} other {# címke egyesítve ebbe:}} {tag}</target>
+      </segment>
+    </unit>
+    <unit id="HnI23ne" name="label.count">
+      <segment state="translated">
+        <source>Count</source>
+        <target>Darab</target>
+      </segment>
+    </unit>
+    <unit id="OveSIPt" name="label.search">
+      <segment state="translated">
+        <source>Search</source>
+        <target>Keresés</target>
+      </segment>
+    </unit>
+    <unit id="gmw5Mif" name="label.all">
+      <segment state="translated">
+        <source>All</source>
+        <target>Összes</target>
+      </segment>
+    </unit>
+    <unit id="a8eBH77" name="btn.reset">
+      <segment state="translated">
+        <source>Reset</source>
+        <target>Visszaállítás</target>
+      </segment>
+    </unit>
+    <unit id="pB821zV" name="label.created_at">
+      <segment state="translated">
+        <source>Created at</source>
+        <target>Létrehozva</target>
       </segment>
     </unit>
   </file>
