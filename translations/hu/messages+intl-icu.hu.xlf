@@ -841,5 +841,239 @@
         <target>Létrehozva</target>
       </segment>
     </unit>
+    <unit id="WAXhQr6" name="label.comment">
+      <segment state="translated">
+        <source>Comment</source>
+        <target>Megjegyzés</target>
+      </segment>
+    </unit>
+    <unit id="CJm9OVi" name="menu.board">
+      <segment state="translated">
+        <source>Board</source>
+        <target>Tábla</target>
+      </segment>
+    </unit>
+    <unit id="0sdRJOC" name="menu.tag">
+      <segment state="translated">
+        <source>Tag</source>
+        <target>Címke</target>
+      </segment>
+    </unit>
+    <unit id="9yxbGqQ" name="menu.post">
+      <segment state="translated">
+        <source>Post</source>
+        <target>Bejegyzés</target>
+      </segment>
+    </unit>
+    <unit id="Cs2h4Jr" name="label.php_version">
+      <segment state="translated">
+        <source>PHP version</source>
+        <target>PHP verzió</target>
+      </segment>
+    </unit>
+    <unit id="f5dsFMw" name="label.symfony_version">
+      <segment state="translated">
+        <source>Symfony version</source>
+        <target>Symfony verzió</target>
+      </segment>
+    </unit>
+    <unit id="Fr4nkPv" name="label.frankenphp_version">
+      <segment state="translated">
+        <source>FrankenPHP version</source>
+        <target>FrankenPHP verzió</target>
+      </segment>
+    </unit>
+    <unit id="stg00d1" name="bulk_upload.dropzone">
+      <segment state="translated">
+        <source>Drag and drop files here, or click to select</source>
+        <target>Húzza ide a fájlokat, vagy kattintson a kiválasztáshoz</target>
+      </segment>
+    </unit>
+    <unit id="stg00d2" name="bulk_upload.duplicate">
+      <segment state="translated">
+        <source>Potential duplicate</source>
+        <target>Lehetséges duplikátum</target>
+      </segment>
+    </unit>
+    <unit id="stg00a1" name="bulk_upload.assign">
+      <segment state="translated">
+        <source>Assign</source>
+        <target>Hozzárendelés</target>
+      </segment>
+    </unit>
+    <unit id="stg00a2" name="bulk_upload.assign_selected">
+      <segment state="translated">
+        <source>Assign to board</source>
+        <target>Hozzárendelés táblához</target>
+      </segment>
+    </unit>
+    <unit id="stg00a3" name="bulk_upload.delete_selected">
+      <segment state="translated">
+        <source>Delete selected</source>
+        <target>Kijelöltek törlése</target>
+      </segment>
+    </unit>
+    <unit id="stg00a4" name="bulk_upload.select_all">
+      <segment state="translated">
+        <source>Select all</source>
+        <target>Összes kijelölése</target>
+      </segment>
+    </unit>
+    <unit id="stg00m2" name="message.bulk_upload_assigned">
+      <segment state="translated">
+        <source>Files assigned to board</source>
+        <target>A fájlok hozzá lettek rendelve a táblához</target>
+      </segment>
+    </unit>
+    <unit id="stg00m3" name="message.bulk_upload_deleted">
+      <segment state="translated">
+        <source>Files deleted</source>
+        <target>A fájlok törölve</target>
+      </segment>
+    </unit>
+    <unit id="FWWEdRq" name="title.jobs">
+      <segment state="translated">
+        <source>Jobs</source>
+        <target>Feladatok</target>
+      </segment>
+    </unit>
+    <unit id="hGnEVLQ" name="menu.automatic_tags">
+      <segment state="translated">
+        <source>Automatic tags</source>
+        <target>Automatikus címkék</target>
+      </segment>
+    </unit>
+    <unit id="enbL3da" name="label.enabled">
+      <segment state="translated">
+        <source>Enabled</source>
+        <target>Engedélyezve</target>
+      </segment>
+    </unit>
+    <unit id="dsbL3da" name="label.disabled">
+      <segment state="translated">
+        <source>Disabled</source>
+        <target>Letiltva</target>
+      </segment>
+    </unit>
+    <unit id="4PqVsqZ" name="global.none">
+      <segment state="translated">
+        <source>None</source>
+        <target>Egyik sem</target>
+      </segment>
+    </unit>
+    <unit id="T8K0HoP" name="label.tag_existing_posts">
+      <segment state="translated">
+        <source>Tag existing posts</source>
+        <target>Meglévő bejegyzések címkézése</target>
+      </segment>
+    </unit>
+    <unit id="dgZ5AnR" name="label.tag_existing_posts_help">
+      <segment state="translated">
+        <source>Suggests tags for your images by analyzing what they show. You review and confirm every suggestion — nothing is tagged without you. New uploads are handled automatically. For best results, run "Analyze image content" first.</source>
+        <target>Címkéket javasol a képeihez azok tartalmának elemzésével. Minden javaslatot Ön ellenőriz és hagy jóvá – semmi sem kap címkét Ön nélkül. Az új feltöltések automatikusan feldolgozásra kerülnek. A legjobb eredmény érdekében először futtassa a „Képtartalom elemzése” műveletet.</target>
+      </segment>
+    </unit>
+    <unit id="rN7uQ2a" name="label.run_active">
+      <segment state="translated">
+        <source>In progress</source>
+        <target>Folyamatban</target>
+      </segment>
+    </unit>
+    <unit id="rN7uQ2d" name="label.run_waiting">
+      <segment state="translated">
+        <source>Waiting for worker</source>
+        <target>Várakozás workerre</target>
+      </segment>
+    </unit>
+    <unit id="rN7uQ2c" name="label.run_remaining">
+      <segment state="translated">
+        <source>remaining</source>
+        <target>hátravan</target>
+      </segment>
+    </unit>
+    <unit id="rN7uQ2e" name="label.run_starting">
+      <segment state="translated">
+        <source>Starting…</source>
+        <target>Indítás…</target>
+      </segment>
+    </unit>
+    <unit id="UQ6FVNw" name="label.processed">
+      <segment state="translated">
+        <source>Processed</source>
+        <target>Feldolgozva</target>
+      </segment>
+    </unit>
+    <unit id="c5aZKyp" name="btn.tag_missing">
+      <segment state="translated">
+        <source>Missing</source>
+        <target>Hiányzók</target>
+      </segment>
+    </unit>
+    <unit id="N2RoYUz" name="btn.tag_all">
+      <segment state="translated">
+        <source>All</source>
+        <target>Mind</target>
+      </segment>
+    </unit>
+    <unit id="7atujC1" name="message.automatic_tags_started">
+      <segment state="translated">
+        <source>Retroactive tagging started</source>
+        <target>A visszamenőleges címkézés elindult</target>
+      </segment>
+    </unit>
+    <unit id="zTLmNX4" name="message.automatic_tags_disabled">
+      <segment state="translated">
+        <source>Automatic tagging is disabled</source>
+        <target>Az automatikus címkézés le van tiltva</target>
+      </segment>
+    </unit>
+    <unit id="7S7FGNF" name="label.source_wd">
+      <segment state="translated">
+        <source>WD</source>
+        <target>WD</target>
+      </segment>
+    </unit>
+    <unit id="XAUgRuO" name="label.tagging_done">
+      <segment state="translated">
+        <source>tagged</source>
+        <target>címkézve</target>
+      </segment>
+    </unit>
+    <unit id="fIBPbER" name="label.tagging_todo">
+      <segment state="translated">
+        <source>to tag</source>
+        <target>címkézésre vár</target>
+      </segment>
+    </unit>
+    <unit id="6qNJwGn" name="label.vectors_done">
+      <segment state="translated">
+        <source>vectorized</source>
+        <target>vektorizálva</target>
+      </segment>
+    </unit>
+    <unit id="FAYWKWm" name="label.vectors_todo">
+      <segment state="translated">
+        <source>to compute</source>
+        <target>számításra vár</target>
+      </segment>
+    </unit>
+    <unit id="qs81Y4S" name="label.duplicate_vectors_help">
+      <segment state="translated">
+        <source>Builds a visual fingerprint of each image so the app can flag duplicates and near-identical posts when you upload. New uploads are fingerprinted automatically.</source>
+        <target>Vizuális ujjlenyomatot készít minden képről, hogy az alkalmazás feltöltéskor jelezni tudja a duplikátumokat és a majdnem azonos bejegyzéseket. Az új feltöltések automatikusan feldolgozásra kerülnek.</target>
+      </segment>
+    </unit>
+    <unit id="N7b4Cgh" name="message.job_already_running">
+      <segment state="translated">
+        <source>That job is already running.</source>
+        <target>Ez a feladat már fut.</target>
+      </segment>
+    </unit>
+    <unit id="gX2YOcW" name="message.job_cancelled">
+      <segment state="translated">
+        <source>Job cancelled.</source>
+        <target>A feladat megszakítva.</target>
+      </segment>
+    </unit>
   </file>
 </xliff>
