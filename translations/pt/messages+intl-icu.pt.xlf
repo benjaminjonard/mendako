@@ -703,6 +703,12 @@
         <target>Versão Symfony</target>
       </segment>
     </unit>
+    <unit id="Fr4nkPv" name="label.frankenphp_version">
+      <segment state="translated">
+        <source>FrankenPHP version</source>
+        <target>Versão FrankenPHP</target>
+      </segment>
+    </unit>
     <unit id="C0cGYZr" name="label.ai_blacklist">
       <segment state="translated">
         <source>AI blacklist</source>
@@ -755,132 +761,6 @@
       <segment state="translated">
         <source>Bulk upload</source>
         <target>Envio em massa</target>
-      </segment>
-    </unit>
-    <unit id="klTEu5O" name="label.tag_suggestions">
-      <segment state="translated">
-        <source>Tag suggestions</source>
-        <target>Sugestões de tags</target>
-      </segment>
-    </unit>
-    <unit id="ATuY3sA" name="label.source_custom">
-      <segment state="translated">
-        <source>Custom</source>
-        <target>Próprio</target>
-      </segment>
-    </unit>
-    <unit id="LUZ16KF" name="app.enum.tag.category.rating">
-      <segment state="translated">
-        <source>Rating</source>
-        <target>Classificação</target>
-      </segment>
-    </unit>
-    <unit id="D9tmsoA" name="label.duplicate_vectors">
-      <segment state="translated">
-        <source>Duplicate vectors</source>
-        <target>Vetores de duplicados</target>
-      </segment>
-    </unit>
-    <unit id="Vn4kQ8p" name="label.thumbnails">
-      <segment state="translated">
-        <source>Regenerate thumbnails</source>
-        <target>Regenerar miniaturas</target>
-      </segment>
-    </unit>
-    <unit id="Hs2mLd7" name="label.thumbnails_help">
-      <segment state="translated">
-        <source>Rebuild missing thumbnails and delete the ones no longer referenced.</source>
-        <target>Regenera as miniaturas em falta e elimina as que já não são referenciadas.</target>
-      </segment>
-    </unit>
-    <unit id="Bx9rTc4" name="label.thumbnails_done">
-      <segment state="translated">
-        <source>with a thumbnail</source>
-        <target>com miniatura</target>
-      </segment>
-    </unit>
-    <unit id="Wj5nPe1" name="label.thumbnails_todo">
-      <segment state="translated">
-        <source>remaining</source>
-        <target>restantes</target>
-      </segment>
-    </unit>
-    <unit id="Qz6vRm3" name="message.thumbnails_started">
-      <segment state="translated">
-        <source>Thumbnail rebuild started.</source>
-        <target>Regeneração de miniaturas iniciada.</target>
-      </segment>
-    </unit>
-    <unit id="WZYaXwy" name="message.vectors_started">
-      <segment state="translated">
-        <source>Vector recompute started.</source>
-        <target>Recálculo de vetores iniciado.</target>
-      </segment>
-    </unit>
-    <unit id="MNaOL0B" name="title.merge_tags">
-      <segment state="translated">
-        <source>Merge tags</source>
-        <target>Fundir etiquetas</target>
-      </segment>
-    </unit>
-    <unit id="WJO2QqL" name="label.merge_tags">
-      <segment state="translated">
-        <source>Tags to merge into this one</source>
-        <target>Etiquetas a fundir nesta</target>
-      </segment>
-    </unit>
-    <unit id="C9swX1y" name="label.merge_tags_help">
-      <segment state="translated">
-        <source>The selected tags will be deleted and all their images reassigned to this tag. This cannot be undone.</source>
-        <target>As etiquetas selecionadas serão eliminadas e todas as suas imagens reatribuídas a esta etiqueta. Esta ação é irreversível.</target>
-      </segment>
-    </unit>
-    <unit id="55qqFwT" name="btn.merge">
-      <segment state="translated">
-        <source>Merge</source>
-        <target>Fundir</target>
-      </segment>
-    </unit>
-    <unit id="GV060Lm" name="message.tags_merged">
-      <segment state="translated">
-        <source>{count, plural, one {# tag merged into} other {# tags merged into}} {tag}</source>
-        <target>{count, plural, one {# etiqueta fundida em} other {# etiquetas fundidas em}} {tag}</target>
-      </segment>
-    </unit>
-    <unit id="HnI23ne" name="label.count">
-      <segment state="translated">
-        <source>Count</source>
-        <target>Quantidade</target>
-      </segment>
-    </unit>
-    <unit id="OveSIPt" name="label.search">
-      <segment state="translated">
-        <source>Search</source>
-        <target>Pesquisar</target>
-      </segment>
-    </unit>
-    <unit id="gmw5Mif" name="label.all">
-      <segment state="translated">
-        <source>All</source>
-        <target>Todos</target>
-      </segment>
-    </unit>
-    <unit id="a8eBH77" name="btn.reset">
-      <segment state="translated">
-        <source>Reset</source>
-        <target>Redefinir</target>
-      </segment>
-    </unit>
-    <unit id="pB821zV" name="label.created_at">
-      <segment state="translated">
-        <source>Created at</source>
-        <target>Criado em</target>
-      </segment>
-    </unit>
-    <unit id="Fr4nkPv" name="label.frankenphp_version">
-      <segment state="translated">
-        <source>FrankenPHP version</source>
-        <target>Versão FrankenPHP</target>
       </segment>
     </unit>
     <unit id="stg00d1" name="bulk_upload.dropzone">
@@ -1027,10 +907,28 @@
         <target>A etiquetagem automática está desativada</target>
       </segment>
     </unit>
+    <unit id="klTEu5O" name="label.tag_suggestions">
+      <segment state="translated">
+        <source>Tag suggestions</source>
+        <target>Sugestões de tags</target>
+      </segment>
+    </unit>
     <unit id="7S7FGNF" name="label.source_wd">
       <segment state="translated">
         <source>WD</source>
         <target>WD</target>
+      </segment>
+    </unit>
+    <unit id="ATuY3sA" name="label.source_custom">
+      <segment state="translated">
+        <source>Custom</source>
+        <target>Próprio</target>
+      </segment>
+    </unit>
+    <unit id="LUZ16KF" name="app.enum.tag.category.rating">
+      <segment state="translated">
+        <source>Rating</source>
+        <target>Classificação</target>
       </segment>
     </unit>
     <unit id="XAUgRuO" name="label.tagging_done">
@@ -1057,10 +955,52 @@
         <target>por calcular</target>
       </segment>
     </unit>
+    <unit id="D9tmsoA" name="label.duplicate_vectors">
+      <segment state="translated">
+        <source>Regenerate vectors</source>
+        <target>Vetores de duplicados</target>
+      </segment>
+    </unit>
+    <unit id="Vn4kQ8p" name="label.thumbnails">
+      <segment state="translated">
+        <source>Regenerate thumbnails</source>
+        <target>Regenerar miniaturas</target>
+      </segment>
+    </unit>
+    <unit id="Hs2mLd7" name="label.thumbnails_help">
+      <segment state="translated">
+        <source>Rebuild missing thumbnails and delete the ones no longer referenced.</source>
+        <target>Regenera as miniaturas em falta e elimina as que já não são referenciadas.</target>
+      </segment>
+    </unit>
+    <unit id="Bx9rTc4" name="label.thumbnails_done">
+      <segment state="translated">
+        <source>with a thumbnail</source>
+        <target>com miniatura</target>
+      </segment>
+    </unit>
+    <unit id="Wj5nPe1" name="label.thumbnails_todo">
+      <segment state="translated">
+        <source>remaining</source>
+        <target>restantes</target>
+      </segment>
+    </unit>
+    <unit id="Qz6vRm3" name="message.thumbnails_started">
+      <segment state="translated">
+        <source>Thumbnail rebuild started.</source>
+        <target>Regeneração de miniaturas iniciada.</target>
+      </segment>
+    </unit>
     <unit id="qs81Y4S" name="label.duplicate_vectors_help">
       <segment state="translated">
         <source>Builds a visual fingerprint of each image so the app can flag duplicates and near-identical posts when you upload. New uploads are fingerprinted automatically.</source>
         <target>Cria uma impressão digital visual de cada imagem para que o aplicativo possa sinalizar duplicados e publicações quase idênticas ao enviá-las. Os novos envios são processados automaticamente.</target>
+      </segment>
+    </unit>
+    <unit id="WZYaXwy" name="message.vectors_started">
+      <segment state="translated">
+        <source>Vector recompute started.</source>
+        <target>Recálculo de vetores iniciado.</target>
       </segment>
     </unit>
     <unit id="N7b4Cgh" name="message.job_already_running">
@@ -1073,6 +1013,66 @@
       <segment state="translated">
         <source>Job cancelled.</source>
         <target>Tarefa cancelada.</target>
+      </segment>
+    </unit>
+    <unit id="MNaOL0B" name="title.merge_tags">
+      <segment state="translated">
+        <source>Merge tags</source>
+        <target>Fundir etiquetas</target>
+      </segment>
+    </unit>
+    <unit id="WJO2QqL" name="label.merge_tags">
+      <segment state="translated">
+        <source>Tags to merge into this one</source>
+        <target>Etiquetas a fundir nesta</target>
+      </segment>
+    </unit>
+    <unit id="C9swX1y" name="label.merge_tags_help">
+      <segment state="translated">
+        <source>The selected tags will be deleted and all their images reassigned to this tag. This cannot be undone.</source>
+        <target>As etiquetas selecionadas serão eliminadas e todas as suas imagens reatribuídas a esta etiqueta. Esta ação é irreversível.</target>
+      </segment>
+    </unit>
+    <unit id="55qqFwT" name="btn.merge">
+      <segment state="translated">
+        <source>Merge</source>
+        <target>Fundir</target>
+      </segment>
+    </unit>
+    <unit id="GV060Lm" name="message.tags_merged">
+      <segment state="translated">
+        <source>{count, plural, one {# tag merged into} other {# tags merged into}} {tag}</source>
+        <target>{count, plural, one {# etiqueta fundida em} other {# etiquetas fundidas em}} {tag}</target>
+      </segment>
+    </unit>
+    <unit id="HnI23ne" name="label.count">
+      <segment state="translated">
+        <source>Count</source>
+        <target>Quantidade</target>
+      </segment>
+    </unit>
+    <unit id="OveSIPt" name="label.search">
+      <segment state="translated">
+        <source>Search</source>
+        <target>Pesquisar</target>
+      </segment>
+    </unit>
+    <unit id="gmw5Mif" name="label.all">
+      <segment state="translated">
+        <source>All</source>
+        <target>Todos</target>
+      </segment>
+    </unit>
+    <unit id="a8eBH77" name="btn.reset">
+      <segment state="translated">
+        <source>Reset</source>
+        <target>Redefinir</target>
+      </segment>
+    </unit>
+    <unit id="pB821zV" name="label.created_at">
+      <segment state="translated">
+        <source>Created at</source>
+        <target>Criado em</target>
       </segment>
     </unit>
   </file>
