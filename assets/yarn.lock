@@ -1889,7 +1889,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cssnano-preset-default@npm:^8.0.4":
+"cssnano-preset-default@npm:^8.0.5":
   version: 8.0.5
   resolution: "cssnano-preset-default@npm:8.0.5"
   dependencies:
@@ -1937,15 +1937,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cssnano@npm:8.0.4":
-  version: 8.0.4
-  resolution: "cssnano@npm:8.0.4"
+"cssnano@npm:8.0.5":
+  version: 8.0.5
+  resolution: "cssnano@npm:8.0.5"
   dependencies:
-    cssnano-preset-default: "npm:^8.0.4"
+    cssnano-preset-default: "npm:^8.0.5"
     lilconfig: "npm:^3.1.3"
   peerDependencies:
-    postcss: ^8.5.25
-  checksum: 10/b2191d67cc8706afdef7216e56a246fc482bba6b52d07f5f6190ace3a9a1abc18486fd50bbc3e481cd66fb59918080f4851a77be0caaf30213a3e614655e1f60
+    postcss: ^8.5.26
+  checksum: 10/9625c2b8ea6fb4a263b04d60b83512b998584d1fd8f21d607f1e7b8e0e1564d3bd8e4323ea649be77fea76ff3024e6f6028ef87b4a31288d3b8edcfdd66fdb3f
   languageName: node
   linkType: hard
 
@@ -2542,7 +2542,7 @@ __metadata:
     bulma-toast: "npm:2.4.4"
     copy-webpack-plugin: "npm:14.0.0"
     core-js: "npm:3.50.0"
-    cssnano: "npm:8.0.4"
+    cssnano: "npm:8.0.5"
     postcss: "npm:8.5.26"
     regenerator-runtime: "npm:0.14.1"
     stimulus: "npm:3.2.2"

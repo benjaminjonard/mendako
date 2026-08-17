@@ -19,7 +19,7 @@
         "babel-plugin-polyfill-corejs3": "1.0.0",
         "copy-webpack-plugin": "14.0.0",
         "core-js": "3.50.0",
-        "cssnano": "8.0.4",
+        "cssnano": "8.0.5",
         "postcss": "8.5.26",
         "regenerator-runtime": "0.14.1",
         "webpack": "5.109.2",
