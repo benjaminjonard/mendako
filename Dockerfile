@@ -5,7 +5,6 @@ ENV APP_ENV=prod
 ENV PUID=1000
 ENV PGID=1000
 ENV USER=mendako
-ENV FRANKENPHP_CONFIG="worker /app/public/public/index.php"
 ENV FRANKENPHP_SERVER_NAME=":80"
 ENV APP_RUNTIME="Symfony\\Component\\Runtime\\SymfonyRuntime"
 ENV COMPOSER_ALLOW_SUPERUSER=1

@@ -72,7 +72,9 @@ services:
 # APP_THUMBNAILS_FORMAT possible values : jpeg, png, webp, avif. Leave empty if you want to keep the original image format
 # APP_POST_PER_PAGE and APP_INFINITE_SCROLL_POST_PER_PAGE are limited to 200
 #
-# WORKER_PHP_MEMORY_LIMIT -> max memory consumption for workers, the memory will be freed once the worker is done
+# WORKER_PHP_MEMORY_LIMIT -> max memory consumption for job workers, the memory will be freed once the worker is done
+#
+# FRANKENPHP_THREADS_NUMBER, must be strictly superior to FRANKENPHP_WORKERS_NUMBER
 ########################################################################################################
 
 APP_DEBUG=0
@@ -88,6 +90,9 @@ PHP_TZ=Europe/Paris
 APP_THUMBNAILS_FORMAT=
 APP_POST_PER_PAGE=20
 APP_INFINITE_SCROLL_POST_PER_PAGE=50
+
+FRANKENPHP_WORKERS_NUMBER=1
+FRANKENPHP_THREADS_NUMBER=2
 
 ########################################################################################################
 #                                                DATABASE
