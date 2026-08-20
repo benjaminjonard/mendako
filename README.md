@@ -51,8 +51,8 @@ services:
         volumes:
             - "./volumes/postgresql:/var/lib/postgresql/data"
 
-    #Only required for ML tasks, you can remove it if you don't want autotagging
-    #mendako_ml:
+    # Only required for ML tasks, you can remove it if you don't want autotagging
+    # mendako_ml:
     #   container_name: mendako_ml
     #   image: benjaminjonard/mendako-ml
     #   restart: unless-stopped       
