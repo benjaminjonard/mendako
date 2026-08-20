@@ -51,11 +51,11 @@ services:
         volumes:
             - "./volumes/postgresql:/var/lib/postgresql/data"
 
-    # Only required for ML tasks, you can remove it if you don't want autotagging
-    # mendako_ml:
-    #    container_name: mendako_ml
-    #    image: benjaminjonard/mendako-ml
-    #    restart: unless-stopped       
+    #Only required for ML tasks, you can remove it if you don't want autotagging
+    #mendako_ml:
+    #   container_name: mendako_ml
+    #   image: benjaminjonard/mendako-ml
+    #   restart: unless-stopped       
 ```
 
 ####  Step 2 -> Create a `.env` file
