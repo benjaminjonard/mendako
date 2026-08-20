@@ -49,7 +49,7 @@ services:
             - POSTGRES_USER=${DB_USER}
             - POSTGRES_PASSWORD=${DB_PASSWORD}
         volumes:
-            - "./volumes/postgresql:/var/lib/postgresql/data"
+            - "./volumes/postgresql:/var/lib/postgresql"
 
     # Only required for ML tasks, you can remove it if you don't want autotagging
     # mendako_ml:
