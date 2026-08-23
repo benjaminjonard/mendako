@@ -2,7 +2,7 @@
 # Versions are baseline pins; CI verifies amd64 + arm64 wheels resolve at build.
 fastapi==0.141.1
 python-multipart==0.0.32
-uvicorn[standard]==0.52.1
+uvicorn[standard]==0.52.3
 onnxruntime==1.28.0
 huggingface_hub==1.27.0
 pillow==12.3.0
