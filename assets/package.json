@@ -7,35 +7,20 @@
     "engines": {
         "node": "^22.18.0 || ^24.11.0 || >=26.0"
     },
-    "browserslist": [
-        "defaults"
-    ],
     "devDependencies": {
-        "@babel/core": "8.0.1",
-        "@babel/preset-env": "8.0.2",
         "@hotwired/stimulus": "3.2.2",
-        "@symfony/stimulus-bridge": "4.0.1",
-        "@symfony/webpack-encore": "7.2.0",
-        "babel-plugin-polyfill-corejs3": "1.0.0",
-        "copy-webpack-plugin": "14.0.0",
-        "core-js": "3.50.0",
-        "cssnano": "8.0.4",
-        "postcss": "8.5.26",
-        "regenerator-runtime": "0.14.1",
-        "webpack": "5.109.2",
-        "webpack-cli": "7.2.2"
+        "@symfony/reprise": "1.1.1",
+        "vite": "8.2.2"
     },
     "dependencies": {
         "bulma": "1.0.4",
         "bulma-toast": "2.4.4",
-        "stimulus": "3.2.2",
         "stimulus-use": "^0.53.0"
     },
     "scripts": {
-        "dev-server": "encore dev-server",
-        "dev": "encore dev",
-        "watch": "encore dev --watch",
-        "build": "encore production --progress"
+        "dev": "vite build --mode development",
+        "watch": "vite build --mode development --watch",
+        "build": "vite build"
     },
     "packageManager": "yarn@4.14.1"
 }

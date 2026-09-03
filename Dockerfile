@@ -56,7 +56,6 @@ COPY ./assets/ ./assets
 WORKDIR /app/assets
 
 RUN set -eux ; \
-    mkdir -p /app/public/build/ ; \
     npm install -g corepack ; \
     corepack enable ; \
     yarn --version ; \
