@@ -679,6 +679,18 @@
         <target>Post</target>
       </segment>
     </unit>
+    <unit id="Cs2h4Jr" name="label.php_version">
+      <segment state="translated">
+        <source>PHP version</source>
+        <target>PHP version</target>
+      </segment>
+    </unit>
+    <unit id="f5dsFMw" name="label.symfony_version">
+      <segment state="translated">
+        <source>Symfony version</source>
+        <target>Symfony version</target>
+      </segment>
+    </unit>
     <unit id="stg00m1" name="menu.staging">
       <segment state="translated">
         <source>Staging</source>
@@ -715,6 +727,12 @@
         <target>Supprimer la sélection</target>
       </segment>
     </unit>
+    <unit id="stg00a4" name="staging.select_all">
+      <segment state="translated">
+        <source>Select all</source>
+        <target>Tout sélectionner</target>
+      </segment>
+    </unit>
     <unit id="stg00m2" name="message.staged_assigned">
       <segment state="translated">
         <source>Files assigned to board</source>
@@ -725,12 +743,6 @@
       <segment state="translated">
         <source>Files deleted</source>
         <target>Fichiers supprimés</target>
-      </segment>
-    </unit>
-    <unit id="stg00a4" name="staging.select_all">
-      <segment state="translated">
-        <source>Select all</source>
-        <target>Tout sélectionner</target>
       </segment>
     </unit>
   </file>
