@@ -79,7 +79,6 @@ class TagBlacklistTest extends WebTestCase
         $form['name'] = 'bad_tag';
         $this->client->submit($form);
 
-        // The already-surfaced suggestion is gone — it must never remonter.
         $this->assertSame(
             [],
             static::getContainer()->get(TagSuggestionRepository::class)->findForTarget('post', $targetId)

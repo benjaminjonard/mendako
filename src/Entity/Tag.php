@@ -20,10 +20,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[UniqueEntity(fields: ['name'], message: 'error.name.not_unique')]
 class Tag
 {
-    // Provenance: only `custom` tags (names the WD model cannot produce) propagate by similarity.
     public const string SOURCE_CUSTOM = 'custom';
-    // Model-known names: a tagger emits them, so they aren't the user's own invention. The value
-    // matches TagSuggestion's source so a suggestion's source carries straight over.
     public const string SOURCE_WD = 'wd';
 
     #[ORM\Id]

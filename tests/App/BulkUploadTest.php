@@ -146,7 +146,6 @@ class BulkUploadTest extends WebTestCase
         $this->client->loginUser($user);
         $this->client->followRedirects();
 
-        // Create an existing Post with the same image (so its vector lands in men_post)
         $board = BoardFactory::createOne();
         $this->client->request(Request::METHOD_GET, '/boards/'.$board->getSlug().'/add');
         $this->client->submitForm('Submit', [
@@ -156,7 +155,6 @@ class BulkUploadTest extends WebTestCase
         ]);
         $this->client->followRedirects(false);
 
-        // Stage the same image -> flagged as a potential duplicate (stored on entity + in card)
         $result = $this->stageOne();
 
         $this->assertResponseIsSuccessful();
@@ -347,13 +345,11 @@ class BulkUploadTest extends WebTestCase
 
     public function test_cannot_delete_another_users_bulk_upload_upload(): void
     {
-        // User A stages a file
         $userA = UserFactory::createOne();
         $this->client->loginUser($userA);
         $result = $this->stageOne();
         StagedPostFactory::assert()->count(1);
 
-        // User B tries to delete it
         $userB = UserFactory::createOne();
         $this->client->loginUser($userB);
         $this->client->request(Request::METHOD_POST, '/bulk-upload/delete', [
@@ -364,17 +360,15 @@ class BulkUploadTest extends WebTestCase
         $this->assertResponseIsSuccessful();
         $data = json_decode($this->client->getResponse()->getContent(), true);
         $this->assertSame([], $data['removedIds']);
-        StagedPostFactory::assert()->count(1); // still there
+        StagedPostFactory::assert()->count(1);
     }
 
     public function test_index_is_scoped_to_current_user(): void
     {
-        // User A stages a file
         $userA = UserFactory::createOne();
         $this->client->loginUser($userA);
         $this->stageOne();
 
-        // User B sees none of A's bulk uploads
         $userB = UserFactory::createOne();
         $this->client->loginUser($userB);
         $crawler = $this->client->request(Request::METHOD_GET, '/bulk-upload');

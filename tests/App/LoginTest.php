@@ -27,64 +27,52 @@ class LoginTest extends WebTestCase
 
     public function test_can_login(): void
     {
-        // Arrange
         $user = UserFactory::createOne(['plainPassword' => 'password']);
 
-        // Act
         $this->client->request(Request::METHOD_GET, '/');
         $this->client->submitForm('Sign in', [
             '_login' => $user->getUsername(),
             '_password' => "password"
         ]);
 
-        // Assert
         $this->assertResponseIsSuccessful();
         $this->assertRouteSame('app_board_index');
     }
 
     public function test_user_redirected_if_already_logged_in(): void
     {
-        // Arrange
         $user = UserFactory::createOne();
         $this->client->loginUser($user);
 
-        // Act
         $this->client->request(Request::METHOD_GET, '/login');
 
-        // Assert
         $this->assertRouteSame('app_board_index');
     }
 
     public function test_user_cant_login_with_bad_credentials(): void
     {
-        // Arrange
         $user = UserFactory::createOne(['plainPassword' => 'password']);
 
-        // Act
         $this->client->request(Request::METHOD_GET, '/');
         $crawler = $this->client->submitForm('Sign in', [
             '_login' => $user->getUsername(),
             '_password' => 'wrong password'
         ]);
 
-        // Assert
         $this->assertSame('Sign in', $crawler->filter('h1')->innerText());
         $this->assertSame('Invalid credentials.', $crawler->filter('.has-text-danger')->text());
     }
 
     public function test_not_enabled_user_cant_login(): void
     {
-        // Arrange
         $user = UserFactory::createOne(['enabled' => false]);
 
-        // Act
         $this->client->request(Request::METHOD_GET, '/');
         $crawler = $this->client->submitForm('Sign in', [
             '_login' => $user->getUsername(),
             '_password' => $user->getPlainPassword()
         ]);
 
-        // Assert
         $this->assertSame('Sign in', $crawler->filter('h1')->innerText());
         $this->assertSame('User not activated', $crawler->filter('.has-text-danger')->text());
     }

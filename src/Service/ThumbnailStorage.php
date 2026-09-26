@@ -6,10 +6,6 @@ namespace App\Service;
 
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-/**
- * Names are never reused across regenerations: thumbnails are served straight off disk with a long
- * cache lifetime, so overwriting a path in place would leave stale images in browser caches.
- */
 class ThumbnailStorage
 {
     public const int POST_WIDTH = 360;
@@ -90,9 +86,6 @@ class ThumbnailStorage
         return $purged;
     }
 
-    /**
-     * Falls back to jpeg for videos and SVGs, which have no usable image extension of their own.
-     */
     public function extensionFor(?string $mimetype): string
     {
         $configured = strtolower(trim((string) $this->format));

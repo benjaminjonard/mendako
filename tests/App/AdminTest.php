@@ -28,27 +28,21 @@ class AdminTest extends WebTestCase
 
     public function test_admin_can_access_administration(): void
     {
-        // Arrange
         $user = UserFactory::createOne(['roles' => ['ROLE_ADMIN']]);
         $this->client->loginUser($user);
 
-        // Act
         $this->client->request(Request::METHOD_GET, '/admin');
 
-        // Assert
         $this->assertResponseIsSuccessful();
     }
 
     public function test_user_cannot_access_administration(): void
     {
-        // Arrange
         $user = UserFactory::createOne(['roles' => ['ROLE_USER']]);
         $this->client->loginUser($user);
 
-        // Act
         $this->client->request(Request::METHOD_GET, '/admin');
 
-        // Assert
         $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
     }
 }

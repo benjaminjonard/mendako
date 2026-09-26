@@ -20,7 +20,6 @@ final class UserFactory extends \Zenstruck\Foundry\Persistence\PersistentObjectF
     #[\Override]
     protected function defaults(): array
     {
-        // Faker's unique() memory is lost when the kernel reboots between requests, so build unique values ourselves
         $unique = ++self::$sequence.bin2hex(random_bytes(4));
 
         return [

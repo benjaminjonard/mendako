@@ -18,12 +18,10 @@ class FrameResultAggregatorTest extends TestCase
 
         $result = (new FrameResultAggregator())->aggregate($frames);
 
-        // Max score per tag, sorted desc.
         $this->assertSame([
             ['name' => 'cat', 'category' => 'general', 'score' => 0.9],
             ['name' => 'tree', 'category' => 'general', 'score' => 0.7],
         ], $result['tags']);
-        // Highest-scoring rating across frames.
         $this->assertSame('sensitive', $result['rating']['label']);
         $this->assertSame(0.8, $result['rating']['score']);
     }

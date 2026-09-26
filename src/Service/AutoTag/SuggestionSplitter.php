@@ -6,12 +6,6 @@ namespace App\Service\AutoTag;
 
 use App\Entity\TagSuggestion;
 
-/**
- * Splits a target's pending suggestions into the ones confident enough to pre-fill the tag field
- * and the ones offered as click-to-add chips, deduped by name across sources.
- *
- * Confidence is judged against the producing model's own threshold.
- */
 class SuggestionSplitter
 {
     public function __construct(
@@ -21,7 +15,6 @@ class SuggestionSplitter
 
     /**
      * @param TagSuggestion[] $suggestions
-     *
      * @return array{0: array<int, array>, 1: array<int, array>} confident prefills, then chips
      */
     public function split(array $suggestions): array

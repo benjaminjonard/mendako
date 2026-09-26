@@ -24,10 +24,6 @@ class TagSuggestionRepository extends ServiceEntityRepository
         );
     }
 
-    /**
-     * Remove a target's still-pending suggestions for a source so a re-run can replace them;
-     * accepted/dismissed rows are left untouched.
-     */
     public function deletePendingForTarget(string $targetType, string $targetId, string $source): void
     {
         $this->createQueryBuilder('s')
@@ -44,14 +40,8 @@ class TagSuggestionRepository extends ServiceEntityRepository
             ->execute();
     }
 
-    /**
-     * Resolve a target's pending suggestions after human validation: kept names → ACCEPTED, the
-     * rest → DISMISSED. Both statuses are terminal, so the names never re-surface on a re-run.
-     * Bulk UPDATEs — run it when no matching suggestions are held in the UoW.
-     */
     public function resolvePendingForTarget(string $targetType, string $targetId, array $acceptedNames): void
     {
-        // Pass 1: accept the pending suggestions whose name the reviewer kept.
         if ($acceptedNames !== []) {
             $this->createQueryBuilder('s')
                 ->update()
@@ -69,7 +59,6 @@ class TagSuggestionRepository extends ServiceEntityRepository
                 ->execute();
         }
 
-        // Pass 2: whatever is still pending was offered but not kept → dismissed.
         $this->createQueryBuilder('s')
             ->update()
             ->set('s.status', ':dismissed')
@@ -84,10 +73,6 @@ class TagSuggestionRepository extends ServiceEntityRepository
             ->execute();
     }
 
-    /**
-     * Remove every suggestion carrying a given tag name (any target/status/source). Called when a
-     * name is blacklisted so an already-surfaced suggestion disappears from the UI immediately.
-     */
     public function deleteByTagName(string $tagName): void
     {
         $this->createQueryBuilder('s')
@@ -98,10 +83,6 @@ class TagSuggestionRepository extends ServiceEntityRepository
             ->execute();
     }
 
-    /**
-     * Names a human has already decided on (accepted or dismissed) for this target, across all
-     * sources. A re-run skips these, so one decision holds whichever source resurfaces it.
-     */
     public function decidedTagNamesForTarget(string $targetType, string $targetId): array
     {
         $rows = $this->createQueryBuilder('s')
@@ -118,11 +99,6 @@ class TagSuggestionRepository extends ServiceEntityRepository
         return array_map('strval', $rows);
     }
 
-    /**
-     * The source of a model that has been seen emitting this name (any target/status), or null when
-     * no model ever has — i.e. the name is the user's own. Ordered so the answer is stable when both
-     * taggers know the name.
-     */
     public function modelSourceForName(string $name): ?string
     {
         $row = $this->createQueryBuilder('s')
@@ -137,11 +113,6 @@ class TagSuggestionRepository extends ServiceEntityRepository
         return $row['source'] ?? null;
     }
 
-    /**
-     * Best-known category for a suggested tag name, so accepting a suggestion keeps its type
-     * instead of defaulting to general. WD assigns a deterministic category per name, so the
-     * highest-scoring row with a non-null category is a safe answer regardless of target.
-     */
     public function findCategoryForName(string $name): ?TagCategory
     {
         $suggestion = $this->createQueryBuilder('s')

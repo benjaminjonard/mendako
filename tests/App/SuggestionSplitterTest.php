@@ -39,7 +39,6 @@ class SuggestionSplitterTest extends TestCase
             $this->suggestion('beach', 0.50, 'other'),
         ]);
 
-        // Same score, opposite verdicts: that is the whole point of splitting the thresholds.
         $this->assertSame(['1girl'], array_column($confident, 'name'));
         $this->assertSame(['beach'], array_column($chips, 'name'));
     }

@@ -22,10 +22,8 @@ logger = logging.getLogger(__name__)
 
 DEFAULT_MODELS_DIR = "/models"
 
-
 def _models_dir() -> Path:
     return Path(os.environ.get("MENDAKO_MODELS_DIR", DEFAULT_MODELS_DIR))
-
 
 def _status(entry: dict, models_dir: Path) -> str:
     try:
@@ -37,7 +35,6 @@ def _status(entry: dict, models_dir: Path) -> str:
         return "absent"
     return "absent"
 
-
 class CatalogEntry(BaseModel):
     category: str
     id: str
@@ -46,7 +43,6 @@ class CatalogEntry(BaseModel):
     files: list[str]
     dim: int | None
     status: str
-
 
 @router.get("/models", response_model=list[CatalogEntry])
 def list_models() -> list[CatalogEntry]:
@@ -64,7 +60,6 @@ def list_models() -> list[CatalogEntry]:
         for entry in CATALOG
     ]
 
-
 @router.post("/analyze")
 def analyze(
     model: str = Form(...),
@@ -81,18 +76,14 @@ def analyze(
     suffix = Path(image.filename or "image").suffix or ".png"
     tmp_path = None
     try:
-        # Set tmp_path before the copy so a mid-copy failure (disk full, client disconnect)
-        # is still caught here and the temp file is still cleaned up in `finally`.
         with tempfile.NamedTemporaryFile(suffix=suffix, delete=False) as tmp:
             tmp_path = tmp.name
             shutil.copyfileobj(image.file, tmp)
 
         return inference.analyze(models_dir / entry["id"], tmp_path)
     except (ValueError, OSError) as exc:
-        # Corrupt/non-image/oversized upload — clean 422 rather than a 500.
         raise HTTPException(status_code=422, detail="could not process image") from exc
     except Exception as exc:
-        # onnxruntime / unexpected inference failure — clean 500, no stack-trace leak.
         logger.exception("analyze failed")
         raise HTTPException(status_code=500, detail="inference failed") from exc
     finally:

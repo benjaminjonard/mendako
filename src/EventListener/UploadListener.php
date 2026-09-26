@@ -49,10 +49,6 @@ final readonly class UploadListener
         }
     }
 
-    /**
-     * Returns whether the entity carries any upload field, which is what tells onFlush a change set
-     * needs recomputing.
-     */
     private function handleUpload(object $entity): bool
     {
         $fields = $this->reader->getUploadFields($entity);

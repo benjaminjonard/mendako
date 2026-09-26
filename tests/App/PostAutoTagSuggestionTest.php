@@ -30,7 +30,6 @@ class PostAutoTagSuggestionTest extends WebTestCase
     {
         $this->client = static::createClient();
         $this->client->followRedirects();
-        // Keep the same kernel so container-fetched services share one entity manager.
         $this->client->disableReboot();
     }
 
@@ -53,11 +52,8 @@ class PostAutoTagSuggestionTest extends WebTestCase
         [, $post] = $this->createPost();
         $em = static::getContainer()->get(EntityManagerInterface::class);
 
-        // A tag already confirmed on the post must not be re-proposed on a re-run.
         $existing = TagFactory::createOne(['name' => 'existing_tag', 'category' => TagCategory::GENERAL]);
         $managedPost = $em->getRepository(\App\Entity\Post::class)->find($post->getId());
-        // The transient upload file was already consumed on creation; clear it so re-flushing
-        // to attach the tag doesn't retrigger the upload listener on a now-missing temp file.
         $managedPost->setFile(null);
         $managedPost->addTag($existing);
         $em->flush();

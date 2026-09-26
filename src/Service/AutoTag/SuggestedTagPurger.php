@@ -7,18 +7,6 @@ namespace App\Service\AutoTag;
 use App\Entity\TagSuggestion;
 use Doctrine\DBAL\Connection;
 
-/**
- * Undoes auto-tagging: detaches from their post every tag a suggestion put there, drops the tags
- * that are then left on no post at all, and purges the whole suggestion history.
- *
- * `Tag::source` is deliberately NOT the criterion: StringToTagTransformer stamps SOURCE_WD on a name
- * the user typed by hand as soon as a model is known to emit it, so purging on source would delete
- * the user's own work. An ACCEPTED suggestion is the only proof that a tag reached a post through
- * auto-tagging, so what gets removed is the join between `men_post_tag` and those suggestions.
- *
- * Set-based SQL on purpose: the back-catalogue can hold hundreds of thousands of links and none of
- * this work needs entities. Callers holding posts or tags in the UoW must clear it afterwards.
- */
 class SuggestedTagPurger
 {
     private const string TARGET_POST = 'post';
@@ -28,8 +16,6 @@ class SuggestedTagPurger
     }
 
     /**
-     * What a purge would delete, computed without writing anything.
-     *
      * @return array{links: int, tags: int, suggestions: int}
      */
     public function preview(): array
@@ -55,8 +41,6 @@ class SuggestedTagPurger
         return $this->connection->transactional(function (Connection $connection): array {
             $links = (int) $connection->executeStatement($this->deleteAppliedLinksSql(), $this->linkParameters());
 
-            // Order matters: "left unused" is read off men_tag_suggestion, so the tags must go
-            // before the history that identifies them.
             $tags = (int) $connection->executeStatement(
                 $this->deleteTagsLeftUnusedSql(),
                 ['accepted' => TagSuggestion::STATUS_ACCEPTED],
@@ -79,10 +63,6 @@ class SuggestedTagPurger
         ];
     }
 
-    /**
-     * True for a `men_post_tag` row (aliased `pt`) that an accepted suggestion put there.
-     * `tag_name` carries no FK to men_tag, hence the join on the name.
-     */
     private function appliedLinkPredicate(): string
     {
         return <<<'SQL'
@@ -111,11 +91,6 @@ class SuggestedTagPurger
             SQL;
     }
 
-    /**
-     * Tags auto-tagging applied somewhere and whose every remaining link is one the purge removes —
-     * i.e. the tags the purge leaves on no post. A tag the user also put on a post by hand keeps
-     * that link and therefore survives.
-     */
     private function countTagsLeftUnusedSql(): string
     {
         return <<<'SQL'
@@ -143,10 +118,6 @@ class SuggestedTagPurger
             SQL;
     }
 
-    /**
-     * Same set as countTagsLeftUnusedSql(), but run once the links are already gone: a tag that
-     * auto-tagging applied and that no post carries any more.
-     */
     private function deleteTagsLeftUnusedSql(): string
     {
         return <<<'SQL'

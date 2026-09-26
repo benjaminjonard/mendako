@@ -11,10 +11,6 @@ use App\Entity\ThumbnailableInterface;
 use App\Message\GenerateThumbnailMessage;
 use Symfony\Component\Messenger\MessageBusInterface;
 
-/**
- * Messages must never leave before the entity is committed, or the worker finds no row:
- * schedule() collects them during a flush, dispatchScheduled() releases them after it.
- */
 class ThumbnailDispatcher
 {
     /** @var array<string, GenerateThumbnailMessage> */

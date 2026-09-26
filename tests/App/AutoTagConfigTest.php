@@ -25,22 +25,19 @@ class AutoTagConfigTest extends WebTestCase
     {
         $this->client = static::createClient();
         $this->client->followRedirects();
-        // Keep the same kernel across requests so a stubbed service/provider persists.
         $this->client->disableReboot();
     }
 
-    /** Replace the service client with a bare stub so tests never hit the network. */
     private function stubClient(): void
     {
         static::getContainer()->set(AutoTagInferenceClient::class, $this->createStub(AutoTagInferenceClient::class));
     }
 
-    /** Force the env-driven feature flag on (it defaults off in the test env). */
     private function setEnabled(bool $enabled): void
     {
         $provider = $this->createStub(AutoTagConfigProvider::class);
         $provider->method('isEnabled')->willReturn($enabled);
-        $provider->method('getActiveModel')->willReturnMap([['wd', 'wd-eva02-large-tagger-v3']]);
+        $provider->method('getActiveModel')->willReturnMap([['wd', 'mendako-tagger']]);
         static::getContainer()->set(AutoTagConfigProvider::class, $provider);
     }
 
@@ -57,11 +54,6 @@ class AutoTagConfigTest extends WebTestCase
         $this->assertStringContainsString('Retroactive tagging started', $this->client->getResponse()->getContent());
     }
 
-    /**
-     * A provider whose isEnabled() can be flipped after it is wired into the container (the container
-     * refuses to replace an already-initialized service). Lets one test render the form while enabled,
-     * then disable the feature before submitting — the guard we want to hit is checked after CSRF.
-     */
     private function installTogglingProvider(): object
     {
         $provider = new class(true) extends AutoTagConfigProvider {
@@ -104,14 +96,14 @@ class AutoTagConfigTest extends WebTestCase
         $this->assertResponseIsSuccessful();
         $content = $this->client->getResponse()->getContent();
         $this->assertStringContainsString('Disabled', $content);
-        $this->assertStringNotContainsString('/admin/autotag/tag-backlog', $content); // no actions exposed
+        $this->assertStringNotContainsString('/admin/autotag/tag-backlog', $content);
     }
 
     public function test_jobs_endpoint_returns_processed_total_per_job(): void
     {
         $this->client->loginUser(UserFactory::createOne(['roles' => ['ROLE_ADMIN']]));
         $board = \App\Tests\Factory\BoardFactory::createOne();
-        \App\Tests\Factory\PostFactory::createOne(['board' => $board]); // unprocessed
+        \App\Tests\Factory\PostFactory::createOne(['board' => $board]);
         $processed = \App\Tests\Factory\PostFactory::createOne(['board' => $board]);
         $em = static::getContainer()->get(\Doctrine\ORM\EntityManagerInterface::class);
         $em->persist((new \App\Entity\TagSuggestion())->setTargetType('post')->setTargetId($processed->getId())->setTagName('cat')->setScore(0.9)->setSource(\App\Entity\TagSuggestion::SOURCE_WD));
@@ -125,10 +117,8 @@ class AutoTagConfigTest extends WebTestCase
 
         $this->assertResponseIsSuccessful();
         $data = json_decode($this->client->getResponse()->getContent(), true);
-        // A single request now carries every job card's status.
         $this->assertSame(2, $data['tagging']['total']);
         $this->assertSame(1, $data['tagging']['processed']);
-        // Duplicate-detection vectors: both factory posts lack a vector (not built at factory time).
         $this->assertArrayHasKey('vectors', $data);
         $this->assertSame(2, $data['vectors']['total']);
         $this->assertSame(0, $data['vectors']['processed']);
@@ -159,7 +149,6 @@ class AutoTagConfigTest extends WebTestCase
     {
         $this->client->loginUser(UserFactory::createOne(['roles' => ['ROLE_ADMIN']]));
         $this->stubClient();
-        // Duplicate detection is a core feature: the recompute must work with auto-tagging OFF.
         $this->setEnabled(false);
 
         $crawler = $this->client->request(Request::METHOD_GET, '/admin/jobs');
@@ -173,18 +162,14 @@ class AutoTagConfigTest extends WebTestCase
     {
         $this->client->loginUser(UserFactory::createOne(['roles' => ['ROLE_ADMIN']]));
         $this->stubClient();
-        // Vectors card (and its cancel form) is always rendered, auto-tagging on or off.
         $this->setEnabled(false);
 
         $crawler = $this->client->request(Request::METHOD_GET, '/admin/jobs');
-        // Submit the form node itself: the cancel button ships disabled (JS enables it live), so
-        // clicking it in the crawler wouldn't post — the form still carries the CSRF token.
         $this->client->submit($crawler->filter('form[action$="jobs/vectors/cancel"]')->form());
 
         $this->assertResponseIsSuccessful();
         $this->assertStringContainsString('Job cancelled', $this->client->getResponse()->getContent());
     }
-
 
     public function test_is_enabled_reflects_the_env_flag(): void
     {
@@ -200,9 +185,8 @@ class AutoTagConfigTest extends WebTestCase
 
     public function test_get_active_model_comes_from_the_static_catalog(): void
     {
-        // One model per category, baked into the service image — no DB selection involved.
         $provider = new AutoTagConfigProvider(true);
-        $this->assertSame('wd-eva02-large-tagger-v3', $provider->getActiveModel('wd'));
+        $this->assertSame('mendako-tagger', $provider->getActiveModel('wd'));
         $this->assertNull($provider->getActiveModel('unknown'));
     }
 
@@ -216,7 +200,6 @@ class AutoTagConfigTest extends WebTestCase
 
     public function test_an_unset_threshold_falls_back_to_the_default(): void
     {
-        // `default::` yields null for an unset env var, and empty for one set to nothing.
         $this->assertSame(85.0, (new AutoTagConfigProvider(true, '', null))->getAutoValidateThresholdPercent('wd'));
         $this->assertSame(85.0, (new AutoTagConfigProvider(true, '', ''))->getAutoValidateThresholdPercent('wd'));
     }
@@ -243,7 +226,7 @@ class AutoTagConfigTest extends WebTestCase
     {
         $provider = new AutoTagConfigProvider(true, '', '', 'anime');
 
-        $this->assertSame(['wd' => 'wd-eva02-large-tagger-v3'], $provider->getModelsForBoard('anime'));
+        $this->assertSame(['wd' => 'mendako-tagger'], $provider->getModelsForBoard('anime'));
         $this->assertSame([], $provider->getModelsForBoard('misc'));
         $this->assertSame([], $provider->getModelsForBoard(null));
     }
@@ -252,12 +235,11 @@ class AutoTagConfigTest extends WebTestCase
     {
         $provider = new AutoTagConfigProvider(true, '', '', '*');
 
-        $this->assertSame(['wd' => 'wd-eva02-large-tagger-v3'], $provider->getModelsForBoard('anything'));
+        $this->assertSame(['wd' => 'mendako-tagger'], $provider->getModelsForBoard('anything'));
     }
 
     public function test_an_empty_board_list_tags_nothing(): void
     {
-        // Unset env vars arrive as null through the `default::` processor — the feature-off state.
         $provider = new AutoTagConfigProvider(true, '', '', null);
 
         $this->assertSame([], $provider->getModelsForBoard('anime'));

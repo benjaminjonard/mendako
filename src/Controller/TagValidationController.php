@@ -37,7 +37,6 @@ class TagValidationController extends AbstractController
 
         $post = $postRepository->findLatestWithPendingSuggestions();
         if ($post === null) {
-            // Queue drained — nothing left to validate.
             return $this->render('App/TagValidation/index.html.twig', ['post' => null]);
         }
 
@@ -45,8 +44,6 @@ class TagValidationController extends AbstractController
             $tagSuggestionRepository->findForTarget('post', $post->getId())
         );
 
-        // Seed the in-memory post with the confident tags to pre-fill the field; never flushed on
-        // GET, so nothing persists until the reviewer submits.
         foreach ($stringToTagTransformer->reverseTransform(implode(' ', $highConfidenceNames)) as $tag) {
             $post->addTag($tag);
         }
@@ -80,8 +77,6 @@ class TagValidationController extends AbstractController
             $manager->persist($post);
             $manager->flush();
 
-            // Validation done: kept tags → accepted, the rest → dismissed. Both are terminal,
-            // so the post leaves the pending queue and re-runs won't re-surface them.
             $acceptedNames = array_map(
                 static fn ($tag): string => $tag->getName(),
                 $post->getTags()->toArray()
@@ -124,9 +119,6 @@ class TagValidationController extends AbstractController
         }
     }
 
-    /**
-     * The prefill field takes bare names; the chips keep their full entry.
-     */
     private function splitSuggestions(array $suggestions): array
     {
         [$confident, $chips] = $this->suggestionSplitter->split($suggestions);

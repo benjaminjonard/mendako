@@ -27,20 +27,15 @@ class FirstConnectionTest extends WebTestCase
 
     public function test_redirected_to_first_connection_if_no_user(): void
     {
-        // Arrange
 
-        // Act
         $this->client->request(Request::METHOD_GET, '/login');
 
-        // Assert
         $this->assertRouteSame('app_security_first_connection');
     }
 
     public function test_can_complete_first_connection(): void
     {
-        // Arrange
 
-        // Act
         $this->client->request(Request::METHOD_GET, '/first-connection');
         $this->client->submitForm('Submit', [
             'user[username]' => 'Stitch',
@@ -50,19 +45,15 @@ class FirstConnectionTest extends WebTestCase
             'user[timezone]' => 'Pacific/Honolulu',
         ]);
 
-        // Assert
         $this->assertRouteSame('app_board_index');
     }
 
     public function test_cant_redo_first_connection(): void
     {
-        // Arrange
         UserFactory::createOne();
 
-        // Act
         $this->client->request(Request::METHOD_GET, '/first-connection');
 
-        // Assert
         $this->assertRouteSame('app_security_login');
     }
 }

@@ -76,10 +76,6 @@ class PostRepository extends ServiceEntityRepository
         return $result === [] ? 0 : $result[0]['count'];
     }
 
-    /**
-     * Normalized names of the tags already applied to a post (via men_post_tag). Auto-tagging
-     * uses these to skip re-proposing a tag the post already carries. Returns [] for an unknown id.
-     */
     public function appliedTagNamesForPost(string $postId): array
     {
         $rows = $this->createQueryBuilder('post')
@@ -93,12 +89,6 @@ class PostRepository extends ServiceEntityRepository
         return array_map('strval', $rows);
     }
 
-    /**
-     * Nearest posts by perceptual pHash for near-duplicate detection. The `vector` column holds a
-     * 64-bit binary pHash, so pgvector's L2 `<->` equals sqrt(Hamming distance): results are ranked on
-     * Hamming and thresholded at `$maxHamming` bits (10 ≈ the usual pHash "same image" cut-off), served
-     * by the HNSW `vector_l2_ops` index. `distance` is a 0-100 similarity percentage.
-     */
     public function findSimilarByVector(string $vector, int $maxHamming = 10, int $limit = 3): array {
         $conn = $this->getEntityManager()->getConnection();
 
@@ -128,9 +118,6 @@ class PostRepository extends ServiceEntityRepository
         return $stmt->executeQuery()->fetchAllAssociative();
     }
 
-    /**
-     * Stream posts with no duplicate-detection vector — the "recompute missing" backfill set.
-     */
     public function findWithoutVectorIterable(): iterable
     {
         return $this->createQueryBuilder('p')
@@ -176,18 +163,11 @@ class PostRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
-    /**
-     * Stream every post (for `--all` retroactive tagging).
-     */
     public function findAllIterable(): iterable
     {
         return $this->createQueryBuilder('p')->getQuery()->toIterable();
     }
 
-    /**
-     * Stream posts with no tag suggestion yet (never processed) — the default retroactive set.
-     * `men_tag_suggestion` is polymorphic (no FK), hence a correlated NOT EXISTS on the target.
-     */
     public function findWithoutSuggestionsIterable(): iterable
     {
         $qb = $this->createQueryBuilder('p');
@@ -204,10 +184,6 @@ class PostRepository extends ServiceEntityRepository
             ->toIterable();
     }
 
-    /**
-     * The most recent post with a pending suggestion — the Tag validation queue's working set, or
-     * null when empty. Native SQL for symmetry with the sibling queue queries; re-hydrates via find().
-     */
     public function findLatestWithPendingSuggestions(): ?Post
     {
         $conn = $this->getEntityManager()->getConnection();
@@ -231,9 +207,6 @@ class PostRepository extends ServiceEntityRepository
         return $id === false ? null : $this->find($id);
     }
 
-    /**
-     * How many distinct posts still have a pending suggestion — the Tag validation queue size (menu badge).
-     */
     public function countPostsWithPendingSuggestions(): int
     {
         $qb = $this->createQueryBuilder('p')->select('COUNT(p.id)');

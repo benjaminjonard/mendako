@@ -61,7 +61,6 @@ class TaggingDispatchOnUploadTest extends WebTestCase
 
     public function test_upload_enqueues_nothing_when_ai_disabled(): void
     {
-        // Default test env: APP_AUTOTAG_ENABLED unset → feature disabled.
         $this->client->loginUser(UserFactory::createOne());
         $board = BoardFactory::createOne();
 

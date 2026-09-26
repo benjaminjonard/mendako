@@ -25,10 +25,6 @@ class ThumbnailRuntime implements RuntimeExtensionInterface
         return $thumbnailPath;
     }
 
-    /**
-     * Where the async worker will write the thumbnail, so a page rendered before it ran can poll
-     * for the file instead of staying on the default image until the next refresh.
-     */
     #[AsTwigFilter('expected_thumbnail')]
     public function expectedThumbnail(?string $uploadPath, ?string $mimetype): ?string
     {

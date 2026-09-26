@@ -68,8 +68,6 @@ class ThumbnailStorageTest extends TestCase
 
     public function test_sources_with_no_usable_image_extension_fall_back_to_jpeg(): void
     {
-        // The old on-the-fly thumbnailer derived the extension by stripping "image/", which turned
-        // a video into the literal extension "video/mp4".
         $this->assertSame('jpeg', $this->storage(null)->extensionFor('video/mp4'));
         $this->assertSame('jpeg', $this->storage(null)->extensionFor('image/svg+xml'));
         $this->assertSame('jpeg', $this->storage(null)->extensionFor(null));

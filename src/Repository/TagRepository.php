@@ -15,10 +15,6 @@ use Doctrine\Persistence\ManagerRegistry;
 
 class TagRepository extends ServiceEntityRepository
 {
-    /**
-     * The sortable columns exposed on the tag index, mapped to their DQL ordering expression.
-     * 'count' targets the correlated post-count alias built in findPaginated().
-     */
     private const array SORTS = [
         'name' => 'LOWER(t.name)',
         'count' => 'counter',
@@ -61,7 +57,7 @@ class TagRepository extends ServiceEntityRepository
         $direction = strtoupper($direction) === 'DESC' ? Criteria::DESC : Criteria::ASC;
         $qb->orderBy($column, $direction);
         if ($column !== self::SORTS['name']) {
-            $qb->addOrderBy('LOWER(t.name)', Criteria::ASC); // stable tiebreaker
+            $qb->addOrderBy('LOWER(t.name)', Criteria::ASC);
         }
 
         return $qb->getQuery()->getArrayResult();
@@ -91,8 +87,6 @@ class TagRepository extends ServiceEntityRepository
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
 
-        // Semi-join rather than a correlated count: the board-wide tally is aggregated once for
-        // every tag, instead of being recomputed for each (tag, post) pair the join produces.
         $onAPagePost = $this->getEntityManager()
             ->createQueryBuilder()
             ->select('1')
@@ -141,12 +135,6 @@ class TagRepository extends ServiceEntityRepository
         return $results;
     }
 
-    /**
-     * Flip the given names from `custom` to the model source that emitted them. Only
-     * `custom` rows are touched, so a name already attributed to another model keeps its first
-     * attribution. Returns rows reclassified. Bulk UPDATE — run it when no matching Tag is held in
-     * the UoW.
-     */
     public function reclassifyToModel(array $names, string $source): int
     {
         if ($names === []) {
@@ -171,8 +159,8 @@ class TagRepository extends ServiceEntityRepository
             ->createQueryBuilder('tag')
             ->addSelect('(CASE WHEN LOWER(tag.name) LIKE LOWER(:startWith) THEN 0 ELSE 1 END) AS HIDDEN startWithOrder')
             ->andWhere('LOWER(tag.name) LIKE LOWER(:query)')
-            ->orderBy('startWithOrder', Criteria::ASC) // Order tags starting with the search term first
-            ->addOrderBy('LOWER(tag.name)', Criteria::ASC) // Then order other matching tags alphabetically
+            ->orderBy('startWithOrder', Criteria::ASC)
+            ->addOrderBy('LOWER(tag.name)', Criteria::ASC)
             ->setParameter('query', '%'.trim($query).'%')
             ->setParameter('startWith', trim($query).'%')
             ->setMaxResults(15)

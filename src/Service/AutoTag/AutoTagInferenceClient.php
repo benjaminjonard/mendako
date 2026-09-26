@@ -10,13 +10,8 @@ use Symfony\Component\Mime\Part\DataPart;
 use Symfony\Component\Mime\Part\Multipart\FormDataPart;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-/**
- * The single HTTP boundary between the app and the inference service.
- */
 class AutoTagInferenceClient
 {
-    // Inference is heavy and runs on the async worker — allow a generous timeout,
-    // especially for the cold-start load of the WD model on the first request.
     private const float ANALYZE_TIMEOUT_SECONDS = 180.0;
 
     public function __construct(
@@ -26,9 +21,6 @@ class AutoTagInferenceClient
     ) {
     }
 
-    /**
-     * Run WD inference on an image. Returns `{tags, rating}`.
-     */
     public function analyze(string $imagePath, string $modelId): array
     {
         if (!$this->autoTagConfigProvider->isEnabled()) {

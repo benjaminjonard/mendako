@@ -7,10 +7,6 @@ namespace App\Service\AutoTag;
 use App\Repository\PostRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
-/**
- * Streams the backlog of posts and queues each for retroactive auto-tag suggestion generation on
- * the deprioritized autotag_batch transport. Used by the admin UI trigger.
- */
 class BacklogEnqueuer
 {
     public function __construct(
@@ -29,7 +25,7 @@ class BacklogEnqueuer
             $this->taggingDispatcher->dispatchBatch($item);
             ++$count;
             if ($count % 100 === 0) {
-                $this->entityManager->clear(); // bound memory over a large back-catalogue
+                $this->entityManager->clear();
             }
         }
 

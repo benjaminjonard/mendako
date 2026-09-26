@@ -11,10 +11,6 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-/**
- * Trimmed-down PostType for the Tag validation queue: only the tags field. Reuses PostType's
- * StringToTagTransformer, so accepted suggestions keep their category and new tags are created on the fly.
- */
 class TagValidationType extends AbstractType
 {
     public function __construct(

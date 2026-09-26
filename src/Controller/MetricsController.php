@@ -40,20 +40,17 @@ class MetricsController extends AbstractController
 
         $this->addCounter('user', [['label' => '', 'value' => $userRepository->count([])]], 'number of registered users');
 
-        // Create global counters
         $boardValues[] = ['label' => null, 'value' => $boardRepository->count([])];
         $postValues[] = ['label' => null, 'value' => $postRepository->count([])];
         $tagValues[] = ['label' => null, 'value' => $tagRepository->count([])];
         $diskUsedValues[] = ['label' => null, 'value' => $diskUsageCalculator->getFolderSize($uploadsPath)];
 
-        // Create counters per board
         foreach ($boardRepository->findAll() as $board) {
             $label = "{board=\"{$board->getName()}\"}";
             $postValues[] = ['label' => $label, 'value' => $postRepository->count(['board' => $board])];
             $diskUsedValues[] = ['label' => $label, 'value' => $diskUsageCalculator->getFolderSize("{$uploadsPath}/boards/{$board->getId()}")];
         }
 
-        // Fill metrics
         $this->addCounter('board', $boardValues, 'number of created boards');
         $this->addCounter('post', $postValues, 'number of created posts');
         $this->addCounter('tag', $tagValues, 'number of created tags');
@@ -70,7 +67,6 @@ class MetricsController extends AbstractController
 
     public function addCounter(string $name, array $values, string $help, ?string $unit = null): void
     {
-        //$name = "mendako_{$name}";
 
         $this->lines[] = "# HELP {$name} {$help}";
         if ($unit !== null) {

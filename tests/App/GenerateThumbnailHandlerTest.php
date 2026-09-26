@@ -161,7 +161,6 @@ class GenerateThumbnailHandlerTest extends TestCase
 
         $handler = $this->handler($generator, $postRepository);
 
-        // Must not throw: a corrupt source would otherwise dead-letter and retry forever.
         $handler(new GenerateThumbnailMessage(GenerateThumbnailMessage::TARGET_POST, 'id'));
 
         $this->assertSame('thumbnails/boards/b1/old.webp', $post->getThumbnailPath());

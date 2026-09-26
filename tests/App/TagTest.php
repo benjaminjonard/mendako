@@ -29,23 +29,19 @@ class TagTest extends WebTestCase
 
     public function test_can_get_tag_list(): void
     {
-        // Arrange
         $user = UserFactory::createOne();
         $this->client->loginUser($user);
         TagFactory::createMany(3);
 
-        // Act
         $crawler = $this->client->request(Request::METHOD_GET, '/tags');
 
-        // Assert
         $this->assertResponseIsSuccessful();
         $this->assertRouteSame('app_tag_index');
-        $this->assertCount(7, $crawler->filter('tbody tr')); // 7 because 4 tags are included in migrations (4 + 3)
+        $this->assertCount(7, $crawler->filter('tbody tr'));
     }
 
     public function test_tag_list_is_paginated(): void
     {
-        // The 4 migration tags are META, so filtering on another category isolates the fixtures.
         $this->client->loginUser(UserFactory::createOne());
         TagFactory::createMany(25, ['category' => TagCategory::CHARACTER]);
 
@@ -95,19 +91,16 @@ class TagTest extends WebTestCase
 
     public function test_can_edit_tag(): void
     {
-        // Arrange
         $user = UserFactory::createOne();
         $this->client->loginUser($user);
         $tag = TagFactory::createOne();
 
-        // Act
         $this->client->request(Request::METHOD_GET, '/tags/'.$tag->getId().'/edit');
         $this->client->submitForm('Submit', [
             'tag[name]' => 'frieren',
             'tag[category]' => TagCategory::META->value
         ]);
 
-        // Assert
         $this->assertResponseIsSuccessful();
         $this->assertRouteSame('app_tag_index');
         TagFactory::assert()->exists([
@@ -119,33 +112,27 @@ class TagTest extends WebTestCase
 
     public function test_can_delete_tag(): void
     {
-        // Arrange
         $user = UserFactory::createOne();
         $this->client->loginUser($user);
         $tag = TagFactory::createOne();
 
-        // Act
         $this->client->request(Request::METHOD_GET, '/tags/'.$tag->getId().'/edit');
         $this->client->submitForm('Agree');
 
-        // Assert
         $this->assertRouteSame('app_tag_index');
         TagFactory::assert()->notExists(['id' => $tag->getId()]);
     }
 
     public function test_can_get_tag_autocomplete(): void
     {
-        // Arrange
         $user = UserFactory::createOne();
         $this->client->loginUser($user);
         TagFactory::createOne(['name' => 'dog']);
         TagFactory::createOne(['name' => 'otter']);
         TagFactory::createOne(['name' => 'capybara']);
 
-        // Act
         $this->client->request(Request::METHOD_GET, '/tags/autocomplete?query=capy');
 
-        // Assert
         $this->assertResponseIsSuccessful();
         $this->assertJsonStringEqualsJsonString(
             json_encode([['name' => 'capybara', 'category' => TagCategory::GENERAL->value]]),

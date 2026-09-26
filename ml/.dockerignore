@@ -9,3 +9,4 @@ pyproject.toml
 .gitignore
 .dockerignore
 *.md
+.hf_token

@@ -15,7 +15,6 @@ final class BoardFactory extends \Zenstruck\Foundry\Persistence\PersistentObject
     #[\Override]
     protected function defaults(): array
     {
-        // Faker's unique() memory is lost when the kernel reboots between requests, so build unique values ourselves
         return [
             'name' => 'board_'.++self::$sequence.bin2hex(random_bytes(4)),
             'createdAt' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),

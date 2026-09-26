@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace App\Service\AutoTag;
 
-/**
- * Merges per-frame `/analyze` results for a video into one suggestion set: each tag keeps its
- * highest score across frames and the rating is the highest-scoring frame's.
- */
 class FrameResultAggregator
 {
     public function aggregate(array $frameResults): array
@@ -22,8 +18,6 @@ class FrameResultAggregator
                     continue;
                 }
                 $score = (float) ($tag['score'] ?? 0.0);
-                // Dedup by name only: the highest-scoring frame's score + category win
-                // (a WD model maps a name to one category, so frames don't disagree).
                 if (!isset($tagsByName[$name]) || $score > $tagsByName[$name]['score']) {
                     $tagsByName[$name] = ['score' => $score, 'category' => $tag['category'] ?? null];
                 }

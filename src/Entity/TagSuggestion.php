@@ -21,7 +21,6 @@ class TagSuggestion
     public const STATUS_ACCEPTED = 'accepted';
     public const STATUS_DISMISSED = 'dismissed';
 
-    // The producing model's catalog category (see ModelCatalog).
     public const SOURCE_WD = 'wd';
 
     #[ORM\Id]

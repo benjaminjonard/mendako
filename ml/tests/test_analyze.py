@@ -1,19 +1,23 @@
 from fastapi.testclient import TestClient
 
 from app import inference
+from app.catalog import find_entry
 from app.main import app
 
 client = TestClient(app)
 
-WD = "wd-eva02-large-tagger-v3"
-
+WD = "mendako-tagger"
 
 def _ready(tmp_path):
+    """Materialise whatever the catalog declares, rather than a hardcoded pair of files.
+
+    A model that gains a file — `thresholds.csv` did — would otherwise stay `absent` here and the
+    failure would point at the route instead of at this helper.
+    """
     model_dir = tmp_path / WD
     model_dir.mkdir()
-    (model_dir / "model.onnx").write_text("x")
-    (model_dir / "selected_tags.csv").write_text("x")
-
+    for filename in find_entry(WD)["files"]:
+        (model_dir / filename).write_text("x")
 
 
 def _stub_analyze(monkeypatch, extra=None):
@@ -23,7 +27,6 @@ def _stub_analyze(monkeypatch, extra=None):
     }
     result.update(extra or {})
     monkeypatch.setattr(inference, "analyze", lambda model_dir, path: dict(result))
-
 
 def test_analyze_returns_result(monkeypatch, tmp_path):
     monkeypatch.setenv("MENDAKO_MODELS_DIR", str(tmp_path))
@@ -37,15 +40,13 @@ def test_analyze_returns_result(monkeypatch, tmp_path):
     assert body["tags"][0]["name"] == "1girl"
     assert body["rating"]["label"] == "general"
 
-
 def test_analyze_unknown_model_404(monkeypatch, tmp_path):
     monkeypatch.setenv("MENDAKO_MODELS_DIR", str(tmp_path))
     resp = client.post("/analyze", data={"model": "nope"}, files={"image": ("a.png", b"x", "image/png")})
     assert resp.status_code == 404
 
-
 def test_analyze_model_not_ready_409(monkeypatch, tmp_path):
-    monkeypatch.setenv("MENDAKO_MODELS_DIR", str(tmp_path))  # empty dir → absent
+    monkeypatch.setenv("MENDAKO_MODELS_DIR", str(tmp_path))
     resp = client.post("/analyze", data={"model": WD}, files={"image": ("a.png", b"x", "image/png")})
     assert resp.status_code == 409
 

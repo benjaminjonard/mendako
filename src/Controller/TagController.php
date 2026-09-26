@@ -60,10 +60,6 @@ class TagController extends AbstractController
         ]);
     }
 
-    /**
-     * Blacklist a tag name for auto-tagging: it must never be suggested again, and any suggestion
-     * already carrying that name is purged so it disappears from the queues at once.
-     */
     #[Route(path: '/tags/blacklist/add', name: 'app_tag_blacklist_add', methods: ['POST'])]
     #[IsGranted('ROLE_ADMIN')]
     public function blacklistAdd(
@@ -85,14 +81,12 @@ class TagController extends AbstractController
         $blacklistedTag = (new BlacklistedTag())->setName($request->request->getString('name'));
         $name = (string) $blacklistedTag->getName();
 
-        // Ignore blanks and names already blacklisted (keep the unique index happy, idempotent).
         if ($name !== '' && $blacklistedTagRepository->findOneBy(['name' => $name]) === null) {
             $manager = $managerRegistry->getManager();
             try {
                 $manager->persist($blacklistedTag);
                 $manager->flush();
             } catch (UniqueConstraintViolationException) {
-                // A concurrent request already blacklisted this name — idempotent no-op.
                 return $this->redirectToRoute('app_tag_blacklist');
             }
 
@@ -172,11 +166,6 @@ class TagController extends AbstractController
         ]);
     }
 
-    /**
-     * Merge other tags into the current one: their posts are reassigned to this tag and the
-     * source tags are deleted. Submitted names are matched against existing tags only; unknown
-     * names and the current tag are silently ignored.
-     */
     #[Route(path: '/tags/{id}/merge', name: 'app_tag_merge', methods: ['POST'])]
     #[IsGranted('ROLE_ADMIN')]
     public function merge(

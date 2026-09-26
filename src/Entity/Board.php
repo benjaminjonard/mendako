@@ -35,8 +35,6 @@ class Board implements ThumbnailableInterface
     #[ORM\JoinColumn(onDelete: 'SET NULL')]
     private ?Post $thumbnail = null;
 
-    // Deliberately outlives the post above: deleting it nulls the relation but leaves the board
-    // its cover.
     #[ORM\Column(type: Types::STRING, nullable: true)]
     private ?string $thumbnailPath = null;
 

@@ -13,11 +13,6 @@ class ThumbnailGenerator
 {
     public const array VIDEO_MIMETYPES = ['video/mp4', 'video/webm', 'video/x-m4v', 'image/gif'];
 
-    /**
-     * Extract up to `$count` resized JPEG frames at evenly-spaced timecodes — used to
-     * sample a video's content for automatic tagging. Returns the written frame paths (fewer
-     * than `$count` if the clip is too short to yield distinct frames). Non-video → [].
-     */
     public function extractVideoFrames(string $path, string $destDir, int $count, int $width): array
     {
         if (!is_file($path) || !in_array(mime_content_type($path), self::VIDEO_MIMETYPES, true)) {
@@ -31,7 +26,7 @@ class ThumbnailGenerator
         $video = FFMpeg::create()->open($path);
         $stream = $video->getStreams()->videos()->first();
         if ($stream === null) {
-            return []; // no video stream (e.g. audio-only container, or a corrupt clip)
+            return [];
         }
         $originalWidth = $stream->getDimensions()->getWidth();
         $originalHeight = $stream->getDimensions()->getHeight();
@@ -44,8 +39,6 @@ class ThumbnailGenerator
         $video->filters()->resize(new Dimension($targetWidth, $targetHeight))->synchronize();
 
         $duration = (float) $video->getFormat()->get('duration');
-        // A static gif / missing duration metadata reports ~0; sample a single frame
-        // rather than `$count` identical ones at t=0.
         if ($duration <= 0.0) {
             $count = 1;
         }
@@ -55,10 +48,6 @@ class ThumbnailGenerator
             $second = $count === 1 ? 0.0 : $duration * (($i + 1) / ($count + 1));
             $framePath = $destDir.'/frame-'.$i.'.jpeg';
             try {
-                // ffmpeg can't always encode a frame at a given timecode (e.g. the last
-                // sampled position of a very short clip, or a frame the MJPEG encoder
-                // rejects). A single unreadable frame must not lose the whole sample:
-                // skip it and keep the frames that did decode.
                 $video->frame(TimeCode::fromSeconds($second))->save($framePath);
             } catch (\Throwable) {
                 continue;
@@ -80,9 +69,6 @@ class ThumbnailGenerator
         $mime = mime_content_type($path);
 
         if ($mime === 'image/svg+xml') {
-            // GD can't read SVG, so rasterize with ffmpeg (via librsvg) to feed the tagging
-            // pipeline a raster. Display templates render the original SVG, so this only runs
-            // for the on-demand thumbnailer and the tagging pipeline.
             $this->ensureDirectory($thumbnailPath);
             $this->rasterizeWithFfmpeg($path, $thumbnailPath, $thumbnailWidth);
 
@@ -94,7 +80,7 @@ class ThumbnailGenerator
             $video = $ffmpeg->open($path);
             $stream = $video->getStreams()->videos()->first();
             if ($stream === null) {
-                return false; // no video stream to thumbnail
+                return false;
             }
             $width = $stream->getDimensions()->getWidth();
             $height = $stream->getDimensions()->getHeight();
@@ -128,7 +114,6 @@ class ThumbnailGenerator
 
             $thumbnail = imagecreatetruecolor($thumbnailWidth, $thumbnailHeight);
 
-            // Transparency
             if (in_array($mime, ['image/png', 'image/webp', 'image/avif'])) {
                 imagecolortransparent($thumbnail, imagecolorallocate($thumbnail, 0, 0, 0));
                 imagealphablending($thumbnail, false);
@@ -159,10 +144,6 @@ class ThumbnailGenerator
         }
     }
 
-    /**
-     * Rasterize/downscale an image with ffmpeg (out-of-process, bounded memory, librsvg for
-     * SVG). The output format follows the thumbnail path's extension; never upscales.
-     */
     private function rasterizeWithFfmpeg(string $sourcePath, string $thumbnailPath, int $width): void
     {
         $process = new Process([

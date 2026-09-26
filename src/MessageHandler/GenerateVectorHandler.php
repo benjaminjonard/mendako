@@ -13,11 +13,6 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
-/**
- * (Re)computes + stores one post's perceptual duplicate-detection vector via PostVectorService
- * (pure PHP/GD, no ML call), so it works whether or not auto-tagging is enabled. Idempotent
- * (overwrites the target's vector) and soft-fails so a bad source image never poisons the worker.
- */
 #[AsMessageHandler]
 final class GenerateVectorHandler
 {
@@ -34,7 +29,7 @@ final class GenerateVectorHandler
     {
         $post = $this->postRepository->find($message->id);
         if ($post === null || $post->getPath() === null) {
-            return; // removed before processing — idempotent no-op
+            return;
         }
 
         $path = $this->publicPath.'/'.$post->getPath();

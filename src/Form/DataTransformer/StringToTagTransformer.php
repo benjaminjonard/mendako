@@ -48,12 +48,8 @@ class StringToTagTransformer implements DataTransformerInterface
             $tag = $this->tagRepository->findOneBy(['name' => $name]);
 
             if ($tag === null) {
-                // A brand-new tag born from an accepted suggestion keeps the suggested
-                // category (rating/character/…); anything typed by hand falls back to general.
                 $category = $this->tagSuggestionRepository->findCategoryForName($name) ?? TagCategory::GENERAL;
 
-                // A name some tagger already emits isn't the user's own invention; the suggestion's
-                // source doubles as the tag source.
                 $source = $this->tagSuggestionRepository->modelSourceForName($name) ?? Tag::SOURCE_CUSTOM;
 
                 $tag = new Tag();

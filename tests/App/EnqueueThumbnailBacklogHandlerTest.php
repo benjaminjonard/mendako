@@ -22,7 +22,6 @@ use Symfony\Component\Messenger\MessageBusInterface;
 
 class EnqueueThumbnailBacklogHandlerTest extends TestCase
 {
-    /** @var array<int, array{string, string}> */
     private array $dispatched = [];
 
     private function bus(): MessageBusInterface
@@ -119,8 +118,6 @@ class EnqueueThumbnailBacklogHandlerTest extends TestCase
         $storage = $this->createMock(ThumbnailStorage::class);
         $storage->expects($this->once())->method('purgeUnreferenced')->willReturnCallback(
             function (array $referenced) use (&$order): int {
-                // A board cover whose source post was deleted is still referenced, so it must be
-                // spared even though no message will ever regenerate it.
                 $order[] = ['purge', $referenced];
 
                 return 0;

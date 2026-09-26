@@ -14,10 +14,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
-/**
- * Idempotent and soft-failing: on any error the stored path is left as it was, which the templates
- * render as the default image.
- */
 #[AsMessageHandler]
 final class GenerateThumbnailHandler
 {
@@ -70,7 +66,6 @@ final class GenerateThumbnailHandler
             return;
         }
 
-        // After the commit, so a failure never leaves the entity pointing at a deleted file.
         if ($previous !== null && $previous !== $relativePath) {
             $this->thumbnailStorage->remove($previous);
         }

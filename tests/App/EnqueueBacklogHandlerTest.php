@@ -64,7 +64,7 @@ class EnqueueBacklogHandlerTest extends KernelTestCase
 
         $handler(new EnqueueBacklogMessage(false));
 
-        $this->assertCount(2, $this->batchTransport()->getSent()); // suggested post skipped
+        $this->assertCount(2, $this->batchTransport()->getSent());
     }
 
     public function test_all_fans_out_every_post(): void

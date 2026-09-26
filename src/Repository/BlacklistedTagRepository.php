@@ -15,9 +15,6 @@ class BlacklistedTagRepository extends ServiceEntityRepository
         parent::__construct($registry, BlacklistedTag::class);
     }
 
-    /**
-     * Every blacklisted name, for the O(1) skip lookup in the suggestion pipeline.
-     */
     public function allNames(): array
     {
         return array_map('strval', $this->createQueryBuilder('b')

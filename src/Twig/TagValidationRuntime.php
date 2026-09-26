@@ -14,10 +14,6 @@ class TagValidationRuntime implements RuntimeExtensionInterface
     {
     }
 
-    /**
-     * Number of posts still waiting in the Tag validation queue — drives the badge next to the
-     * Validation tab. A lazy runtime so the COUNT only runs on pages that actually render the tab.
-     */
     #[AsTwigFunction('pending_validation_count')]
     public function pendingValidationCount(): int
     {

@@ -13,11 +13,6 @@ class TagMerger
     {
     }
 
-    /**
-     * Absorb $sources into $target: every post carrying a source tag is moved onto the target
-     * tag, then the source tag is deleted. The target tag itself and duplicate entries are
-     * ignored. Returns the number of tags actually merged.
-     */
     public function merge(Tag $target, array $sources): int
     {
         $merged = 0;
@@ -32,7 +27,6 @@ class TagMerger
 
             $seen[$id] = true;
 
-            // Snapshot the collection: reassigning mutates the one we iterate over.
             foreach ($source->getPosts()->toArray() as $post) {
                 $post->addTag($target);
                 $post->removeTag($source);

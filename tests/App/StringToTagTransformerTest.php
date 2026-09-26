@@ -31,7 +31,6 @@ class StringToTagTransformerTest extends KernelTestCase
 
     public function test_new_tag_from_wd_known_name_is_wd_others_stay_custom(): void
     {
-        // A prior wd suggestion proves the model produces 'wd_name'.
         $this->entityManager->persist((new TagSuggestion())
             ->setTargetType('post')
             ->setTargetId(Uuid::v7()->toRfc4122())

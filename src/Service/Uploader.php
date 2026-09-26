@@ -27,10 +27,6 @@ class Uploader
         $this->accessor = PropertyAccess::createPropertyAccessor();
     }
 
-    /**
-     * Returns whether a file was actually moved, which is what tells an ordinary update apart
-     * from a genuine (re)upload.
-     */
     public function upload(UploadableInterface $entity, string $property, Upload $attribute): bool
     {
         $file = $this->accessor->getValue($entity, $property);

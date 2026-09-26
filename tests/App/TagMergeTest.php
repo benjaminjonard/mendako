@@ -68,7 +68,6 @@ class TagMergeTest extends KernelTestCase
         $target = TagFactory::createOne(['name' => 'cat']);
         $source = TagFactory::createOne(['name' => 'kitten']);
 
-        // A post carrying both the target and the source must end up with the target exactly once.
         $post = PostFactory::createOne(['board' => BoardFactory::createOne(), 'uploadedBy' => UserFactory::createOne(), 'tags' => [$target, $source]]);
 
         $this->merger->merge($target, [$source]);
@@ -84,7 +83,6 @@ class TagMergeTest extends KernelTestCase
 
         $post = PostFactory::createOne(['board' => BoardFactory::createOne(), 'uploadedBy' => UserFactory::createOne(), 'tags' => [$source]]);
 
-        // Target passed as a source is skipped; the duplicate source is only merged once.
         $merged = $this->merger->merge($target, [$target, $source, $source]);
 
         self::assertSame(1, $merged);

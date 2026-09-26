@@ -79,7 +79,7 @@ class PostController extends AbstractController
 
         $vector = $postVectorService->generateVector($post->getFile());
         if ($vector === null) {
-            return $this->json([]); // no file, or an undecodable/non-image upload
+            return $this->json([]);
         }
 
         $similarPosts = [];

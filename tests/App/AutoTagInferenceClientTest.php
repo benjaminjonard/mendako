@@ -34,7 +34,7 @@ class AutoTagInferenceClientTest extends TestCase
         ]);
         $httpClient = new MockHttpClient([new MockResponse($body, ['http_code' => 200])]);
 
-        $result = (new AutoTagInferenceClient($httpClient, $this->provider(), new NullLogger()))->analyze($tmp, 'wd-eva02-large-tagger-v3');
+        $result = (new AutoTagInferenceClient($httpClient, $this->provider(), new NullLogger()))->analyze($tmp, 'mendako-tagger');
         unlink($tmp);
 
         $this->assertSame('1girl', $result['tags'][0]['name']);
@@ -64,11 +64,11 @@ class AutoTagInferenceClientTest extends TestCase
         });
 
         (new AutoTagInferenceClient($httpClient, $this->provider(), new NullLogger()))
-            ->analyze($tmp, 'wd-eva02-large-tagger-v3');
+            ->analyze($tmp, 'mendako-tagger');
         unlink($tmp);
 
         $this->assertStringEndsWith('/analyze', $captured['url']);
-        $this->assertStringContainsString('wd-eva02-large-tagger-v3', $captured['body']);
+        $this->assertStringContainsString('mendako-tagger', $captured['body']);
     }
 
     public function test_analyze_throws_on_error(): void
@@ -82,7 +82,7 @@ class AutoTagInferenceClientTest extends TestCase
         $this->expectException(AutoTagInferenceException::class);
 
         try {
-            (new AutoTagInferenceClient($httpClient, $this->provider(), new NullLogger()))->analyze($tmp, 'wd-eva02-large-tagger-v3');
+            (new AutoTagInferenceClient($httpClient, $this->provider(), new NullLogger()))->analyze($tmp, 'mendako-tagger');
         } finally {
             unlink($tmp);
         }
@@ -97,7 +97,7 @@ class AutoTagInferenceClientTest extends TestCase
         $this->expectException(AutoTagInferenceException::class);
 
         try {
-            (new AutoTagInferenceClient($httpClient, $this->provider(), new NullLogger()))->analyze($tmp, 'wd-eva02-large-tagger-v3');
+            (new AutoTagInferenceClient($httpClient, $this->provider(), new NullLogger()))->analyze($tmp, 'mendako-tagger');
         } finally {
             unlink($tmp);
         }
@@ -110,7 +110,7 @@ class AutoTagInferenceClientTest extends TestCase
         $provider->method('getServiceUrl')->willReturn('http://mendako_ml:8000');
         $httpClient = new MockHttpClient([new MockResponse('{}', ['http_code' => 200])]);
 
-        $result = (new AutoTagInferenceClient($httpClient, $provider, new NullLogger()))->analyze('/nonexistent', 'wd-eva02-large-tagger-v3');
+        $result = (new AutoTagInferenceClient($httpClient, $provider, new NullLogger()))->analyze('/nonexistent', 'mendako-tagger');
 
         $this->assertSame([], $result);
         $this->assertSame(0, $httpClient->getRequestsCount());

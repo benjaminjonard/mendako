@@ -13,8 +13,6 @@ export default class extends Controller {
         this.appendToInput(event.currentTarget.dataset.suggestion);
     }
 
-    // Add-and-remove: the "+" control adds the tag to the field, then drops its row so the
-    // list closes up. Rejecting ("−") just drops the row. Either way the suggestion leaves the list.
     acceptSuggestion(event) {
         const row = event.currentTarget.closest('[data-suggestion]');
         if (row === null) {

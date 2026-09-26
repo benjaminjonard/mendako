@@ -37,7 +37,10 @@ services:
     # Optional, but required for ML tasks
     mendako_ml:
         container_name: mendako_ml
-        build: ./ml
+        build:
+            context: ./ml
+            secrets:
+                - hf_token
         restart: unless-stopped
         volumes:
             - "./ml/app:/app/app"
@@ -63,3 +66,7 @@ services:
         environment:
             PGADMIN_DEFAULT_EMAIL: admin@admin.com
             PGADMIN_DEFAULT_PASSWORD: password
+
+secrets:
+    hf_token:
+        file: ./ml/.hf_token

@@ -94,14 +94,12 @@ class DeleteSuggestedTagsCommandTest extends KernelTestCase
 
     public function test_purge_detaches_auto_applied_tags_and_keeps_hand_typed_ones(): void
     {
-        // `source` is not the criterion: a name the model emits can also have been typed by hand.
         $autoTag = TagFactory::createOne(['name' => 'smile', 'source' => Tag::SOURCE_WD]);
         $handTag = TagFactory::createOne(['name' => 'my_own_tag', 'source' => Tag::SOURCE_CUSTOM]);
 
         $autoTagged = $this->createPost([$autoTag, $handTag]);
         $handTagged = $this->createPost([$autoTag]);
 
-        // Only the first post got 'smile' from auto-tagging.
         $this->persistSuggestion('smile', $autoTagged->getId());
 
         $tester = $this->tester();
@@ -111,9 +109,7 @@ class DeleteSuggestedTagsCommandTest extends KernelTestCase
         $this->entityManager->clear();
 
         self::assertSame(['my_own_tag'], $this->tagNamesOf($autoTagged->getId()));
-        // Same tag, but on a post no suggestion ever targeted -> untouched.
         self::assertSame(['smile'], $this->tagNamesOf($handTagged->getId()));
-        // Still carried by a post, so the tag itself survives.
         self::assertNotNull($this->tagRepository->findOneBy(['name' => 'smile']));
         self::assertNotNull($this->tagRepository->findOneBy(['name' => 'my_own_tag']));
     }
@@ -136,7 +132,6 @@ class DeleteSuggestedTagsCommandTest extends KernelTestCase
 
         self::assertSame([], $this->tagNamesOf($post->getId()));
         self::assertNull($this->tagRepository->findOneBy(['name' => 'solo']));
-        // Every status goes, whatever the target: the validation queue comes out empty.
         self::assertNull($this->suggestionRepository->find($accepted->getId()));
         self::assertNull($this->suggestionRepository->find($pending->getId()));
         self::assertNull($this->suggestionRepository->find($dismissed->getId()));
@@ -144,7 +139,6 @@ class DeleteSuggestedTagsCommandTest extends KernelTestCase
 
     public function test_pending_suggestion_alone_never_detaches_a_tag(): void
     {
-        // The user typed 'smile' himself; the model merely also suggested it, still pending.
         $tag = TagFactory::createOne(['name' => 'smile', 'source' => Tag::SOURCE_WD]);
         $post = $this->createPost([$tag]);
         $pending = $this->persistSuggestion('smile', $post->getId(), TagSuggestion::STATUS_PENDING);

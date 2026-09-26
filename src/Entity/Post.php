@@ -50,7 +50,7 @@ class Post implements UploadableInterface, ThumbnailableInterface
     private ?int $size = null;
 
     #[ORM\Column(type: Types::INTEGER, nullable: true)]
-    private ?int $duration = null; //in seconds
+    private ?int $duration = null;
 
     #[ORM\Column(type: Types::BOOLEAN, nullable: false, options: ['default' => false])]
     private bool $hasSound = false;
@@ -102,7 +102,6 @@ class Post implements UploadableInterface, ThumbnailableInterface
     public function setFile(?File $file): Post
     {
         $this->file = $file;
-        // Force Doctrine to trigger an update
         if ($file instanceof UploadedFile) {
             $this->setUpdatedAt(new \DateTimeImmutable());
         }

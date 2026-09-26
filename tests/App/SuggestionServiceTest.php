@@ -50,7 +50,6 @@ class SuggestionServiceTest extends KernelTestCase
         $suggestions = $this->repository->findForTarget('post', $this->targetId);
 
         $this->assertCount(3, $suggestions);
-        // Ordered by score DESC.
         $this->assertSame(['hatsune_miku', 'general', '1girl'], array_map(static fn (TagSuggestion $s) => $s->getTagName(), $suggestions));
         foreach ($suggestions as $suggestion) {
             $this->assertSame(TagSuggestion::STATUS_PENDING, $suggestion->getStatus());
@@ -60,7 +59,6 @@ class SuggestionServiceTest extends KernelTestCase
         $byName = $this->indexByName($suggestions);
         $this->assertSame(TagCategory::CHARACTER, $byName['hatsune_miku']->getCategory());
         $this->assertSame(TagCategory::GENERAL, $byName['1girl']->getCategory());
-        // Rating mapped to the RATING category, not whatever string it carried.
         $this->assertSame(TagCategory::RATING, $byName['general']->getCategory());
         $this->assertSame(0.8, $byName['general']->getScore());
     }
@@ -102,12 +100,10 @@ class SuggestionServiceTest extends KernelTestCase
             ],
         ]);
 
-        // The user accepts one suggestion.
         $accepted = $this->repository->findOneBy(['targetId' => $this->targetId, 'tagName' => 'kept_tag']);
         $accepted->setStatus(TagSuggestion::STATUS_ACCEPTED);
         $this->entityManager->flush();
 
-        // Re-run with a fresh result set.
         $this->service->store('post', $this->targetId, [
             'tags' => [['name' => 'new_tag', 'category' => 'general', 'score' => 0.8]],
         ]);
@@ -115,7 +111,6 @@ class SuggestionServiceTest extends KernelTestCase
         $suggestions = $this->repository->findForTarget('post', $this->targetId);
         $names = array_map(static fn (TagSuggestion $s) => $s->getTagName(), $suggestions);
 
-        // Accepted row survives; stale pending 'old_tag' is gone; new pending added; no duplicate.
         $this->assertContains('kept_tag', $names);
         $this->assertContains('new_tag', $names);
         $this->assertNotContains('old_tag', $names);
@@ -137,7 +132,6 @@ class SuggestionServiceTest extends KernelTestCase
         $byName['accepted_tag']->setStatus(TagSuggestion::STATUS_ACCEPTED);
         $this->entityManager->flush();
 
-        // The model proposes the very same tags again.
         $this->service->store('post', $this->targetId, [
             'tags' => [
                 ['name' => 'dismissed_tag', 'category' => 'general', 'score' => 0.95],
@@ -149,20 +143,15 @@ class SuggestionServiceTest extends KernelTestCase
         $suggestions = $this->repository->findForTarget('post', $this->targetId);
         $byName = $this->indexByName($suggestions);
 
-        // No duplicates: exactly one row per name.
         $this->assertCount(3, $suggestions);
-        // The dismissed tag stays dismissed (not re-surfaced as pending).
         $this->assertSame(TagSuggestion::STATUS_DISMISSED, $byName['dismissed_tag']->getStatus());
-        // The accepted tag is untouched (not duplicated, score unchanged).
         $this->assertSame(TagSuggestion::STATUS_ACCEPTED, $byName['accepted_tag']->getStatus());
         $this->assertSame(0.7, $byName['accepted_tag']->getScore());
-        // Only the genuinely new tag is added as pending.
         $this->assertSame(TagSuggestion::STATUS_PENDING, $byName['fresh_tag']->getStatus());
     }
 
     public function test_decision_on_one_source_blocks_reproposal_from_another_source(): void
     {
-        // wd proposes a tag; the user dismisses it.
         $this->service->store('post', $this->targetId, [
             'tags' => [['name' => 'dismissed_tag', 'category' => 'general', 'score' => 0.6]],
         ], TagSuggestion::SOURCE_WD);
@@ -170,12 +159,10 @@ class SuggestionServiceTest extends KernelTestCase
         $dismissed->setStatus(TagSuggestion::STATUS_DISMISSED);
         $this->entityManager->flush();
 
-        // Later, another source proposes the very same name with high confidence...
         $this->service->store('post', $this->targetId, [
             'tags' => [['name' => 'dismissed_tag', 'category' => 'general', 'score' => 0.95]],
         ], 'other');
 
-        // ...it is not re-surfaced: a dismiss holds for every source, so no twin is created.
         $suggestions = $this->repository->findForTarget('post', $this->targetId);
         $this->assertCount(1, $suggestions);
         $this->assertSame(TagSuggestion::SOURCE_WD, $suggestions[0]->getSource());
@@ -184,7 +171,6 @@ class SuggestionServiceTest extends KernelTestCase
 
     public function test_blacklisted_name_is_never_stored(): void
     {
-        // 'Bad Tag' normalizes to 'bad_tag', matching the model's normalized output.
         $this->entityManager->persist((new \App\Entity\BlacklistedTag())->setName('Bad Tag'));
         $this->entityManager->flush();
 
@@ -193,7 +179,6 @@ class SuggestionServiceTest extends KernelTestCase
                 ['name' => 'bad_tag', 'category' => 'general', 'score' => 0.99],
                 ['name' => 'good_tag', 'category' => 'general', 'score' => 0.5],
             ],
-            // Even as a rating, a blacklisted name must be dropped.
             'rating' => ['label' => 'bad_tag', 'score' => 0.9],
         ]);
 
@@ -232,9 +217,7 @@ class SuggestionServiceTest extends KernelTestCase
         ], TagSuggestion::SOURCE_WD);
         $this->entityManager->clear();
 
-        // The WD model emitted 'known_by_wd' → it is not custom after all.
         $this->assertSame(Tag::SOURCE_WD, $tagRepository->findOneBy(['name' => 'known_by_wd'])->getSource());
-        // A tag the model never mentioned stays custom.
         $this->assertSame(Tag::SOURCE_CUSTOM, $tagRepository->findOneBy(['name' => 'truly_custom'])->getSource());
     }
 

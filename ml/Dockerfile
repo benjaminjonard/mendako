@@ -37,7 +37,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # so only the real weights ship, then hand /models to the service user.
 COPY app/__init__.py app/catalog.py ./app/
 COPY download_models.py ./
-RUN set -eux; \
+RUN --mount=type=secret,id=hf_token set -eux; \
+    HF_TOKEN="$(cat /run/secrets/hf_token 2>/dev/null || true)" \
     HF_HOME=/tmp/hf-cache python download_models.py; \
     rm -rf /tmp/hf-cache; \
     chown -R mendako:mendako /models

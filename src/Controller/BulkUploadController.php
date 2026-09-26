@@ -80,7 +80,6 @@ class BulkUploadController extends AbstractController
         $stagedPost = new StagedPost();
         $stagedPost->setFile($file);
 
-        // Run the entity's #[Assert\File] mimetype/size constraints (no Form here).
         $violations = $validator->validate($stagedPost);
         if (count($violations) > 0) {
             return $this->json(['error' => (string) $violations[0]->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
@@ -95,9 +94,6 @@ class BulkUploadController extends AbstractController
 
         $managerRegistry->getManager()->persist($stagedPost);
         $managerRegistry->getManager()->flush();
-
-        // Not tagged here: a staged post has no board yet, so no model can be resolved for it. The
-        // post created in assign() is dispatched instead, once its board is known.
 
         return $this->json([
             'id' => $stagedPost->getId(),
@@ -137,20 +133,17 @@ class BulkUploadController extends AbstractController
         }
 
         foreach ((array) $request->request->all('ids') as $id) {
-            // Ownership scoping: only the uploader can assign their own bulk upload files.
             $stagedPost = $stagedPostRepository->findOneBy(['id' => (string) $id, 'uploadedBy' => $user]);
             if ($stagedPost === null || $stagedPost->getPath() === null) {
                 $failedIds[] = (string) $id;
                 continue;
             }
 
-            // Fresh random name avoids collisions with existing board files / the unique path constraint.
             $extension = pathinfo((string) $stagedPost->getPath(), PATHINFO_EXTENSION);
             $filename = $this->randomStringGenerator->generate(20) . ($extension !== '' ? '.' . $extension : '');
             $newRelativePath = $relativeDir . '/' . $filename;
 
             if (!@rename($this->publicPath . '/' . $stagedPost->getPath(), $this->publicPath . '/' . $newRelativePath)) {
-                // Move failed: leave the bulk upload untouched so nothing is lost.
                 $failedIds[] = (string) $id;
                 continue;
             }
@@ -174,8 +167,6 @@ class BulkUploadController extends AbstractController
             $manager->persist($post);
             $createdPosts[] = $post;
 
-            // Null the bulk upload path BEFORE removal so postRemove/removeOldFile does NOT
-            // unlink the file we just moved into the board directory.
             $stagedPost->setPath(null);
             if ($newThumbnailPath !== null) {
                 $stagedPost->setThumbnailPath(null);
@@ -214,7 +205,6 @@ class BulkUploadController extends AbstractController
         $removedIds = [];
 
         foreach ((array) $request->request->all('ids') as $id) {
-            // Ownership scoping: only the uploader can delete their own bulk upload files.
             $stagedPost = $stagedPostRepository->findOneBy(['id' => (string) $id, 'uploadedBy' => $user]);
             if ($stagedPost === null) {
                 continue;

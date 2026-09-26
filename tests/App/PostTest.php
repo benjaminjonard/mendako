@@ -33,7 +33,6 @@ class PostTest extends WebTestCase
 
     public function test_can_get_post(): void
     {
-        // Arrange
         $user = UserFactory::createOne();
         $this->client->loginUser($user);
         $board = BoardFactory::createOne();
@@ -43,17 +42,14 @@ class PostTest extends WebTestCase
         $uploadedFile = new UploadedFile("/tmp/{$uniqId}.png", "{$uniqId}.png", test: true);
         $post = PostFactory::createOne(['board' => $board, 'file' => $uploadedFile, 'uploadedBy' => $user]);
 
-        // Act
         $this->client->request(Request::METHOD_GET, '/boards/'.$board->getSlug(). '/'.$post->getId());
 
-        // Assert
         $this->assertResponseIsSuccessful();
         $this->assertRouteSame('app_post_show', ['slug' => $board->getSlug(), 'id' => $post->getId()]);
     }
 
     public function test_can_edit_post(): void
     {
-        // Arrange
         $user = UserFactory::createOne();
         $this->client->loginUser($user);
         $board = BoardFactory::createOne();
@@ -63,20 +59,17 @@ class PostTest extends WebTestCase
         $uploadedFile = new UploadedFile("/tmp/{$uniqId}.png", "{$uniqId}.png", test: true);
         $post = PostFactory::createOne(['board' => $board, 'file' => $uploadedFile, 'uploadedBy' => $user]);
 
-        // Act
         $this->client->request(Request::METHOD_GET, '/boards/'.$board->getSlug(). '/' . $post->getId() .'/edit');
         $this->client->submitForm('Submit', [
             'post[tags]' => 'nyancat cat rainbow',
             'post[setAsBoardThumbnail]' => true,
         ]);
 
-        // Assert
         $this->assertResponseIsSuccessful();
     }
 
     public function test_accepting_a_suggestion_keeps_its_category(): void
     {
-        // Arrange
         $user = UserFactory::createOne();
         $this->client->loginUser($user);
         $board = BoardFactory::createOne();
@@ -97,13 +90,11 @@ class PostTest extends WebTestCase
         $entityManager->persist($suggestion);
         $entityManager->flush();
 
-        // Act — accept the suggestion by saving it as a tag on the post.
         $this->client->request(Request::METHOD_GET, '/boards/'.$board->getSlug().'/'.$post->getId().'/edit');
         $this->client->submitForm('Submit', [
             'post[tags]' => 'explicit',
         ]);
 
-        // Assert — the new tag inherits the suggested RATING category, not GENERAL.
         $this->assertResponseIsSuccessful();
         TagFactory::assert()->exists([
             'name' => 'explicit',
@@ -113,7 +104,6 @@ class PostTest extends WebTestCase
 
     public function test_post_file_is_moved_when_board_is_changed(): void
     {
-        // Arrange
         $user = UserFactory::createOne();
         $this->client->loginUser($user);
         $board = BoardFactory::createOne();
@@ -125,13 +115,10 @@ class PostTest extends WebTestCase
         $post = PostFactory::createOne(['board' => $board, 'file' => $uploadedFile, 'uploadedBy' => $user]);
         $filename = basename($post->getPath());
 
-        // Act
         $this->client->request(Request::METHOD_GET, '/boards/'.$board->getSlug(). '/' . $post->getId() .'/edit');
         $this->client->submitForm('Submit', [
             'post[board]' => $newBoard->getId(),
         ]);
-
-        // Assert
 
         $this->assertResponseIsSuccessful();
         PostFactory::assert()->exists([
@@ -142,7 +129,6 @@ class PostTest extends WebTestCase
 
     public function test_can_delete_post(): void
     {
-        // Arrange
         $user = UserFactory::createOne();
         $this->client->loginUser($user);
         $board = BoardFactory::createOne();
@@ -152,18 +138,15 @@ class PostTest extends WebTestCase
         $uploadedFile = new UploadedFile("/tmp/{$uniqId}.png", "{$uniqId}.png", test: true);
         $post = PostFactory::createOne(['board' => $board, 'file' => $uploadedFile, 'uploadedBy' => $user]);
 
-        // Act
         $this->client->request(Request::METHOD_GET, '/boards/'.$board->getSlug(). '/' . $post->getId());
         $this->client->submitForm('Agree');
 
-        // Assert
         $this->assertRouteSame('app_board_show', ['slug' => $board->getSlug()]);
         PostFactory::assert()->count(0);
     }
 
     public function test_can_upload_png(): void
     {
-        // Arrange
         $user = UserFactory::createOne();
         $this->client->loginUser($user);
         $board = BoardFactory::createOne();
@@ -172,7 +155,6 @@ class PostTest extends WebTestCase
         $filesystem->copy(__DIR__.'/../../assets/fixtures/nyancat.png', "/tmp/{$uniqId}.png");
         $uploadedFile = new UploadedFile("/tmp/{$uniqId}.png", "{$uniqId}.png");
 
-        // Act
         $this->client->request(Request::METHOD_GET, '/boards/'.$board->getSlug(). '/add');
         $this->client->submitForm('Submit', [
             'post[file]' => $uploadedFile,
@@ -181,13 +163,11 @@ class PostTest extends WebTestCase
             'post[setAsBoardThumbnail]' => true,
         ]);
 
-        // Assert
         $this->assertResponseIsSuccessful();
     }
 
     public function test_can_upload_jpg(): void
     {
-        // Arrange
         $user = UserFactory::createOne();
         $this->client->loginUser($user);
         $board = BoardFactory::createOne();
@@ -196,7 +176,6 @@ class PostTest extends WebTestCase
         $filesystem->copy(__DIR__.'/../../assets/fixtures/nyancat.jpg', "/tmp/{$uniqId}.jpg");
         $uploadedFile = new UploadedFile("/tmp/{$uniqId}.jpg", "{$uniqId}.jpg");
 
-        // Act
         $this->client->request(Request::METHOD_GET, '/boards/'.$board->getSlug(). '/add');
         $this->client->submitForm('Submit', [
             'post[file]' => $uploadedFile,
@@ -204,13 +183,11 @@ class PostTest extends WebTestCase
             'post[tags]' => 'nyancat'
         ]);
 
-        // Assert
         $this->assertResponseIsSuccessful();
     }
 
     public function test_can_upload_webp(): void
     {
-        // Arrange
         $user = UserFactory::createOne();
         $this->client->loginUser($user);
         $board = BoardFactory::createOne();
@@ -219,7 +196,6 @@ class PostTest extends WebTestCase
         $filesystem->copy(__DIR__.'/../../assets/fixtures/nyancat.webp', "/tmp/{$uniqId}.webp");
         $uploadedFile = new UploadedFile("/tmp/{$uniqId}.webp", "{$uniqId}.webp");
 
-        // Act
         $this->client->request(Request::METHOD_GET, '/boards/'.$board->getSlug(). '/add');
         $this->client->submitForm('Submit', [
             'post[file]' => $uploadedFile,
@@ -227,13 +203,11 @@ class PostTest extends WebTestCase
             'post[tags]' => 'nyancat'
         ]);
 
-        // Assert
         $this->assertResponseIsSuccessful();
     }
 
     public function test_can_upload_avif(): void
     {
-        // Arrange
         $user = UserFactory::createOne();
         $this->client->loginUser($user);
         $board = BoardFactory::createOne();
@@ -242,7 +216,6 @@ class PostTest extends WebTestCase
         $filesystem->copy(__DIR__.'/../../assets/fixtures/nyancat.avif', "/tmp/{$uniqId}.avif");
         $uploadedFile = new UploadedFile("/tmp/{$uniqId}.avif", "{$uniqId}.avif");
 
-        // Act
         $this->client->request(Request::METHOD_GET, '/boards/'.$board->getSlug(). '/add');
         $this->client->submitForm('Submit', [
             'post[file]' => $uploadedFile,
@@ -250,13 +223,11 @@ class PostTest extends WebTestCase
             'post[tags]' => 'nyancat'
         ]);
 
-        // Assert
         $this->assertResponseIsSuccessful();
     }
 
     public function test_can_upload_gif(): void
     {
-        // Arrange
         $user = UserFactory::createOne();
         $this->client->loginUser($user);
         $board = BoardFactory::createOne();
@@ -265,7 +236,6 @@ class PostTest extends WebTestCase
         $filesystem->copy(__DIR__.'/../../assets/fixtures/nyancat.gif', "/tmp/{$uniqId}.gif");
         $uploadedFile = new UploadedFile("/tmp/{$uniqId}.gif", "{$uniqId}.gif");
 
-        // Act
         $this->client->request(Request::METHOD_GET, '/boards/'.$board->getSlug(). '/add');
         $this->client->submitForm('Submit', [
             'post[file]' => $uploadedFile,
@@ -273,13 +243,11 @@ class PostTest extends WebTestCase
             'post[tags]' => 'nyancat'
         ]);
 
-        // Assert
         $this->assertResponseIsSuccessful();
     }
 
     public function test_can_upload_mp4(): void
     {
-        // Arrange
         $user = UserFactory::createOne();
         $this->client->loginUser($user);
         $board = BoardFactory::createOne();
@@ -288,7 +256,6 @@ class PostTest extends WebTestCase
         $filesystem->copy(__DIR__.'/../../assets/fixtures/nyancat.mp4', "/tmp/{$uniqId}.mp4");
         $uploadedFile = new UploadedFile("/tmp/{$uniqId}.mp4", "{$uniqId}.mp4");
 
-        // Act
         $this->client->request(Request::METHOD_GET, '/boards/'.$board->getSlug(). '/add');
         $this->client->submitForm('Submit', [
             'post[file]' => $uploadedFile,
@@ -296,13 +263,11 @@ class PostTest extends WebTestCase
             'post[tags]' => 'nyancat'
         ]);
 
-        // Assert
         $this->assertResponseIsSuccessful();
     }
 
     public function test_can_check_similar_posts(): void
     {
-        // Arrange
         $user = UserFactory::createOne();
         $this->client->loginUser($user);
 
@@ -323,28 +288,21 @@ class PostTest extends WebTestCase
         $filesystem->copy(__DIR__.'/../../assets/fixtures/nyancat.png', "/tmp/{$uniqId}.png");
         $uploadedFile = new UploadedFile("/tmp/{$uniqId}.png", "{$uniqId}.png", test: true);
 
-        // Act
         $this->client->request(Request::METHOD_POST, '/check-similar', [], ['file' => $uploadedFile]);
 
-        // Assert
         $this->assertResponseIsSuccessful();
         $this->assertCount(1, json_decode($this->client->getResponse()->getContent()));
     }
 
     public function test_board_choices_are_listed_alphabetically(): void
     {
-        // Arrange
         $this->client->loginUser(UserFactory::createOne());
-        // Created out of order: without an explicit ordering the choices come out in whatever
-        // order Postgres returns them.
         foreach (['Zebra', 'anime', 'Minerals'] as $name) {
             BoardFactory::createOne(['name' => $name]);
         }
 
-        // Act
         $crawler = $this->client->request(Request::METHOD_GET, '/boards/anime/add');
 
-        // Assert
         $this->assertResponseIsSuccessful();
         $names = $crawler->filter('#post_board option')->each(static fn ($option): string => $option->text());
         $sorted = $names;

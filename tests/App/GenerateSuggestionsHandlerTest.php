@@ -18,7 +18,7 @@ use Psr\Log\NullLogger;
 
 class GenerateSuggestionsHandlerTest extends TestCase
 {
-    private const array WD_ONLY = ['wd' => 'wd-eva02-large-tagger-v3'];
+    private const array WD_ONLY = ['wd' => 'mendako-tagger'];
 
     private function provider(bool $enabled, array $models = self::WD_ONLY): AutoTagConfigProvider
     {
@@ -130,11 +130,9 @@ class GenerateSuggestionsHandlerTest extends TestCase
         $wdResult = ['tags' => [['name' => '1girl', 'category' => 'general', 'score' => 0.9]], 'rating' => ['label' => 'general', 'score' => 0.8]];
         $otherResult = ['tags' => [['name' => 'beach', 'category' => 'general', 'score' => 0.7]], 'rating' => ['label' => null, 'score' => 0.0]];
 
-        // One call per model, each against the same decoded thumbnail.
         $client = $this->createMock(AutoTagInferenceClient::class);
         $client->expects($this->exactly(2))->method('analyze')->willReturnOnConsecutiveCalls($wdResult, $otherResult);
 
-        // Each model's output is stored under its own source, so the two never overwrite each other.
         $stored = [];
         $suggestionService = $this->createMock(SuggestionService::class);
         $suggestionService->expects($this->exactly(2))->method('store')->willReturnCallback(
@@ -143,7 +141,7 @@ class GenerateSuggestionsHandlerTest extends TestCase
             },
         );
 
-        $handler = $this->handler($this->provider(true, ['wd' => 'wd-eva02-large-tagger-v3', 'other' => 'other-model']), $postRepository, $client, $suggestionService);
+        $handler = $this->handler($this->provider(true, ['wd' => 'mendako-tagger', 'other' => 'other-model']), $postRepository, $client, $suggestionService);
         $handler(new GenerateSuggestionsMessage('both-id'));
 
         $this->assertSame($wdResult, $stored['wd']);
@@ -169,10 +167,9 @@ class GenerateSuggestionsHandlerTest extends TestCase
             },
         );
 
-        $handler = $this->handler($this->provider(true, ['wd' => 'wd-eva02-large-tagger-v3', 'other' => 'other-model']), $postRepository, $client, $suggestionService);
+        $handler = $this->handler($this->provider(true, ['wd' => 'mendako-tagger', 'other' => 'other-model']), $postRepository, $client, $suggestionService);
         $handler(new GenerateSuggestionsMessage('both-id'));
 
-        // The wd store threw, yet the next model was still attempted — nothing escaped to the worker.
         $this->assertSame(['wd', 'other'], $sources);
     }
 
@@ -186,7 +183,6 @@ class GenerateSuggestionsHandlerTest extends TestCase
         $thumbnailGenerator = $this->createStub(ThumbnailGenerator::class);
         $thumbnailGenerator->method('extractVideoFrames')->willReturn(['/tmp/f0.jpeg', '/tmp/f1.jpeg', '/tmp/f2.jpeg']);
 
-        // Each frame returns 'cat'; the middle frame scores it highest → aggregated max 0.9.
         $client = $this->createMock(AutoTagInferenceClient::class);
         $client->expects($this->exactly(3))->method('analyze')->willReturnOnConsecutiveCalls(
             ['tags' => [['name' => 'cat', 'category' => 'general', 'score' => 0.4]], 'rating' => ['label' => null, 'score' => 0.0]],
@@ -212,15 +208,13 @@ class GenerateSuggestionsHandlerTest extends TestCase
         $postRepository = $this->createStub(PostRepository::class);
         $postRepository->method('find')->willReturn($post);
 
-        // One extraction, whatever the number of models — decoding is the expensive part.
         $thumbnailGenerator = $this->createMock(ThumbnailGenerator::class);
         $thumbnailGenerator->expects($this->once())->method('extractVideoFrames')->willReturn(['/tmp/f0.jpeg', '/tmp/f1.jpeg']);
 
-        // 2 models × 2 frames.
         $client = $this->createMock(AutoTagInferenceClient::class);
         $client->expects($this->exactly(4))->method('analyze')->willReturn(['tags' => [], 'rating' => ['label' => null, 'score' => 0.0]]);
 
-        $handler = $this->handler($this->provider(true, ['wd' => 'wd-eva02-large-tagger-v3', 'other' => 'other-model']), $postRepository, $client, thumbnailGenerator: $thumbnailGenerator);
+        $handler = $this->handler($this->provider(true, ['wd' => 'mendako-tagger', 'other' => 'other-model']), $postRepository, $client, thumbnailGenerator: $thumbnailGenerator);
         $handler(new GenerateSuggestionsMessage('video-id'));
     }
 
@@ -232,8 +226,8 @@ class GenerateSuggestionsHandlerTest extends TestCase
         $postRepository->method('find')->willReturn($post);
 
         $thumbnailGenerator = $this->createMock(ThumbnailGenerator::class);
-        $thumbnailGenerator->method('extractVideoFrames')->willReturn([]); // sampler couldn't read it
-        $thumbnailGenerator->expects($this->once())->method('generate'); // fallback single frame
+        $thumbnailGenerator->method('extractVideoFrames')->willReturn([]);
+        $thumbnailGenerator->expects($this->once())->method('generate');
 
         $client = $this->createMock(AutoTagInferenceClient::class);
         $client->expects($this->once())->method('analyze')->willReturn(['tags' => [], 'rating' => ['label' => null, 'score' => 0.0]]);
@@ -256,7 +250,6 @@ class GenerateSuggestionsHandlerTest extends TestCase
 
         $handler = $this->handler($this->provider(true), $postRepository, $client, thumbnailGenerator: $thumbnailGenerator);
 
-        // Must not throw — extraction failure soft-fails (analyze never reached, asserted above).
         $handler(new GenerateSuggestionsMessage('video-id'));
     }
 
@@ -273,7 +266,7 @@ class GenerateSuggestionsHandlerTest extends TestCase
         $client = $this->createStub(AutoTagInferenceClient::class);
         $client->method('analyze')->willReturnOnConsecutiveCalls(
             ['tags' => [['name' => 'cat', 'category' => 'general', 'score' => 0.5]], 'rating' => ['label' => null, 'score' => 0.0]],
-            [], // representative (middle) frame soft-failed
+            [],
             ['tags' => [['name' => 'dog', 'category' => 'general', 'score' => 0.6]], 'rating' => ['label' => null, 'score' => 0.0]],
         );
 
@@ -291,7 +284,7 @@ class GenerateSuggestionsHandlerTest extends TestCase
         $handler(new GenerateSuggestionsMessage('video-id'));
     }
 
-    public function test_image_item_uses_single_thumbnail_not_frame_extraction(): void
+    public function test_a_still_image_is_analysed_as_it_is(): void
     {
         $post = $this->postWithPath();
         $post->setMimetype('image/png');
@@ -300,12 +293,48 @@ class GenerateSuggestionsHandlerTest extends TestCase
 
         $thumbnailGenerator = $this->createMock(ThumbnailGenerator::class);
         $thumbnailGenerator->expects($this->never())->method('extractVideoFrames');
-        $thumbnailGenerator->expects($this->once())->method('generate');
+        $thumbnailGenerator->expects($this->never())->method('generate');
 
+        $analysed = null;
         $client = $this->createStub(AutoTagInferenceClient::class);
-        $client->method('analyze')->willReturn(['tags' => [], 'rating' => ['label' => null, 'score' => 0.0]]);
+        $client->method('analyze')->willReturnCallback(
+            function (string $path) use (&$analysed): array {
+                $analysed = $path;
+
+                return ['tags' => [], 'rating' => ['label' => null, 'score' => 0.0]];
+            },
+        );
 
         $handler = $this->handler($this->provider(true), $postRepository, $client, thumbnailGenerator: $thumbnailGenerator);
         $handler(new GenerateSuggestionsMessage('image-id'));
+
+        $this->assertStringEndsWith($post->getPath(), (string) $analysed);
+    }
+
+    public function test_the_upload_is_never_unlinked(): void
+    {
+        $post = $this->postWithPath();
+        $post->setMimetype('image/png');
+        $postRepository = $this->createStub(PostRepository::class);
+        $postRepository->method('find')->willReturn($post);
+
+        $thumbnailGenerator = $this->createMock(ThumbnailGenerator::class);
+        $client = $this->createStub(AutoTagInferenceClient::class);
+        $analysed = null;
+        $client->method('analyze')->willReturnCallback(
+            function (string $path) use (&$analysed): array {
+                $analysed = $path;
+                @mkdir(\dirname($path), 0o777, true);
+                touch($path);
+
+                return ['tags' => [], 'rating' => ['label' => null, 'score' => 0.0]];
+            },
+        );
+
+        $handler = $this->handler($this->provider(true), $postRepository, $client, thumbnailGenerator: $thumbnailGenerator);
+        $handler(new GenerateSuggestionsMessage('image-id'));
+
+        $this->assertFileExists((string) $analysed);
+        @unlink((string) $analysed);
     }
 }

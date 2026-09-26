@@ -32,8 +32,6 @@ final class EnqueueThumbnailBacklogHandler
 
     public function __invoke(EnqueueThumbnailBacklogMessage $message): void
     {
-        // Before the fan-out, while the paths still in the database are the only referenced ones:
-        // afterwards every regenerated target points somewhere new and nothing would be orphaned.
         $purged = $this->thumbnailStorage->purgeUnreferenced([
             ...$this->postRepository->thumbnailPaths(),
             ...$this->stagedPostRepository->thumbnailPaths(),
@@ -61,7 +59,7 @@ final class EnqueueThumbnailBacklogHandler
                     [new TransportNamesStamp('autotag_batch')],
                 );
                 if (++$count % 100 === 0) {
-                    $this->entityManager->clear(); // bound memory over a large back-catalogue
+                    $this->entityManager->clear();
                 }
             }
         }
