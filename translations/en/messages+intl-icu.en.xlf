@@ -73,18 +73,6 @@
         <target>Tags</target>
       </segment>
     </unit>
-    <unit id="untag01" name="menu.untagged">
-      <segment state="translated">
-        <source>Untagged</source>
-        <target>Untagged</target>
-      </segment>
-    </unit>
-    <unit id="untag02" name="message.no_untagged_posts">
-      <segment state="translated">
-        <source>No untagged posts.</source>
-        <target>No untagged posts.</target>
-      </segment>
-    </unit>
     <unit id="5CgT51i" name="menu.boards">
       <segment state="translated">
         <source>Boards</source>
@@ -689,12 +677,6 @@
       <segment state="translated">
         <source>Symfony version</source>
         <target>Symfony version</target>
-      </segment>
-    </unit>
-    <unit id="stg00m1" name="menu.staging">
-      <segment state="translated">
-        <source>Staging</source>
-        <target>Staging</target>
       </segment>
     </unit>
     <unit id="stg00d1" name="staging.dropzone">
