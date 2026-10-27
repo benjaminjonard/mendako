@@ -9,7 +9,7 @@ use App\Entity\Post;
 use App\Entity\Tag;
 use App\Enum\TagCategory;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Collections\Criteria;
+use Doctrine\Common\Collections\Order;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -54,10 +54,10 @@ class TagRepository extends ServiceEntityRepository
         $this->applyFilters($qb, $search, $category);
 
         $column = self::SORTS[$sort] ?? self::SORTS['name'];
-        $direction = strtoupper($direction) === 'DESC' ? Criteria::DESC : Criteria::ASC;
+        $direction = strtoupper($direction) === 'DESC' ? Order::Descending->value : Order::Ascending->value;
         $qb->orderBy($column, $direction);
         if ($column !== self::SORTS['name']) {
-            $qb->addOrderBy('LOWER(t.name)', Criteria::ASC);
+            $qb->addOrderBy('LOWER(t.name)', Order::Ascending->value);
         }
 
         return $qb->getQuery()->getArrayResult();
@@ -159,8 +159,8 @@ class TagRepository extends ServiceEntityRepository
             ->createQueryBuilder('tag')
             ->addSelect('(CASE WHEN LOWER(tag.name) LIKE LOWER(:startWith) THEN 0 ELSE 1 END) AS HIDDEN startWithOrder')
             ->andWhere('LOWER(tag.name) LIKE LOWER(:query)')
-            ->orderBy('startWithOrder', Criteria::ASC)
-            ->addOrderBy('LOWER(tag.name)', Criteria::ASC)
+            ->orderBy('startWithOrder', Order::Ascending->value)
+            ->addOrderBy('LOWER(tag.name)', Order::Ascending->value)
             ->setParameter('query', '%'.trim($query).'%')
             ->setParameter('startWith', trim($query).'%')
             ->setMaxResults(15)

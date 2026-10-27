@@ -7,6 +7,7 @@ namespace App\Repository;
 use App\Entity\StagedPost;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
 
 class StagedPostRepository extends ServiceEntityRepository
@@ -66,7 +67,7 @@ class StagedPostRepository extends ServiceEntityRepository
             ->createQueryBuilder('staged')
             ->where('staged.uploadedBy = :user')
             ->setParameter('user', $user)
-            ->orderBy('staged.createdAt', \Doctrine\Common\Collections\Criteria::DESC)
+            ->orderBy('staged.createdAt', Order::Descending->value)
             ->getQuery()
             ->getResult();
     }

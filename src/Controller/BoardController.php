@@ -11,7 +11,7 @@ use App\Repository\BoardRepository;
 use App\Repository\PostRepository;
 use App\Repository\TagRepository;
 use App\Service\PaginatorFactory;
-use Doctrine\Common\Collections\Criteria;
+use Doctrine\Common\Collections\Order;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -27,7 +27,7 @@ class BoardController extends AbstractController
     #[Route(path: '/', name: 'app_homepage', methods: ['GET'])]
     public function index(BoardRepository $boardRepository): Response
     {
-        $boards = $boardRepository->findBy([], ['name' => Criteria::ASC]);
+        $boards = $boardRepository->findBy([], ['name' => Order::Ascending->value]);
 
         return $this->render('App/Board/index.html.twig', [
             'counters' => $boardRepository->getPostCounters(),

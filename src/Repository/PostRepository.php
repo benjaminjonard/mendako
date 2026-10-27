@@ -8,7 +8,7 @@ use App\Entity\Board;
 use App\Entity\Post;
 use App\Entity\TagSuggestion;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Collections\Criteria;
+use Doctrine\Common\Collections\Order;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -29,7 +29,7 @@ class PostRepository extends ServiceEntityRepository
         $qb = $this
             ->createQueryBuilder('post')
             ->where('post.board = :board')
-            ->orderBy('post.createdAt', \Doctrine\Common\Collections\Criteria::DESC)
+            ->orderBy('post.createdAt', Order::Descending->value)
             ->setFirstResult(($page - 1) * $postPerPage)
             ->setMaxResults($postPerPage)
             ->setParameter('board', $board)
