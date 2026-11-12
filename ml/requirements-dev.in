@@ -1,0 +1,8 @@
+# Test/dev dependencies for the Mendako ML sidecar. Edit this file, then
+# regenerate requirements-dev.txt:
+#   pip-compile --strip-extras requirements-dev.in   (Python 3.12, Linux)
+# Runtime versions are constrained to requirements.txt, so CI tests what ships.
+-c requirements.txt
+-r requirements.in
+pytest==9.1.1
+httpx==0.28.1
