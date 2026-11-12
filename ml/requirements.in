@@ -1,0 +1,9 @@
+# Runtime dependencies for the Mendako ML sidecar.
+# Direct dependencies. Edit this file, then regenerate requirements.txt:
+#   pip-compile --strip-extras requirements.in   (Python 3.12, Linux)
+fastapi==0.162.0
+python-multipart==0.0.32
+uvicorn[standard]==0.54.0
+onnxruntime==1.31.0
+huggingface_hub==1.27.0
+pillow==13.0.0
