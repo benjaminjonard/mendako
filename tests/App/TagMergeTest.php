@@ -45,6 +45,13 @@ class TagMergeTest extends KernelTestCase
         return array_map(static fn (Tag $tag): string => (string) $tag->getName(), $post->getTags()->toArray());
     }
 
+    private function reloadedTags(Tag ...$tags): array
+    {
+        $this->entityManager->clear();
+
+        return array_map(fn (Tag $tag): Tag => $this->tagRepository->find($tag->getId()), $tags);
+    }
+
     public function testMergeTransfersPostsAndDeletesSources(): void
     {
         $target = TagFactory::createOne(['name' => 'cat']);
@@ -54,6 +61,7 @@ class TagMergeTest extends KernelTestCase
         $postA = PostFactory::createOne(['board' => BoardFactory::createOne(), 'uploadedBy' => UserFactory::createOne(), 'tags' => [$sourceA]]);
         $postB = PostFactory::createOne(['board' => BoardFactory::createOne(), 'uploadedBy' => UserFactory::createOne(), 'tags' => [$sourceB]]);
 
+        [$target, $sourceA, $sourceB] = $this->reloadedTags($target, $sourceA, $sourceB);
         $merged = $this->merger->merge($target, [$sourceA, $sourceB]);
 
         self::assertSame(2, $merged);
@@ -70,6 +78,7 @@ class TagMergeTest extends KernelTestCase
 
         $post = PostFactory::createOne(['board' => BoardFactory::createOne(), 'uploadedBy' => UserFactory::createOne(), 'tags' => [$target, $source]]);
 
+        [$target, $source] = $this->reloadedTags($target, $source);
         $this->merger->merge($target, [$source]);
 
         self::assertSame(['cat'], $this->reloadedPostTagNames($post->getId()));
@@ -83,6 +92,7 @@ class TagMergeTest extends KernelTestCase
 
         $post = PostFactory::createOne(['board' => BoardFactory::createOne(), 'uploadedBy' => UserFactory::createOne(), 'tags' => [$source]]);
 
+        [$target, $source] = $this->reloadedTags($target, $source);
         $merged = $this->merger->merge($target, [$target, $source, $source]);
 
         self::assertSame(1, $merged);
