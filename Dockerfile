@@ -40,8 +40,16 @@ RUN set -eux ; \
     apt-get clean ; \
     rm -rf /var/lib/apt/lists/* ; \
     rm -rf /usr/local/bin/composer ; \
+    rm -rf /app/public/public/uploads /app/public/public/thumbnails ; \
+    mkdir -p /uploads /thumbnails /app/public/var ; \
+    ln -s /uploads /app/public/public/uploads ; \
+    ln -s /thumbnails /app/public/public/thumbnails ; \
     # Set permissions \
     chown -R "$USER":"$USER" /app/public ; \
+    chown -R "$USER":0 /app/public/var /uploads /thumbnails /data /config ; \
+    chgrp 0 /app/public ; \
+    chmod -R g=u /app/public/var /uploads /thumbnails /data /config ; \
+    chmod g=u /app/public ; \
     chmod +x /app/public/docker/entrypoint.sh ; \
     mkdir /run/php ; \
     # Add PHP config files \
