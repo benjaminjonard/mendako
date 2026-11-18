@@ -6,6 +6,7 @@ framework:
             autotag_interactive:
                 dsn: 'doctrine://default'
                 options:
+                    table_name: doctrine_messenger_message
                     queue_name: autotag_interactive
                     auto_setup: false
                 retry_strategy:
@@ -15,6 +16,7 @@ framework:
             autotag_batch:
                 dsn: 'doctrine://default'
                 options:
+                    table_name: doctrine_messenger_message
                     queue_name: autotag_batch
                     auto_setup: false
                 retry_strategy:
@@ -24,6 +26,7 @@ framework:
             thumbnails:
                 dsn: 'doctrine://default'
                 options:
+                    table_name: doctrine_messenger_message
                     queue_name: thumbnails
                     auto_setup: false
                 retry_strategy:
@@ -33,6 +36,7 @@ framework:
             failed:
                 dsn: 'doctrine://default'
                 options:
+                    table_name: doctrine_messenger_message
                     queue_name: failed
                     auto_setup: false
 
