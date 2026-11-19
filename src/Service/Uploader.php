@@ -27,7 +27,7 @@ class Uploader
         $this->accessor = PropertyAccess::createPropertyAccessor();
     }
 
-    public function upload(UploadableInterface $entity, string $property, Upload $attribute): void
+    public function upload(UploadableInterface $entity, string $property, Upload $attribute): bool
     {
         $file = $this->accessor->getValue($entity, $property);
         if ($file instanceof UploadedFile) {
@@ -78,16 +78,26 @@ class Uploader
 
             $this->removeOldFile($entity, $attribute);
             $this->accessor->setValue($entity, $attribute->getPath(), $relativePath . $fileName);
+
+            return true;
         }
+
+        return false;
     }
 
     public function removeOldFile(object $entity, Upload $attribute): void
     {
-        if (null !== $attribute->getPath()) {
-            $path = $this->accessor->getValue($entity, $attribute->getPath());
+        foreach ([$attribute->getPath(), $attribute->getThumbnailPath()] as $property) {
+            if (null === $property) {
+                continue;
+            }
+
+            $path = $this->accessor->getValue($entity, $property);
             if (null !== $path) {
                 @unlink($this->publicPath . '/' . $path);
             }
+
+            $this->accessor->setValue($entity, $property, null);
         }
     }
 

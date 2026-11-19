@@ -15,6 +15,51 @@ class BoardRepository extends ServiceEntityRepository
         parent::__construct($registry, Board::class);
     }
 
+    public function findWithoutThumbnailIterable(): iterable
+    {
+        return $this->createQueryBuilder('b')
+            ->where('b.thumbnailPath IS NULL')
+            ->andWhere('b.thumbnail IS NOT NULL')
+            ->getQuery()
+            ->toIterable();
+    }
+
+    public function findWithCoverIterable(): iterable
+    {
+        return $this->createQueryBuilder('b')
+            ->where('b.thumbnail IS NOT NULL')
+            ->getQuery()
+            ->toIterable();
+    }
+
+    public function countWithoutThumbnail(): int
+    {
+        return (int) $this->createQueryBuilder('b')
+            ->select('COUNT(b.id)')
+            ->where('b.thumbnailPath IS NULL')
+            ->andWhere('b.thumbnail IS NOT NULL')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    public function countWithCover(): int
+    {
+        return (int) $this->createQueryBuilder('b')
+            ->select('COUNT(b.id)')
+            ->where('b.thumbnail IS NOT NULL')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    public function thumbnailPaths(): array
+    {
+        return array_map('strval', $this->createQueryBuilder('b')
+            ->select('b.thumbnailPath')
+            ->where('b.thumbnailPath IS NOT NULL')
+            ->getQuery()
+            ->getSingleColumnResult());
+    }
+
     public function getPostCounters(): array
     {
         $qb = $this->createQueryBuilder('b')

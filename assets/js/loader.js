@@ -2,7 +2,6 @@ window.onload = window.onpageshow = function() {
     document.documentElement.classList.remove('loading');
 };
 
-//Service Worker
 if ('serviceWorker' in navigator) {
     const LOADING = 0;
     const LOADED = 1;
@@ -21,7 +20,6 @@ if ('serviceWorker' in navigator) {
     });
 }
 
-// Fetch
 let _oldFetch = fetch;
 window.fetch = function(){
     let fetchStart = new Event( 'fetchStart', { 'view': document, 'bubbles': true, 'cancelable': false } );

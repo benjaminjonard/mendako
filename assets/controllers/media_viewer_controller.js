@@ -15,7 +15,7 @@ export default class extends Controller {
         if (this.constructor.videoMimetypes.includes(mediaMimetype)) {
             media = document.createElement('video');
             media.setAttribute('controls', '');
-            media.muted = true; // required for reliable autoplay
+            media.muted = true;
             media.setAttribute('autoplay', '');
             media.src = mediaSrc;
         } else {
@@ -29,7 +29,6 @@ export default class extends Controller {
 
     close() {
         this.viewerTarget.classList.remove('is-active');
-        // Clearing the content stops any playing video.
         this.viewerContentTarget.replaceChildren();
     }
 

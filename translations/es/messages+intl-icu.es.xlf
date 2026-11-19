@@ -73,18 +73,6 @@
         <target>Etiquetas</target>
       </segment>
     </unit>
-    <unit id="untag01" name="menu.untagged">
-      <segment state="translated">
-        <source>Untagged</source>
-        <target>Sin etiquetar</target>
-      </segment>
-    </unit>
-    <unit id="untag02" name="message.no_untagged_posts">
-      <segment state="translated">
-        <source>No untagged posts.</source>
-        <target>No hay publicaciones sin etiquetar.</target>
-      </segment>
-    </unit>
     <unit id="5CgT51i" name="menu.boards">
       <segment state="translated">
         <source>Boards</source>
@@ -691,58 +679,238 @@
         <target>Versión Symfony</target>
       </segment>
     </unit>
-    <unit id="stg00m1" name="menu.staging">
+    <unit id="Fr4nkPv" name="label.frankenphp_version">
       <segment state="translated">
-        <source>Staging</source>
-        <target>Staging</target>
+        <source>FrankenPHP version</source>
+        <target>Versión FrankenPHP</target>
       </segment>
     </unit>
-    <unit id="stg00d1" name="staging.dropzone">
+    <unit id="stg00m1" name="menu.bulk_upload">
+      <segment state="translated">
+        <source>Bulk upload</source>
+        <target>Subida masiva</target>
+      </segment>
+    </unit>
+    <unit id="stg00d1" name="bulk_upload.dropzone">
       <segment state="translated">
         <source>Drag and drop files here, or click to select</source>
-        <target>Drag and drop files here, or click to select</target>
+        <target>Arrastra y suelta archivos aquí, o haz clic para seleccionarlos</target>
       </segment>
     </unit>
-    <unit id="stg00d2" name="staging.duplicate">
+    <unit id="stg00d2" name="bulk_upload.duplicate">
       <segment state="translated">
         <source>Potential duplicate</source>
-        <target>Potential duplicate</target>
+        <target>Posible duplicado</target>
       </segment>
     </unit>
-    <unit id="stg00a1" name="staging.assign">
+    <unit id="stg00a1" name="bulk_upload.assign">
       <segment state="translated">
         <source>Assign</source>
-        <target>Assign</target>
+        <target>Asignar</target>
       </segment>
     </unit>
-    <unit id="stg00a2" name="staging.assign_selected">
+    <unit id="stg00a2" name="bulk_upload.assign_selected">
       <segment state="translated">
         <source>Assign to board</source>
-        <target>Assign to board</target>
+        <target>Asignar a un tablero</target>
       </segment>
     </unit>
-    <unit id="stg00a3" name="staging.delete_selected">
+    <unit id="stg00a3" name="bulk_upload.delete_selected">
       <segment state="translated">
         <source>Delete selected</source>
-        <target>Delete selected</target>
+        <target>Eliminar la selección</target>
       </segment>
     </unit>
-    <unit id="stg00m2" name="message.staged_assigned">
-      <segment state="translated">
-        <source>Files assigned to board</source>
-        <target>Files assigned to board</target>
-      </segment>
-    </unit>
-    <unit id="stg00m3" name="message.staged_deleted">
-      <segment state="translated">
-        <source>Files deleted</source>
-        <target>Files deleted</target>
-      </segment>
-    </unit>
-    <unit id="stg00a4" name="staging.select_all">
+    <unit id="stg00a4" name="bulk_upload.select_all">
       <segment state="translated">
         <source>Select all</source>
-        <target>Select all</target>
+        <target>Seleccionar todo</target>
+      </segment>
+    </unit>
+    <unit id="stg00m2" name="message.bulk_upload_assigned">
+      <segment state="translated">
+        <source>Files assigned to board</source>
+        <target>Archivos asignados al tablero</target>
+      </segment>
+    </unit>
+    <unit id="stg00m3" name="message.bulk_upload_deleted">
+      <segment state="translated">
+        <source>Files deleted</source>
+        <target>Archivos eliminados</target>
+      </segment>
+    </unit>
+    <unit id="FWWEdRq" name="title.jobs">
+      <segment state="translated">
+        <source>Jobs</source>
+        <target>Tareas</target>
+      </segment>
+    </unit>
+    <unit id="rN7uQ2a" name="label.run_active">
+      <segment state="translated">
+        <source>In progress</source>
+        <target>En curso</target>
+      </segment>
+    </unit>
+    <unit id="rN7uQ2d" name="label.run_waiting">
+      <segment state="translated">
+        <source>Waiting for worker</source>
+        <target>Esperando un worker</target>
+      </segment>
+    </unit>
+    <unit id="rN7uQ2c" name="label.run_remaining">
+      <segment state="translated">
+        <source>remaining</source>
+        <target>restantes</target>
+      </segment>
+    </unit>
+    <unit id="rN7uQ2e" name="label.run_starting">
+      <segment state="translated">
+        <source>Starting…</source>
+        <target>Iniciando…</target>
+      </segment>
+    </unit>
+    <unit id="c5aZKyp" name="btn.tag_missing">
+      <segment state="translated">
+        <source>Missing</source>
+        <target>Faltantes</target>
+      </segment>
+    </unit>
+    <unit id="N2RoYUz" name="btn.tag_all">
+      <segment state="translated">
+        <source>All</source>
+        <target>Todos</target>
+      </segment>
+    </unit>
+    <unit id="6qNJwGn" name="label.vectors_done">
+      <segment state="translated">
+        <source>vectorized</source>
+        <target>vectorizados</target>
+      </segment>
+    </unit>
+    <unit id="FAYWKWm" name="label.vectors_todo">
+      <segment state="translated">
+        <source>to compute</source>
+        <target>por calcular</target>
+      </segment>
+    </unit>
+    <unit id="D9tmsoA" name="label.duplicate_vectors">
+      <segment state="translated">
+        <source>Regenerate vectors</source>
+        <target>Vectores de duplicados</target>
+      </segment>
+    </unit>
+    <unit id="Vn4kQ8p" name="label.thumbnails">
+      <segment state="translated">
+        <source>Regenerate thumbnails</source>
+        <target>Regenerar miniaturas</target>
+      </segment>
+    </unit>
+    <unit id="Hs2mLd7" name="label.thumbnails_help">
+      <segment state="translated">
+        <source>Rebuild missing thumbnails and delete the ones no longer referenced.</source>
+        <target>Regenera las miniaturas que faltan y elimina las que ya no se referencian.</target>
+      </segment>
+    </unit>
+    <unit id="Bx9rTc4" name="label.thumbnails_done">
+      <segment state="translated">
+        <source>with a thumbnail</source>
+        <target>con miniatura</target>
+      </segment>
+    </unit>
+    <unit id="Wj5nPe1" name="label.thumbnails_todo">
+      <segment state="translated">
+        <source>remaining</source>
+        <target>restantes</target>
+      </segment>
+    </unit>
+    <unit id="Qz6vRm3" name="message.thumbnails_started">
+      <segment state="translated">
+        <source>Thumbnail rebuild started.</source>
+        <target>Regeneración de miniaturas iniciada.</target>
+      </segment>
+    </unit>
+    <unit id="qs81Y4S" name="label.duplicate_vectors_help">
+      <segment state="translated">
+        <source>Builds a visual fingerprint of each image so the app can flag duplicates and near-identical posts when you upload. New uploads are fingerprinted automatically.</source>
+        <target>Crea una huella visual de cada imagen para que la aplicación pueda señalar duplicados y publicaciones casi idénticas al subirlas. Las nuevas subidas se procesan automáticamente.</target>
+      </segment>
+    </unit>
+    <unit id="WZYaXwy" name="message.vectors_started">
+      <segment state="translated">
+        <source>Vector recompute started.</source>
+        <target>Recálculo de vectores iniciado.</target>
+      </segment>
+    </unit>
+    <unit id="N7b4Cgh" name="message.job_already_running">
+      <segment state="translated">
+        <source>That job is already running.</source>
+        <target>Esa tarea ya está en curso.</target>
+      </segment>
+    </unit>
+    <unit id="gX2YOcW" name="message.job_cancelled">
+      <segment state="translated">
+        <source>Job cancelled.</source>
+        <target>Tarea cancelada.</target>
+      </segment>
+    </unit>
+    <unit id="MNaOL0B" name="title.merge_tags">
+      <segment state="translated">
+        <source>Merge tags</source>
+        <target>Fusionar etiquetas</target>
+      </segment>
+    </unit>
+    <unit id="WJO2QqL" name="label.merge_tags">
+      <segment state="translated">
+        <source>Tags to merge into this one</source>
+        <target>Etiquetas a fusionar en esta</target>
+      </segment>
+    </unit>
+    <unit id="C9swX1y" name="label.merge_tags_help">
+      <segment state="translated">
+        <source>The selected tags will be deleted and all their images reassigned to this tag. This cannot be undone.</source>
+        <target>Las etiquetas seleccionadas se eliminarán y todas sus imágenes se reasignarán a esta etiqueta. Esta acción no se puede deshacer.</target>
+      </segment>
+    </unit>
+    <unit id="55qqFwT" name="btn.merge">
+      <segment state="translated">
+        <source>Merge</source>
+        <target>Fusionar</target>
+      </segment>
+    </unit>
+    <unit id="GV060Lm" name="message.tags_merged">
+      <segment state="translated">
+        <source>{count, plural, one {# tag merged into} other {# tags merged into}} {tag}</source>
+        <target>{count, plural, one {# etiqueta fusionada en} other {# etiquetas fusionadas en}} {tag}</target>
+      </segment>
+    </unit>
+    <unit id="HnI23ne" name="label.count">
+      <segment state="translated">
+        <source>Count</source>
+        <target>Cantidad</target>
+      </segment>
+    </unit>
+    <unit id="OveSIPt" name="label.search">
+      <segment state="translated">
+        <source>Search</source>
+        <target>Buscar</target>
+      </segment>
+    </unit>
+    <unit id="gmw5Mif" name="label.all">
+      <segment state="translated">
+        <source>All</source>
+        <target>Todos</target>
+      </segment>
+    </unit>
+    <unit id="a8eBH77" name="btn.reset">
+      <segment state="translated">
+        <source>Reset</source>
+        <target>Restablecer</target>
+      </segment>
+    </unit>
+    <unit id="pB821zV" name="label.created_at">
+      <segment state="translated">
+        <source>Created at</source>
+        <target>Creado el</target>
       </segment>
     </unit>
   </file>

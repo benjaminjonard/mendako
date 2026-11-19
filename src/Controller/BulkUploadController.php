@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\Post;
-use App\Entity\StagedUpload;
+use App\Entity\StagedPost;
 use App\Repository\BoardRepository;
 use App\Repository\PostRepository;
-use App\Repository\StagedUploadRepository;
+use App\Repository\StagedPostRepository;
 use App\Service\PostVectorService;
 use App\Service\RandomStringGenerator;
+use App\Service\ThumbnailStorage;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -20,7 +21,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class StagedUploadController extends AbstractController
+class BulkUploadController extends AbstractController
 {
     public function __construct(
         private readonly RandomStringGenerator $randomStringGenerator,
@@ -28,37 +29,37 @@ class StagedUploadController extends AbstractController
     ) {
     }
 
-    #[Route(path: '/staging', name: 'app_staged_index', methods: ['GET'])]
+    #[Route(path: '/bulk-upload', name: 'app_bulk_upload_index', methods: ['GET'])]
     public function index(
-        StagedUploadRepository $stagedUploadRepository,
+        StagedPostRepository $stagedPostRepository,
         BoardRepository $boardRepository,
     ): Response {
-        return $this->render('App/StagedUpload/index.html.twig', [
-            'stagedUploads' => $stagedUploadRepository->findAllForUser($this->getUser()),
+        return $this->render('App/BulkUpload/index.html.twig', [
+            'stagedPosts' => $stagedPostRepository->findAllForUser($this->getUser()),
             'boards' => $boardRepository->findBy([], ['name' => 'ASC']),
         ]);
     }
 
-    #[Route(path: '/staging/{id}/similar', name: 'app_staged_similar', methods: ['GET'])]
+    #[Route(path: '/bulk-upload/{id}/similar', name: 'app_bulk_upload_similar', methods: ['GET'])]
     public function similar(
         string $id,
-        StagedUploadRepository $stagedUploadRepository,
+        StagedPostRepository $stagedPostRepository,
         PostRepository $postRepository,
     ): JsonResponse {
-        $stagedUpload = $stagedUploadRepository->findOneBy(['id' => $id, 'uploadedBy' => $this->getUser()]);
-        if ($stagedUpload === null || $stagedUpload->getVector() === null) {
+        $stagedPost = $stagedPostRepository->findOneBy(['id' => $id, 'uploadedBy' => $this->getUser()]);
+        if ($stagedPost === null || $stagedPost->getVector() === null) {
             return $this->json(['similar' => []]);
         }
 
         $similar = [];
-        foreach ($postRepository->findSimilarByVector($stagedUpload->getVector()) as $post) {
+        foreach ($postRepository->findSimilarByVector($stagedPost->getVector()) as $post) {
             $similar[] = $this->renderView('App/Post/_similar.html.twig', ['post' => $post]);
         }
 
         return $this->json(['similar' => $similar]);
     }
 
-    #[Route(path: '/staging/add', name: 'app_staged_add', methods: ['POST'])]
+    #[Route(path: '/bulk-upload/add', name: 'app_bulk_upload_add', methods: ['POST'])]
     public function add(
         Request $request,
         ManagerRegistry $managerRegistry,
@@ -66,7 +67,7 @@ class StagedUploadController extends AbstractController
         PostRepository $postRepository,
         ValidatorInterface $validator,
     ): JsonResponse {
-        if (!$this->isCsrfTokenValid('staged_action', (string) $request->request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('bulk_upload_action', (string) $request->request->get('_token'))) {
             return $this->json(['error' => 'Invalid CSRF token'], Response::HTTP_FORBIDDEN);
         }
 
@@ -75,40 +76,40 @@ class StagedUploadController extends AbstractController
             return $this->json(['error' => 'No file uploaded'], Response::HTTP_BAD_REQUEST);
         }
 
-        $stagedUpload = new StagedUpload();
-        $stagedUpload->setFile($file);
+        $stagedPost = new StagedPost();
+        $stagedPost->setFile($file);
 
-        // Run the entity's #[Assert\File] mimetype/size constraints (no Form here).
-        $violations = $validator->validate($stagedUpload);
+        $violations = $validator->validate($stagedPost);
         if (count($violations) > 0) {
             return $this->json(['error' => (string) $violations[0]->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         $vector = $postVectorService->generateVector($file);
-        $stagedUpload
+        $stagedPost
             ->setUploadedBy($user = $this->getUser())
             ->setVector($vector)
             ->setIsDuplicate($vector !== null && $postRepository->findSimilarByVector($vector) !== [])
         ;
 
-        $managerRegistry->getManager()->persist($stagedUpload);
+        $managerRegistry->getManager()->persist($stagedPost);
         $managerRegistry->getManager()->flush();
 
         return $this->json([
-            'id' => $stagedUpload->getId(),
-            'card' => $this->renderView('App/StagedUpload/_card.html.twig', ['stagedUpload' => $stagedUpload]),
+            'id' => $stagedPost->getId(),
+            'card' => $this->renderView('App/BulkUpload/_card.html.twig', ['stagedPost' => $stagedPost]),
         ]);
     }
 
-    #[Route(path: '/staging/assign', name: 'app_staged_assign', methods: ['POST'])]
+    #[Route(path: '/bulk-upload/assign', name: 'app_bulk_upload_assign', methods: ['POST'])]
     public function assign(
         Request $request,
         TranslatorInterface $translator,
         ManagerRegistry $managerRegistry,
-        StagedUploadRepository $stagedUploadRepository,
+        StagedPostRepository $stagedPostRepository,
         BoardRepository $boardRepository,
+        ThumbnailStorage $thumbnailStorage,
     ): JsonResponse {
-        if (!$this->isCsrfTokenValid('staged_action', (string) $request->request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('bulk_upload_action', (string) $request->request->get('_token'))) {
             return $this->json(['error' => 'Invalid CSRF token'], Response::HTTP_FORBIDDEN);
         }
 
@@ -129,43 +130,44 @@ class StagedUploadController extends AbstractController
         }
 
         foreach ((array) $request->request->all('ids') as $id) {
-            // Ownership scoping: only the uploader can assign their own staged files.
-            $stagedUpload = $stagedUploadRepository->findOneBy(['id' => (string) $id, 'uploadedBy' => $user]);
-            if ($stagedUpload === null || $stagedUpload->getPath() === null) {
+            $stagedPost = $stagedPostRepository->findOneBy(['id' => (string) $id, 'uploadedBy' => $user]);
+            if ($stagedPost === null || $stagedPost->getPath() === null) {
                 $failedIds[] = (string) $id;
                 continue;
             }
 
-            // Fresh random name avoids collisions with existing board files / the unique path constraint.
-            $extension = pathinfo((string) $stagedUpload->getPath(), PATHINFO_EXTENSION);
+            $extension = pathinfo((string) $stagedPost->getPath(), PATHINFO_EXTENSION);
             $filename = $this->randomStringGenerator->generate(20) . ($extension !== '' ? '.' . $extension : '');
             $newRelativePath = $relativeDir . '/' . $filename;
 
-            if (!@rename($this->publicPath . '/' . $stagedUpload->getPath(), $this->publicPath . '/' . $newRelativePath)) {
-                // Move failed: leave the staged upload untouched so nothing is lost.
+            if (!@rename($this->publicPath . '/' . $stagedPost->getPath(), $this->publicPath . '/' . $newRelativePath)) {
                 $failedIds[] = (string) $id;
                 continue;
             }
+
+            $newThumbnailPath = $this->moveThumbnail($thumbnailStorage, $stagedPost, $newRelativePath);
 
             $post = new Post();
             $post
                 ->setBoard($board)
-                ->setUploadedBy($stagedUpload->getUploadedBy() ?? $user)
-                ->setMimetype($stagedUpload->getMimetype())
-                ->setSize($stagedUpload->getSize())
-                ->setWidth($stagedUpload->getWidth())
-                ->setHeight($stagedUpload->getHeight())
-                ->setDuration($stagedUpload->getDuration())
-                ->setVector($stagedUpload->getVector())
+                ->setUploadedBy($stagedPost->getUploadedBy() ?? $user)
+                ->setMimetype($stagedPost->getMimetype())
+                ->setSize($stagedPost->getSize())
+                ->setWidth($stagedPost->getWidth())
+                ->setHeight($stagedPost->getHeight())
+                ->setDuration($stagedPost->getDuration())
+                ->setVector($stagedPost->getVector())
                 ->setPath($newRelativePath)
+                ->setThumbnailPath($newThumbnailPath)
             ;
-            $post->setHasSound($stagedUpload->hasSound()); // Post::setHasSound() returns void (not fluent)
+            $post->setHasSound($stagedPost->hasSound());
             $manager->persist($post);
 
-            // Null the staged path BEFORE removal so postRemove/removeOldFile does NOT
-            // unlink the file we just moved into the board directory.
-            $stagedUpload->setPath(null);
-            $manager->remove($stagedUpload);
+            $stagedPost->setPath(null);
+            if ($newThumbnailPath !== null) {
+                $stagedPost->setThumbnailPath(null);
+            }
+            $manager->remove($stagedPost);
 
             $removedIds[] = (string) $id;
         }
@@ -173,20 +175,20 @@ class StagedUploadController extends AbstractController
         $manager->flush();
 
         if ($removedIds !== []) {
-            $this->addFlash('notice', $translator->trans('message.staged_assigned'));
+            $this->addFlash('notice', $translator->trans('message.bulk_upload_assigned'));
         }
 
         return $this->json(['removedIds' => $removedIds, 'failedIds' => $failedIds]);
     }
 
-    #[Route(path: '/staging/delete', name: 'app_staged_delete', methods: ['POST'])]
+    #[Route(path: '/bulk-upload/delete', name: 'app_bulk_upload_delete', methods: ['POST'])]
     public function delete(
         Request $request,
         TranslatorInterface $translator,
         ManagerRegistry $managerRegistry,
-        StagedUploadRepository $stagedUploadRepository,
+        StagedPostRepository $stagedPostRepository,
     ): JsonResponse {
-        if (!$this->isCsrfTokenValid('staged_action', (string) $request->request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('bulk_upload_action', (string) $request->request->get('_token'))) {
             return $this->json(['error' => 'Invalid CSRF token'], Response::HTTP_FORBIDDEN);
         }
 
@@ -195,22 +197,41 @@ class StagedUploadController extends AbstractController
         $removedIds = [];
 
         foreach ((array) $request->request->all('ids') as $id) {
-            // Ownership scoping: only the uploader can delete their own staged files.
-            $stagedUpload = $stagedUploadRepository->findOneBy(['id' => (string) $id, 'uploadedBy' => $user]);
-            if ($stagedUpload === null) {
+            $stagedPost = $stagedPostRepository->findOneBy(['id' => (string) $id, 'uploadedBy' => $user]);
+            if ($stagedPost === null) {
                 continue;
             }
 
-            $manager->remove($stagedUpload);
+            $manager->remove($stagedPost);
             $removedIds[] = (string) $id;
         }
 
         $manager->flush();
 
         if ($removedIds !== []) {
-            $this->addFlash('notice', $translator->trans('message.staged_deleted'));
+            $this->addFlash('notice', $translator->trans('message.bulk_upload_deleted'));
         }
 
         return $this->json(['removedIds' => $removedIds]);
+    }
+
+    private function moveThumbnail(ThumbnailStorage $thumbnailStorage, StagedPost $stagedPost, string $newRelativePath): ?string
+    {
+        $currentPath = $stagedPost->getThumbnailPath();
+        if ($currentPath === null) {
+            return null;
+        }
+
+        $newPath = $thumbnailStorage->relativePathFor($newRelativePath, $stagedPost->getMimetype());
+        $absoluteDir = \dirname($thumbnailStorage->absolutePath($newPath));
+        if (!is_dir($absoluteDir) && !mkdir($absoluteDir, recursive: true) && !is_dir($absoluteDir)) {
+            return null;
+        }
+
+        if (!@rename($thumbnailStorage->absolutePath($currentPath), $thumbnailStorage->absolutePath($newPath))) {
+            return null;
+        }
+
+        return $newPath;
     }
 }

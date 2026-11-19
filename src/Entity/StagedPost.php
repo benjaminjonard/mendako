@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Attribute\Upload;
-use App\Repository\StagedUploadRepository;
+use App\Repository\StagedPostRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
@@ -13,20 +13,23 @@ use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity(repositoryClass: StagedUploadRepository::class)]
-#[ORM\Table(name: 'men_staged_upload')]
-class StagedUpload implements UploadableInterface
+#[ORM\Entity(repositoryClass: StagedPostRepository::class)]
+#[ORM\Table(name: 'men_staged_post')]
+class StagedPost implements UploadableInterface, ThumbnailableInterface
 {
     #[ORM\Id]
     #[ORM\Column(type: Types::STRING, length: 36, unique: true, options: ['fixed' => true])]
     private string $id;
 
-    #[Upload(path: 'path')]
+    #[Upload(path: 'path', thumbnailPath: 'thumbnailPath')]
     #[Assert\File(mimeTypes: ['image/png', 'image/jpeg', 'image/webp', 'image/gif', 'image/avif', 'image/svg+xml', 'video/mp4', 'video/webm', 'video/x-m4v'])]
     private ?File $file = null;
 
     #[ORM\Column(type: Types::STRING, nullable: true, unique: true)]
     private ?string $path = null;
+
+    #[ORM\Column(type: Types::STRING, nullable: true)]
+    private ?string $thumbnailPath = null;
 
     #[ORM\Column(type: Types::STRING)]
     private ?string $mimetype = null;
@@ -41,12 +44,12 @@ class StagedUpload implements UploadableInterface
     private ?int $size = null;
 
     #[ORM\Column(type: Types::INTEGER, nullable: true)]
-    private ?int $duration = null; //in seconds
+    private ?int $duration = null;
 
     #[ORM\Column(type: Types::BOOLEAN, nullable: false, options: ['default' => false])]
     private bool $hasSound = false;
 
-    #[ORM\Column(type: 'vector', nullable: true, options: ['dimensions' => 271])]
+    #[ORM\Column(type: 'vector', nullable: true, options: ['dimensions' => 64])]
     private ?string $vector = null;
 
     #[ORM\Column(type: Types::BOOLEAN, nullable: false, options: ['default' => false])]
@@ -66,7 +69,7 @@ class StagedUpload implements UploadableInterface
 
     public function getUploadRelativeDirectory(): string
     {
-        return 'uploads/staging';
+        return 'uploads/bulk-upload';
     }
 
     public function getId(): ?string
@@ -79,7 +82,7 @@ class StagedUpload implements UploadableInterface
         return $this->file;
     }
 
-    public function setFile(?File $file): StagedUpload
+    public function setFile(?File $file): StagedPost
     {
         $this->file = $file;
 
@@ -91,9 +94,21 @@ class StagedUpload implements UploadableInterface
         return $this->path;
     }
 
-    public function setPath(?string $path): StagedUpload
+    public function setPath(?string $path): StagedPost
     {
         $this->path = $path;
+
+        return $this;
+    }
+
+    public function getThumbnailPath(): ?string
+    {
+        return $this->thumbnailPath;
+    }
+
+    public function setThumbnailPath(?string $thumbnailPath): StagedPost
+    {
+        $this->thumbnailPath = $thumbnailPath;
 
         return $this;
     }
@@ -103,7 +118,7 @@ class StagedUpload implements UploadableInterface
         return $this->mimetype;
     }
 
-    public function setMimetype(?string $mimetype): StagedUpload
+    public function setMimetype(?string $mimetype): StagedPost
     {
         $this->mimetype = $mimetype;
 
@@ -115,7 +130,7 @@ class StagedUpload implements UploadableInterface
         return $this->height;
     }
 
-    public function setHeight(?int $height): StagedUpload
+    public function setHeight(?int $height): StagedPost
     {
         $this->height = $height;
 
@@ -127,7 +142,7 @@ class StagedUpload implements UploadableInterface
         return $this->width;
     }
 
-    public function setWidth(?int $width): StagedUpload
+    public function setWidth(?int $width): StagedPost
     {
         $this->width = $width;
 
@@ -139,7 +154,7 @@ class StagedUpload implements UploadableInterface
         return $this->size;
     }
 
-    public function setSize(?int $size): StagedUpload
+    public function setSize(?int $size): StagedPost
     {
         $this->size = $size;
 
@@ -151,7 +166,7 @@ class StagedUpload implements UploadableInterface
         return $this->duration;
     }
 
-    public function setDuration(?int $duration): StagedUpload
+    public function setDuration(?int $duration): StagedPost
     {
         $this->duration = $duration;
 
@@ -163,7 +178,7 @@ class StagedUpload implements UploadableInterface
         return $this->hasSound;
     }
 
-    public function setHasSound(bool $hasSound): StagedUpload
+    public function setHasSound(bool $hasSound): StagedPost
     {
         $this->hasSound = $hasSound;
 
@@ -175,7 +190,7 @@ class StagedUpload implements UploadableInterface
         return $this->vector;
     }
 
-    public function setVector(?string $vector): StagedUpload
+    public function setVector(?string $vector): StagedPost
     {
         $this->vector = $vector;
 
@@ -187,7 +202,7 @@ class StagedUpload implements UploadableInterface
         return $this->isDuplicate;
     }
 
-    public function setIsDuplicate(bool $isDuplicate): StagedUpload
+    public function setIsDuplicate(bool $isDuplicate): StagedPost
     {
         $this->isDuplicate = $isDuplicate;
 
@@ -199,7 +214,7 @@ class StagedUpload implements UploadableInterface
         return $this->uploadedBy;
     }
 
-    public function setUploadedBy(?User $uploadedBy): StagedUpload
+    public function setUploadedBy(?User $uploadedBy): StagedPost
     {
         $this->uploadedBy = $uploadedBy;
 
@@ -211,7 +226,7 @@ class StagedUpload implements UploadableInterface
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeImmutable $createdAt): StagedUpload
+    public function setCreatedAt(\DateTimeImmutable $createdAt): StagedPost
     {
         $this->createdAt = $createdAt;
 

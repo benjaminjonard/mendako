@@ -2,7 +2,7 @@
     <figure class="image">
         <div>
             <span class="tag is-dark has-text-weight-medium">{{ post.distance }} %</span>
-            <img src="{{ asset(post.path|thumbnail(360)) }}">
+            <img src="{{ asset(post.thumbnail_path|thumbnail) }}">
         </div>
     </figure>
 </a>

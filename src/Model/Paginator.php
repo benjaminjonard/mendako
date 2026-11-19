@@ -90,20 +90,6 @@ class Paginator
         return $this->getPageUrl($this->getPrevPage());
     }
 
-    /**
-     * Get an array of paginated page data.
-     *
-     * Example:
-     * [
-     *     ['num' => 1,     'url' => '/example/page/1',  'isCurrent' => false],
-     *     ['num' => '...', 'url' => NULL,               'isCurrent' => false],
-     *     ['num' => 3,     'url' => '/example/page/3',  'isCurrent' => false],
-     *     ['num' => 4,     'url' => '/example/page/4',  'isCurrent' => true],
-     *     ['num' => 5,     'url' => '/example/page/5',  'isCurrent' => false],
-     *     ['num' => '...', 'url' => NULL,               'isCurrent' => false],
-     *     ['num' => 10,    'url' => '/example/page/10', 'isCurrent' => false],
-     * ]
-     */
     public function getPages(): array
     {
         $pages = [];
@@ -117,7 +103,6 @@ class Paginator
                 $pages[] = $this->createPage($i, $i == $this->currentPage);
             }
         } else {
-            // Determine the sliding range, centered around the current page.
             $numAdjacents = (int) floor(($this->maxPagesToShow - 3) / 2);
             if ($this->currentPage + $numAdjacents > $this->numPages) {
                 $slidingStart = $this->numPages - $this->maxPagesToShow + 2;
@@ -134,7 +119,6 @@ class Paginator
                 $slidingEnd = $this->numPages - 1;
             }
 
-            // Build the list of pages.
             $pages[] = $this->createPage(1, 1 == $this->currentPage);
             if ($slidingStart > 2) {
                 $pages[] = $this->createPageEllipsis();

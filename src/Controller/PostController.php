@@ -10,6 +10,7 @@ use App\Form\Type\PostType;
 use App\Repository\PostRepository;
 use App\Repository\TagRepository;
 use App\Service\PostVectorService;
+use App\Service\ThumbnailDispatcher;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -28,6 +29,7 @@ class PostController extends AbstractController
         ManagerRegistry $managerRegistry,
         TagRepository $tagRepository,
         PostVectorService $postVectorService,
+        ThumbnailDispatcher $thumbnailDispatcher,
         #[MapEntity(mapping: ['slug' => 'slug'])] ?Board $board
     ): Response {
         $post = new Post();
@@ -41,12 +43,17 @@ class PostController extends AbstractController
                 ->setVector($postVectorService->generateVector($post->getFile()))
             ;
 
-            if ($form->get('setAsBoardThumbnail')->getData() === true) {
+            $setAsBoardThumbnail = $form->get('setAsBoardThumbnail')->getData() === true;
+            if ($setAsBoardThumbnail) {
                 $post->getBoard()->setThumbnail($post);
             }
 
             $managerRegistry->getManager()->persist($post);
             $managerRegistry->getManager()->flush();
+
+            if ($setAsBoardThumbnail) {
+                $thumbnailDispatcher->dispatch($post->getBoard());
+            }
 
             $this->addFlash('notice', $translator->trans('message.post_added'));
 
@@ -57,7 +64,7 @@ class PostController extends AbstractController
             'board' => $board,
             'post' => $post,
             'form' => $form,
-            'suggestedTags' => $tagRepository->findBy(['suggested' => true])
+            'suggestedTags' => $tagRepository->findBy(['suggested' => true]),
         ]);
     }
 
@@ -68,6 +75,10 @@ class PostController extends AbstractController
         $post->setFile($request->files->get('file'));
 
         $vector = $postVectorService->generateVector($post->getFile());
+        if ($vector === null) {
+            return $this->json([]);
+        }
+
         $similarPosts = [];
 
         foreach ($postRepository->findSimilarByVector($vector) as $similarPost) {
@@ -99,23 +110,26 @@ class PostController extends AbstractController
         TagRepository $tagRepository,
         ManagerRegistry $managerRegistry,
         PostVectorService $postVectorService,
+        ThumbnailDispatcher $thumbnailDispatcher,
         #[MapEntity(mapping: ['slug' => 'slug'])] Board $board,
         Post $post
     ): Response {
         $form = $this->createForm(PostType::class, $post);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $post
-                ->setUploadedBy($this->getUser())
-                ->setVector($postVectorService->generateVector($post->getFile()))
-            ;
+            $post->setVector($postVectorService->generateVector($post->getFile()));
 
-            if ($form->get('setAsBoardThumbnail')->getData() === true) {
+            $setAsBoardThumbnail = $form->get('setAsBoardThumbnail')->getData() === true;
+            if ($setAsBoardThumbnail) {
                 $board->setThumbnail($post);
             }
 
             $managerRegistry->getManager()->persist($post);
             $managerRegistry->getManager()->flush();
+
+            if ($setAsBoardThumbnail) {
+                $thumbnailDispatcher->dispatch($board);
+            }
 
             $this->addFlash('notice', $translator->trans('message.post_edited'));
 
@@ -126,7 +140,7 @@ class PostController extends AbstractController
             'board' => $board,
             'post' => $post,
             'form' => $form,
-            'suggestedTags' => $tagRepository->findBy(['suggested' => true])
+            'suggestedTags' => $tagRepository->findBy(['suggested' => true]),
         ]);
     }
 

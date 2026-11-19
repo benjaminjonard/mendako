@@ -1,10 +1,13 @@
 import { Controller } from '@hotwired/stimulus';
 import { toast } from 'bulma-toast';
 
-const MAX_CONCURRENT_UPLOADS = 3;
+const MAX_CONCURRENT_UPLOADS = 1;
+
+const THUMBNAIL_POLL_INTERVAL = 2000;
+const THUMBNAIL_POLL_ATTEMPTS = 60;
 
 export default class extends Controller {
-    static targets = ['dropzone', 'input', 'grid', 'bulkBar', 'board', 'card', 'viewer', 'viewerContent', 'progress', 'progressCounter'];
+    static targets = ['dropzone', 'input', 'grid', 'bulkBar', 'board', 'card', 'viewer', 'viewerContent', 'progress', 'progressCounter', 'pendingThumbnail'];
 
     static values = {
         addUrl: String,
@@ -18,13 +21,17 @@ export default class extends Controller {
     static maxVisibleRows = 5;
 
     connect() {
-        this.items = [];          // { file, state: 'pending'|'uploading'|'error', error, row }
+        this.items = [];
         this.activeUploads = 0;
-        this.batchTotal = 0;      // files in the current batch
-        this.batchDone = 0;       // processed (succeeded + failed)
+        this.batchTotal = 0;
+        this.batchDone = 0;
+        this.thumbnailAttempts = 0;
+        this.thumbnailTimer = null;
     }
 
-    /* ---------- Drag & drop ---------- */
+    disconnect() {
+        this.stopThumbnailPolling();
+    }
 
     dragover(event) {
         event.preventDefault();
@@ -33,7 +40,6 @@ export default class extends Controller {
 
     dragleave(event) {
         event.preventDefault();
-        // Ignore dragleave fired when moving onto a child node of the dropzone.
         if (event.relatedTarget && this.dropzoneTarget.contains(event.relatedTarget)) {
             return;
         }
@@ -55,15 +61,12 @@ export default class extends Controller {
         this.inputTarget.value = '';
     }
 
-    /* ---------- Upload queue (bounded concurrency) ---------- */
-
     enqueueFiles(files) {
         const valid = Array.from(files).filter((file) => file && (file.size > 0 || file.type !== ''));
         if (valid.length === 0) {
             return;
         }
 
-        // Fresh batch once the previous one has fully drained (only leftover error rows remain).
         if (this.activeUploads === 0 && !this.items.some((item) => item.state !== 'error')) {
             this.items.forEach((item) => item.row && item.row.remove());
             this.items = [];
@@ -131,8 +134,6 @@ export default class extends Controller {
         }
     }
 
-    /* ---------- Progress window (max N rows) + counter ---------- */
-
     updateCounter() {
         if (!this.hasProgressCounterTarget) {
             return;
@@ -153,13 +154,11 @@ export default class extends Controller {
             return;
         }
 
-        // Prioritise in-flight uploads, then pending, then errors; cap to maxVisibleRows.
         const order = { uploading: 0, pending: 1, error: 2 };
         const visible = [...this.items]
             .sort((a, b) => order[a.state] - order[b.state])
             .slice(0, this.constructor.maxVisibleRows);
 
-        // Drop rows that fell out of the window.
         this.items.forEach((item) => {
             if (item.row && !visible.includes(item)) {
                 item.row.remove();
@@ -167,7 +166,6 @@ export default class extends Controller {
             }
         });
 
-        // Create/refresh visible rows in priority order.
         visible.forEach((item) => {
             if (!item.row) {
                 item.row = this.buildRow(item.file);
@@ -179,14 +177,14 @@ export default class extends Controller {
 
     buildRow(file) {
         const row = document.createElement('li');
-        row.className = 'staging-progress-item';
+        row.className = 'bulk-upload-progress-item';
 
         const name = document.createElement('span');
-        name.className = 'staging-progress-name';
+        name.className = 'bulk-upload-progress-name';
         name.textContent = file.name;
 
         const status = document.createElement('span');
-        status.className = 'staging-progress-status';
+        status.className = 'bulk-upload-progress-status';
 
         row.append(name, status);
 
@@ -195,7 +193,7 @@ export default class extends Controller {
 
     applyRowState(item) {
         item.row.dataset.state = item.state;
-        const status = item.row.querySelector('.staging-progress-status');
+        const status = item.row.querySelector('.bulk-upload-progress-status');
         if (status) {
             status.textContent = item.state === 'uploading'
                 ? 'Uploading…'
@@ -203,7 +201,49 @@ export default class extends Controller {
         }
     }
 
-    /* ---------- Media viewer ---------- */
+    pendingThumbnailTargetConnected() {
+        this.thumbnailAttempts = 0;
+        if (!this.thumbnailTimer) {
+            this.thumbnailTimer = setTimeout(() => this.pollThumbnails(), THUMBNAIL_POLL_INTERVAL);
+        }
+    }
+
+    pollThumbnails() {
+        this.thumbnailTimer = null;
+
+        if (this.pendingThumbnailTargets.length === 0) {
+            return;
+        }
+
+        this.pendingThumbnailTargets.forEach((image) => this.probeThumbnail(image));
+
+        this.thumbnailAttempts += 1;
+        if (this.thumbnailAttempts < THUMBNAIL_POLL_ATTEMPTS) {
+            this.thumbnailTimer = setTimeout(() => this.pollThumbnails(), THUMBNAIL_POLL_INTERVAL);
+        }
+    }
+
+    probeThumbnail(image) {
+        const source = image.dataset.thumbnailSrc;
+        if (!source) {
+            return;
+        }
+
+        const probe = new Image();
+        probe.onload = () => {
+            image.src = source;
+            delete image.dataset.thumbnailSrc;
+            image.removeAttribute('data-bulk-upload-target');
+        };
+        probe.src = source;
+    }
+
+    stopThumbnailPolling() {
+        if (this.thumbnailTimer) {
+            clearTimeout(this.thumbnailTimer);
+            this.thumbnailTimer = null;
+        }
+    }
 
     openViewer(event) {
         const { mediaSrc, mediaMimetype } = event.currentTarget.dataset;
@@ -215,7 +255,7 @@ export default class extends Controller {
         if (this.constructor.videoMimetypes.includes(mediaMimetype)) {
             media = document.createElement('video');
             media.setAttribute('controls', '');
-            media.muted = true; // required for reliable autoplay
+            media.muted = true;
             media.setAttribute('autoplay', '');
             media.src = mediaSrc;
         } else {
@@ -242,7 +282,7 @@ export default class extends Controller {
                     return;
                 }
                 const grid = document.createElement('div');
-                grid.className = 'grid grid-posts staged-duplicates';
+                grid.className = 'grid grid-posts bulk-upload-duplicates';
                 grid.innerHTML = items.join('');
                 this.viewerContentTarget.replaceChildren(grid);
                 this.viewerTarget.classList.add('is-active');
@@ -252,7 +292,6 @@ export default class extends Controller {
 
     closeViewer() {
         this.viewerTarget.classList.remove('is-active');
-        // Clearing the content stops any playing video.
         this.viewerContentTarget.replaceChildren();
     }
 
@@ -262,10 +301,7 @@ export default class extends Controller {
         }
     }
 
-    /* ---------- Selection ---------- */
-
     toggleSelection() {
-        // Selection state is read on demand by the bulk actions; nothing to toggle visually.
     }
 
     selectAll() {
@@ -280,10 +316,8 @@ export default class extends Controller {
     selectedIds() {
         return this.cardTargets
             .filter((card) => card.querySelector('input[type=checkbox]')?.checked)
-            .map((card) => card.dataset.stagedId);
+            .map((card) => card.dataset.bulkUploadId);
     }
-
-    /* ---------- Bulk actions ---------- */
 
     assignSelected() {
         this.assign(this.selectedIds());
@@ -293,20 +327,21 @@ export default class extends Controller {
         this.remove(this.selectedIds());
     }
 
-    /* ---------- Individual actions ---------- */
-
     assignOne(event) {
-        this.assign([event.currentTarget.dataset.stagedId]);
+        this.assign([event.currentTarget.dataset.bulkUploadId]);
     }
 
     deleteOne(event) {
-        this.remove([event.currentTarget.dataset.stagedId]);
+        this.remove([event.currentTarget.dataset.bulkUploadId]);
     }
-
-    /* ---------- HTTP ---------- */
 
     assign(ids) {
         if (ids.length === 0) {
+            return;
+        }
+
+        if (!this.hasBoardTarget) {
+            this.notifyError('Select a board first');
             return;
         }
 
@@ -356,7 +391,7 @@ export default class extends Controller {
     }
 
     removeCard(id) {
-        const card = this.cardTargets.find((element) => element.dataset.stagedId === id);
+        const card = this.cardTargets.find((element) => element.dataset.bulkUploadId === id);
         if (card) {
             card.remove();
         }

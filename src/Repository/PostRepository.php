@@ -6,10 +6,9 @@ namespace App\Repository;
 
 use App\Entity\Board;
 use App\Entity\Post;
-use App\Entity\Tag;
-use App\Enum\TagCategory;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Collections\Criteria;
+use Doctrine\Common\Collections\Order;
+use Doctrine\DBAL\ParameterType;
 use Doctrine\Persistence\ManagerRegistry;
 
 class PostRepository extends ServiceEntityRepository
@@ -17,34 +16,6 @@ class PostRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Post::class);
-    }
-
-    /**
-     * Returns posts that have no "real" tag, i.e. no tag whose category is anything other than meta.
-     * A post tagged only with meta tags (audio, video, animated, ...) — or with no tag at all — counts as untagged.
-     *
-     * @return Post[]
-     */
-    public function findWithoutTags(): array
-    {
-        $realTagQuery = $this->getEntityManager()
-            ->createQueryBuilder()
-            ->select('1')
-            ->from(Tag::class, 'realTag')
-            ->join('realTag.posts', 'taggedPost')
-            ->where('taggedPost = post')
-            ->andWhere('realTag.category IS NULL OR realTag.category != :metaCategory')
-            ->getDQL()
-        ;
-
-        return $this
-            ->createQueryBuilder('post')
-            ->where(sprintf('NOT EXISTS (%s)', $realTagQuery))
-            ->orderBy('post.createdAt', Criteria::DESC)
-            ->setParameter('metaCategory', TagCategory::META->value)
-            ->getQuery()
-            ->getResult()
-        ;
     }
 
     public function filterByTags(Board $board, string $tags, $page, int $postPerPage): array
@@ -57,7 +28,7 @@ class PostRepository extends ServiceEntityRepository
         $qb = $this
             ->createQueryBuilder('post')
             ->where('post.board = :board')
-            ->orderBy('post.createdAt', \Doctrine\Common\Collections\Criteria::DESC)
+            ->orderBy('post.createdAt', Order::Descending->value)
             ->setFirstResult(($page - 1) * $postPerPage)
             ->setMaxResults($postPerPage)
             ->setParameter('board', $board)
@@ -104,33 +75,87 @@ class PostRepository extends ServiceEntityRepository
         return $result === [] ? 0 : $result[0]['count'];
     }
 
-    public function findSimilarByVector(string $vector, float $maxDistance = 0.3, int $limit = 3): array {
+    public function findSimilarByVector(string $vector, int $maxHamming = 10, int $limit = 3): array {
         $conn = $this->getEntityManager()->getConnection();
 
-        // Use L2 distance operator <->
-        // Lower distance = more similar
         $sql = "
-            SELECT 
+            SELECT
                 post.id,
                 post.path,
+                post.thumbnail_path,
                 post.mimetype,
                 post.created_at AS created_at,
-                (1 - (post.vector <-> :vector)) * 100 as distance,
+                (1 - power(post.vector <-> :vector, 2) / 64) * 100 as distance,
                 board.id AS board_id,
                 board.slug AS board_slug
             FROM men_post post
-            LEFT JOIN men_board board ON post.board_id = board.id 
+            LEFT JOIN men_board board ON post.board_id = board.id
             WHERE post.vector IS NOT NULL
-            AND post.vector <-> :vector < :max_distance
+            AND power(post.vector <-> :vector, 2) <= :max_hamming
             ORDER BY post.vector <-> :vector
             LIMIT :limit
         ";
 
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(':vector', $vector);
-        $stmt->bindValue(':max_distance', $maxDistance);
-        $stmt->bindValue(':limit', $limit);
+        $stmt->bindValue(':max_hamming', $maxHamming, ParameterType::INTEGER);
+        $stmt->bindValue(':limit', $limit, ParameterType::INTEGER);
 
         return $stmt->executeQuery()->fetchAllAssociative();
+    }
+
+    public function findWithoutVectorIterable(): iterable
+    {
+        return $this->createQueryBuilder('p')
+            ->where('p.vector IS NULL')
+            ->getQuery()
+            ->toIterable();
+    }
+
+    public function findWithoutThumbnailIterable(): iterable
+    {
+        return $this->createQueryBuilder('p')
+            ->where('p.thumbnailPath IS NULL')
+            ->andWhere('p.path IS NOT NULL')
+            ->getQuery()
+            ->toIterable();
+    }
+
+    public function countWithoutThumbnail(): int
+    {
+        return (int) $this->createQueryBuilder('p')
+            ->select('COUNT(p.id)')
+            ->where('p.thumbnailPath IS NULL')
+            ->andWhere('p.path IS NOT NULL')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    public function thumbnailPaths(): array
+    {
+        return array_map('strval', $this->createQueryBuilder('p')
+            ->select('p.thumbnailPath')
+            ->where('p.thumbnailPath IS NOT NULL')
+            ->getQuery()
+            ->getSingleColumnResult());
+    }
+
+    public function countWithoutVector(): int
+    {
+        return (int) $this->createQueryBuilder('p')
+            ->select('COUNT(p.id)')
+            ->where('p.vector IS NULL')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    public function findAllIterable(): iterable
+    {
+        return $this->createQueryBuilder('p')->getQuery()->toIterable();
+    }
+
+    public function countAll(): int
+    {
+        return (int) $this->createQueryBuilder('p')->select('COUNT(p.id)')->getQuery()->getSingleScalarResult();
     }
 }

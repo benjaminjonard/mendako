@@ -1,6 +1,7 @@
 monolog:
     channels:
         - deprecation # Deprecations are logged in the dedicated "deprecation" channel when it exists
+        - jobs # background jobs (thumbnails, duplicate-detection vectors)
 
 when@dev:
     monolog:

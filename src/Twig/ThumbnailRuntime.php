@@ -4,24 +4,34 @@ declare(strict_types=1);
 
 namespace App\Twig;
 
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use App\Service\ThumbnailStorage;
 use Twig\Attribute\AsTwigFilter;
 use Twig\Extension\RuntimeExtensionInterface;
 
 class ThumbnailRuntime implements RuntimeExtensionInterface
 {
     public function __construct(
-        #[Autowire('%kernel.project_dir%/public')] private readonly string $publicPath
-    ) {}
+        private readonly ThumbnailStorage $thumbnailStorage,
+    ) {
+    }
 
     #[AsTwigFilter('thumbnail')]
-    public function thumbnail(?string $path, int $width, bool $round = false): string
+    public function thumbnail(?string $thumbnailPath, bool $round = false): string
     {
-        $fullImagePath = $this->publicPath . '/' . $path;
-        if ($path === null || !file_exists($fullImagePath)) {
+        if ($thumbnailPath === null || $thumbnailPath === '') {
             return $round ? 'build/images/default-round.png' : 'build/images/default.png';
         }
 
-        return "upload.php?width={$width}&path={$path}";
+        return $thumbnailPath;
+    }
+
+    #[AsTwigFilter('expected_thumbnail')]
+    public function expectedThumbnail(?string $uploadPath, ?string $mimetype): ?string
+    {
+        if ($uploadPath === null || $uploadPath === '') {
+            return null;
+        }
+
+        return $this->thumbnailStorage->relativePathFor($uploadPath, $mimetype);
     }
 }

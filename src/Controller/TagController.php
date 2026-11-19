@@ -4,27 +4,41 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Entity\Post;
 use App\Entity\Tag;
-use App\Form\DataTransformer\StringToTagTransformer;
+use App\Enum\TagCategory;
 use App\Form\Type\TagType;
-use App\Repository\PostRepository;
 use App\Repository\TagRepository;
+use App\Service\PaginatorFactory;
+use App\Service\TagMerger;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TagController extends AbstractController
 {
     #[Route(path: '/tags', name: 'app_tag_index', methods: ['GET'])]
-    public function index(TagRepository $tagRepository): Response
+    public function index(Request $request, TagRepository $tagRepository, PaginatorFactory $paginatorFactory): Response
     {
-        $tags = $tagRepository->findWithCounters();
+        $page = max(1, $request->query->getInt('page', 1));
+        $search = trim($request->query->getString('q'));
+        $category = TagCategory::tryFrom($request->query->getString('category'));
+
+        $sort = $request->query->getString('sort', 'name');
+        $direction = strtoupper($request->query->getString('dir')) === 'DESC' ? 'DESC' : 'ASC';
+
+        $perPage = $paginatorFactory->getPaginationItemsPerPage();
 
         return $this->render('App/Tag/index.html.twig', [
-            'tags' => $tags,
+            'tags' => $tagRepository->findPaginated($page, $perPage, $search, $category, $sort, $direction),
+            'paginator' => $paginatorFactory->generate($tagRepository->countFiltered($search, $category)),
+            'search' => $search,
+            'category' => $category,
+            'sort' => $sort,
+            'direction' => $direction,
+            'categories' => TagCategory::cases(),
         ]);
     }
 
@@ -43,38 +57,6 @@ class TagController extends AbstractController
         }, $tagRepository->findLike($query));
 
         return $this->json($tags);
-    }
-
-    #[Route(path: '/tags/untagged', name: 'app_tag_untagged', methods: ['GET'])]
-    public function untagged(PostRepository $postRepository): Response
-    {
-        return $this->render('App/Tag/untagged.html.twig', [
-            'posts' => $postRepository->findWithoutTags(),
-        ]);
-    }
-
-    #[Route(path: '/tags/untagged/{id}', name: 'app_tag_untagged_add', methods: ['POST'])]
-    public function untaggedAdd(
-        Request $request,
-        TranslatorInterface $translator,
-        ManagerRegistry $managerRegistry,
-        StringToTagTransformer $stringToTagTransformer,
-        Post $post,
-    ): Response {
-        if (!$this->isCsrfTokenValid('untag_post', (string) $request->request->get('_token'))) {
-            return $this->redirectToRoute('app_tag_untagged');
-        }
-
-        foreach ($stringToTagTransformer->reverseTransform((string) $request->request->get('tags')) as $tag) {
-            $post->addTag($tag);
-        }
-
-        $managerRegistry->getManager()->persist($post);
-        $managerRegistry->getManager()->flush();
-
-        $this->addFlash('notice', $translator->trans('message.post_edited'));
-
-        return $this->redirectToRoute('app_tag_untagged');
     }
 
     #[Route(path: '/tags/{id}/edit', name: 'app_tag_edit', methods: ['GET', 'POST'])]
@@ -99,6 +81,44 @@ class TagController extends AbstractController
             'tag' => $tag,
             'form' => $form,
         ]);
+    }
+
+    #[Route(path: '/tags/{id}/merge', name: 'app_tag_merge', methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function merge(
+        Request $request,
+        TranslatorInterface $translator,
+        TagRepository $tagRepository,
+        TagMerger $tagMerger,
+        Tag $tag,
+    ): Response {
+        if (!$this->isCsrfTokenValid('tag_merge', $request->request->getString('_token'))) {
+            throw $this->createAccessDeniedException('Invalid CSRF token');
+        }
+
+        $names = array_unique(array_filter(
+            preg_split('/\s+/', trim($request->request->getString('tags'))) ?: [],
+            static fn (string $name): bool => $name !== '',
+        ));
+
+        $sources = [];
+        foreach ($names as $name) {
+            $source = $tagRepository->findOneBy(['name' => $name]);
+            if ($source !== null && $source->getId() !== $tag->getId()) {
+                $sources[] = $source;
+            }
+        }
+
+        $merged = $tagMerger->merge($tag, $sources);
+
+        if ($merged > 0) {
+            $this->addFlash('notice', $translator->trans('message.tags_merged', [
+                'count' => $merged,
+                'tag' => '&nbsp;<strong>'.$tag->getName().'</strong>&nbsp;',
+            ]));
+        }
+
+        return $this->redirectToRoute('app_tag_index');
     }
 
     #[Route(path: '/tags/{id}/delete', name: 'app_tag_delete', methods: ['POST'])]
