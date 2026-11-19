@@ -10,6 +10,7 @@ services:
         environment:
             - APP_ENV=dev
             - APP_DEBUG=1
+            - APP_SECRET=changeMe
             - DB_DRIVER=pdo_pgsql
             - DB_NAME=mendako
             - DB_HOST=postgresql
