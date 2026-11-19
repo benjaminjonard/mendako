@@ -5,6 +5,11 @@ on:
       version:
         description: 'Git tag / version to build (e.g. 1.4.1)'
         required: true
+  workflow_call:
+    inputs:
+      version:
+        type: string
+        required: true
   release:
     types: [published]
 
@@ -23,6 +28,13 @@ jobs:
           repository: benjaminjonard/mendako
           ref: ${{ env.VERSION }}
           token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get base image digest
+        id: base_image
+        run: |
+          name=$(grep -m1 '^FROM' Dockerfile | awk '{print $2}')
+          echo "name=$name" >> "$GITHUB_OUTPUT"
+          echo "digest=$(docker buildx imagetools inspect "$name" --format '{{.Manifest.Digest}}')" >> "$GITHUB_OUTPUT"
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v4
@@ -43,6 +55,9 @@ jobs:
           push: true
           tags: docker.io/benjaminjonard/mendako,docker.io/benjaminjonard/mendako:latest,docker.io/benjaminjonard/mendako:${{ env.VERSION }}
           platforms: linux/amd64,linux/arm64
+          labels: |
+            org.opencontainers.image.base.name=${{ steps.base_image.outputs.name }}
+            org.opencontainers.image.base.digest=${{ steps.base_image.outputs.digest }}
 
       - name: Build and push ML sidecar
         uses: docker/build-push-action@v7
