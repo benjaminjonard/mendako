@@ -11,20 +11,16 @@ class PaginatorTest extends WebTestCase
 {
     public function test_paginator_middle_page(): void
     {
-        // Arrange
         $paginator = new Paginator(200, 20, 5, '/animals/posts');
 
-        // Act
-
-        // Assert
         $this->assertEquals([
-            ["num" => 1, "url" => "/animals/posts?page=1", "isCurrent" => false],  // first page
+            ["num" => 1, "url" => "/animals/posts?page=1", "isCurrent" => false],
             ["num" => '...', "url" => null, "isCurrent" => false],
-            ["num" => 4, "url" => "/animals/posts?page=4", "isCurrent" => false],  // previous page
-            ["num" => 5, "url" => "/animals/posts?page=5", "isCurrent" => true],   // current page
-            ["num" => 6, "url" => "/animals/posts?page=6", "isCurrent" => false],  // next page
+            ["num" => 4, "url" => "/animals/posts?page=4", "isCurrent" => false],
+            ["num" => 5, "url" => "/animals/posts?page=5", "isCurrent" => true],
+            ["num" => 6, "url" => "/animals/posts?page=6", "isCurrent" => false],
             ["num" => '...', "url" => null, "isCurrent" => false],
-            ["num" => 10, "url" => "/animals/posts?page=10", "isCurrent" => false], // last page
+            ["num" => 10, "url" => "/animals/posts?page=10", "isCurrent" => false],
         ], $paginator->getPages());
         $this->assertSame(5, $paginator->getMaxPagesToShow());
         $this->assertSame(5, $paginator->getCurrentPage());
@@ -39,12 +35,8 @@ class PaginatorTest extends WebTestCase
 
     public function test_paginator_first_page(): void
     {
-        // Arrange
         $paginator = new Paginator(200, 20, 1, '/animals/posts');
 
-        // Act
-
-        // Assert
         $this->assertEquals([
             ["num" => 1, "url" => "/animals/posts?page=1", "isCurrent" => true],
             ["num" => 2, "url" => "/animals/posts?page=2", "isCurrent" => false],
@@ -66,12 +58,8 @@ class PaginatorTest extends WebTestCase
 
     public function test_paginator_last_page(): void
     {
-        // Arrange
         $paginator = new Paginator(200, 20, 10, '/animals/posts');
 
-        // Act
-
-        // Assert
         $this->assertEquals([
             ["num" => 1, "url" => "/animals/posts?page=1", "isCurrent" => false],
             ["num" => '...', "url" => null, "isCurrent" => false],
@@ -93,7 +81,6 @@ class PaginatorTest extends WebTestCase
 
     public function test_paginator_only_one_page(): void
     {
-        // Arrange
         $paginator = new Paginator(3, 20, 1, '/animals/posts');
         $this->assertSame([], $paginator->getPages());
         $this->assertSame(5, $paginator->getMaxPagesToShow());
@@ -109,7 +96,6 @@ class PaginatorTest extends WebTestCase
 
     public function test_paginator_small_number_of_pages(): void
     {
-        // Arrange
         $paginator = new Paginator(25, 20, 1, '/animals/posts');
         $this->assertEquals([
             ["num" => 1, "url" => "/animals/posts?page=1", "isCurrent" => true],
@@ -128,7 +114,6 @@ class PaginatorTest extends WebTestCase
 
     public function test_paginator_current_page_near_end(): void
     {
-        // Arrange
         $paginator = new Paginator(200, 20, 9, '/animals/posts');
         $this->assertEquals([
             ["num" => 1, "url" => "/animals/posts?page=1", "isCurrent" => false],

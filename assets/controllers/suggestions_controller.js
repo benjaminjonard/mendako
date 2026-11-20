@@ -4,9 +4,9 @@ export default class extends Controller {
     static targets = ['input'];
 
     fillInputWithSuggestion(event) {
-        let suggestion = event.target.dataset.suggestion;
-        if (!this.inputTarget.value.includes(suggestion)) {
-            this.inputTarget.value += ' ' + suggestion;
+        const suggestion = event.currentTarget.dataset.suggestion;
+        if (!this.inputTarget.value.split(' ').includes(suggestion)) {
+            this.inputTarget.value = (this.inputTarget.value + ' ' + suggestion).trim();
         }
     }
 }

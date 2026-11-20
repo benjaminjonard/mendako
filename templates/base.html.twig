@@ -35,15 +35,15 @@
         <meta name="apple-mobile-web-app-title" content="Koillection">
 
         {% block stylesheets %}
-            {{ encore_entry_link_tags('app') }}
+            {{ reprise_entry_link_tags('app') }}
 
             {% if app.user is null or app.user.theme == 'browser' %}
-                {{ encore_entry_link_tags("dark", null, '_default', {media: '(prefers-color-scheme: dark)'}) }}
+                {{ reprise_entry_link_tags('dark', attributes={media: '(prefers-color-scheme: dark)'}) }}
             {% endif %}
         {% endblock %}
 
         {% block javascripts %}
-            {{ encore_entry_script_tags('app') }}
+            {{ reprise_entry_script_tags('app') }}
         {% endblock %}
     </head>
     <body>

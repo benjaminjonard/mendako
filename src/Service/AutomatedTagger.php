@@ -6,21 +6,17 @@ namespace App\Service;
 
 use App\Entity\Post;
 use App\Repository\TagRepository;
-use FFMpeg\FFMpeg;
-use FFMpeg\FFProbe\DataMapping\Stream;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 class AutomatedTagger
 {
     public function __construct(
-        private readonly TagRepository $tagRepository,
-        #[Autowire('%kernel.project_dir%/public')] private readonly string $publicPath
+        private readonly TagRepository $tagRepository
     ) {
     }
 
     public function tag(Post $post): void
     {
-        if ($post->getMimetype() === 'video/mp4' || $post->getMimetype() === 'video/webm') {
+        if ($post->getMimetype() === 'video/mp4' || $post->getMimetype() === 'video/webm' || $post->getMimetype() === 'video/x-m4v') {
             $this->animated($post);
             $this->withSound($post);
             $this->video($post);
@@ -52,11 +48,11 @@ class AutomatedTagger
 
     private function withSound(Post $post): void
     {
-        $ffmpeg = FFMpeg::create();
-        $video = $ffmpeg->open($this->publicPath.'/'.$post->getPath());
-        if ($video->getStreams()->audios()->first() instanceof Stream) {
-            $withSound = $this->tagRepository->findOneBy(['name' => 'with_sound']);
-            $post->addTag($withSound);
+        if (!$post->hasSound()) {
+            return;
         }
+
+        $withSound = $this->tagRepository->findOneBy(['name' => 'with_sound']);
+        $post->addTag($withSound);
     }
 }

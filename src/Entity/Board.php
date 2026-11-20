@@ -17,7 +17,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: BoardRepository::class)]
 #[ORM\Table(name: 'men_board')]
 #[UniqueEntity(fields: ['name'], message: 'error.name.not_unique')]
-class Board
+class Board implements ThumbnailableInterface
 {
     #[ORM\Id]
     #[ORM\Column(type: Types::STRING, length: 36, unique: true, options: ['fixed' => true])]
@@ -34,6 +34,9 @@ class Board
     #[ORM\ManyToOne(targetEntity: Post::class, cascade: ['all'])]
     #[ORM\JoinColumn(onDelete: 'SET NULL')]
     private ?Post $thumbnail = null;
+
+    #[ORM\Column(type: Types::STRING, nullable: true)]
+    private ?string $thumbnailPath = null;
 
     #[ORM\OneToMany(targetEntity: Post::class, mappedBy: 'board', cascade: ['all'], fetch: 'EXTRA_LAZY')]
     private Collection $posts;
@@ -89,6 +92,18 @@ class Board
     public function setThumbnail(?Post $thumbnail): Board
     {
         $this->thumbnail = $thumbnail;
+
+        return $this;
+    }
+
+    public function getThumbnailPath(): ?string
+    {
+        return $this->thumbnailPath;
+    }
+
+    public function setThumbnailPath(?string $thumbnailPath): Board
+    {
+        $this->thumbnailPath = $thumbnailPath;
 
         return $this;
     }

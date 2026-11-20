@@ -427,7 +427,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         resources?: Param|string|array<string, scalar|Param|null>,
  *     },
  *     messenger?: bool|array{ // Messenger configuration
- *         enabled?: bool|Param, // Default: false
+ *         enabled?: bool|Param, // Default: true
  *         routing?: array<string, Param|string|list<scalar|Param|null>>,
  *         serializer?: array{
  *             default_serializer?: scalar|Param|null, // Service id to use as the default serializer for the transports. // Default: "messenger.transport.native_php_serializer"
@@ -471,7 +471,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *     },
  *     disallow_search_engine_index?: bool|Param, // Enabled by default when debug is enabled. // Default: true
  *     http_client?: bool|array{ // HTTP Client configuration
- *         enabled?: bool|Param, // Default: false
+ *         enabled?: bool|Param, // Default: true
  *         max_host_connections?: int|Param, // The maximum number of connections to a single host.
  *         default_options?: array{
  *             headers?: array<string, mixed>,
@@ -1005,6 +1005,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  * }
  * @psalm-type MonologConfig = array{
  *     use_microseconds?: scalar|Param|null, // Default: true
+ *     timezone?: string|Param, // The timezone used for the timestamp of every log record (e.g. "UTC" or "Europe/Paris"). Defaults to the PHP default timezone. // Default: null
  *     channels?: list<scalar|Param|null>,
  *     handlers?: array<string, array{ // Default: []
  *         type?: scalar|Param|null,
@@ -1016,6 +1017,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         interactive_only?: bool|Param, // Default: false
  *         app_name?: scalar|Param|null, // Default: null
  *         include_stacktraces?: bool|Param, // Default: false
+ *         base_path?: scalar|Param|null, // Default: null
  *         process_psr_3_messages?: array{
  *             enabled?: bool|Param|null, // Default: null
  *             date_format?: scalar|Param|null,
@@ -1027,7 +1029,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         use_locking?: bool|Param, // Default: false
  *         filename_format?: scalar|Param|null, // Default: "{filename}-{date}"
  *         date_format?: scalar|Param|null, // Default: "Y-m-d"
- *         ident?: scalar|Param|null, // Default: false
+ *         ident?: scalar|Param|null, // Default: "php"
  *         logopts?: scalar|Param|null, // Default: 1
  *         facility?: scalar|Param|null, // Default: "user"
  *         max_files?: scalar|Param|null, // Default: 0
@@ -1064,6 +1066,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         title?: scalar|Param|null, // Default: null
  *         host?: scalar|Param|null, // Default: null
  *         port?: scalar|Param|null, // Default: 514
+ *         rfc?: scalar|Param|null, // Default: 1
  *         config?: list<scalar|Param|null>,
  *         members?: list<scalar|Param|null>,
  *         connection_string?: scalar|Param|null,
@@ -1074,6 +1077,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         connection_timeout?: scalar|Param|null,
  *         persistent?: bool|Param,
  *         message_type?: scalar|Param|null, // Default: 0
+ *         expand_newlines?: bool|Param, // Default: false
  *         parse_mode?: scalar|Param|null, // Default: null
  *         disable_webpage_preview?: bool|Param|null, // Default: null
  *         disable_notification?: bool|Param|null, // Default: null
@@ -1120,7 +1124,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *             database?: scalar|Param|null, // Default: 0
  *             key_name?: scalar|Param|null, // Default: "monolog_redis"
  *         },
- *         predis?: Param|string|array{
+ *         predis?: Param|string|array{ // Deprecated: The "predis" option is deprecated and ignored, use the "redis" option to configure the Predis client.
  *             id?: scalar|Param|null,
  *             host?: scalar|Param|null,
  *         },
@@ -1129,6 +1133,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         subject?: scalar|Param|null,
  *         content_type?: scalar|Param|null, // Default: null
  *         headers?: list<scalar|Param|null>,
+ *         parameters?: list<scalar|Param|null>,
  *         mailer?: scalar|Param|null, // Default: null
  *         email_prototype?: Param|string|array{
  *             id?: scalar|Param|null,
@@ -1155,15 +1160,16 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *     dump_destination?: scalar|Param|null, // A stream URL where dumps should be written to. // Default: null
  *     theme?: "dark"|"light"|Param, // Changes the color of the dump() output when rendered directly on the templating. "dark" (default) or "light". // Default: "dark"
  * }
- * @psalm-type WebpackEncoreConfig = array{
- *     output_path?: scalar|Param|null, // The path where Encore is building the assets - i.e. Encore.setOutputPath()
- *     crossorigin?: false|"anonymous"|"use-credentials"|Param, // crossorigin value when Encore.enableIntegrityHashes() is used, can be false (default), anonymous or use-credentials // Default: false
- *     preload?: bool|Param, // preload all rendered script and link tags automatically via the http2 Link header. // Default: false
- *     cache?: bool|Param, // Enable caching of the entry point file(s) // Default: false
- *     strict_mode?: bool|Param, // Throw an exception if the entrypoints.json file is missing or an entry is missing from the data // Default: true
+ * @psalm-type RepriseConfig = array{
+ *     output_path?: scalar|Param|null, // Directory where the @symfony/reprise plugin writes entrypoints.json and manifest.json. Set to false to only use named "builds". // Default: "%kernel.project_dir%/public/build"
  *     builds?: array<string, scalar|Param|null>,
- *     script_attributes?: array<string, scalar|Param|null>,
- *     link_attributes?: array<string, scalar|Param|null>,
+ *     strict_mode?: bool|Param, // Throw when the entrypoints.json file or a requested entry is missing. // Default: true
+ *     cache?: bool|Param, // Cache the parsed entrypoints.json in a compiled PHP file (warmed at cache:warmup). Enable in production; requires symfony/cache. // Default: false
+ *     preload?: bool|Param, // Register rendered assets as WebLink Link: headers (HTTP/2 preload). No-op when symfony/web-link is absent. // Default: true
+ *     asset_package?: scalar|Param|null, // Name of a framework.assets package used to resolve entry URLs (must have no version strategy). Null uses the default package. // Default: null
+ *     crossorigin?: false|"anonymous"|"use-credentials"|Param, // crossorigin attribute added alongside SRI integrity: false, "anonymous", or "use-credentials". // Default: false
+ *     script_attributes?: list<mixed>,
+ *     link_attributes?: list<mixed>,
  * }
  * @psalm-type StofDoctrineExtensionsConfig = array{
  *     orm?: array<string, array{ // Default: []
@@ -1552,7 +1558,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         reset?: array{
  *             connections?: list<scalar|Param|null>,
  *             entity_managers?: list<scalar|Param|null>,
- *             mode?: \Zenstruck\Foundry\ORM\ResetDatabase\ResetDatabaseMode::SCHEMA|\Zenstruck\Foundry\ORM\ResetDatabase\ResetDatabaseMode::MIGRATE|Param, // Reset mode to use with ResetDatabase trait // Default: "schema"
+ *             mode?: \Zenstruck\Foundry\ORM\ResetDatabase\ResetDatabaseMode::SCHEMA|\Zenstruck\Foundry\ORM\ResetDatabase\ResetDatabaseMode::MIGRATE|"schema"|"migrate"|Param, // Reset mode to use with ResetDatabase trait // Default: "schema"
  *             migrations?: array{
  *                 configurations?: list<scalar|Param|null>,
  *             },
@@ -1593,7 +1599,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *     twig?: TwigConfig,
  *     twig_extra?: TwigExtraConfig,
  *     monolog?: MonologConfig,
- *     webpack_encore?: WebpackEncoreConfig,
+ *     reprise?: RepriseConfig,
  *     stof_doctrine_extensions?: StofDoctrineExtensionsConfig,
  *     security?: SecurityConfig,
  *     "when@dev"?: array{
@@ -1608,7 +1614,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         web_profiler?: WebProfilerConfig,
  *         monolog?: MonologConfig,
  *         debug?: DebugConfig,
- *         webpack_encore?: WebpackEncoreConfig,
+ *         reprise?: RepriseConfig,
  *         stof_doctrine_extensions?: StofDoctrineExtensionsConfig,
  *         security?: SecurityConfig,
  *         zenstruck_foundry?: ZenstruckFoundryConfig,
@@ -1624,7 +1630,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         twig?: TwigConfig,
  *         twig_extra?: TwigExtraConfig,
  *         monolog?: MonologConfig,
- *         webpack_encore?: WebpackEncoreConfig,
+ *         reprise?: RepriseConfig,
  *         stof_doctrine_extensions?: StofDoctrineExtensionsConfig,
  *         security?: SecurityConfig,
  *     },
@@ -1639,7 +1645,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         twig_extra?: TwigExtraConfig,
  *         web_profiler?: WebProfilerConfig,
  *         monolog?: MonologConfig,
- *         webpack_encore?: WebpackEncoreConfig,
+ *         reprise?: RepriseConfig,
  *         stof_doctrine_extensions?: StofDoctrineExtensionsConfig,
  *         security?: SecurityConfig,
  *         zenstruck_foundry?: ZenstruckFoundryConfig,

@@ -7,6 +7,8 @@ namespace App\Form\Type;
 use App\Entity\Board;
 use App\Entity\Post;
 use App\Form\DataTransformer\StringToTagTransformer;
+use App\Repository\BoardRepository;
+use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -47,7 +49,10 @@ class PostType extends AbstractType
                 'choice_label' => 'name',
                 'expanded' => false,
                 'multiple' => false,
-                'required' => true
+                'required' => true,
+                'query_builder' => static fn (BoardRepository $boardRepository): QueryBuilder => $boardRepository
+                    ->createQueryBuilder('b')
+                    ->orderBy('b.name', 'ASC'),
             ])
         ;
 

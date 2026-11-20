@@ -5,7 +5,6 @@ ENV APP_ENV=prod
 ENV PUID=1000
 ENV PGID=1000
 ENV USER=mendako
-ENV FRANKENPHP_CONFIG="worker /app/public/public/index.php"
 ENV FRANKENPHP_SERVER_NAME=":80"
 ENV APP_RUNTIME="Symfony\\Component\\Runtime\\SymfonyRuntime"
 ENV COMPOSER_ALLOW_SUPERUSER=1
@@ -26,6 +25,7 @@ RUN set -eux ; \
     git \
     unzip \
     ffmpeg \
+    supervisor \
     openssl ; \
     # Install PHP extensions \
     install-php-extensions opcache pdo_pgsql intl gd zip curl ; \
@@ -40,8 +40,16 @@ RUN set -eux ; \
     apt-get clean ; \
     rm -rf /var/lib/apt/lists/* ; \
     rm -rf /usr/local/bin/composer ; \
+    rm -rf /app/public/public/uploads /app/public/public/thumbnails ; \
+    mkdir -p /uploads /thumbnails /app/public/var ; \
+    ln -s /uploads /app/public/public/uploads ; \
+    ln -s /thumbnails /app/public/public/thumbnails ; \
     # Set permissions \
     chown -R "$USER":"$USER" /app/public ; \
+    chown -R "$USER":0 /app/public/var /uploads /thumbnails /data /config ; \
+    chgrp 0 /app/public ; \
+    chmod -R g=u /app/public/var /uploads /thumbnails /data /config ; \
+    chmod g=u /app/public ; \
     chmod +x /app/public/docker/entrypoint.sh ; \
     mkdir /run/php ; \
     # Add PHP config files \
@@ -56,7 +64,6 @@ COPY ./assets/ ./assets
 WORKDIR /app/assets
 
 RUN set -eux ; \
-    mkdir -p /app/public/build/ ; \
     npm install -g corepack ; \
     corepack enable ; \
     yarn --version ; \

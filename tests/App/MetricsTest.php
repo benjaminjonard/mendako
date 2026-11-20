@@ -27,13 +27,10 @@ class MetricsTest extends WebTestCase
 
     public function test_can_see_metrics(): void
     {
-        // Arrange
         $_ENV['APP_ENABLE_METRICS'] = 1;
 
-        // Act
         $this->client->request(Request::METHOD_GET, '/metrics');
 
-        // Assert
         $this->assertResponseIsSuccessful();
     }
 }

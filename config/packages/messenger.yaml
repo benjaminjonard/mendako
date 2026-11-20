@@ -1,0 +1,45 @@
+framework:
+    messenger:
+        failure_transport: failed
+
+        transports:
+            batch:
+                dsn: 'doctrine://default'
+                options:
+                    table_name: doctrine_messenger_message
+                    queue_name: batch
+                    auto_setup: false
+                retry_strategy:
+                    max_retries: 3
+                    delay: 1000
+                    multiplier: 2
+            thumbnails:
+                dsn: 'doctrine://default'
+                options:
+                    table_name: doctrine_messenger_message
+                    queue_name: thumbnails
+                    auto_setup: false
+                retry_strategy:
+                    max_retries: 3
+                    delay: 1000
+                    multiplier: 2
+            failed:
+                dsn: 'doctrine://default'
+                options:
+                    table_name: doctrine_messenger_message
+                    queue_name: failed
+                    auto_setup: false
+
+        routing:
+            'App\Message\GenerateThumbnailMessage': thumbnails
+            'App\Message\GenerateVectorMessage': batch
+            'App\Message\EnqueueVectorBacklogMessage': batch
+            'App\Message\EnqueueThumbnailBacklogMessage': batch
+
+when@test:
+    framework:
+        messenger:
+            transports:
+                batch: 'in-memory://'
+                thumbnails: 'in-memory://'
+                failed: 'in-memory://'

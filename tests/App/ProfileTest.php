@@ -27,11 +27,9 @@ class ProfileTest extends WebTestCase
 
     public function test_can_edit_profile(): void
     {
-        // Arrange
         $user = UserFactory::createOne();
         $this->client->loginUser($user);
 
-        // Act
         $this->client->request(Request::METHOD_GET, '/profile');
         $this->client->submitForm('Submit', [
             'user[username]' => 'Stitch',
@@ -40,7 +38,6 @@ class ProfileTest extends WebTestCase
             'user[plainPassword][second]' => 'testtest1234',
         ]);
 
-        // Assert
         $this->assertResponseIsSuccessful();
         UserFactory::assert()->exists(['username' => 'Stitch', 'email' => 'stitch@koillection.com']);
     }
