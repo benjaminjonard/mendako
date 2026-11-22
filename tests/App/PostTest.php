@@ -6,11 +6,11 @@ namespace App\Tests\App;
 
 use App\Tests\Factory\BoardFactory;
 use App\Tests\Factory\PostFactory;
+use App\Tests\Factory\TagFactory;
 use App\Tests\Factory\UserFactory;
+use App\Tests\FileTrait;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
@@ -18,6 +18,7 @@ use Zenstruck\Foundry\Test\ResetDatabase;
 class PostTest extends WebTestCase
 {
     use Factories;
+    use FileTrait;
     use ResetDatabase;
 
     private KernelBrowser $client;
@@ -34,10 +35,7 @@ class PostTest extends WebTestCase
         $user = UserFactory::createOne();
         $this->client->loginUser($user);
         $board = BoardFactory::createOne();
-        $filesystem = new Filesystem();
-        $uniqId = uniqid();
-        $filesystem->copy(__DIR__.'/../../assets/fixtures/nyancat.png', "/tmp/{$uniqId}.png");
-        $uploadedFile = new UploadedFile("/tmp/{$uniqId}.png", "{$uniqId}.png", test: true);
+        $uploadedFile = $this->createFile('png');
         $post = PostFactory::createOne(['board' => $board, 'file' => $uploadedFile, 'uploadedBy' => $user]);
 
         $this->client->request(Request::METHOD_GET, '/boards/'.$board->getSlug(). '/'.$post->getId());
@@ -51,10 +49,7 @@ class PostTest extends WebTestCase
         $user = UserFactory::createOne();
         $this->client->loginUser($user);
         $board = BoardFactory::createOne();
-        $filesystem = new Filesystem();
-        $uniqId = uniqid();
-        $filesystem->copy(__DIR__.'/../../assets/fixtures/nyancat.png', "/tmp/{$uniqId}.png");
-        $uploadedFile = new UploadedFile("/tmp/{$uniqId}.png", "{$uniqId}.png", test: true);
+        $uploadedFile = $this->createFile('png');
         $post = PostFactory::createOne(['board' => $board, 'file' => $uploadedFile, 'uploadedBy' => $user]);
 
         $this->client->request(Request::METHOD_GET, '/boards/'.$board->getSlug(). '/' . $post->getId() .'/edit');
@@ -72,10 +67,7 @@ class PostTest extends WebTestCase
         $this->client->loginUser($user);
         $board = BoardFactory::createOne();
         $newBoard = BoardFactory::createOne();
-        $filesystem = new Filesystem();
-        $uniqId = uniqid();
-        $filesystem->copy(__DIR__.'/../../assets/fixtures/nyancat.png', "/tmp/{$uniqId}.png");
-        $uploadedFile = new UploadedFile("/tmp/{$uniqId}.png", "{$uniqId}.png", test: true);
+        $uploadedFile = $this->createFile('png');
         $post = PostFactory::createOne(['board' => $board, 'file' => $uploadedFile, 'uploadedBy' => $user]);
         $filename = basename($post->getPath());
 
@@ -96,10 +88,7 @@ class PostTest extends WebTestCase
         $user = UserFactory::createOne();
         $this->client->loginUser($user);
         $board = BoardFactory::createOne();
-        $filesystem = new Filesystem();
-        $uniqId = uniqid();
-        $filesystem->copy(__DIR__.'/../../assets/fixtures/nyancat.png', "/tmp/{$uniqId}.png");
-        $uploadedFile = new UploadedFile("/tmp/{$uniqId}.png", "{$uniqId}.png", test: true);
+        $uploadedFile = $this->createFile('png');
         $post = PostFactory::createOne(['board' => $board, 'file' => $uploadedFile, 'uploadedBy' => $user]);
 
         $this->client->request(Request::METHOD_GET, '/boards/'.$board->getSlug(). '/' . $post->getId());
@@ -114,10 +103,7 @@ class PostTest extends WebTestCase
         $user = UserFactory::createOne();
         $this->client->loginUser($user);
         $board = BoardFactory::createOne();
-        $filesystem = new Filesystem();
-        $uniqId = uniqid();
-        $filesystem->copy(__DIR__.'/../../assets/fixtures/nyancat.png', "/tmp/{$uniqId}.png");
-        $uploadedFile = new UploadedFile("/tmp/{$uniqId}.png", "{$uniqId}.png");
+        $uploadedFile = $this->createFile('png');
 
         $this->client->request(Request::METHOD_GET, '/boards/'.$board->getSlug(). '/add');
         $this->client->submitForm('Submit', [
@@ -130,15 +116,30 @@ class PostTest extends WebTestCase
         $this->assertResponseIsSuccessful();
     }
 
+    public function test_duplicated_new_tag_is_created_once(): void
+    {
+        $user = UserFactory::createOne();
+        $this->client->loginUser($user);
+        $board = BoardFactory::createOne();
+
+        $this->client->request(Request::METHOD_GET, '/boards/'.$board->getSlug(). '/add');
+        $this->client->submitForm('Submit', [
+            'post[file]' => $this->createFile('png'),
+            'post[board]' => $board->getId(),
+            'post[tags]' => 'frieren  frieren frieren',
+        ]);
+
+        $this->assertResponseIsSuccessful();
+        TagFactory::assert()->count(1, ['name' => 'frieren']);
+        PostFactory::assert()->count(1);
+    }
+
     public function test_can_upload_jpg(): void
     {
         $user = UserFactory::createOne();
         $this->client->loginUser($user);
         $board = BoardFactory::createOne();
-        $filesystem = new Filesystem();
-        $uniqId = uniqid();
-        $filesystem->copy(__DIR__.'/../../assets/fixtures/nyancat.jpg', "/tmp/{$uniqId}.jpg");
-        $uploadedFile = new UploadedFile("/tmp/{$uniqId}.jpg", "{$uniqId}.jpg");
+        $uploadedFile = $this->createFile('jpg');
 
         $this->client->request(Request::METHOD_GET, '/boards/'.$board->getSlug(). '/add');
         $this->client->submitForm('Submit', [
@@ -155,10 +156,7 @@ class PostTest extends WebTestCase
         $user = UserFactory::createOne();
         $this->client->loginUser($user);
         $board = BoardFactory::createOne();
-        $filesystem = new Filesystem();
-        $uniqId = uniqid();
-        $filesystem->copy(__DIR__.'/../../assets/fixtures/nyancat.webp', "/tmp/{$uniqId}.webp");
-        $uploadedFile = new UploadedFile("/tmp/{$uniqId}.webp", "{$uniqId}.webp");
+        $uploadedFile = $this->createFile('webp');
 
         $this->client->request(Request::METHOD_GET, '/boards/'.$board->getSlug(). '/add');
         $this->client->submitForm('Submit', [
@@ -175,10 +173,7 @@ class PostTest extends WebTestCase
         $user = UserFactory::createOne();
         $this->client->loginUser($user);
         $board = BoardFactory::createOne();
-        $filesystem = new Filesystem();
-        $uniqId = uniqid();
-        $filesystem->copy(__DIR__.'/../../assets/fixtures/nyancat.avif', "/tmp/{$uniqId}.avif");
-        $uploadedFile = new UploadedFile("/tmp/{$uniqId}.avif", "{$uniqId}.avif");
+        $uploadedFile = $this->createFile('avif');
 
         $this->client->request(Request::METHOD_GET, '/boards/'.$board->getSlug(). '/add');
         $this->client->submitForm('Submit', [
@@ -195,10 +190,7 @@ class PostTest extends WebTestCase
         $user = UserFactory::createOne();
         $this->client->loginUser($user);
         $board = BoardFactory::createOne();
-        $filesystem = new Filesystem();
-        $uniqId = uniqid();
-        $filesystem->copy(__DIR__.'/../../assets/fixtures/nyancat.gif', "/tmp/{$uniqId}.gif");
-        $uploadedFile = new UploadedFile("/tmp/{$uniqId}.gif", "{$uniqId}.gif");
+        $uploadedFile = $this->createFile('gif');
 
         $this->client->request(Request::METHOD_GET, '/boards/'.$board->getSlug(). '/add');
         $this->client->submitForm('Submit', [
@@ -215,10 +207,7 @@ class PostTest extends WebTestCase
         $user = UserFactory::createOne();
         $this->client->loginUser($user);
         $board = BoardFactory::createOne();
-        $filesystem = new Filesystem();
-        $uniqId = uniqid();
-        $filesystem->copy(__DIR__.'/../../assets/fixtures/nyancat.mp4', "/tmp/{$uniqId}.mp4");
-        $uploadedFile = new UploadedFile("/tmp/{$uniqId}.mp4", "{$uniqId}.mp4");
+        $uploadedFile = $this->createFile('mp4');
 
         $this->client->request(Request::METHOD_GET, '/boards/'.$board->getSlug(). '/add');
         $this->client->submitForm('Submit', [
@@ -237,10 +226,7 @@ class PostTest extends WebTestCase
 
         $board = BoardFactory::createOne();
 
-        $filesystem = new Filesystem();
-        $uniqId = uniqid();
-        $filesystem->copy(__DIR__.'/../../assets/fixtures/nyancat.png', "/tmp/{$uniqId}.png");
-        $uploadedFile = new UploadedFile("/tmp/{$uniqId}.png", "{$uniqId}.png", test: true);
+        $uploadedFile = $this->createFile('png');
         $this->client->request(Request::METHOD_GET, '/boards/'.$board->getSlug(). '/add');
         $this->client->submitForm('Submit', [
             'post[file]' => $uploadedFile,
@@ -248,9 +234,7 @@ class PostTest extends WebTestCase
             'post[tags]' => 'nyancat'
         ]);
 
-        $uniqId = uniqid();
-        $filesystem->copy(__DIR__.'/../../assets/fixtures/nyancat.png', "/tmp/{$uniqId}.png");
-        $uploadedFile = new UploadedFile("/tmp/{$uniqId}.png", "{$uniqId}.png", test: true);
+        $uploadedFile = $this->createFile('png');
 
         $this->client->request(Request::METHOD_POST, '/check-similar', [], ['file' => $uploadedFile]);
 

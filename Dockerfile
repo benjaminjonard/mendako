@@ -1,4 +1,4 @@
-FROM dunglas/frankenphp:php8.5 AS mendako-base
+FROM dunglas/frankenphp:php8.6 AS mendako-base
 
 # Environment variables
 ENV APP_ENV=prod
@@ -28,7 +28,7 @@ RUN set -eux ; \
     supervisor \
     openssl ; \
     # Install PHP extensions \
-    install-php-extensions opcache pdo_pgsql intl gd zip curl ; \
+    install-php-extensions opcache pdo_pgsql intl gd zip curl mbstring ; \
     #Install composer dependencies \
     curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer ; \
     cd /app/public ; \

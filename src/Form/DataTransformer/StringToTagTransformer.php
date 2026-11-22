@@ -39,25 +39,13 @@ class StringToTagTransformer implements DataTransformerInterface
         foreach ($parts as $part) {
             $name = trim($part);
 
-            if ('' === $name) {
+            if ('' === $name || isset($tags[$name])) {
                 continue;
             }
 
-            $tag = $this->tagRepository->findOneBy(['name' => $name]);
-
-            if ($tag === null) {
-                $tag = new Tag();
-                $tag
-                    ->setName($name)
-                    ->setCategory(TagCategory::GENERAL)
-                ;
-            }
-
-            if (!\in_array($tag, $tags, false)) {
-                $tags[] = $tag;
-            }
+            $tags[$name] = $this->tagRepository->findOneBy(['name' => $name]) ?? new Tag()->setName($name)->setCategory(TagCategory::GENERAL);
         }
 
-        return $tags;
+        return array_values($tags);
     }
 }

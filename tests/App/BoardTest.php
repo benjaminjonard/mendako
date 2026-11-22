@@ -7,10 +7,9 @@ namespace App\Tests\App;
 use App\Tests\Factory\BoardFactory;
 use App\Tests\Factory\PostFactory;
 use App\Tests\Factory\UserFactory;
+use App\Tests\FileTrait;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
@@ -18,6 +17,7 @@ use Zenstruck\Foundry\Test\ResetDatabase;
 class BoardTest extends WebTestCase
 {
     use Factories;
+    use FileTrait;
     use ResetDatabase;
 
     private KernelBrowser $client;
@@ -91,10 +91,7 @@ class BoardTest extends WebTestCase
         $this->client->loginUser($user);
         $board = BoardFactory::createOne();
 
-        $filesystem = new Filesystem();
-        $uniqId = uniqid();
-        $filesystem->copy(__DIR__.'/../../assets/fixtures/nyancat.png', "/tmp/{$uniqId}.png");
-        $uploadedFile = new UploadedFile("/tmp/{$uniqId}.png", "{$uniqId}.png", test: true);
+        $uploadedFile = $this->createFile('png');
         PostFactory::createOne(['board' => $board, 'file' => $uploadedFile, 'uploadedBy' => $user]);
 
         $this->client->request(Request::METHOD_GET, '/boards/'.$board->getSlug());

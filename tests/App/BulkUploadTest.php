@@ -9,9 +9,9 @@ use App\Tests\Factory\BoardFactory;
 use App\Tests\Factory\PostFactory;
 use App\Tests\Factory\StagedPostFactory;
 use App\Tests\Factory\UserFactory;
+use App\Tests\FileTrait;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Zenstruck\Foundry\Test\Factories;
@@ -20,6 +20,7 @@ use Zenstruck\Foundry\Test\ResetDatabase;
 class BulkUploadTest extends WebTestCase
 {
     use Factories;
+    use FileTrait;
     use ResetDatabase;
 
     private KernelBrowser $client;
@@ -28,25 +29,6 @@ class BulkUploadTest extends WebTestCase
     protected function setUp(): void
     {
         $this->client = static::createClient();
-    }
-
-    private function uploadFixture(string $fixture = 'nyancat.png'): UploadedFile
-    {
-        $filesystem = new Filesystem();
-        $uniqId = uniqid();
-        $extension = pathinfo($fixture, PATHINFO_EXTENSION);
-        $filesystem->copy(__DIR__.'/../../assets/fixtures/'.$fixture, "/tmp/{$uniqId}.{$extension}");
-
-        return new UploadedFile("/tmp/{$uniqId}.{$extension}", "{$uniqId}.{$extension}", test: true);
-    }
-
-    private function textFile(): UploadedFile
-    {
-        $uniqId = uniqid();
-        $path = "/tmp/{$uniqId}.txt";
-        file_put_contents($path, 'not an image');
-
-        return new UploadedFile($path, "{$uniqId}.txt", test: true);
     }
 
     private function publicPath(): string
@@ -63,7 +45,7 @@ class BulkUploadTest extends WebTestCase
 
     private function stageOne(?UploadedFile $file = null): array
     {
-        $this->client->request(Request::METHOD_POST, '/bulk-upload/add', ['_token' => $this->csrfToken()], ['file' => $file ?? $this->uploadFixture()]);
+        $this->client->request(Request::METHOD_POST, '/bulk-upload/add', ['_token' => $this->csrfToken()], ['file' => $file ?? $this->createFile()]);
 
         return json_decode($this->client->getResponse()->getContent(), true);
     }
@@ -114,7 +96,7 @@ class BulkUploadTest extends WebTestCase
     {
         $this->client->loginUser(UserFactory::createOne());
 
-        $this->client->request(Request::METHOD_POST, '/bulk-upload/add', [], ['file' => $this->uploadFixture()]);
+        $this->client->request(Request::METHOD_POST, '/bulk-upload/add', [], ['file' => $this->createFile()]);
 
         $this->assertResponseStatusCodeSame(403);
         StagedPostFactory::assert()->count(0);
@@ -134,7 +116,7 @@ class BulkUploadTest extends WebTestCase
     {
         $this->client->loginUser(UserFactory::createOne());
 
-        $this->client->request(Request::METHOD_POST, '/bulk-upload/add', ['_token' => $this->csrfToken()], ['file' => $this->textFile()]);
+        $this->client->request(Request::METHOD_POST, '/bulk-upload/add', ['_token' => $this->csrfToken()], ['file' => $this->createFile('txt')]);
 
         $this->assertResponseStatusCodeSame(422);
         StagedPostFactory::assert()->count(0);
@@ -149,7 +131,7 @@ class BulkUploadTest extends WebTestCase
         $board = BoardFactory::createOne();
         $this->client->request(Request::METHOD_GET, '/boards/'.$board->getSlug().'/add');
         $this->client->submitForm('Submit', [
-            'post[file]' => $this->uploadFixture(),
+            'post[file]' => $this->createFile(),
             'post[board]' => $board->getId(),
             'post[tags]' => 'nyancat',
         ]);
@@ -172,7 +154,7 @@ class BulkUploadTest extends WebTestCase
         $board = BoardFactory::createOne();
         $this->client->request(Request::METHOD_GET, '/boards/'.$board->getSlug().'/add');
         $this->client->submitForm('Submit', [
-            'post[file]' => $this->uploadFixture(),
+            'post[file]' => $this->createFile(),
             'post[board]' => $board->getId(),
             'post[tags]' => 'nyancat',
         ]);

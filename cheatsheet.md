@@ -15,6 +15,3 @@ Then
 - `composer test:phpunit` 
 - or `composer test:paratest` for parallel tests (faster)
 - or `composer test:coverage` for test coverage
-
-###### Rector
-- `./vendor/bin/rector --dry-run`
