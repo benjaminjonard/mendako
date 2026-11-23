@@ -52,15 +52,15 @@
         "twig/twig": "3.30.0"
     },
     "require-dev": {
-        "brianium/paratest": "7.27.4",
+        "brianium/paratest": "7.29.0",
         "dama/doctrine-test-bundle": "8.8.0",
         "phpunit/php-code-coverage": "14.5.2",
-        "phpunit/phpunit": "13.4.7",
+        "phpunit/phpunit": "13.4.8",
         "symfony/debug-bundle": "8.1.0",
         "symfony/maker-bundle": "1.68.0",
         "symfony/stopwatch": "8.0.8",
         "symfony/web-profiler-bundle": "8.1.11",
-        "zenstruck/foundry": "2.16.0"
+        "zenstruck/foundry": "2.17.0"
     },
     "config": {
         "allow-plugins": {
