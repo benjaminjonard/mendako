@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "702a26025d3df7c0d29b75ee69eb8866",
+    "content-hash": "c155df5d570f0203e76ecba705da0c49",
     "packages": [
         {
             "name": "contao/imagine-svg",
@@ -7932,16 +7932,16 @@
     "packages-dev": [
         {
             "name": "brianium/paratest",
-            "version": "v7.27.4",
+            "version": "v7.29.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/paratestphp/paratest.git",
-                "reference": "6d73b615611a2da7af85637d99d1b0efac9fcd00"
+                "reference": "2e4bbc8340be877d4f1a82f993a387e2c8c76272"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/paratestphp/paratest/zipball/6d73b615611a2da7af85637d99d1b0efac9fcd00",
-                "reference": "6d73b615611a2da7af85637d99d1b0efac9fcd00",
+                "url": "https://api.github.com/repos/paratestphp/paratest/zipball/2e4bbc8340be877d4f1a82f993a387e2c8c76272",
+                "reference": "2e4bbc8340be877d4f1a82f993a387e2c8c76272",
                 "shasum": ""
             },
             "require": {
@@ -7952,10 +7952,10 @@
                 "fidry/cpu-core-counter": "^1.4.1",
                 "jean85/pretty-package-versions": "^2.1.1",
                 "php": "~8.4.0 || ~8.5.0 || ~8.6.0",
-                "phpunit/php-code-coverage": "^14.4.1",
+                "phpunit/php-code-coverage": "^14.5.2",
                 "phpunit/php-file-iterator": "^7.0.2",
                 "phpunit/php-timer": "^9",
-                "phpunit/phpunit": "^13.4.3",
+                "phpunit/phpunit": "^13.4.7",
                 "sebastian/environment": "^9.3.3",
                 "symfony/console": "^7.4.20 || ^8.1.8",
                 "symfony/process": "^7.4.19 || ^8.1.7"
@@ -7965,10 +7965,10 @@
                 "ext-pcntl": "*",
                 "ext-pcov": "*",
                 "ext-posix": "*",
-                "phpstan/phpstan": "^2.3.1",
+                "phpstan/phpstan": "^2.3.5",
                 "phpstan/phpstan-deprecation-rules": "^2.0.5",
-                "phpstan/phpstan-phpunit": "^2.1.1",
-                "phpstan/phpstan-strict-rules": "^2.1.0",
+                "phpstan/phpstan-phpunit": "^2.1.2",
+                "phpstan/phpstan-strict-rules": "^2.1.1",
                 "symfony/filesystem": "^7.4.18 || ^8.1.6"
             },
             "bin": [
@@ -8009,7 +8009,7 @@
             ],
             "support": {
                 "issues": "https://github.com/paratestphp/paratest/issues",
-                "source": "https://github.com/paratestphp/paratest/tree/v7.27.4"
+                "source": "https://github.com/paratestphp/paratest/tree/v7.29.0"
             },
             "funding": [
                 {
@@ -8021,7 +8021,7 @@
                     "type": "paypal"
                 }
             ],
-            "time": "2026-10-22T06:15:12+00:00"
+            "time": "2026-11-14T20:49:33+00:00"
         },
         {
             "name": "dama/doctrine-test-bundle",
@@ -8896,16 +8896,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "13.4.7",
+            "version": "13.4.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "e6458d44279e3b4fc492d4c41fe8e677efed7a2c"
+                "reference": "291e66a76eb39f2fb8f880d38edc30dbd7acd9a2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/e6458d44279e3b4fc492d4c41fe8e677efed7a2c",
-                "reference": "e6458d44279e3b4fc492d4c41fe8e677efed7a2c",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/291e66a76eb39f2fb8f880d38edc30dbd7acd9a2",
+                "reference": "291e66a76eb39f2fb8f880d38edc30dbd7acd9a2",
                 "shasum": ""
             },
             "require": {
@@ -8976,7 +8976,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/13.4.7"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/13.4.8"
             },
             "funding": [
                 {
@@ -8984,7 +8984,7 @@
                     "type": "other"
                 }
             ],
-            "time": "2026-11-13T11:10:10+00:00"
+            "time": "2026-11-19T12:17:15+00:00"
         },
         {
             "name": "sebastian/cli-parser",
@@ -10549,16 +10549,16 @@
         },
         {
             "name": "zenstruck/foundry",
-            "version": "v2.16.0",
+            "version": "v2.17.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zenstruck/foundry.git",
-                "reference": "29199b9a8363af0f96daaf3ade8fff191fd63952"
+                "reference": "af9a39400231bf92ea128235b81b30c2287443ba"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zenstruck/foundry/zipball/29199b9a8363af0f96daaf3ade8fff191fd63952",
-                "reference": "29199b9a8363af0f96daaf3ade8fff191fd63952",
+                "url": "https://api.github.com/repos/zenstruck/foundry/zipball/af9a39400231bf92ea128235b81b30c2287443ba",
+                "reference": "af9a39400231bf92ea128235b81b30c2287443ba",
                 "shasum": ""
             },
             "require": {
@@ -10661,7 +10661,7 @@
             ],
             "support": {
                 "issues": "https://github.com/zenstruck/foundry/issues",
-                "source": "https://github.com/zenstruck/foundry/tree/v2.16.0"
+                "source": "https://github.com/zenstruck/foundry/tree/v2.17.0"
             },
             "funding": [
                 {
@@ -10673,7 +10673,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-11-09T12:40:49+00:00"
+            "time": "2026-11-18T11:18:19+00:00"
         }
     ],
     "aliases": [],
@@ -10690,5 +10690,5 @@
         "ext-intl": "*"
     },
     "platform-dev": {},
-    "plugin-api-version": "2.11.0"
+    "plugin-api-version": "2.9.0"
 }
